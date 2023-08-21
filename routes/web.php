@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BranchController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -36,7 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/branches', [BranchController::class, 'index'])->name('branches');
+Route::post('/branches', [BranchController::class, 'importData'])->name('branches.import');
+Route::get('/branches/export', [BranchController::class, 'exportData'])->name('branches.export');
 Route::get('/home', [UsersController::class, 'index'])->name('home');
 Route::post('/import', [UsersController::class, 'import'])->name('import');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
