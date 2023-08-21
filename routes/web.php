@@ -43,4 +43,7 @@ Route::get('/branches/export', [BranchController::class, 'exportData'])->name('b
 Route::get('/home', [UsersController::class, 'index'])->name('home');
 Route::post('/import', [UsersController::class, 'import'])->name('import');
 
+Route::get('/employees', [BranchController::class, 'employeeIndex'])->name('employees');
+Route::post('/employees', [BranchController::class, 'importEmployee'])->name('employees.import');
+
 require __DIR__ . '/auth.php';

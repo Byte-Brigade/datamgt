@@ -16,6 +16,11 @@ class Branch extends Model
         'address'
     ];
 
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'branch_id');
+    }
+
     public function toSearchableArray()
     {
         return [
