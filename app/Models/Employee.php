@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Branch;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'branch_id',
@@ -27,5 +29,14 @@ class Employee extends Model
     public function getBranch()
     {
         return $this->branches->branch_name;
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+            'employee_id' => $this->employee_id,
+            'email' => $this->email
+        ];
     }
 }

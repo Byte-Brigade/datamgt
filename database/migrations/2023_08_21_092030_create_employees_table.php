@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->enum('gender', ['L', 'P']);
-            $table->date('birth_date');
-            $table->date('hiring_date');
+            $table->date('birth_date')->nullable();
+            $table->date('hiring_date')->nullable();
             $table->timestamps();
 
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');

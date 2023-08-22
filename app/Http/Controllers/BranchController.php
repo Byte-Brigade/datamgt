@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\BranchesExport;
 use App\Imports\EmployeesImport;
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -38,10 +39,14 @@ class BranchController extends Controller
         return Excel::download(new BranchesExport, 'data_cabang.xlsx');
     }
 
-    public function employeeIndex()
+    public function employeeIndex(Request $request)
     {
         return Inertia::render('Cabang/Karyawan', [
-            'employees' => Employee::paginate(10)
+            'employees' => Employee::search($request->search)
+                ->query(fn(Builder $query) => $query->with('branches'))
+                ->paginate($request->perpage ?? 10)
+                ->appends('query', null)
+                ->withQueryString()
         ]);
     }
 
