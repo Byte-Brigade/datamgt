@@ -122,6 +122,7 @@ export default function Karyawan({ employees, sessions }) {
                   <TextInput
                     type="search"
                     name="search"
+                    id="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -130,9 +131,9 @@ export default function Karyawan({ employees, sessions }) {
               </form>
             </div>
           </div>
-          <div className="relative overflow-x-auto rounded-lg shadow-sm">
-            <table className="w-full">
-              <thead className="border border-gray-200 rounded-lg">
+          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
+            <table className="w-full text-sm">
+              <thead className="border-b-2 border-slate-200">
                 <tr className="[&>th]:p-2 bg-slate-100">
                   <th className="text-left">No</th>
                   <th>Branch ID</th>
@@ -143,6 +144,7 @@ export default function Karyawan({ employees, sessions }) {
                   <th>Gender</th>
                   <th>Tanggal Lahir</th>
                   <th>Hiring Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,22 +152,31 @@ export default function Karyawan({ employees, sessions }) {
                   <tr>
                     <td
                       className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="4"
+                      colSpan="10"
                     >
                       Loading ...
                     </td>
                   </tr>
                 ) : (
                   employees.data.map((employee, index) => (
-                    <tr key={employee.id} className="[&>td]:p-2">
+                    <tr
+                      key={employee.id}
+                      className="[&>td]:p-2 hover:bg-slate-200"
+                    >
                       <td>{employees.from + index}</td>
-                      <td>{employee.branch_id}</td>
-                      {/* <td>{employee.branch_code}</td> */}
+                      <td>{employee.branches.branch_code}</td>
+                      <td>{employee.branches.branch_name}</td>
+                      <td>{employee.employee_id}</td>
                       <td>{employee.name}</td>
                       <td>{employee.email}</td>
-                      <td>{employee.gender}</td>
-                      <td>{employee.birth_date}</td>
+                      <td className="text-center">{employee.gender}</td>
+                      <td>
+                        {employee.birth_date === "1970-01-01"
+                          ? "-"
+                          : employee.birth_date}
+                      </td>
                       <td>{employee.hiring_date}</td>
+                      <td>Edit | Delete</td>
                     </tr>
                   ))
                 )}
