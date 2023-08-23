@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('position_id');
             $table->string('employee_id', 8)->unique();
             $table->string('name');
             $table->string('email');
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->foreign('position_id')->references('id')->on('employee_positions')->onDelete('cascade');
         });
     }
 

@@ -20,7 +20,8 @@ export default function Cabang({ branches, sessions }) {
 
   const exportData = (e) => {
     e.preventDefault();
-    router.get(route("branches.export"));
+
+    window.open(route("branches.export"), "_blank");
   };
 
   const perpage = useRef(branches.per_page);
@@ -72,7 +73,10 @@ export default function Cabang({ branches, sessions }) {
             )}
           </div>
           <div className="flex items-center justify-between mb-4">
-            <PrimaryButton className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400" onClick={toggleModal}>
+            <PrimaryButton
+              className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+              onClick={toggleModal}
+            >
               <div className="flex items-center gap-x-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +144,12 @@ export default function Cabang({ branches, sessions }) {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse" colSpan="4">Loading ... </td>
+                    <td
+                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
+                      colSpan="4"
+                    >
+                      Loading ...{" "}
+                    </td>
                   </tr>
                 ) : (
                   branches.data.map((branch, index) => (
@@ -157,7 +166,8 @@ export default function Cabang({ branches, sessions }) {
           </div>
           <div className="flex items-center justify-between mt-4">
             <div>
-              Showing {branches.from} to {branches.to} of {branches.total} entries
+              Showing {branches.from} to {branches.to} of {branches.total}{" "}
+              entries
             </div>
             <div className="flex items-center gap-2">
               {!branches.first_page_url.includes(url) && (

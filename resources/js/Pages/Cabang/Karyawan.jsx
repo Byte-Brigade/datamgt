@@ -138,6 +138,7 @@ export default function Karyawan({ employees, sessions }) {
                   <th className="text-left">No</th>
                   <th>Branch ID</th>
                   <th>Branch Name</th>
+                  <th>Position</th>
                   <th>Employee ID</th>
                   <th>Employee Name</th>
                   <th>Email</th>
@@ -166,6 +167,7 @@ export default function Karyawan({ employees, sessions }) {
                       <td>{employees.from + index}</td>
                       <td>{employee.branches.branch_code}</td>
                       <td>{employee.branches.branch_name}</td>
+                      <td>{employee.positions.position_name}</td>
                       <td>{employee.employee_id}</td>
                       <td>{employee.name}</td>
                       <td>{employee.email}</td>

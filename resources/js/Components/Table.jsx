@@ -4,7 +4,7 @@ import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { pickBy } from "lodash";
 import { useRef, useState } from "react";
 
-export default function Table({ paginates }) {
+export default function Table({ headers, paginates }) {
   const perpage = useRef(branches.per_page);
   const { url } = usePage();
   const [loading, setLoading] = useState(false);
@@ -35,6 +35,30 @@ export default function Table({ paginates }) {
       }
     );
   };
+
+  const TableHeader = ({ headers, className }) => (
+    <thead className="border border-gray-200 rounded-lg">
+      <tr className="[&>th]:p-2 bg-slate-100">
+        {headers.map((header, index) => (
+          <th key={index} className={className}>
+            {header}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+
+  const TableBody = ({ data, className }) => (
+    <tbody className={className}>
+      {data.map((row, index) => (
+        <tr key={index} className="[&>td]:p-2">
+          {row.map((cell, index) => (
+            <td key={index}>{cell}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  )
   return (
     <>
       <div className="flex items-center justify-between mb-4">
