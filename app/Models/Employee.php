@@ -49,6 +49,9 @@ class Employee extends Model
             'name' => $this->name,
             'employee_id' => $this->employee_id,
             'email' => $this->email,
+            'branches.branch_code' => '',
+            'branches.branch_name' => '',
+            'employee_positions.position_name' => ''
         ];
     }
 }
