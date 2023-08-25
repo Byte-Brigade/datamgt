@@ -59,7 +59,6 @@ class EmployeeController extends Controller
 
     public function export(Request $request)
     {
-        // dd($request);
         $fileName = 'Data_Karyawan_' . date('d-m-y') . '.xlsx';
         return (new EmployeesExport($request->branch, $request->position))->download($fileName);
     }

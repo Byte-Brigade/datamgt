@@ -2,20 +2,25 @@ import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
+import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import axios from "axios";
 import { pickBy } from "lodash";
 import { useRef, useState } from "react";
 
 export default function Karyawan({ employees, branches, positions, sessions }) {
-  console.log(branches);
   const { data, setData, post, processing, errors } = useForm({
     file: null,
-    branch: null,
-    position: null,
+    branch: 0,
+    position: 0,
   });
+  const perpage = useRef(employees.per_page);
+  const { url } = usePage();
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [isModalImportOpen, setIsModalImportOpen] = useState(false);
+  const [isModalExportOpen, setIsModalExportOpen] = useState(false);
 
   const submit = (e) => {
     e.preventDefault();
@@ -24,14 +29,19 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
 
   const exportData = (e) => {
     e.preventDefault();
-    // axios.post(route("employees.export"), data);
-    window.open(route("employees.export"));
-  };
+    const { branch, position } = data;
+    const query =
+      branch !== 0 && position !== 0
+        ? `?branch=${branch}&position=${position}`
+        : branch !== 0
+        ? `?branch=${branch}`
+        : position !== 0
+        ? `?position=${position}`
+        : "";
 
-  const perpage = useRef(employees.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
+    window.open(route("employees.export") + query, "_self");
+    setData({ branch: 0, position: 0 });
+  };
 
   const handleChangePerpage = (e) => {
     perpage.current = e.target.value;
@@ -68,9 +78,6 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
     };
     return d.toLocaleDateString("id-ID", options);
   };
-
-  const [isModalImportOpen, setIsModalImportOpen] = useState(false);
-  const [isModalExportOpen, setIsModalExportOpen] = useState(false);
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -295,36 +302,38 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
           <form onSubmit={exportData}>
             <div className="flex flex-col px-12">
               <p>Export to Excel (.xlsx)</p>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-y-2">
                 <div className="grid items-center grid-cols-2">
                   <label htmlFor="branch">Branch :</label>
-                  <select
+                  <SelectInput
                     id="branch"
                     name="branch"
                     onChange={(e) => setData("branch", e.target.value)}
+                    value={data.branch}
                   >
-                    <option>All</option>
+                    <option value={0}>All</option>
                     {branches.map((branch) => (
                       <option key={branch.id} value={branch.id}>
                         {branch.branch_code} - {branch.branch_name}
                       </option>
                     ))}
-                  </select>
+                  </SelectInput>
                 </div>
                 <div className="grid items-center grid-cols-2">
                   <label htmlFor="position">Position :</label>
-                  <select
+                  <SelectInput
                     id="position"
                     name="position"
                     onChange={(e) => setData("position", e.target.value)}
+                    value={data.position}
                   >
-                    <option>All</option>
+                    <option value={0}>All</option>
                     {positions.map((position) => (
                       <option key={position.id} value={position.id}>
                         {position.position_name}
                       </option>
                     ))}
-                  </select>
+                  </SelectInput>
                 </div>
               </div>
             </div>
