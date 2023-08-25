@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\EmployeePosition;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;

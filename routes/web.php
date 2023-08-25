@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
@@ -48,6 +49,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/employees', [EmployeeController::class, 'import'])->name('employees.import');
     Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
     /* [END] Employees */
+
+    Route::prefix('ops')->name('ops.')->group(function () {
+        /* [START] Ops SKBIRTGS */
+        Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
+        Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
+        /* [END] Ops SKBIRTGS */
+    });
 });
 
 Route::get('/test', [BranchController::class, 'testApi'])->name('test');
