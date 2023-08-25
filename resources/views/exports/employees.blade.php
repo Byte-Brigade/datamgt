@@ -14,6 +14,7 @@
         </tr>
     </thead>
     <tbody>
+
         @foreach ($employees as $index => $employee)
             <tr>
                 <td>{{ $index + 1 }}</td>
