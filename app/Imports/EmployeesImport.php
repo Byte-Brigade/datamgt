@@ -21,7 +21,7 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithUpserts, WithValid
     {
         return new Employee([
             'branch_id' => Branch::where('branch_code', $row['branch_id'])->pluck('id')->first(),
-            'position_id' => random_int(1, 3),
+            'position_id' => EmployeePosition::where('position_name', $row['posisi'])->pluck('id')->first(),
             'employee_id' => $row['employee_id'],
             'name' => $row['employee_name'],
             'email' => $row['email'],
