@@ -1,10 +1,9 @@
-import InputLabel from "@/Components/InputLabel";
+import { Pagination, Search, TableHeader } from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
+import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { pickBy } from "lodash";
 import { useRef, useState } from "react";
 
@@ -12,6 +11,17 @@ export default function Cabang({ branches, sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
+  const perpage = useRef(branches.per_page);
+  const { url } = usePage();
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const headers = [
+    { name: "No", field: "id" },
+    { name: "Kode Cabang", field: "branch_code" },
+    { name: "Nama Cabang", field: "branch_name" },
+    { name: "Alamat", field: "address" },
+  ];
 
   const submit = (e) => {
     e.preventDefault();
@@ -23,11 +33,6 @@ export default function Cabang({ branches, sessions }) {
 
     window.open(route("branches.export"), "__blank");
   };
-
-  const perpage = useRef(branches.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
 
   const handleChangePerpage = (e) => {
     perpage.current = e.target.value;
@@ -48,7 +53,6 @@ export default function Cabang({ branches, sessions }) {
         search,
       }),
       {
-        only: 'branches',
         preserveScroll: true,
         preserveState: true,
         onFinish: () => setLoading(false),
@@ -100,48 +104,16 @@ export default function Cabang({ branches, sessions }) {
             </PrimaryButton>
             <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-x-2">
-              Show
-              <select
-                name="perpage"
-                id="perpage"
-                className="rounded-lg bg-slate-100"
-                value={perpage.current}
-                onChange={handleChangePerpage}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              entries
-            </div>
-            <div>
-              <form onSubmit={handleSearch}>
-                <div className="flex items-center gap-2">
-                  <InputLabel htmlFor="search">Search : </InputLabel>
-                  <TextInput
-                    type="search"
-                    name="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <PrimaryButton type="submit">Cari</PrimaryButton>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div className="relative overflow-x-auto rounded-lg shadow-sm">
+          <Search
+            perpage={perpage}
+            handleSearch={handleSearch}
+            handleChangePerpage={handleChangePerpage}
+            search={search}
+            setSearch={setSearch}
+          />
+          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
             <table className="w-full">
-              <thead className="border border-gray-200 rounded-lg">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-left">No</th>
-                  <th>Kode Cabang</th>
-                  <th>Nama Cabang</th>
-                  <th>Alamat</th>
-                </tr>
-              </thead>
+              <TableHeader headers={headers} />
               <tbody>
                 {loading ? (
                   <tr>
@@ -165,52 +137,7 @@ export default function Cabang({ branches, sessions }) {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              Showing {branches.from} to {branches.to} of {branches.total}{" "}
-              entries
-            </div>
-            <div className="flex items-center gap-2">
-              {!branches.first_page_url.includes(url) && (
-                <Link
-                  href={branches.first_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>First</div>
-                </Link>
-              )}
-              {branches.links.map(
-                (link, index) =>
-                  link.url && (
-                    <Link
-                      key={index}
-                      href={link.url}
-                      className={`${
-                        link.url.includes(url) ? `bg-slate-200` : `bg-slate-100`
-                      } py-2 px-3 text-sm rounded-lg`}
-                      preserveScroll
-                      preserveState
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                      ></div>
-                    </Link>
-                  )
-              )}
-              {!branches.last_page_url.includes(url) && (
-                <Link
-                  href={branches.last_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>Last</div>
-                </Link>
-              )}
-            </div>
-          </div>
+          <Pagination data={branches} url={url} />
         </div>
       </div>
       <Modal show={isOpen}>

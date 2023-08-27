@@ -1,11 +1,10 @@
-import InputLabel from "@/Components/InputLabel";
+import { Pagination, Search, TableHeader } from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import SelectInput from "@/Components/SelectInput";
-import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
+import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { pickBy } from "lodash";
 import { useRef, useState } from "react";
 
@@ -21,6 +20,20 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
   const [search, setSearch] = useState("");
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+
+  const headers = [
+    { name: "No", field: "id" },
+    { name: "Branch ID", field: "branch_code" },
+    { name: "Branch Name", field: "branch_name" },
+    { name: "Position", field: "position" },
+    { name: "Employee ID", field: "employee_id" },
+    { name: "Employee Name", field: "employee_name" },
+    { name: "Email", field: "email" },
+    { name: "Gender", field: "gender" },
+    { name: "Tanggal Lahir", field: "tanggal_lahir" },
+    { name: "Hiring Date", field: "hiring_date" },
+    { name: "Action", field: "action" },
+  ];
 
   const submit = (e) => {
     e.preventDefault();
@@ -127,56 +140,16 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-x-2">
-              Show
-              <select
-                name="perpage"
-                id="perpage"
-                className="rounded-lg bg-slate-100"
-                value={perpage.current}
-                onChange={handleChangePerpage}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              entries
-            </div>
-            <div>
-              <form onSubmit={handleSearch}>
-                <div className="flex items-center gap-2">
-                  <InputLabel htmlFor="search">Search : </InputLabel>
-                  <TextInput
-                    type="search"
-                    name="search"
-                    id="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <PrimaryButton type="submit">Cari</PrimaryButton>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Search
+            perpage={perpage}
+            search={search}
+            setSearch={setSearch}
+            handleSearch={handleSearch}
+            handleChangePerpage={handleChangePerpage}
+          />
           <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
             <table className="w-full text-sm">
-              <thead className="border-b-2 border-slate-200">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-left">No</th>
-                  <th>Branch ID</th>
-                  <th>Branch Name</th>
-                  <th>Position</th>
-                  <th>Employee ID</th>
-                  <th>Employee Name</th>
-                  <th>Email</th>
-                  <th>Gender</th>
-                  <th>Tanggal Lahir</th>
-                  <th>Hiring Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+              <TableHeader headers={headers} />
               <tbody>
                 {loading ? (
                   <tr>
@@ -218,52 +191,7 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              Showing {employees.from} to {employees.to} of {employees.total}{" "}
-              entries
-            </div>
-            <div className="flex items-center gap-2">
-              {!employees.first_page_url.includes(url) && (
-                <Link
-                  href={employees.first_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>First</div>
-                </Link>
-              )}
-              {employees.links.map(
-                (link, index) =>
-                  link.url && (
-                    <Link
-                      key={index}
-                      href={link.url}
-                      className={`${
-                        link.url.includes(url) ? `bg-slate-200` : `bg-slate-100`
-                      } py-2 px-3 text-sm rounded-lg`}
-                      preserveScroll
-                      preserveState
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                      ></div>
-                    </Link>
-                  )
-              )}
-              {!employees.last_page_url.includes(url) && (
-                <Link
-                  href={employees.last_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>Last</div>
-                </Link>
-              )}
-            </div>
-          </div>
+          <Pagination data={employees} url={url} />
         </div>
       </div>
       <Modal show={isModalImportOpen}>
