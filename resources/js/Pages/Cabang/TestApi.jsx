@@ -5,27 +5,48 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
+import axios from "axios";
 import { pickBy } from "lodash";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function Karyawan({ employees, sessions }) {
+export default function TestApi({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
 
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const getBranches = () => {
+    setLoading(true);
+    axios
+    .get("/api/branches")
+    .then((res) => {
+        setLoading(false);
+        setBranches(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    getBranches();
+  }, []);
+  console.log(branches.data);
+
   const submit = (e) => {
     e.preventDefault();
-    post(route("employees.import"));
+    post(route("branches.import"));
   };
 
   const exportData = (e) => {
     e.preventDefault();
-    router.get(route("employees.export"));
+
+    window.open(route("branches.export"), "_blank");
   };
 
-  const perpage = useRef(employees.per_page);
+  const perpage = useRef(branches.per_page);
   const { url } = usePage();
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
   const handleChangePerpage = (e) => {
@@ -60,10 +81,9 @@ export default function Karyawan({ employees, sessions }) {
     setIsOpen(!isOpen);
   };
 
-  console.log(employees);
   return (
     <AuthenticatedLayout>
-      <Head title="Karyawan Bank OPS Cabang" />
+      <Head title="Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>
@@ -122,7 +142,6 @@ export default function Karyawan({ employees, sessions }) {
                   <TextInput
                     type="search"
                     name="search"
-                    id="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -131,54 +150,33 @@ export default function Karyawan({ employees, sessions }) {
               </form>
             </div>
           </div>
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="border-b-2 border-slate-200">
+          <div className="relative overflow-x-auto rounded-lg shadow-sm">
+            <table className="w-full">
+              <thead className="border border-gray-200 rounded-lg">
                 <tr className="[&>th]:p-2 bg-slate-100">
                   <th className="text-left">No</th>
-                  <th>Branch ID</th>
-                  <th>Branch Name</th>
-                  <th>Position</th>
-                  <th>Employee ID</th>
-                  <th>Employee Name</th>
-                  <th>Email</th>
-                  <th>Gender</th>
-                  <th>Tanggal Lahir</th>
-                  <th>Hiring Date</th>
-                  <th>Action</th>
+                  <th>Kode Cabang</th>
+                  <th>Nama Cabang</th>
+                  <th>Alamat</th>
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
+                {!branches.data ? (
                   <tr>
                     <td
                       className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="10"
+                      colSpan="4"
                     >
-                      Loading ...
+                      Loading ...{" "}
                     </td>
                   </tr>
                 ) : (
-                  employees.data.map((employee, index) => (
-                    <tr
-                      key={employee.id}
-                      className="[&>td]:p-2 hover:bg-slate-200"
-                    >
-                      <td>{employees.from + index}</td>
-                      <td>{employee.branches.branch_code}</td>
-                      <td>{employee.branches.branch_name}</td>
-                      <td>{employee.positions.position_name}</td>
-                      <td>{employee.employee_id}</td>
-                      <td>{employee.name}</td>
-                      <td>{employee.email}</td>
-                      <td className="text-center">{employee.gender}</td>
-                      <td>
-                        {employee.birth_date === "1970-01-01"
-                          ? "-"
-                          : employee.birth_date}
-                      </td>
-                      <td>{employee.hiring_date}</td>
-                      <td>Edit | Delete</td>
+                  branches.data.map((branch, index) => (
+                    <tr key={branch.id} className="[&>td]:p-2">
+                      <td>{branches.from + index}</td>
+                      <td>{branch.branch_code}</td>
+                      <td>{branch.branch_name}</td>
+                      <td>{branch.address}</td>
                     </tr>
                   ))
                 )}
@@ -187,13 +185,13 @@ export default function Karyawan({ employees, sessions }) {
           </div>
           <div className="flex items-center justify-between mt-4">
             <div>
-              Showing {employees.from} to {employees.to} of {employees.total}{" "}
+              Showing {branches.from} to {branches.to} of {branches.total}{" "}
               entries
             </div>
-            <div className="flex items-center gap-2">
-              {!employees.first_page_url.includes(url) && (
+            {/* <div className="flex items-center gap-2">
+              {!branches.first_page_url.includes(url) && (
                 <Link
-                  href={employees.first_page_url}
+                  href={branches.first_page_url}
                   className="p-2 text-sm rounded-lg bg-slate-100"
                   preserveScroll
                   preserveState
@@ -201,7 +199,7 @@ export default function Karyawan({ employees, sessions }) {
                   <div>First</div>
                 </Link>
               )}
-              {employees.links.map(
+              {branches.links.map(
                 (link, index) =>
                   link.url && (
                     <Link
@@ -219,9 +217,9 @@ export default function Karyawan({ employees, sessions }) {
                     </Link>
                   )
               )}
-              {!employees.last_page_url.includes(url) && (
+              {!branches.last_page_url.includes(url) && (
                 <Link
-                  href={employees.last_page_url}
+                  href={branches.last_page_url}
                   className="p-2 text-sm rounded-lg bg-slate-100"
                   preserveScroll
                   preserveState
@@ -229,7 +227,7 @@ export default function Karyawan({ employees, sessions }) {
                   <div>Last</div>
                 </Link>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

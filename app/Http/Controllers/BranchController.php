@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exports\BranchesExport;
-use App\Imports\EmployeesImport;
-use App\Models\Employee;
-use Illuminate\Database\Eloquent\Builder;
-use Inertia\Inertia;
+use App\Imports\BranchesImport;
 use App\Models\Branch;
 use Illuminate\Http\Request;
-use App\Imports\BranchesImport;
+use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\StoreBranchRequest;
-use App\Http\Requests\UpdateBranchRequest;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class BranchController extends Controller
 {
@@ -27,6 +23,33 @@ class BranchController extends Controller
         ]);
     }
 
+    public function import(Request $request)
+    {
+        try {
+            (new BranchesImport)->import($request->file('file')->store('temp'));
+
+            return redirect('branches')->with(['status' => 'success', 'message' => 'Import Success']);
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+
+            foreach ($failures as $failure) {
+                $failure->row(); // row that went wrong
+                $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $failure->errors(); // Actual error messages from Laravel validator
+                $failure->values(); // The values of the row that has failed.
+            }
+            dd($failures);
+            return redirect('branches')->with(['status' => 'failed', 'message' => 'Import Failed']);
+        }
+
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_Cabang_' . date('d-m-y') . '.xlsx';
+        return (new BranchesExport)->download($fileName);
+    }
+
     public function api(Request $request)
     {
         $branches = Branch::search(trim($request->search))
@@ -38,33 +61,8 @@ class BranchController extends Controller
         return response()->json($branches);
     }
 
-    public function importData(Request $request)
+    public function testApi(Request $request)
     {
-        Excel::import(new BranchesImport, $request->file('file')->store('temp'));
-
-        return redirect('branches')->with(['status' => 'success', 'message' => 'Import Success']);
-    }
-
-    public function exportData()
-    {
-        return Excel::download(new BranchesExport, 'data_cabang.xlsx');
-    }
-
-    public function employeeIndex(Request $request)
-    {
-        return Inertia::render('Cabang/Karyawan', [
-            'employees' => Employee::search(trim($request->search))
-                ->query(fn(Builder $query) => $query->with(['branches', 'positions'])->orderBy('id', 'asc'))
-                ->paginate($request->perpage ?? 10)
-                ->appends('query', null)
-                ->withQueryString()
-        ]);
-    }
-
-    public function importEmployee(Request $request)
-    {
-        Excel::import(new EmployeesImport, $request->file('file')->store('temp'));
-
-        return redirect('employees')->with(['status' => 'success', 'message' => 'Import Success']);
+        return Inertia::render('Cabang/TestApi');
     }
 }
