@@ -23,8 +23,6 @@ class EmployeesExport implements FromView
     public function view(): View
     {
         $branch_id = $this->branch_id;
-        // $branch_id = 1;
-        // $position_id = 2;
         $position_id = $this->position_id;
         $employees = Employee::with(['branches', 'positions'])->newQuery();
         if (isset($branch_id)) {
