@@ -19,12 +19,23 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Cabang/Page', [
-            'branches' => Branch::search($request->search)
+            'branches' => Branch::search(trim($request->search))
                 ->orderBy('branch_code', 'asc')
                 ->paginate($request->perpage ?? 10)
                 ->appends('query', null)
                 ->withQueryString()
         ]);
+    }
+
+    public function api(Request $request)
+    {
+        $branches = Branch::search(trim($request->search))
+            ->orderBy('branch_code', 'asc')
+            ->paginate($request->perpage ?? 10)
+            ->appends('query', null)
+            ->withQueryString();
+
+        return response()->json($branches);
     }
 
     public function importData(Request $request)
@@ -42,8 +53,8 @@ class BranchController extends Controller
     public function employeeIndex(Request $request)
     {
         return Inertia::render('Cabang/Karyawan', [
-            'employees' => Employee::search($request->search)
-                ->query(fn(Builder $query) => $query->with('branches'))
+            'employees' => Employee::search(trim($request->search))
+                ->query(fn(Builder $query) => $query->with(['branches', 'positions'])->orderBy('id', 'asc'))
                 ->paginate($request->perpage ?? 10)
                 ->appends('query', null)
                 ->withQueryString()

@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\EmployeePosition;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -13,7 +14,8 @@ class EmployeesImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         return new Employee([
-            'branch_id' => Branch::where('branch_code', $row['branch_id'])->pluck('id')->first() ?? 1,
+            'branch_id' => Branch::where('branch_code', $row['branch_id'])->pluck('id')->first(),
+            'position_id' => EmployeePosition::where('position_name', $row['posisi'])->pluck('id')->first(),
             'employee_id' => $row['employee_id'],
             'name' => $row['employee_name'],
             'email' => $row['email'],
