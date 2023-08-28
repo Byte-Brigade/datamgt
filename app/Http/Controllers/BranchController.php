@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\BranchesExport;
+use App\Http\Resources\BranchResource;
 use App\Imports\BranchesImport;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -50,15 +51,36 @@ class BranchController extends Controller
         return (new BranchesExport)->download($fileName);
     }
 
+    protected array $sortFields = ['branch_code', 'branch_name', 'address'];
+
+    public function __construct(public Branch $branch)
+    {
+    }
     public function api(Request $request)
     {
-        $branches = Branch::search(trim($request->search))
-            ->orderBy('branch_code', 'asc')
-            ->paginate($request->perpage ?? 10)
-            ->appends('query', null)
-            ->withQueryString();
+        $sortFieldInput = $request->input('sort_field', 'branch_name');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branch_name';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $this->branch->orderBy($sortField, $sortOrder);
+        $perpage = $request->perpage ?? 10;
 
-        return response()->json($branches);
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('branch_code', 'like', $searchQuery)->orWhere('branch_name', 'like', $searchQuery)->orWhere(
+                'address',
+                'like',
+                $searchQuery
+            );
+        }
+        $branches = $query->paginate($perpage);
+        // $branches = Branch::search(trim($searchInput))
+        //     ->orderBy('branch_code', 'asc')
+        //     ->paginate($perpage)
+        //     ->appends('query', null)
+        //     ->withQueryString();
+
+        return BranchResource::collection($branches);
     }
 
     public function testApi(Request $request)

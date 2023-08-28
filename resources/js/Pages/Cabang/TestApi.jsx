@@ -1,3 +1,4 @@
+import CustTable from "@/Components/CustTable";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -14,25 +15,6 @@ export default function TestApi({ sessions }) {
     file: null,
   });
 
-  const [branches, setBranches] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const getBranches = () => {
-    setLoading(true);
-    axios
-    .get("/api/branches")
-    .then((res) => {
-        setLoading(false);
-        setBranches(res.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
-  };
-  useEffect(() => {
-    getBranches();
-  }, []);
-  console.log(branches.data);
 
   const submit = (e) => {
     e.preventDefault();
@@ -45,41 +27,17 @@ export default function TestApi({ sessions }) {
     window.open(route("branches.export"), "_blank");
   };
 
-  const perpage = useRef(branches.per_page);
-  const { url } = usePage();
-  const [search, setSearch] = useState("");
-
-  const handleChangePerpage = (e) => {
-    perpage.current = e.target.value;
-    getData();
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    getData();
-  };
-
-  const getData = () => {
-    setLoading(true);
-    router.get(
-      route().current(),
-      pickBy({
-        perpage: perpage.current,
-        search,
-      }),
-      {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => setLoading(false),
-      }
-    );
-  };
-
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
+
+  const columns = [
+    {field: "Kode Cabang", data: 'branch_code'},
+    {field: "Nama Cabang", data: 'branch_name'},
+    {field: "Alamat", data: 'address'},
+  ]
 
   return (
     <AuthenticatedLayout>
@@ -118,117 +76,10 @@ export default function TestApi({ sessions }) {
             </PrimaryButton>
             <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-x-2">
-              Show
-              <select
-                name="perpage"
-                id="perpage"
-                className="rounded-lg bg-slate-100"
-                value={perpage.current}
-                onChange={handleChangePerpage}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              entries
-            </div>
-            <div>
-              <form onSubmit={handleSearch}>
-                <div className="flex items-center gap-2">
-                  <InputLabel htmlFor="search">Search : </InputLabel>
-                  <TextInput
-                    type="search"
-                    name="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <PrimaryButton type="submit">Cari</PrimaryButton>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div className="relative overflow-x-auto rounded-lg shadow-sm">
-            <table className="w-full">
-              <thead className="border border-gray-200 rounded-lg">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-left">No</th>
-                  <th>Kode Cabang</th>
-                  <th>Nama Cabang</th>
-                  <th>Alamat</th>
-                </tr>
-              </thead>
-              <tbody>
-                {!branches.data ? (
-                  <tr>
-                    <td
-                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="4"
-                    >
-                      Loading ...{" "}
-                    </td>
-                  </tr>
-                ) : (
-                  branches.data.map((branch, index) => (
-                    <tr key={branch.id} className="[&>td]:p-2">
-                      <td>{branches.from + index}</td>
-                      <td>{branch.branch_code}</td>
-                      <td>{branch.branch_name}</td>
-                      <td>{branch.address}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              Showing {branches.from} to {branches.to} of {branches.total}{" "}
-              entries
-            </div>
-            {/* <div className="flex items-center gap-2">
-              {!branches.first_page_url.includes(url) && (
-                <Link
-                  href={branches.first_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>First</div>
-                </Link>
-              )}
-              {branches.links.map(
-                (link, index) =>
-                  link.url && (
-                    <Link
-                      key={index}
-                      href={link.url}
-                      className={`${
-                        link.url.includes(url) ? `bg-slate-200` : `bg-slate-100`
-                      } py-2 px-3 text-sm rounded-lg`}
-                      preserveScroll
-                      preserveState
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                      ></div>
-                    </Link>
-                  )
-              )}
-              {!branches.last_page_url.includes(url) && (
-                <Link
-                  href={branches.last_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>Last</div>
-                </Link>
-              )}
-            </div> */}
-          </div>
+          <CustTable
+            columns={columns}
+            fetchUrl={"/api/branches"}
+          />
         </div>
       </div>
       <Modal show={isOpen}>
