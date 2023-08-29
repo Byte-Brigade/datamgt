@@ -1,13 +1,14 @@
 <?php
 
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsSkbirtgsController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UsersController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\OpsPajakReklameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
         Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
         /* [END] Ops SKBIRTGS */
+
+        /* [START] Ops Pajak Reklame */
+        Route::get('/pajak-reklame', [OpsPajakReklameController::class, 'index'])->name('pajak-reklame');
+        Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
+        /* [END] Ops Pajak Reklame */
     });
 });
 
