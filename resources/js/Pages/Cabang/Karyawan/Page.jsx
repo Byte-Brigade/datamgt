@@ -1,36 +1,30 @@
-import { Pagination, Search, TableHeader } from "@/Components/DataTable";
+import DataTable from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import SelectInput from "@/Components/SelectInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router, useForm, usePage } from "@inertiajs/react";
-import { pickBy } from "lodash";
-import { useRef, useState } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function Karyawan({ employees, branches, positions, sessions }) {
+export default function Karyawan({ branches, positions, sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
     branch: 0,
     position: 0,
   });
-  const perpage = useRef(employees.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
 
-  const headers = [
-    { name: "No", field: "id" },
-    { name: "Branch ID", field: "branch_code" },
-    { name: "Branch Name", field: "branch_name" },
-    { name: "Position", field: "position" },
+  const columns = [
+    { name: "Branch ID", field: "branches.branch_code" },
+    { name: "Branch Name", field: "branches.branch_name" },
+    { name: "Position", field: "positions.position_name" },
     { name: "Employee ID", field: "employee_id" },
-    { name: "Employee Name", field: "employee_name" },
+    { name: "Employee Name", field: "name" },
     { name: "Email", field: "email" },
-    { name: "Gender", field: "gender" },
-    { name: "Tanggal Lahir", field: "tanggal_lahir" },
+    { name: "Gender", field: "gender", className: 'text-center' },
+    { name: "Tanggal Lahir", field: "birth_date" },
     { name: "Hiring Date", field: "hiring_date" },
     { name: "Action", field: "action" },
   ];
@@ -56,42 +50,6 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
     setData({ branch: 0, position: 0 });
   };
 
-  const handleChangePerpage = (e) => {
-    perpage.current = e.target.value;
-    getData();
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    getData();
-  };
-
-  const getData = () => {
-    setLoading(true);
-    router.get(
-      route().current(),
-      pickBy({
-        perpage: perpage.current,
-        search,
-      }),
-      {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => setLoading(false),
-      }
-    );
-  };
-
-  const convertDate = (date) => {
-    const d = new Date(date);
-    const options = {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    };
-    return d.toLocaleDateString("id-ID", options);
-  };
-
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
   };
@@ -100,7 +58,6 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-  console.log(employees);
   return (
     <AuthenticatedLayout>
       <Head title="Karyawan Bank OPS Cabang" />
@@ -140,58 +97,7 @@ export default function Karyawan({ employees, branches, positions, sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <Search
-            perpage={perpage}
-            search={search}
-            setSearch={setSearch}
-            handleSearch={handleSearch}
-            handleChangePerpage={handleChangePerpage}
-          />
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className="w-full text-sm">
-              <TableHeader headers={headers} />
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="11"
-                    >
-                      Loading ...
-                    </td>
-                  </tr>
-                ) : (
-                  employees.data.map((employee, index) => (
-                    <tr
-                      key={employee.id}
-                      className="[&>td]:p-2 hover:bg-slate-200"
-                    >
-                      <td>{employees.from + index}</td>
-                      <td>{employee.branches.branch_code}</td>
-                      <td>{employee.branches.branch_name}</td>
-                      <td>{employee.positions.position_name}</td>
-                      <td>{employee.employee_id}</td>
-                      <td>{employee.name}</td>
-                      <td>{employee.email}</td>
-                      <td className="text-center">{employee.gender}</td>
-                      <td>
-                        {employee.birth_date
-                          ? convertDate(employee.birth_date)
-                          : "-"}
-                      </td>
-                      <td>
-                        {employee.hiring_date
-                          ? convertDate(employee.hiring_date)
-                          : "-"}
-                      </td>
-                      <td>Edit | Delete</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <Pagination data={employees} url={url} />
+          <DataTable columns={columns} fetchUrl={"/api/employees"} />
         </div>
       </div>
       <Modal show={isModalImportOpen}>

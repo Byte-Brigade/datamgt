@@ -1,20 +1,15 @@
-import CustTable from "@/Components/CustTable";
-import InputLabel from "@/Components/InputLabel";
+import CustTable from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import axios from "axios";
-import { pickBy } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function TestApi({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
-
 
   const submit = (e) => {
     e.preventDefault();
@@ -34,9 +29,9 @@ export default function TestApi({ sessions }) {
   };
 
   const columns = [
-    {field: "Kode Cabang", data: 'branch_code'},
-    {field: "Nama Cabang", data: 'branch_name'},
-    {field: "Alamat", data: 'address'},
+    {name: "Kode Cabang", field: 'branch_code'},
+    {name: "Nama Cabang", field: 'branch_name'},
+    {name: "Alamat", field: 'address'},
   ]
 
   return (

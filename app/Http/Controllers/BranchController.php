@@ -12,15 +12,35 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class BranchController extends Controller
 {
+    protected array $sortFields = ['branch_code', 'branch_name', 'address'];
+
+    public function __construct(public Branch $branch)
+    {
+    }
+    public function api(Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branch_name');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branch_name';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $this->branch->orderBy($sortField, $sortOrder);
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('branch_code', 'like', $searchQuery)->orWhere('branch_name', 'like', $searchQuery)->orWhere(
+                'address',
+                'like',
+                $searchQuery
+            );
+        }
+        $branches = $query->paginate($perpage);
+        return BranchResource::collection($branches);
+    }
+
     public function index(Request $request)
     {
-        return Inertia::render('Cabang/Page', [
-            'branches' => Branch::search(trim($request->search))
-                ->orderBy('id', 'asc')
-                ->paginate($request->perpage ?? 10)
-                ->appends('query', null)
-                ->withQueryString()
-        ]);
+        return Inertia::render('Cabang/Page');
     }
 
     public function import(Request $request)
@@ -48,38 +68,6 @@ class BranchController extends Controller
     {
         $fileName = 'Data_Cabang_' . date('d-m-y') . '.xlsx';
         return (new BranchesExport)->download($fileName);
-    }
-
-    protected array $sortFields = ['branch_code', 'branch_name', 'address'];
-
-    public function __construct(public Branch $branch)
-    {
-    }
-    public function api(Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branch_name');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branch_name';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $this->branch->orderBy($sortField, $sortOrder);
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('branch_code', 'like', $searchQuery)->orWhere('branch_name', 'like', $searchQuery)->orWhere(
-                'address',
-                'like',
-                $searchQuery
-            );
-        }
-        $branches = $query->paginate($perpage);
-        // $branches = Branch::search(trim($searchInput))
-        //     ->orderBy('branch_code', 'asc')
-        //     ->paginate($perpage)
-        //     ->appends('query', null)
-        //     ->withQueryString();
-
-        return BranchResource::collection($branches);
     }
 
     public function testApi(Request $request)
