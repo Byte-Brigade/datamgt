@@ -1,26 +1,21 @@
-import { Pagination, Search, TableHeader } from "@/Components/DataTable";
+import DataTable from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router, useForm, usePage } from "@inertiajs/react";
-import { pickBy } from "lodash";
-import { useRef, useState } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function Cabang({ branches, sessions }) {
+export default function Cabang({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
-  const perpage = useRef(branches.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
 
-  const headers = [
-    { name: "No", field: "id" },
+  const columns = [
     { name: "Kode Cabang", field: "branch_code" },
     { name: "Nama Cabang", field: "branch_name" },
     { name: "Alamat", field: "address" },
+    { name: "Action", field: "action" },
   ];
 
   const submit = (e) => {
@@ -34,39 +29,12 @@ export default function Cabang({ branches, sessions }) {
     window.open(route("branches.export"), "__blank");
   };
 
-  const handleChangePerpage = (e) => {
-    perpage.current = e.target.value;
-    getData();
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    getData();
-  };
-
-  const getData = () => {
-    setLoading(true);
-    router.get(
-      route().current(),
-      pickBy({
-        perpage: perpage.current,
-        search,
-      }),
-      {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => setLoading(false),
-      }
-    );
-  };
-
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
 
-  console.log(branches);
   return (
     <AuthenticatedLayout>
       <Head title="Cabang" />
@@ -104,40 +72,10 @@ export default function Cabang({ branches, sessions }) {
             </PrimaryButton>
             <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
           </div>
-          <Search
-            perpage={perpage}
-            handleSearch={handleSearch}
-            handleChangePerpage={handleChangePerpage}
-            search={search}
-            setSearch={setSearch}
+          <DataTable
+            columns={columns}
+            fetchUrl={"/api/branches"}
           />
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className="w-full">
-              <TableHeader headers={headers} />
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="4"
-                    >
-                      Loading ...{" "}
-                    </td>
-                  </tr>
-                ) : (
-                  branches.data.map((branch, index) => (
-                    <tr key={branch.id} className="[&>td]:p-2">
-                      <td>{branches.from + index}</td>
-                      <td>{branch.branch_code}</td>
-                      <td>{branch.branch_name}</td>
-                      <td>{branch.address}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <Pagination data={branches} url={url} />
         </div>
       </div>
       <Modal show={isOpen}>

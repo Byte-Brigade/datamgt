@@ -21,7 +21,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "flowbite": "^1.8.1",
-        "flowbite-react": "^0.5.0"
+        "react-data-table-component": "^7.5.4",
+        "styled-components": "^6.0.7"
     }
 }

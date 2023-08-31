@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EmployeesExport;
+use App\Http\Resources\EmployeeResource;
 use App\Imports\EmployeesImport;
 use App\Models\Branch;
 use App\Models\Employee;
@@ -13,6 +14,33 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
 {
+    protected array $sortFields = ['employee_id', 'name', 'email'];
+
+    public function __construct(public Employee $employee)
+    {
+    }
+
+    public function api(Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'employee_id');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'employee_id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $this->employee->orderBy($sortField, $sortOrder);
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('employee_id', 'like', $searchQuery)->orWhere('name', 'like', $searchQuery)->orWhere(
+                'email',
+                'like',
+                $searchQuery
+            );
+        }
+        $employees = $query->paginate($perpage);
+        return EmployeeResource::collection($employees);
+    }
+
     public function index(Request $request)
     {
         $employeesProps = Employee::search(trim($request->search) ?? '')
@@ -31,7 +59,6 @@ class EmployeeController extends Controller
         $positionsProps = EmployeePosition::all();
 
         return Inertia::render('Cabang/Karyawan/Page', [
-            'employees' => $employeesProps,
             'branches' => $branchesProps,
             'positions' => $positionsProps
         ]);
