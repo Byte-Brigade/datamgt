@@ -43,18 +43,6 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $employeesProps = Employee::search(trim($request->search) ?? '')
-            ->query(function ($query) {
-                $query->select('employees.*')
-                    ->join('branches', 'employees.branch_id', 'branches.id')
-                    ->join('employee_positions', 'employees.position_id', 'employee_positions.id')
-                    ->with(['branches', 'positions'])
-                    ->orderBy('employees.id');
-            })
-            ->paginate($request->perpage ?? 10)
-            ->appends('query', null)
-            ->withQueryString();
-
         $branchesProps = Branch::all();
         $positionsProps = EmployeePosition::all();
 
@@ -69,7 +57,7 @@ class EmployeeController extends Controller
         try {
             (new EmployeesImport)->import($request->file('file')->store('temp'));
 
-            return redirect('employees')->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Success']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -80,7 +68,7 @@ class EmployeeController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect('employees')->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
 

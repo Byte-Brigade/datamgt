@@ -1,3 +1,4 @@
+import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -20,13 +21,21 @@ export default function Karyawan({ branches, positions, sessions }) {
     { name: "Branch ID", field: "branches.branch_code" },
     { name: "Branch Name", field: "branches.branch_name" },
     { name: "Position", field: "positions.position_name" },
-    { name: "Employee ID", field: "employee_id" },
-    { name: "Employee Name", field: "name" },
+    { name: "Employee ID", field: "employee_id", sortable: true },
+    { name: "Employee Name", field: "name", sortable: true },
     { name: "Email", field: "email" },
-    { name: "Gender", field: "gender", className: 'text-center' },
+    { name: "Gender", field: "gender", className: "text-center" },
     { name: "Tanggal Lahir", field: "birth_date" },
     { name: "Hiring Date", field: "hiring_date" },
-    { name: "Action", field: "action" },
+    {
+      name: "Action",
+      field: "action",
+      render: (id) => (
+        <button className="text-blue-500" onClick={() => console.log(id)}>
+          {id}
+        </button>
+      ),
+    },
   ];
 
   const submit = (e) => {
@@ -63,11 +72,7 @@ export default function Karyawan({ branches, positions, sessions }) {
       <Head title="Karyawan Bank OPS Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div>
-            {sessions.status && (
-              <p className="font-semibold text-green-400">{sessions.message}</p>
-            )}
-          </div>
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
             <PrimaryButton
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"

@@ -1,3 +1,4 @@
+import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -15,7 +16,7 @@ export default function Cabang({ sessions }) {
     { name: "Kode Cabang", field: "branch_code" },
     { name: "Nama Cabang", field: "branch_name" },
     { name: "Alamat", field: "address" },
-    { name: "Action", field: "action" },
+    { name: "Action", field: "action", render: () => <>Action</> },
   ];
 
   const submit = (e) => {
@@ -40,11 +41,7 @@ export default function Cabang({ sessions }) {
       <Head title="Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div>
-            {sessions.status && (
-              <p className="font-semibold text-green-400">{sessions.message}</p>
-            )}
-          </div>
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
             <PrimaryButton
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
@@ -72,10 +69,7 @@ export default function Cabang({ sessions }) {
             </PrimaryButton>
             <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
           </div>
-          <DataTable
-            columns={columns}
-            fetchUrl={"/api/branches"}
-          />
+          <DataTable columns={columns} fetchUrl={"/api/branches"} />
         </div>
       </div>
       <Modal show={isOpen}>

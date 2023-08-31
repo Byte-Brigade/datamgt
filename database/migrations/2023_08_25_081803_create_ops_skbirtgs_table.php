@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_surat');
             $table->unsignedBigInteger('branch_id');
+            $table->string('file')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
 

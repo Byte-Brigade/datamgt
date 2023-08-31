@@ -24,7 +24,7 @@ class OpsSkbirtgsController extends Controller
         try {
             (new SkBirtgsImport)->import($request->file('file')->store('temp'));
 
-            return redirect('ops.skbirtgs')->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Import Success']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -35,7 +35,7 @@ class OpsSkbirtgsController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect('ops.skbirtgs')->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
 }

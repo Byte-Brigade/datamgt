@@ -1,35 +1,41 @@
-import { Pagination, Search, TableHeader } from "@/Components/DataTable";
+import Alert from "@/Components/Alert";
+import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import SelectInput from "@/Components/SelectInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router, useForm, usePage } from "@inertiajs/react";
-import { pickBy } from "lodash";
-import { useRef, useState } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function PajakReklame({ sessions, reklames }) {
+export default function PajakReklame({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
     branch: 0,
     position: 0,
   });
-  const perpage = useRef(reklames.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
+
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
 
-  const headers = [
-    { name: "No", field: "no" },
-    { name: "Branch ID", field: "branch_code" },
-    { name: "Branch Name", field: "branch_name" },
-    { name: "Periode Awal", field: "periode_awal" },
-    { name: "Periode Akhir", field: "periode_akhir" },
+  const columns = [
+    { name: "Branch ID", field: "branches.branch_code" },
+    { name: "Branch Name", field: "branches.branch_name" },
+    {
+      name: "Periode Awal",
+      field: "periode_awal",
+      type: "date",
+      sortable: true,
+    },
+    {
+      name: "Periode Akhir",
+      field: "periode_akhir",
+      type: "date",
+      sortable: true,
+    },
     { name: "Keterangan", field: "note" },
     { name: "Info Tambahan", field: "additional_info" },
-    { name: "Action", field: "action" },
+    { name: "Action", field: "action", render: () => <DropdownMenu /> },
   ];
 
   const submit = (e) => {
@@ -53,42 +59,6 @@ export default function PajakReklame({ sessions, reklames }) {
   //   setData({ branch: 0, position: 0 });
   // };
 
-  const handleChangePerpage = (e) => {
-    perpage.current = e.target.value;
-    getData();
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    getData();
-  };
-
-  const getData = () => {
-    setLoading(true);
-    router.get(
-      route().current(),
-      pickBy({
-        perpage: perpage.current,
-        search,
-      }),
-      {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => setLoading(false),
-      }
-    );
-  };
-
-  const convertDate = (date) => {
-    const d = new Date(date);
-    const options = {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    };
-    return d.toLocaleDateString("id-ID", options);
-  };
-
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
   };
@@ -97,17 +67,12 @@ export default function PajakReklame({ sessions, reklames }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-  console.log(reklames);
   return (
     <AuthenticatedLayout>
       <Head title="Pajak Reklame Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div>
-            {sessions.status && (
-              <p className="font-semibold text-green-400">{sessions.message}</p>
-            )}
-          </div>
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
             <PrimaryButton
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
@@ -137,59 +102,7 @@ export default function PajakReklame({ sessions, reklames }) {
               Create Report
             </PrimaryButton>
           </div>
-          <Search
-            perpage={perpage}
-            search={search}
-            setSearch={setSearch}
-            handleSearch={handleSearch}
-            handleChangePerpage={handleChangePerpage}
-          />
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className="w-full text-sm">
-              <TableHeader headers={headers} />
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="11"
-                    >
-                      Loading ...
-                    </td>
-                  </tr>
-                ) : (
-                  reklames.data.map((reklame, index) => (
-                    <tr
-                      key={reklame.id}
-                      className="[&>td]:p-2 hover:bg-slate-200"
-                    >
-                      <td>{reklames.from + index}</td>
-                      <td>{reklame.branches.branch_code}</td>
-                      <td>{reklame.branches.branch_name}</td>
-                      <td>
-                        {reklame.periode_awal !== null
-                          ? convertDate(reklame.periode_awal)
-                          : "-"}
-                      </td>
-                      <td>
-                        {reklame.periode_akhir !== null
-                          ? convertDate(reklame.periode_akhir)
-                          : "-"}
-                      </td>
-                      <td>{reklame.note !== null ? reklame.note : "-"}</td>
-                      <td>
-                        {reklame.additional_info !== null
-                          ? reklame.additional_info
-                          : "-"}
-                      </td>
-                      <td>Edit | Delete</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <Pagination data={reklames} url={url} />
+          <DataTable columns={columns} fetchUrl={"/api/ops/pajak-reklame"} />
         </div>
       </div>
       <Modal show={isModalImportOpen}>
