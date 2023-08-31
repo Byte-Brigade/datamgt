@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('skbirtgs_has_penerima_kuasa', function (Blueprint $table) {
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('ops_skbirtgs_id');
-            $table->foreign('employee_id')->references('id')->on('employees');
-            $table->foreign('ops_skbirtgs_id')->references('id')->on('ops_skbirtgs');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            $table->foreign('ops_skbirtgs_id')->references('id')->on('ops_skbirtgs')->onDelete('cascade');
         });
     }
 

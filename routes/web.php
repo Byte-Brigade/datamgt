@@ -64,9 +64,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/test', [BranchController::class, 'testApi'])->name('test');
-Route::get('/home', [UsersController::class, 'index'])->name('home');
-Route::post('/import', [UsersController::class, 'import'])->name('import');
-
-
 require __DIR__ . '/auth.php';

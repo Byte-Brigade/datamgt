@@ -1,3 +1,4 @@
+import Alert from "@/Components/Alert";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -18,6 +19,7 @@ export default function SKBIRTGS({ sessions, sks }) {
   const [search, setSearch] = useState("");
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
 
   const submit = (e) => {
     e.preventDefault();
@@ -58,17 +60,18 @@ export default function SKBIRTGS({ sessions, sks }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
+  };
+
+
   console.log(sks);
   return (
     <AuthenticatedLayout>
       <Head title="OPS | Surat Kuasa BI RGTS" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div>
-            {sessions.status && (
-              <p className="font-semibold text-green-400">{sessions.message}</p>
-            )}
-          </div>
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
             <PrimaryButton
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
@@ -140,6 +143,7 @@ export default function SKBIRTGS({ sessions, sks }) {
                   <th>Nomor Surat</th>
                   <th>Kantor Cabang</th>
                   <th>Penerima Kuasa</th>
+                  <th>Lampiran</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -167,6 +171,15 @@ export default function SKBIRTGS({ sessions, sks }) {
                               .map((employee) => employee.name)
                               .join(" - ")
                           : "-"}
+                      </td>
+                      <td>
+                        {sk.file ? (
+                          sk.file
+                        ) : (
+                          <button onClick={toggleModalUpload} className="text-blue-600 hover:underline hover:cursor-pointer">
+                            Upload FIle
+                          </button>
+                        )}
                       </td>
                       <td>{sk.status}</td>
                       <td>Edit | Delete</td>
@@ -248,6 +261,36 @@ export default function SKBIRTGS({ sessions, sks }) {
                 disabled={processing}
               >
                 Import Data
+              </PrimaryButton>
+            </div>
+          </form>
+        </div>
+      </Modal>
+      <Modal show={isModalUploadOpen}>
+        <div className="flex flex-col p-4 gap-y-4">
+          <h3 className="text-xl font-semibold text-center">Upload Data Lampiran</h3>
+          <form onSubmit={submit} encType="multipart/form-data">
+            <div className="flex flex-col">
+              <label htmlFor="upload">Upload Lampiran (.pdf)</label>
+              <input
+                className="bg-gray-100 border-2 border-gray-200 rounded-lg"
+                onChange={(e) => setData("file", e.target.files[0])}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+              />
+            </div>
+            <div className="flex justify-between mt-4 gap-x-4">
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
+                Close Modal
+              </SecondaryButton>
+              <PrimaryButton
+                type="submit"
+                onClick={toggleModalUpload}
+                disabled={processing}
+              >
+                Upload Data
               </PrimaryButton>
             </div>
           </form>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const OFFSET = 4;
+const OFFSET = 3;
 
 export default function Paginator({ pagination, pageChanged, totalItems }) {
   const [pageNumbers, setPageNumbers] = useState([]);

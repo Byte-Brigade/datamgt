@@ -4,7 +4,6 @@ import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
-import PrimaryButton from "../PrimaryButton";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -80,21 +79,36 @@ export default function DataTable({ columns, fetchUrl }) {
     return value;
   };
 
+  const convertDate = (date) => {
+    if (date === null) return "-";
+    const d = new Date(date);
+    const options = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+    return d.toLocaleDateString("id-ID", options);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <select
-          name="perpage"
-          id="perpage"
-          className="rounded-lg bg-slate-100"
-          value={perPage}
-          onChange={(e) => handlePerPage(e.target.value)}
-        >
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+        <div className="flex items-center gap-x-2">
+          Show
+          <select
+            name="perpage"
+            id="perpage"
+            className="rounded-lg bg-slate-100"
+            value={perPage}
+            onChange={(e) => handlePerPage(e.target.value)}
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          entries
+        </div>
         <div>
           <div className="flex items-center gap-2">
             <InputLabel htmlFor="search">Search : </InputLabel>
@@ -112,19 +126,26 @@ export default function DataTable({ columns, fetchUrl }) {
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
               {columns.map((column, i) => (
-                <th key={column.name} onClick={(e) => handleSort(column.field)}>
-                  <div className="cursor-pointer hover:underline">
-                    {column.name}
-                    {column.field === sortColumn ? (
-                      <span>
-                        {sortOrder === SORT_ASC ? (
-                          <span> 🔽</span>
-                        ) : (
-                          <span> 🔼</span>
-                        )}
-                      </span>
-                    ) : null}
-                  </div>
+                <th key={column.name}>
+                  {column.sortable === true ? (
+                    <div
+                      className="cursor-pointer hover:underline"
+                      onClick={(e) => handleSort(column.field)}
+                    >
+                      {column.name}
+                      {column.field === sortColumn ? (
+                        <span>
+                          {sortOrder === SORT_ASC ? (
+                            <span> 🔼</span>
+                          ) : (
+                            <span> 🔽</span>
+                          )}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div>{column.name}</div>
+                  )}
                 </th>
               ))}
             </tr>
@@ -143,7 +164,7 @@ export default function DataTable({ columns, fetchUrl }) {
               <tr>
                 <td
                   colSpan={columns.length + 1}
-                  className="font-semibold text-center bg-slate-200"
+                  className="p-2 text-lg font-semibold text-center bg-slate-200"
                 >
                   Tidak ada data tersedia
                 </td>
@@ -151,15 +172,17 @@ export default function DataTable({ columns, fetchUrl }) {
             ) : (
               data.map((data, index) => (
                 <tr key={index} className="[&>td]:p-2 hover:bg-slate-200">
-                  <td className="text-center">{index + 1}</td>
+                  <td className="text-center">{pagination.from + index}</td>
                   {columns.map((column) =>
                     column.field === "action" ? (
                       <td key={column.field} className="flex gap-x-4">
-                        {data["id"]}
+                        {column.render(data["id"])}
                       </td>
                     ) : (
                       <td key={column.field} className={column.className}>
-                        {getNestedValue(data, column.field)}
+                        {column.type === "date"
+                          ? convertDate(getNestedValue(data, column.field))
+                          : getNestedValue(data, column.field) || "-"}
                       </td>
                     )
                   )}
