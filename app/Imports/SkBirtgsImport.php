@@ -16,21 +16,23 @@ class SkBirtgsImport implements ToModel, WithHeadingRow, WithUpserts
 
     public function model(array $row)
     {
-        $penerima_kuasa = $row['penerima_kuasa'] != '' ? explode(' - ', $row['penerima_kuasa']) : [null, null];
-        $penerima_kuasa_1 = $penerima_kuasa[0] != null ? Employee::where('name', 'like', "%$penerima_kuasa[0]%")->pluck('id')->first() : null;
-        $penerima_kuasa_2 = null;
-        if (count($penerima_kuasa) > 1) {
-            $penerima_kuasa_2 = Employee::where('name', 'like', "%$penerima_kuasa[1]%")->pluck('id')->first();
-        }
+
+        $penerima_kuasa = isset($row['penerima_kuasa']) ? explode(' - ', $row['penerima_kuasa']) : [null, null];
+        $penerima_kuasa_1 = isset($penerima_kuasa[0]) ? Employee::where('name', 'like', "%$penerima_kuasa[0]%")->pluck('id')->first() : null;
+        $penerima_kuasa_2 = isset($penerima_kuasa[1]) ? Employee::where('name', 'like', "%$penerima_kuasa[1]%")->pluck('id')->first() : null;
 
         $branch_id = Branch::where('branch_name', $row['kantor_cabang'])->pluck('id')->first();
-        return new OpsSkbirtgs([
+        $ops_skbirtgs =  OpsSkbirtgs::create([
             'no_surat' => $row['nomor_surat'],
             'branch_id' => $branch_id,
-            'penerima_kuasa_1' => $penerima_kuasa_1,
-            'penerima_kuasa_2' => $penerima_kuasa_2,
             'status' => $row['status']
         ]);
+
+        $penerima_kuasa_ids = array_filter([$penerima_kuasa_1, $penerima_kuasa_2], fn ($value) => !is_null($value) && $value !== '');
+        if (count($penerima_kuasa_ids) > 0) {
+            $ops_skbirtgs->penerima_kuasa()->sync($penerima_kuasa_ids);
+        }
+        return $ops_skbirtgs;
     }
 
     public function uniqueBy()

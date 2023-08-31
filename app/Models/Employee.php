@@ -54,4 +54,9 @@ class Employee extends Model
             'employee_positions.position_name' => ''
         ];
     }
+
+    public function ops_skbirtgs()
+    {
+        return $this->belongsToMany(OpsSkbirtgs::class, 'skbirtgs_has_penerima_kuasa', 'employee_id', 'ops_skbirtgs_id');
+    }
 }
