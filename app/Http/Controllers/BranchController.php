@@ -8,7 +8,6 @@ use App\Imports\BranchesImport;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class BranchController extends Controller
@@ -17,7 +16,7 @@ class BranchController extends Controller
     {
         return Inertia::render('Cabang/Page', [
             'branches' => Branch::search(trim($request->search))
-                ->orderBy('branch_code', 'asc')
+                ->orderBy('id', 'asc')
                 ->paginate($request->perpage ?? 10)
                 ->appends('query', null)
                 ->withQueryString()

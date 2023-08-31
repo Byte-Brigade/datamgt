@@ -12,7 +12,7 @@ class OpsSkbirtgsController extends Controller
 {
     public function index()
     {
-        $skbirtgsProps = OpsSkbirtgs::with('branches')->paginate(10);
+        $skbirtgsProps = OpsSkbirtgs::with(['branches', 'penerima_kuasa_1', 'penerima_kuasa_2'])->paginate(10);
         return Inertia::render('Ops/SKBIRTGS/Page', [
             'sks' => $skbirtgsProps,
         ]);

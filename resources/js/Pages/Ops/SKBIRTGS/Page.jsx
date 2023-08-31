@@ -21,7 +21,7 @@ export default function SKBIRTGS({ sessions, sks }) {
 
   const submit = (e) => {
     e.preventDefault();
-    post(route('ops.skbirtgs.import'))
+    post(route("ops.skbirtgs.import"));
   };
 
   const handleChangePerpage = (e) => {
@@ -161,7 +161,9 @@ export default function SKBIRTGS({ sessions, sks }) {
                       <td>Surat Kuasa BI RTGS</td>
                       <td>{sk.no_surat}</td>
                       <td>{sk.branches.branch_name}</td>
-                      <td>Relation</td>
+                      <td>
+                        {sk.penerima_kuasa_1 !== null && sk.penerima_kuasa_1.name} - {sk.penerima_kuasa_2 !== null && sk.penerima_kuasa_2.name}
+                      </td>
                       <td>{sk.status}</td>
                       <td>Edit | Delete</td>
                     </tr>
@@ -172,8 +174,7 @@ export default function SKBIRTGS({ sessions, sks }) {
           </div>
           <div className="flex items-center justify-between mt-4">
             <div>
-              Showing {sks.from} to {sks.to} of {sks.total}{" "}
-              entries
+              Showing {sks.from} to {sks.to} of {sks.total} entries
             </div>
             <div className="flex items-center gap-2">
               {!sks.first_page_url.includes(url) && (

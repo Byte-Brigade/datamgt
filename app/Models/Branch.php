@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Employee;
 use Laravel\Scout\Searchable;
+use App\Models\OpsPajakReklame;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,6 +21,11 @@ class Branch extends Model
     public function employees()
     {
         return $this->hasMany(Employee::class, 'branch_id');
+    }
+
+    public function ops_pajak_reklames()
+    {
+        return $this->hasOne(OpsPajakReklame::class, 'branch_id');
     }
 
     public function toSearchableArray()

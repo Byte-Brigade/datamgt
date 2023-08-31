@@ -6,9 +6,10 @@ use App\Models\Branch;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithUpsertColumns;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class BranchesImport implements ToModel, WithHeadingRow, WithUpserts
+class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithUpsertColumns
 {
     use Importable;
     public function model(array $row)
@@ -23,5 +24,10 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts
     public function uniqueBy()
     {
         return 'branch_code';
+    }
+
+    public function upsertColumns()
+    {
+        return ['address'];
     }
 }
