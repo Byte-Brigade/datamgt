@@ -28,18 +28,23 @@ class OpsSkbirtgs extends Model
         return $this->branches->branch_name;
     }
 
-    public function penerima_kuasa_1()
-    {
-        return $this->belongsTo(Employee::class, 'penerima_kuasa_1', 'id');
-    }
+    // public function penerima_kuasa_1()
+    // {
+    //     return $this->belongsTo(Employee::class, 'penerima_kuasa_1', 'id');
+    // }
 
-    public function penerima_kuasa_2()
-    {
-        return $this->belongsTo(Employee::class, 'penerima_kuasa_2', 'id');
-    }
+    // public function penerima_kuasa_2()
+    // {
+    //     return $this->belongsTo(Employee::class, 'penerima_kuasa_2', 'id');
+    // }
 
     public function getEmployeePenerimaKuasa2()
     {
         return $this->penerima_kuasa_2->name;
+    }
+
+    public function penerima_kuasa()
+    {
+        return $this->belongsToMany(Employee::class, 'skbirtgs_has_penerima_kuasa', 'ops_skbirtgs_id', 'employee_id');
     }
 }

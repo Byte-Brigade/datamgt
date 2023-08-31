@@ -162,7 +162,11 @@ export default function SKBIRTGS({ sessions, sks }) {
                       <td>{sk.no_surat}</td>
                       <td>{sk.branches.branch_name}</td>
                       <td>
-                        {sk.penerima_kuasa_1 !== null && sk.penerima_kuasa_1.name} - {sk.penerima_kuasa_2 !== null && sk.penerima_kuasa_2.name}
+                        {sk.penerima_kuasa.length > 0
+                          ? sk.penerima_kuasa
+                              .map((employee) => employee.name)
+                              .join(" - ")
+                          : "-"}
                       </td>
                       <td>{sk.status}</td>
                       <td>Edit | Delete</td>
