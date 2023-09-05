@@ -1,4 +1,6 @@
 import Alert from "@/Components/Alert";
+import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -21,6 +23,20 @@ export default function SKBIRTGS({ sessions, sks }) {
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
 
+  const columns = [
+    { name: "Jenis Surat", field: "Surat Kuasa BI RTGS" },
+    { name: "Nomor Surat", field: "no_surat" },
+    { name: "Kantor Cabang", field: "branches.branch_name" },
+    {
+      name: "Penerima Kuasa",
+      field: "penerima_kuasa.name",
+      render: (data) =>
+        data.penerima_kuasa.map((employee) => employee.name).join(" - "),
+    },
+    { name: "Lampiran", field: "file" },
+    { name: "Status", field: "status" },
+    { name: "Action", field: "action", render: () => <DropdownMenu /> },
+  ];
   const submit = (e) => {
     e.preventDefault();
     post(route("ops.skbirtgs.import"));
@@ -64,7 +80,6 @@ export default function SKBIRTGS({ sessions, sks }) {
     setIsModalUploadOpen(!isModalUploadOpen);
   };
 
-
   console.log(sks);
   return (
     <AuthenticatedLayout>
@@ -101,139 +116,7 @@ export default function SKBIRTGS({ sessions, sks }) {
               Create Report
             </PrimaryButton>
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-x-2">
-              Show
-              <select
-                name="perpage"
-                id="perpage"
-                className="rounded-lg bg-slate-100"
-                value={perpage.current}
-                onChange={handleChangePerpage}
-              >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              entries
-            </div>
-            <div>
-              <form onSubmit={handleSearch}>
-                <div className="flex items-center gap-2">
-                  <InputLabel htmlFor="search">Search : </InputLabel>
-                  <TextInput
-                    type="search"
-                    name="search"
-                    id="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <PrimaryButton type="submit">Cari</PrimaryButton>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="border-b-2 border-slate-200">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-left">No</th>
-                  <th>Jenis Surat</th>
-                  <th>Nomor Surat</th>
-                  <th>Kantor Cabang</th>
-                  <th>Penerima Kuasa</th>
-                  <th>Lampiran</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      className="p-4 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                      colSpan="7"
-                    >
-                      Loading ...{" "}
-                    </td>
-                  </tr>
-                ) : (
-                  sks.data.map((sk, index) => (
-                    <tr key={sk.id} className="[&>td]:p-2">
-                      <td>{sks.from + index}</td>
-                      <td>Surat Kuasa BI RTGS</td>
-                      <td>{sk.no_surat}</td>
-                      <td>{sk.branches.branch_name}</td>
-                      <td>
-                        {sk.penerima_kuasa.length > 0
-                          ? sk.penerima_kuasa
-                              .map((employee) => employee.name)
-                              .join(" - ")
-                          : "-"}
-                      </td>
-                      <td>
-                        {sk.file ? (
-                          sk.file
-                        ) : (
-                          <button onClick={toggleModalUpload} className="text-blue-600 hover:underline hover:cursor-pointer">
-                            Upload FIle
-                          </button>
-                        )}
-                      </td>
-                      <td>{sk.status}</td>
-                      <td>Edit | Delete</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              Showing {sks.from} to {sks.to} of {sks.total} entries
-            </div>
-            <div className="flex items-center gap-2">
-              {!sks.first_page_url.includes(url) && (
-                <Link
-                  href={sks.first_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>First</div>
-                </Link>
-              )}
-              {sks.links.map(
-                (link, index) =>
-                  link.url && (
-                    <Link
-                      key={index}
-                      href={link.url}
-                      className={`${
-                        link.url.includes(url) ? `bg-slate-200` : `bg-slate-100`
-                      } py-2 px-3 text-sm rounded-lg`}
-                      preserveScroll
-                      preserveState
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                      ></div>
-                    </Link>
-                  )
-              )}
-              {!sks.last_page_url.includes(url) && (
-                <Link
-                  href={sks.last_page_url}
-                  className="p-2 text-sm rounded-lg bg-slate-100"
-                  preserveScroll
-                  preserveState
-                >
-                  <div>Last</div>
-                </Link>
-              )}
-            </div>
-          </div>
+          <DataTable columns={columns} fetchUrl={"/api/ops/skbirtgs"} />
         </div>
       </div>
       <Modal show={isModalImportOpen}>
@@ -268,7 +151,9 @@ export default function SKBIRTGS({ sessions, sks }) {
       </Modal>
       <Modal show={isModalUploadOpen}>
         <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">Upload Data Lampiran</h3>
+          <h3 className="text-xl font-semibold text-center">
+            Upload Data Lampiran
+          </h3>
           <form onSubmit={submit} encType="multipart/form-data">
             <div className="flex flex-col">
               <label htmlFor="upload">Upload Lampiran (.pdf)</label>

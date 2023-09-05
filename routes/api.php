@@ -3,6 +3,7 @@
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsPajakReklameController;
+use App\Http\Controllers\OpsSkbirtgsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/branches', [BranchController::class, 'api']);
 Route::get('/employees', [EmployeeController::class, 'api']);
 Route::get('/ops/pajak-reklame', [OpsPajakReklameController::class, 'api']);
+Route::get('/ops/skbirtgs', [OpsSkbirtgsController::class, 'api']);
