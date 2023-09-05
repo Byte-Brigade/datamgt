@@ -31,7 +31,7 @@ class SkBirtgsImport implements ToModel, WithHeadingRow, WithUpserts
         $penerima_kuasa_ids = array_filter([$penerima_kuasa_1, $penerima_kuasa_2], fn ($value) => !is_null($value) && $value !== '');
         if (count($penerima_kuasa_ids) > 0) {
             $ops_skbirtgs->penerima_kuasa()->sync($penerima_kuasa_ids);
-        }P
+        }
         return $ops_skbirtgs;
     }
 

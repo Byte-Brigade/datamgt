@@ -8,7 +8,10 @@ import Paginator from "./Paginator";
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
-export default function DataTable({ columns, fetchUrl }) {
+export default function DataTable({
+  columns = { name: "", value: "", field: "", type: "", render: (any) => any },
+  fetchUrl,
+}) {
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState(columns[0].field);
@@ -173,16 +176,24 @@ export default function DataTable({ columns, fetchUrl }) {
               data.map((data, index) => (
                 <tr key={index} className="[&>td]:p-2 hover:bg-slate-200">
                   <td className="text-center">{pagination.from + index}</td>
-                  {columns.map((column) =>
-                    column.field === "action" ? (
-                      <td key={column.field} className="flex gap-x-4">
-                        {column.render(data["id"])}
-                      </td>
+                  {columns.map((column, id) =>
+                    column.field ? (
+                      column.field === "action" ? (
+                        <td key={column.field} className="flex gap-x-4">
+                          {column.render(data["id"])}
+                        </td>
+                      ) : (
+                        <td key={column.field} className={column.className}>
+                          {column.type === "date"
+                            ? convertDate(getNestedValue(data, column.field))
+                            : column.type === "custom"
+                            ? column.render(data)
+                            : getNestedValue(data, column.field) || "-"}
+                        </td>
+                      )
                     ) : (
-                      <td key={column.field} className={column.className}>
-                        {column.type === "date"
-                          ? convertDate(getNestedValue(data, column.field))
-                          : getNestedValue(data, column.field) || "-"}
+                      <td key={id} className={column.className}>
+                        {column.value || "-"}
                       </td>
                     )
                   )}

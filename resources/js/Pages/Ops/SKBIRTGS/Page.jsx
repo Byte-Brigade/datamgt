@@ -1,37 +1,31 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
-import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import { pickBy } from "lodash";
-import { useRef, useState } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function SKBIRTGS({ sessions, sks }) {
+export default function SKBIRTGS({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
-  const perpage = useRef(sks.per_page);
-  const { url } = usePage();
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
 
   const columns = [
-    { name: "Jenis Surat", field: "Surat Kuasa BI RTGS" },
+    { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
     { name: "Nomor Surat", field: "no_surat" },
     { name: "Kantor Cabang", field: "branches.branch_name" },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa.name",
+      type: "custom",
       render: (data) =>
-        data.penerima_kuasa.map((employee) => employee.name).join(" - "),
+        data.penerima_kuasa.map((employee) => employee.name).join(" - ") || "-",
     },
     { name: "Lampiran", field: "file" },
     { name: "Status", field: "status" },
@@ -40,32 +34,6 @@ export default function SKBIRTGS({ sessions, sks }) {
   const submit = (e) => {
     e.preventDefault();
     post(route("ops.skbirtgs.import"));
-  };
-
-  const handleChangePerpage = (e) => {
-    perpage.current = e.target.value;
-    getData();
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    getData();
-  };
-
-  const getData = () => {
-    setLoading(true);
-    router.get(
-      route().current(),
-      pickBy({
-        perpage: perpage.current,
-        search,
-      }),
-      {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => setLoading(false),
-      }
-    );
   };
 
   const toggleModalImport = () => {
@@ -80,7 +48,6 @@ export default function SKBIRTGS({ sessions, sks }) {
     setIsModalUploadOpen(!isModalUploadOpen);
   };
 
-  console.log(sks);
   return (
     <AuthenticatedLayout>
       <Head title="OPS | Surat Kuasa BI RGTS" />

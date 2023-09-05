@@ -25,10 +25,10 @@ class OpsSkbirtgsController extends Controller
         $query = $this->ops_skbirtgs->orderBy($sortField, $sortOrder);
         $perpage = $request->perpage ?? 10;
 
-        // if (!is_null($searchInput)) {
-        //     $searchQuery = "%$searchInput%";
-        //     $query = $query->where('periode_awal', 'like', $searchQuery)->orWhere('periode_akhir', 'like', $searchQuery);
-        // }
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('no_surat', 'like', $searchQuery);
+        }
         $employees = $query->paginate($perpage);
         return SkbirtgsResource::collection($employees);
     }
@@ -65,7 +65,6 @@ class OpsSkbirtgsController extends Controller
 
                 $list_error->push($error);
             }
-            // dd($list_error);
             return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
