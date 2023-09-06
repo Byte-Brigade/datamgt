@@ -19,6 +19,7 @@ class SkbirtgsResource extends JsonResource
             'no_surat' => $this->no_surat,
             'branch_id' => $this->branch_id,
             'status' => $this->status,
+            'file' => $this->file,
             'penerima_kuasa' =>  $this->penerima_kuasa,
             'branches' => $this->branches
         ];

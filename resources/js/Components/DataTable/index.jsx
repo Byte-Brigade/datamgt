@@ -11,7 +11,9 @@ const SORT_DESC = "desc";
 export default function DataTable({
   columns = { name: "", value: "", field: "", type: "", render: (any) => any },
   fetchUrl,
+  refreshUrl = false,
 }) {
+  console.log(refreshUrl);
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState(columns[0].field);
@@ -45,26 +47,26 @@ export default function DataTable({
     setPerPage(perPage);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const params = {
-        page: currentPage,
-        perpage: perPage,
-        sort_field: sortColumn,
-        sort_order: sortOrder,
-        search,
-      };
-
-      const { data } = await axios.get(fetchUrl, { params });
-      console.log(data);
-      setData(data.data);
-      setPagination(data.meta);
-      setLoading(false);
+  const fetchData = async () => {
+    setLoading(true);
+    const params = {
+      page: currentPage,
+      perpage: perPage,
+      sort_field: sortColumn,
+      sort_order: sortOrder,
+      search,
     };
 
+    const { data } = await axios.get(fetchUrl, { params });
+    console.log(data);
+    setData(data.data);
+    setPagination(data.meta);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [perPage, sortColumn, sortOrder, search, currentPage]);
+  }, [perPage, sortColumn, sortOrder, search, currentPage, refreshUrl]);
 
   const getNestedValue = (obj, field) => {
     const keys = field.split(".");

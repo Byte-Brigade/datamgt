@@ -15,6 +15,9 @@ export default function SKBIRTGS({ sessions }) {
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
+  const [id, setId] = useState(0);
+  const [isRefreshed, setIsRefreshed] = useState(false);
+  console.log(isRefreshed)
 
   const columns = [
     { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
@@ -27,13 +30,37 @@ export default function SKBIRTGS({ sessions }) {
       render: (data) =>
         data.penerima_kuasa.map((employee) => employee.name).join(" - ") || "-",
     },
-    { name: "Lampiran", field: "file" },
+    {
+      name: "Lampiran",
+      field: "file",
+      type: "custom",
+      render: (data) =>
+        data.file || (
+          <button
+            onClick={() => {
+              toggleModalUpload();
+              setId(data.id);
+            }}
+            className="text-blue-500 hover:underline"
+          >
+            Upload File
+          </button>
+        ),
+    },
     { name: "Status", field: "status" },
     { name: "Action", field: "action", render: () => <DropdownMenu /> },
   ];
   const submit = (e) => {
     e.preventDefault();
     post(route("ops.skbirtgs.import"));
+  };
+
+  const uploadLampiran = (e) => {
+    e.preventDefault();
+    post(route("ops.skbirtgs.upload", id), {
+      replace: true,
+      onFinish: () => setIsRefreshed(!isRefreshed),
+    });
   };
 
   const toggleModalImport = () => {
@@ -83,7 +110,11 @@ export default function SKBIRTGS({ sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <DataTable columns={columns} fetchUrl={"/api/ops/skbirtgs"} />
+          <DataTable
+            columns={columns}
+            fetchUrl={"/api/ops/skbirtgs"}
+            refreshUrl={isRefreshed}
+          />
         </div>
       </div>
       <Modal show={isModalImportOpen}>
@@ -121,7 +152,7 @@ export default function SKBIRTGS({ sessions }) {
           <h3 className="text-xl font-semibold text-center">
             Upload Data Lampiran
           </h3>
-          <form onSubmit={submit} encType="multipart/form-data">
+          <form onSubmit={uploadLampiran} encType="multipart/form-data">
             <div className="flex flex-col">
               <label htmlFor="upload">Upload Lampiran (.pdf)</label>
               <input
@@ -133,6 +164,7 @@ export default function SKBIRTGS({ sessions }) {
                 accept=".pdf"
               />
             </div>
+            <p>{id}</p>
             <div className="flex justify-between mt-4 gap-x-4">
               <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Close Modal
