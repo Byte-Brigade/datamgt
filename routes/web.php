@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     /* [START] Branches */
     Route::get('/branches', [BranchController::class, 'index'])->name('branches');
     Route::post('/branches', [BranchController::class, 'import'])->name('branches.import');
+    Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
+    Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
     Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
     /* [END] Branches */
 

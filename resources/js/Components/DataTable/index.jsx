@@ -13,7 +13,6 @@ export default function DataTable({
   fetchUrl,
   refreshUrl = false,
 }) {
-  console.log(refreshUrl);
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState(columns[0].field);
@@ -103,7 +102,7 @@ export default function DataTable({
           <select
             name="perpage"
             id="perpage"
-            className="rounded-lg bg-slate-100"
+            className="rounded-lg form-select"
             value={perPage}
             onChange={(e) => handlePerPage(e.target.value)}
           >
@@ -176,13 +175,16 @@ export default function DataTable({
               </tr>
             ) : (
               data.map((data, index) => (
-                <tr key={index} className="[&>td]:p-2 hover:bg-slate-200">
+                <tr
+                  key={index}
+                  className="[&>td]:p-2 hover:bg-slate-200"
+                >
                   <td className="text-center">{pagination.from + index}</td>
                   {columns.map((column, id) =>
                     column.field ? (
                       column.field === "action" ? (
-                        <td key={column.field} className="flex gap-x-4">
-                          {column.render(data["id"])}
+                        <td key={column.field} className={column.className}>
+                          {column.render(data)}
                         </td>
                       ) : (
                         <td key={column.field} className={column.className}>
