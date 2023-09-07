@@ -1,5 +1,6 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -30,10 +31,19 @@ export default function Karyawan({ branches, positions, sessions }) {
     {
       name: "Action",
       field: "action",
-      render: (id) => (
-        <button className="text-blue-500" onClick={() => console.log(id)}>
-          {id}
-        </button>
+      render: (data) => (
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            // toggleModalEdit();
+            // setId(data.id);
+            // setEditData(data);
+          }}
+          onDeleteClick={() => {
+            // toggleModalDelete();
+            // setId(data.id);
+          }}
+        />
       ),
     },
   ];

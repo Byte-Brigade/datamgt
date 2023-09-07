@@ -6,18 +6,27 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
+import { Input } from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function SKBIRTGS({ sessions }) {
   const { data, setData, post, processing, errors } = useForm({
     file: null,
   });
+  const [editData, setEditData] = useState({
+    no_surat: null,
+    branches: {
+      branch_name: null,
+    },
+    status: null,
+  });
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [id, setId] = useState(0);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  console.log(isRefreshed)
 
   const columns = [
     { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
@@ -48,7 +57,24 @@ export default function SKBIRTGS({ sessions }) {
         ),
     },
     { name: "Status", field: "status" },
-    { name: "Action", field: "action", render: () => <DropdownMenu /> },
+    {
+      name: "Action",
+      field: "action",
+      render: (data) => (
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setId(data.id);
+            setEditData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setId(data.id);
+          }}
+        />
+      ),
+    },
   ];
   const submit = (e) => {
     e.preventDefault();
@@ -73,6 +99,14 @@ export default function SKBIRTGS({ sessions }) {
 
   const toggleModalUpload = () => {
     setIsModalUploadOpen(!isModalUploadOpen);
+  };
+
+  const toggleModalEdit = () => {
+    setIsModalEditOpen(!isModalEditOpen);
+  };
+
+  const toggleModalDelete = () => {
+    setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
   return (
@@ -178,6 +212,29 @@ export default function SKBIRTGS({ sessions }) {
               </PrimaryButton>
             </div>
           </form>
+        </div>
+      </Modal>
+      <Modal show={isModalEditOpen}>
+        <div className="flex flex-col p-4 gap-y-4">
+          <h3 className="text-xl font-semibold text-center">Edit Data</h3>
+          <Input
+            label="Nomor Surat"
+            value={editData.no_surat}
+            onChange={(e) => setEditData("no_surat", e.target.value)}
+          />
+          <Input label="Kantor Cabang" value={editData.branches.branch_name} />
+          <Input label="Status" value={editData.status} />
+          <SecondaryButton type="button" onClick={toggleModalEdit}>
+            Close Modal
+          </SecondaryButton>
+        </div>
+      </Modal>
+      <Modal show={isModalDeleteOpen}>
+        <div className="flex flex-col p-4 gap-y-4">
+          <h3 className="text-xl font-semibold text-center">Delete Data</h3>
+          <SecondaryButton type="button" onClick={toggleModalDelete}>
+            Close Modal
+          </SecondaryButton>
         </div>
       </Modal>
     </AuthenticatedLayout>

@@ -1,39 +1,113 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
-import Modal from "@/Components/Modal";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  IconButton,
+  Input,
+  Typography,
+} from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function Cabang({ sessions }) {
-  const { data, setData, post, processing, errors } = useForm({
+  const initialData = {
     file: null,
-  });
+    branch_code: null,
+    branch_name: null,
+    address: null,
+  };
+  const {
+    data,
+    setData,
+    post,
+    put,
+    delete: destroy,
+    processing,
+    errors,
+  } = useForm(initialData);
+
+  const [isModalImportOpen, setIsModalImportOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+  const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Kode Cabang", field: "branch_code" },
-    { name: "Nama Cabang", field: "branch_name" },
-    { name: "Alamat", field: "address" },
-    { name: "Action", field: "action", render: () => <>Action</> },
+    { name: "Kode Cabang", field: "branch_code", sortable: true },
+    { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "Alamat", field: "address", sortable: true },
+    {
+      name: "Action",
+      field: "action",
+      render: (data) => (
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
+      ),
+    },
   ];
 
-  const submit = (e) => {
+  const handleSubmitImport = (e) => {
     e.preventDefault();
     post(route("branches.import"));
   };
 
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    put(route("branches.update", data.id), {
+      method: "put",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalEditOpen(!isModalEditOpen);
+      },
+    });
+  };
+
+  const handleSubmitDelete = (e) => {
+    e.preventDefault();
+    destroy(route("branches.delete", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalDeleteOpen(!isModalDeleteOpen);
+      },
+    });
+  };
+
   const exportData = (e) => {
     e.preventDefault();
-
     window.open(route("branches.export"), "__blank");
   };
 
-  const [isOpen, setIsOpen] = useState(false);
+  const toggleModalImport = () => {
+    setIsModalImportOpen(!isModalImportOpen);
+  };
 
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
+  const toggleModalEdit = () => {
+    setIsModalEditOpen(!isModalEditOpen);
+    // if (isModalEditOpen === false) setData(initialData);
+  };
+
+  const toggleModalDelete = () => {
+    setIsModalDeleteOpen(!isModalDeleteOpen);
+    // if (isModalDeleteOpen === false) setData(initialData);
   };
 
   return (
@@ -45,7 +119,7 @@ export default function Cabang({ sessions }) {
           <div className="flex items-center justify-between mb-4">
             <PrimaryButton
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              onClick={toggleModal}
+              onClick={toggleModalImport}
             >
               <div className="flex items-center gap-x-1">
                 <svg
@@ -69,39 +143,139 @@ export default function Cabang({ sessions }) {
             </PrimaryButton>
             <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
           </div>
-          <DataTable columns={columns} fetchUrl={"/api/branches"} />
+          <DataTable
+            columns={columns}
+            fetchUrl={"/api/branches"}
+            refreshUrl={isRefreshed}
+          />
         </div>
       </div>
-      <Modal show={isOpen}>
-        <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">Import Data</h3>
-          <form onSubmit={submit} encType="multipart/form-data">
-            <div className="flex flex-col">
-              <label htmlFor="import">Import Excel (.xlsx)</label>
-              <input
-                className="bg-gray-100 border-2 border-gray-200 rounded-lg"
-                onChange={(e) => setData("file", e.target.files[0])}
+      {/* Modal Import */}
+      <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Ubah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalImport}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitImport} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Import Excel (.xlsx)"
+                disabled={processing}
                 type="file"
                 name="import"
                 id="import"
                 accept=".xlsx"
+                onChange={(e) => setData("file", e.target.files[0])}
               />
             </div>
-            <div className="flex justify-between mt-4 gap-x-4">
-              <SecondaryButton type="button" onClick={toggleModal}>
-                Close Modal
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalImport}>
+                Tutup
               </SecondaryButton>
-              <PrimaryButton
-                type="submit"
-                onClick={toggleModal}
-                disabled={processing}
-              >
-                Import Data
-              </PrimaryButton>
             </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Edit */}
+      <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Ubah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalEdit}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitEdit}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Kode Cabang"
+                value={data.branch_code}
+                disabled={processing}
+                onChange={(e) => setData("branch_code", e.target.value)}
+              />
+              <Input
+                label="Nama Cabang"
+                value={data.branch_name}
+                disabled={processing}
+                onChange={(e) => setData("branch_name", e.target.value)}
+              />
+              <Input
+                label="Alamat"
+                value={data.address}
+                disabled={processing}
+                onChange={(e) => setData("address", e.target.value)}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Ubah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Delete */}
+      <Dialog open={isModalDeleteOpen} handler={toggleModalDelete} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Hapus Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalDelete}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <Typography>
+            Apakah anda yakin ingin menghapus{" "}
+            <span className="text-lg font-bold">
+              {data.branch_code} - {data.branch_name}
+            </span>{" "}
+            ?
+          </Typography>
+        </DialogBody>
+        <DialogFooter>
+          <form
+            onSubmit={handleSubmitDelete}
+            className="flex flex-row-reverse gap-x-4"
+          >
+            <Button color="red" disabled={processing} type="submit">
+              Hapus
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalDelete}>
+              Tutup
+            </SecondaryButton>
           </form>
-        </div>
-      </Modal>
+        </DialogFooter>
+      </Dialog>
     </AuthenticatedLayout>
   );
 }

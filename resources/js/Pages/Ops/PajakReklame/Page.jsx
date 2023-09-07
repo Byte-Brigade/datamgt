@@ -35,7 +35,24 @@ export default function PajakReklame({ sessions }) {
     },
     { name: "Keterangan", field: "note" },
     { name: "Info Tambahan", field: "additional_info" },
-    { name: "Action", field: "action", render: () => <DropdownMenu /> },
+    {
+      name: "Action",
+      field: "action",
+      render: (data) => (
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            // toggleModalEdit();
+            // setId(data.id);
+            // setEditData(data);
+          }}
+          onDeleteClick={() => {
+            // toggleModalDelete();
+            // setId(data.id);
+          }}
+        />
+      ),
+    },
   ];
 
   const submit = (e) => {

@@ -70,8 +70,27 @@ class BranchController extends Controller
         return (new BranchesExport)->download($fileName);
     }
 
-    public function testApi(Request $request)
+    public function update(Request $request, $id)
     {
-        return Inertia::render('Cabang/TestApi');
+        try {
+            $branch = Branch::find($id);
+            $branch->update([
+                'branch_code' => $request->branch_code,
+                'branch_name' => $request->branch_name,
+                'address' => $request->address
+            ]);
+
+            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $branch = Branch::find($id);
+        $branch->delete();
+
+        return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }
