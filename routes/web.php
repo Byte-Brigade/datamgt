@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
         /* [START] Ops SKBIRTGS */
         Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
         Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
+        Route::post('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
         /* [END] Ops SKBIRTGS */
 
         /* [START] Ops Pajak Reklame */

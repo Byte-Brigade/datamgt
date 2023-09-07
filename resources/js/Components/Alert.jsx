@@ -12,7 +12,7 @@ export default function Alert({ sessions }) {
       } p-4 mb-4`}
       role="alert"
     >
-      <p class="font-bold">{status}</p>
+      <p className="font-bold">{status}</p>
       <p>{sessions.message}</p>
     </div>
   );

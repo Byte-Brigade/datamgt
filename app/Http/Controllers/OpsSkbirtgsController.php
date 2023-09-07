@@ -6,9 +6,11 @@ use App\Http\Resources\SkbirtgsResource;
 use App\Imports\SkBirtgsImport;
 use App\Models\ErrorLog;
 use App\Models\OpsSkbirtgs;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
+use Storage;
 
 class OpsSkbirtgsController extends Controller
 {
@@ -18,8 +20,7 @@ class OpsSkbirtgsController extends Controller
 
     public function api(Request $request)
     {
-
-        $sortField =  'id';
+        $sortField = 'id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $this->ops_skbirtgs->orderBy($sortField, $sortOrder);
@@ -35,11 +36,7 @@ class OpsSkbirtgsController extends Controller
 
     public function index()
     {
-        $skbirtgsProps = OpsSkbirtgs::with(['branches', 'penerima_kuasa'])->paginate(10);
-
-        return Inertia::render('Ops/SKBIRTGS/Page', [
-            'sks' => $skbirtgsProps,
-        ]);
+        return Inertia::render('Ops/SKBIRTGS/Page');
     }
 
     public function import(Request $request)
@@ -67,5 +64,29 @@ class OpsSkbirtgsController extends Controller
             }
             return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
+    }
+
+    public function upload(Request $request, $id)
+    {
+        try {
+            $ops_skbirtgs = OpsSkbirtgs::find($id);
+
+            $fileName = $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('ops/skbirtgs/', $fileName);
+
+            $ops_skbirtgs->file = $fileName;
+            $ops_skbirtgs->save();
+
+            return to_route('ops.skbirtgs')->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+        } catch (Exception $e) {
+            dd($e);
+
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
+        }
+    }
+
+    public function download(Request $request)
+    {
+        return Storage::download($request->fileName);
     }
 }
