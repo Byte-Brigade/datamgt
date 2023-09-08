@@ -58,4 +58,29 @@ class OpsPajakReklameController extends Controller
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $pajak_reklame = OpsPajakReklame::find($id);
+            $pajak_reklame->update([
+                'periode_awal' => $request->periode_awal,
+                'periode_akhir' => $request->periode_akhir,
+                'note' => $request->note,
+                'additional_info' => $request->additional_info,
+            ]);
+
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $pajak_reklame = OpsPajakReklame::find($id);
+        $pajak_reklame->delete();
+
+        return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+    }
 }

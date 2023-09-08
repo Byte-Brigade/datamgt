@@ -19,7 +19,7 @@ class PajakReklameResource extends JsonResource
             'branch_id' => $this->branch_id,
             'periode_awal' => $this->periode_awal,
             'periode_akhir' => $this->periode_akhir,
-            'note' => $this->name,
+            'note' => $this->note,
             'additional_info' => $this->additional_info,
             'branches' => $this->branches
         ];

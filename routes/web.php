@@ -1,14 +1,13 @@
 <?php
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BranchController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsPajakReklameController;
+use App\Http\Controllers\OpsSkbirtgsController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +49,8 @@ Route::middleware('auth')->group(function () {
     /* [START] Employees */
     Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
     Route::post('/employees', [EmployeeController::class, 'import'])->name('employees.import');
+    Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
     Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
     /* [END] Employees */
 
@@ -63,6 +64,8 @@ Route::middleware('auth')->group(function () {
         /* [START] Ops Pajak Reklame */
         Route::get('/pajak-reklame', [OpsPajakReklameController::class, 'index'])->name('pajak-reklame');
         Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
+        Route::put('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'update'])->name('pajak-reklame.update');
+        Route::delete('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'destroy'])->name('pajak-reklame.delete');
         /* [END] Ops Pajak Reklame */
     });
 });

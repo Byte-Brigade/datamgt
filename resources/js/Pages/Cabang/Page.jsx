@@ -65,7 +65,13 @@ export default function Cabang({ sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("branches.import"));
+    post(route("branches.import"), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
@@ -102,12 +108,10 @@ export default function Cabang({ sessions }) {
 
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
-    // if (isModalEditOpen === false) setData(initialData);
   };
 
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
-    // if (isModalDeleteOpen === false) setData(initialData);
   };
 
   return (
@@ -153,7 +157,7 @@ export default function Cabang({ sessions }) {
       {/* Modal Import */}
       <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Ubah Data
+          Import Data
           <IconButton
             size="sm"
             variant="text"
