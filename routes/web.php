@@ -58,6 +58,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
         Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
         Route::post('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
+        Route::put('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'update'])->name('skbirtgs.update');
+        Route::delete('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'destroy'])->name('skbirtgs.delete');
+        Route::get('/skbirtgs/export', [OpsSkbirtgsController::class, 'export'])->name('skbirtgs.export');
         /* [END] Ops SKBIRTGS */
 
         /* [START] Ops Pajak Reklame */

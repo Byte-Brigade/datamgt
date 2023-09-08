@@ -5,33 +5,50 @@ import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
-import { Input } from "@material-tailwind/react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  IconButton,
+  Input,
+  Typography,
+} from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function SKBIRTGS({ sessions }) {
-  const { data, setData, post, processing, errors } = useForm({
-    file: null,
-  });
-  const [editData, setEditData] = useState({
+  const initialData = {
     no_surat: null,
     branches: {
       branch_name: null,
     },
     status: null,
-  });
+    file: null,
+  };
+  const {
+    data,
+    setData,
+    post,
+    put,
+    delete: destroy,
+    processing,
+    errors,
+  } = useForm(initialData);
+
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-  const [id, setId] = useState(0);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
     { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
     { name: "Nomor Surat", field: "no_surat" },
-    { name: "Kantor Cabang", field: "branches.branch_name" },
+    { name: "Kantor Cabang", field: "ops.skbirtgs.branch_name" },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa.name",
@@ -44,11 +61,19 @@ export default function SKBIRTGS({ sessions }) {
       field: "file",
       type: "custom",
       render: (data) =>
-        data.file || (
+        data.file ? (
+          <a
+            className="text-blue-500 hover:underline"
+            href={`/storage/ops/skbirtgs/${data.file}`}
+          >
+            {" "}
+            {data.file}
+          </a>
+        ) : (
           <button
             onClick={() => {
               toggleModalUpload();
-              setId(data.id);
+              setData(data.id);
             }}
             className="text-blue-500 hover:underline"
           >
@@ -65,12 +90,11 @@ export default function SKBIRTGS({ sessions }) {
           placement="left-start"
           onEditClick={() => {
             toggleModalEdit();
-            setId(data.id);
-            setEditData(data);
+            setData(data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
-            setId(data.id);
+            setData(data);
           }}
         />
       ),
@@ -87,6 +111,39 @@ export default function SKBIRTGS({ sessions }) {
       replace: true,
       onFinish: () => setIsRefreshed(!isRefreshed),
     });
+  };
+
+  const handleSubmitImport = (e) => {
+    e.preventDefault();
+    post(route("ops.skbirtgs.import"));
+  };
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    put(route("ops.skbirtgs.update", data.id), {
+      method: "put",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalEditOpen(!isModalEditOpen);
+      },
+    });
+  };
+
+  const handleSubmitDelete = (e) => {
+    e.preventDefault();
+    destroy(route("ops.skbirtgs.delete", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalDeleteOpen(!isModalDeleteOpen);
+      },
+    });
+  };
+
+  const exportData = (e) => {
+    e.preventDefault();
+    window.open(route("ops.skbirtgs.export"), "__blank");
   };
 
   const toggleModalImport = () => {
@@ -154,7 +211,7 @@ export default function SKBIRTGS({ sessions }) {
       <Modal show={isModalImportOpen}>
         <div className="flex flex-col p-4 gap-y-4">
           <h3 className="text-xl font-semibold text-center">Import Data</h3>
-          <form onSubmit={submit} encType="multipart/form-data">
+          <form onSubmit={handleSubmitImport} encType="multipart/form-data">
             <div className="flex flex-col">
               <label htmlFor="import">Import Excel (.xlsx)</label>
               <input
@@ -198,7 +255,7 @@ export default function SKBIRTGS({ sessions }) {
                 accept=".pdf"
               />
             </div>
-            <p>{id}</p>
+            <p>{data.id}</p>
             <div className="flex justify-between mt-4 gap-x-4">
               <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Close Modal
@@ -214,29 +271,92 @@ export default function SKBIRTGS({ sessions }) {
           </form>
         </div>
       </Modal>
-      <Modal show={isModalEditOpen}>
-        <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">Edit Data</h3>
-          <Input
-            label="Nomor Surat"
-            value={editData.no_surat}
-            onChange={(e) => setEditData("no_surat", e.target.value)}
-          />
-          <Input label="Kantor Cabang" value={editData.branches.branch_name} />
-          <Input label="Status" value={editData.status} />
-          <SecondaryButton type="button" onClick={toggleModalEdit}>
-            Close Modal
-          </SecondaryButton>
-        </div>
-      </Modal>
-      <Modal show={isModalDeleteOpen}>
-        <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">Delete Data</h3>
-          <SecondaryButton type="button" onClick={toggleModalDelete}>
-            Close Modal
-          </SecondaryButton>
-        </div>
-      </Modal>
+
+      {/* Modal Edit */}
+      <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Ubah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalEdit}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitEdit}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Nomor Surat"
+                value={data.no_surat}
+                disabled={processing}
+                onChange={(e) => setData("no_surat", e.target.value)}
+              />
+              <Input
+                label="Kantor Cabang"
+                disabled={processing}
+                defaultValue={data.branches.branch_name}
+              />
+              <Input
+                label="Status"
+                value={data.status}
+                disabled={processing}
+                onChange={(e) => setData("status", e.target.value)}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Ubah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Delete */}
+      <Dialog open={isModalDeleteOpen} handler={toggleModalDelete} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Hapus Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalDelete}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <Typography>
+            Apakah anda yakin ingin menghapus{" "}
+            <span className="text-lg font-bold">
+              {data.no_surat} - {data.branches.branch_name}
+            </span>{" "}
+            ?
+          </Typography>
+        </DialogBody>
+        <DialogFooter>
+          <form
+            onSubmit={handleSubmitDelete}
+            className="flex flex-row-reverse gap-x-4"
+          >
+            <Button color="red" disabled={processing} type="submit">
+              Hapus
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalDelete}>
+              Tutup
+            </SecondaryButton>
+          </form>
+        </DialogFooter>
+      </Dialog>
     </AuthenticatedLayout>
   );
 }

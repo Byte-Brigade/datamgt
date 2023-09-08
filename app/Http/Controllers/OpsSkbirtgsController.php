@@ -72,12 +72,12 @@ class OpsSkbirtgsController extends Controller
             $ops_skbirtgs = OpsSkbirtgs::find($id);
 
             $fileName = $request->file('file')->getClientOriginalName();
-            $request->file('file')->storeAs('ops/skbirtgs/', $fileName);
+            $request->file('file')->storeAs('ops/skbirtgs/', $fileName, ["disk" => 'public']);
 
             $ops_skbirtgs->file = $fileName;
             $ops_skbirtgs->save();
 
-            return to_route('ops.skbirtgs')->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
@@ -85,8 +85,32 @@ class OpsSkbirtgsController extends Controller
         }
     }
 
-    public function download(Request $request)
+    public function update(Request $request, $id)
     {
-        return Storage::download($request->fileName);
+        try {
+            $ops_skbirtgs = OpsSkbirtgs::find($id);
+            $ops_skbirtgs->update([
+                'no_surat' => $request->no_surat,
+                'status' => $request->status,
+            ]);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $ops_skbirtgs = OpsSkbirtgs::find($id);
+            $ops_skbirtgs->delete();
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function export(Request $request, $id)
+    {
     }
 }
