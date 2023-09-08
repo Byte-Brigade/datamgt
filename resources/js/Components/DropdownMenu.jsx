@@ -1,17 +1,16 @@
 import {
+  IconButton,
   Menu,
   MenuHandler,
-  MenuList,
   MenuItem,
-  Button,
+  MenuList,
+  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 
-import {
-  PencilIcon,
-  TrashIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+
+import { WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
 
 export default function DropdownMenu({
   placement,
@@ -26,12 +25,13 @@ export default function DropdownMenu({
       }}
       placement={placement}
     >
-      <MenuHandler>
-        <Button className="flex items-center gap-x-1" size="sm" color="indigo">
-          <Cog6ToothIcon className="w-4 h-4" />
-          Option
-        </Button>
-      </MenuHandler>
+      <Tooltip content="Options">
+        <MenuHandler>
+          <IconButton size="sm" variant="text">
+            <WrenchScrewdriverIcon className="w-4 h-4" />
+          </IconButton>
+        </MenuHandler>
+      </Tooltip>
       <MenuList>
         <MenuItem className="flex items-center gap-x-2" onClick={onEditClick}>
           <PencilIcon className="w-4 h-4" />
