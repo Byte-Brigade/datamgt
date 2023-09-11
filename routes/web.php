@@ -64,6 +64,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/skbirtgs/export', [OpsSkbirtgsController::class, 'export'])->name('skbirtgs.export');
         /* [END] Ops SKBIRTGS */
 
+        /* [START] Ops SK Operasional Cabang */
+
+        /* [END] Ops SK Operasional Cabang */
+
         /* [START] Ops Pajak Reklame */
         Route::get('/pajak-reklame', [OpsPajakReklameController::class, 'index'])->name('pajak-reklame');
         Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');

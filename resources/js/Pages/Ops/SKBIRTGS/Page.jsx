@@ -1,7 +1,6 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
-import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -48,7 +47,7 @@ export default function SKBIRTGS({ sessions }) {
   const columns = [
     { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
     { name: "Nomor Surat", field: "no_surat" },
-    { name: "Kantor Cabang", field: "ops.skbirtgs.branch_name" },
+    { name: "Kantor Cabang", field: "branches.branch_name" },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa.name",
@@ -65,6 +64,7 @@ export default function SKBIRTGS({ sessions }) {
           <a
             className="text-blue-500 hover:underline"
             href={`/storage/ops/skbirtgs/${data.file}`}
+            target="__blank"
           >
             {" "}
             {data.file}
@@ -73,11 +73,11 @@ export default function SKBIRTGS({ sessions }) {
           <button
             onClick={() => {
               toggleModalUpload();
-              setData(data.id);
+              setData(data);
             }}
             className="text-blue-500 hover:underline"
           >
-            Upload File
+            Upload Lampiran
           </button>
         ),
     },
@@ -100,22 +100,18 @@ export default function SKBIRTGS({ sessions }) {
       ),
     },
   ];
-  const submit = (e) => {
-    e.preventDefault();
-    post(route("ops.skbirtgs.import"));
-  };
-
-  const uploadLampiran = (e) => {
-    e.preventDefault();
-    post(route("ops.skbirtgs.upload", id), {
-      replace: true,
-      onFinish: () => setIsRefreshed(!isRefreshed),
-    });
-  };
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
     post(route("ops.skbirtgs.import"));
+  };
+
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("ops.skbirtgs.upload", data.id), {
+      replace: true,
+      onFinish: () => setIsRefreshed(!isRefreshed),
+    });
   };
 
   const handleSubmitEdit = (e) => {
@@ -208,70 +204,86 @@ export default function SKBIRTGS({ sessions }) {
           />
         </div>
       </div>
-      <Modal show={isModalImportOpen}>
-        <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">Import Data</h3>
-          <form onSubmit={handleSubmitImport} encType="multipart/form-data">
-            <div className="flex flex-col">
-              <label htmlFor="import">Import Excel (.xlsx)</label>
-              <input
-                className="bg-gray-100 border-2 border-gray-200 rounded-lg"
-                onChange={(e) => setData("file", e.target.files[0])}
+      {/* Modal Import */}
+      <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Import Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalImport}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitImport} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Import Excel (.xlsx)"
+                disabled={processing}
                 type="file"
                 name="import"
                 id="import"
                 accept=".xlsx"
+                onChange={(e) => setData("file", e.target.files[0])}
               />
             </div>
-            <div className="flex justify-between mt-4 gap-x-4">
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
               <SecondaryButton type="button" onClick={toggleModalImport}>
-                Close Modal
+                Tutup
               </SecondaryButton>
-              <PrimaryButton
-                type="submit"
-                onClick={toggleModalImport}
-                disabled={processing}
-              >
-                Import Data
-              </PrimaryButton>
             </div>
-          </form>
-        </div>
-      </Modal>
-      <Modal show={isModalUploadOpen}>
-        <div className="flex flex-col p-4 gap-y-4">
-          <h3 className="text-xl font-semibold text-center">
-            Upload Data Lampiran
-          </h3>
-          <form onSubmit={uploadLampiran} encType="multipart/form-data">
-            <div className="flex flex-col">
-              <label htmlFor="upload">Upload Lampiran (.pdf)</label>
-              <input
-                className="bg-gray-100 border-2 border-gray-200 rounded-lg"
-                onChange={(e) => setData("file", e.target.files[0])}
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Import */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
                 type="file"
                 name="upload"
                 id="upload"
                 accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
               />
             </div>
-            <p>{data.id}</p>
-            <div className="flex justify-between mt-4 gap-x-4">
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
               <SecondaryButton type="button" onClick={toggleModalUpload}>
-                Close Modal
+                Tutup
               </SecondaryButton>
-              <PrimaryButton
-                type="submit"
-                onClick={toggleModalUpload}
-                disabled={processing}
-              >
-                Upload Data
-              </PrimaryButton>
             </div>
-          </form>
-        </div>
-      </Modal>
-
+          </DialogFooter>
+        </form>
+      </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
