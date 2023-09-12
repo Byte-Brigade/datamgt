@@ -116,7 +116,7 @@ export default function Cabang({ sessions }) {
 
   return (
     <AuthenticatedLayout>
-      <Head title="Cabang" />
+      <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
@@ -172,6 +172,7 @@ export default function Cabang({ sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"

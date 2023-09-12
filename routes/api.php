@@ -4,6 +4,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
+use App\Http\Controllers\OpsSkOperasionalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,3 +27,4 @@ Route::get('/branches', [BranchController::class, 'api']);
 Route::get('/employees', [EmployeeController::class, 'api']);
 Route::get('/ops/pajak-reklame', [OpsPajakReklameController::class, 'api']);
 Route::get('/ops/skbirtgs', [OpsSkbirtgsController::class, 'api']);
+Route::get('/ops/sk-operasional', [OpsSkOperasionalController::class, 'api']);

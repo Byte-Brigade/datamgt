@@ -18,14 +18,16 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function SKBIRTGS({ sessions }) {
+export default function SkOperasional({ sessions }) {
   const initialData = {
-    no_surat: null,
+    file: null,
+    branch: 0,
     branches: {
+      branch_code: null,
       branch_name: null,
     },
-    status: null,
-    file: null,
+    masa_berlaku: null,
+    note: null,
   };
   const {
     data,
@@ -45,15 +47,21 @@ export default function SKBIRTGS({ sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
-    { name: "Nomor Surat", field: "no_surat" },
-    { name: "Kantor Cabang", field: "branches.branch_name" },
+    { name: "Branch ID", field: "branches.branch_code" },
+    { name: "Branch Name", field: "branches.branch_name" },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa.name",
       type: "custom",
       render: (data) =>
         data.penerima_kuasa.map((employee) => employee.name).join(" - ") || "-",
+    },
+    { name: "Nomor Surat", field: "no_surat" },
+    {
+      name: "Masa Berlaku",
+      field: "masa_berlaku",
+      type: "date",
+      sortable: true,
     },
     {
       name: "Lampiran",
@@ -63,7 +71,7 @@ export default function SKBIRTGS({ sessions }) {
         data.file ? (
           <a
             className="text-blue-500 hover:underline"
-            href={`/storage/ops/skbirtgs/${data.file}`}
+            href={`/storage/ops/skoperasional/${data.file}`}
             target="__blank"
           >
             {" "}
@@ -81,7 +89,7 @@ export default function SKBIRTGS({ sessions }) {
           </button>
         ),
     },
-    { name: "Status", field: "status" },
+    { name: "Keterangan", field: "note" },
     {
       name: "Action",
       field: "action",
@@ -103,12 +111,18 @@ export default function SKBIRTGS({ sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.skbirtgs.import"));
+    post(route("ops.sk-operasional.import"), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
   };
 
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("ops.skbirtgs.upload", data.id), {
+    post(route("ops.sk-operasional.upload", data.id), {
       replace: true,
       onFinish: () => setIsRefreshed(!isRefreshed),
     });
@@ -116,7 +130,7 @@ export default function SKBIRTGS({ sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.skbirtgs.update", data.id), {
+    put(route("ops.sk-operasional.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -128,18 +142,13 @@ export default function SKBIRTGS({ sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.skbirtgs.delete", data.id), {
+    destroy(route("ops.sk-operasional.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalDeleteOpen(!isModalDeleteOpen);
       },
     });
-  };
-
-  const exportData = (e) => {
-    e.preventDefault();
-    window.open(route("ops.skbirtgs.export"), "__blank");
   };
 
   const toggleModalImport = () => {
@@ -164,7 +173,7 @@ export default function SKBIRTGS({ sessions }) {
 
   return (
     <AuthenticatedLayout>
-      <Head title="OPS | Surat Kuasa BI RGTS" />
+      <Head title="OPS | SK Operasional Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
@@ -199,7 +208,7 @@ export default function SKBIRTGS({ sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/ops/skbirtgs"}
+            fetchUrl={"/api/ops/sk-operasional"}
             refreshUrl={isRefreshed}
           />
         </div>
@@ -305,20 +314,22 @@ export default function SKBIRTGS({ sessions }) {
             <div className="flex flex-col gap-y-4">
               <Input
                 label="Nomor Surat"
-                value={data.no_surat}
+                value={data.no_surat || ""}
                 disabled={processing}
                 onChange={(e) => setData("no_surat", e.target.value)}
               />
               <Input
-                label="Kantor Cabang"
+                label="Masa Berlaku"
+                value={data.masa_berlaku || ""}
                 disabled={processing}
-                defaultValue={data.branches.branch_name}
+                type="date"
+                onChange={(e) => setData("masa_berlaku", e.target.value)}
               />
               <Input
-                label="Status"
-                value={data.status}
+                label="Keterangan"
+                value={data.note || ""}
                 disabled={processing}
-                onChange={(e) => setData("status", e.target.value)}
+                onChange={(e) => setData("note", e.target.value)}
               />
               <Input
                 variant="standard"
@@ -362,7 +373,7 @@ export default function SKBIRTGS({ sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.no_surat} - {data.branches.branch_name}
+              {data.branches.branch_code} - {data.branches.branch_name}
             </span>{" "}
             ?
           </Typography>

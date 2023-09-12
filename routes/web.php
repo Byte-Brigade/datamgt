@@ -4,6 +4,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
+use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +66,9 @@ Route::middleware('auth')->group(function () {
         /* [END] Ops SKBIRTGS */
 
         /* [START] Ops SK Operasional Cabang */
-
+        Route::get('/sk-operasional', [OpsSkOperasionalController::class, 'index'])->name('sk-operasional');
+        Route::post('/sk-operasional', [OpsSkOperasionalController::class, 'import'])->name('sk-operasional.import');
+        Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
         /* [END] Ops SK Operasional Cabang */
 
         /* [START] Ops Pajak Reklame */
