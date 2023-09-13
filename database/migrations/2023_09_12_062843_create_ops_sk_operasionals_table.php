@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('ops_sk_operasionals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('branch_id')->unique();;
             $table->string('no_surat');
             $table->date('masa_berlaku');
             $table->string('file')->nullable();

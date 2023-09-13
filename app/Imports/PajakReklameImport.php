@@ -22,9 +22,8 @@ class PajakReklameImport implements ToModel, WithHeadingRow, WithUpserts
         return new OpsPajakReklame([
             'branch_id' => Branch::where('branch_code', $row['kode_cab'])->orWhere('branch_name', 'like', "%$branch%")->pluck('id')->first(),
             'periode_awal' => !is_null($periode[0]) ? Carbon::createFromFormat('d/m/Y', trim($periode[0])) : null,
-            'periode_akhir' => !is_null($periode[1])  ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
+            'periode_akhir' => !is_null($periode[1]) ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
             'note' => $row['keterangan'],
-            'additional_info' => $row['info_tambahan']
         ]);
     }
 

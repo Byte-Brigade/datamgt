@@ -24,9 +24,9 @@ export default function Paginator({ pagination, pageChanged, totalItems }) {
 
   return (
     <div className="flex items-center justify-between mt-4">
-      <div>
-        Showing {pagination.from} to {pagination.to} of {pagination.total}{" "}
-        entries
+      <div className="[&>span]:font-bold">
+        Showing <span>{pagination.from}</span> to <span>{pagination.to}</span>{" "}
+        of <span>{pagination.total}</span> entries
       </div>
       <div className="flex items-center gap-2">
         {pagination.current_page !== 1 && (

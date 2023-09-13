@@ -17,15 +17,18 @@ class OpsSkOperasionalController extends Controller
 
     public function api(Request $request)
     {
-        $sortField = 'id';
+        $sortField = 'ops_sk_operasionals.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_sk_operasional->orderBy($sortField, $sortOrder);
+        $query = $this->ops_sk_operasional->orderBy($sortField, $sortOrder)
+            ->join('branches', 'ops_sk_operasionals.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('no_surat', 'like', $searchQuery);
+            $query = $query->where('no_surat', 'like', $searchQuery)
+                ->orWhere('branch_code', 'like', $searchQuery)
+                ->orWhere('branch_name', 'like', $searchQuery);
         }
         $sk_operasional = $query->paginate($perpage);
         return SkOperasionalResource::collection($sk_operasional);

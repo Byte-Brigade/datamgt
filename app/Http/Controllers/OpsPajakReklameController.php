@@ -20,15 +20,19 @@ class OpsPajakReklameController extends Controller
     public function api(Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_pajak_reklames.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_pajak_reklame->orderBy($sortField, $sortOrder);
+        $query = $this->ops_pajak_reklame->orderBy($sortField, $sortOrder)
+            ->join('branches', 'ops_pajak_reklames.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('periode_awal', 'like', $searchQuery)->orWhere('periode_akhir', 'like', $searchQuery);
+            $query = $query->where('periode_awal', 'like', $searchQuery)
+                ->orWhere('periode_akhir', 'like', $searchQuery)
+                ->orWhere('branch_code', 'like', $searchQuery)
+                ->orWhere('branch_name', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return PajakReklameResource::collection($employees);

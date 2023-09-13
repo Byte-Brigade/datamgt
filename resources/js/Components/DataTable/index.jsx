@@ -4,6 +4,8 @@ import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
+import { ArrowSmallUpIcon } from "@heroicons/react/24/solid";
+import { ArrowSmallDownIcon } from "@heroicons/react/24/outline";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -136,16 +138,18 @@ export default function DataTable({
                       className="cursor-pointer hover:underline"
                       onClick={(e) => handleSort(column.field)}
                     >
-                      {column.name}
-                      {column.field === sortColumn ? (
-                        <span>
-                          {sortOrder === SORT_ASC ? (
-                            <span> 🔼</span>
-                          ) : (
-                            <span> 🔽</span>
-                          )}
-                        </span>
-                      ) : null}
+                      <div className="flex items-center gap-x-1">
+                        {column.name}
+                        {column.field === sortColumn ? (
+                          <span>
+                            {sortOrder === SORT_ASC ? (
+                              <ArrowSmallUpIcon className="w-4 h-4" />
+                            ) : (
+                              <ArrowSmallDownIcon className="w-4 h-4" />
+                            )}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
                   ) : (
                     <div>{column.name}</div>
@@ -177,7 +181,7 @@ export default function DataTable({
               data.map((data, index) => (
                 <tr
                   key={index}
-                  className="[&>td]:p-2 hover:bg-slate-200"
+                  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
                 >
                   <td className="text-center">{pagination.from + index}</td>
                   {columns.map((column, id) =>

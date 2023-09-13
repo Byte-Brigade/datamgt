@@ -1,11 +1,10 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
-import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import SelectInput from "@/Components/SelectInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -26,15 +25,15 @@ import { useState } from "react";
 export default function Karyawan({ branches, positions, sessions }) {
   const initialData = {
     file: null,
-    branch: 0,
-    position: 0,
+    branch: "0",
+    position: "0",
     employee_id: null,
     name: null,
     email: null,
     branches: {
       id: null,
     },
-    positions: {
+    employee_positions: {
       id: null,
     },
     gender: null,
@@ -57,9 +56,13 @@ export default function Karyawan({ branches, positions, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code" },
-    { name: "Branch Name", field: "branches.branch_name" },
-    { name: "Position", field: "positions.position_name" },
+    { name: "Branch ID", field: "branches.branch_code", sortable: true },
+    { name: "Branch Name", field: "branches.branch_name", sortable: true },
+    {
+      name: "Position",
+      field: "employee_positions.position_name",
+      sortable: true,
+    },
     { name: "Employee ID", field: "employee_id", sortable: true },
     { name: "Employee Name", field: "name", sortable: true },
     { name: "Email", field: "email" },
@@ -69,6 +72,7 @@ export default function Karyawan({ branches, positions, sessions }) {
     {
       name: "Action",
       field: "action",
+      className: 'text-center',
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -123,16 +127,15 @@ export default function Karyawan({ branches, positions, sessions }) {
     e.preventDefault();
     const { branch, position } = data;
     const query =
-      branch !== 0 && position !== 0
+      branch !== "0" && position !== "0"
         ? `?branch=${branch}&position=${position}`
-        : branch !== 0
+        : branch !== "0"
         ? `?branch=${branch}`
-        : position !== 0
+        : position !== "0"
         ? `?position=${position}`
         : "";
 
-    window.open(route("employees.export") + query, "_self");
-    setData({ branch: 0, position: 0 });
+    window.open(route("employees.export") + query, "__blank");
   };
 
   const toggleModalImport = () => {
@@ -168,23 +171,8 @@ export default function Karyawan({ branches, positions, sessions }) {
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               onClick={toggleModalImport}
             >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
                 Import Excel
               </div>
             </PrimaryButton>
@@ -259,8 +247,8 @@ export default function Karyawan({ branches, positions, sessions }) {
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
-                value={`${data.branch}`}
                 disabled={processing}
+                value={data.branch}
                 onChange={(e) => setData("branch", e)}
               >
                 <Option value="0">All</Option>
@@ -272,7 +260,7 @@ export default function Karyawan({ branches, positions, sessions }) {
               </Select>
               <Select
                 label="Position"
-                value={`${data.position}`}
+                value={data.position}
                 disabled={processing}
                 onChange={(e) => setData("position", e)}
               >
@@ -348,9 +336,9 @@ export default function Karyawan({ branches, positions, sessions }) {
               </Select>
               <Select
                 label="Position"
-                value={`${data.positions.id}`}
+                value={`${data.employee_positions.id}`}
                 disabled={processing}
-                onChange={(e) => setData("positions.id", e)}
+                onChange={(e) => setData("employee_positions.id", e)}
               >
                 {positions.map((position) => (
                   <Option key={position.id} value={`${position.id}`}>

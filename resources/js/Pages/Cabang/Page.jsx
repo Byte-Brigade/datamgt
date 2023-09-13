@@ -4,6 +4,7 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -36,6 +37,7 @@ export default function Cabang({ sessions }) {
   } = useForm(initialData);
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
+  const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -43,10 +45,11 @@ export default function Cabang({ sessions }) {
   const columns = [
     { name: "Kode Cabang", field: "branch_code", sortable: true },
     { name: "Nama Cabang", field: "branch_name", sortable: true },
-    { name: "Alamat", field: "address", sortable: true },
+    { name: "Alamat", field: "address" },
     {
       name: "Action",
       field: "action",
+      className: 'text-center',
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -74,6 +77,11 @@ export default function Cabang({ sessions }) {
     });
   };
 
+  const handleSubmitExport = (e) => {
+    e.preventDefault();
+    window.open(route("branches.export"), "_self");
+  };
+
   const handleSubmitEdit = (e) => {
     e.preventDefault();
     put(route("branches.update", data.id), {
@@ -97,13 +105,12 @@ export default function Cabang({ sessions }) {
     });
   };
 
-  const exportData = (e) => {
-    e.preventDefault();
-    window.open(route("branches.export"), "__blank");
-  };
-
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
+  };
+
+  const toggleModalExport = () => {
+    setIsModalExportOpen(!isModalExportOpen);
   };
 
   const toggleModalEdit = () => {
@@ -125,27 +132,14 @@ export default function Cabang({ sessions }) {
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               onClick={toggleModalImport}
             >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
                 Import Excel
               </div>
             </PrimaryButton>
-            <PrimaryButton onClick={exportData}>Create Report</PrimaryButton>
+            <PrimaryButton onClick={toggleModalExport}>
+              Create Report
+            </PrimaryButton>
           </div>
           <DataTable
             columns={columns}
@@ -194,6 +188,40 @@ export default function Cabang({ sessions }) {
             </div>
           </DialogFooter>
         </form>
+      </Dialog>
+      {/* Modal Export */}
+      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Create Report
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalExport}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <div className="flex flex-col gap-y-4">
+            <Typography>Buat Report Data Cabang?</Typography>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-row-reverse gap-x-4">
+            <Button
+              onClick={handleSubmitExport}
+              disabled={processing}
+              type="submit"
+            >
+              Buat
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalImport}>
+              Tutup
+            </SecondaryButton>
+          </div>
+        </DialogFooter>
       </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">

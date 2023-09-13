@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
 {
-    protected array $sortFields = ['employee_id', 'name', 'email'];
+    protected array $sortFields = ['employee_id', 'name', 'branches.branch_name', 'positions.position_name'];
 
     public function __construct(public Employee $employee)
     {
@@ -23,19 +23,21 @@ class EmployeeController extends Controller
     public function api(Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'employee_id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'employees.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->employee->orderBy($sortField, $sortOrder);
+        $query = $this->employee->orderBy($sortField, $sortOrder)
+            ->join('branches', 'employees.branch_id', 'branches.id')
+            ->join('employee_positions', 'employees.position_id', 'employee_positions.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('employee_id', 'like', $searchQuery)->orWhere('name', 'like', $searchQuery)->orWhere(
-                'email',
-                'like',
-                $searchQuery
-            );
+            $query = $query->where('employee_id', 'like', $searchQuery)
+                ->orWhere('name', 'like', $searchQuery)
+                ->orWhere('email', 'like', $searchQuery)
+                ->orWhere('branch_name', 'like', $searchQuery)
+                ->orWhere('position_name', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return EmployeeResource::collection($employees);

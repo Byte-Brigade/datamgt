@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('ops_skbirtgs', function (Blueprint $table) {
             $table->id();
             $table->string('no_surat');
-            $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('branch_id')->unique();;
             $table->string('file')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

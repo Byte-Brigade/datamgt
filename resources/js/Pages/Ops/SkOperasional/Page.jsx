@@ -4,6 +4,7 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -61,6 +62,7 @@ export default function SkOperasional({ sessions }) {
       name: "Masa Berlaku",
       field: "masa_berlaku",
       type: "date",
+      className: "text-center",
       sortable: true,
     },
     {
@@ -78,21 +80,27 @@ export default function SkOperasional({ sessions }) {
             {data.file}
           </a>
         ) : (
-          <button
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
             onClick={() => {
               toggleModalUpload();
               setData(data);
             }}
-            className="text-blue-500 hover:underline"
           >
-            Upload Lampiran
-          </button>
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
         ),
     },
     { name: "Keterangan", field: "note" },
     {
       name: "Action",
       field: "action",
+      className: 'text-center',
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -182,23 +190,8 @@ export default function SkOperasional({ sessions }) {
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               onClick={toggleModalImport}
             >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
                 Import Excel
               </div>
             </PrimaryButton>
