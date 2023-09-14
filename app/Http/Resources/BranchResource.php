@@ -18,9 +18,12 @@ class BranchResource extends JsonResource
         /** @var Branch $this */
         return [
             'id' => $this->id,
+            'branch_type_id' => $this->branch_type_id,
             'branch_code' => $this->branch_code,
             'branch_name' => $this->branch_name,
             'address' => $this->address,
+            'telp' => $this->telp,
+            'branch_types' => $this->branch_types
         ];
     }
 }

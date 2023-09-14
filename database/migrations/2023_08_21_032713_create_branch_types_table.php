@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ops_pajak_reklames', function (Blueprint $table) {
+        Schema::create('branch_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id')->unique();
-            $table->date('periode_awal')->nullable();
-            $table->date('periode_akhir')->nullable();
-            $table->text('note')->nullable();
-            $table->text('additional_info')->nullable();
+            $table->string('type_name', 5);
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ops_pajak_reklames');
+        Schema::dropIfExists('branch_types');
     }
 };

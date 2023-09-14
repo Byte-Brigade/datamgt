@@ -112,7 +112,13 @@ export default function SKBIRTGS({ sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.skbirtgs.import"));
+    post(route("ops.skbirtgs.import"), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
   };
 
   const handleSubmitUpload = (e) => {

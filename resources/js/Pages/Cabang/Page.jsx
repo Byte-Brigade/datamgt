@@ -15,16 +15,19 @@ import {
   DialogHeader,
   IconButton,
   Input,
+  Option,
+  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Cabang({ sessions }) {
+export default function Cabang({ sessions, branch_types }) {
   const initialData = {
     file: null,
     branch_code: null,
     branch_name: null,
     address: null,
+    branch_type_id: null,
   };
   const {
     data,
@@ -44,12 +47,14 @@ export default function Cabang({ sessions }) {
 
   const columns = [
     { name: "Kode Cabang", field: "branch_code", sortable: true },
+    { name: "Tipe Cabang", field: "branch_types.type_name", sortable: true },
     { name: "Nama Cabang", field: "branch_name", sortable: true },
     { name: "Alamat", field: "address" },
+    { name: "Telp", field: "telp" },
     {
       name: "Action",
       field: "action",
-      className: 'text-center',
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -240,6 +245,18 @@ export default function Cabang({ sessions }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+              <Select
+                label="Tipe Cabang"
+                value={`${data.branch_type_id || ''}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_type_id", e)}
+              >
+                {branch_types.map((type) => (
+                  <Option key={type.id} value={`${type.id}`}>
+                    {type.type_name}
+                  </Option>
+                ))}
+              </Select>
               <Input
                 label="Kode Cabang"
                 value={data.branch_code}

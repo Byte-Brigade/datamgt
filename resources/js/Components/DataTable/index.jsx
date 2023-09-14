@@ -74,7 +74,7 @@ export default function DataTable({
     let value = obj;
 
     for (const key of keys) {
-      if (value.hasOwnProperty(key)) {
+      if (value !== null && value.hasOwnProperty(key)) {
         value = value[key];
       } else {
         value = null;
