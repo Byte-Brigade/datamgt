@@ -22,7 +22,7 @@ class OpsSkbirtgsController extends Controller
         $sortField = 'ops_skbirtgs.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_skbirtgs->orderBy($sortField, $sortOrder)
+        $query = $this->ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 

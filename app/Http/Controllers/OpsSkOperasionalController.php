@@ -20,7 +20,7 @@ class OpsSkOperasionalController extends Controller
         $sortField = 'ops_sk_operasionals.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_sk_operasional->orderBy($sortField, $sortOrder)
+        $query = $this->ops_sk_operasional->select('ops_sk_operasionals.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_sk_operasionals.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 

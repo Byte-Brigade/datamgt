@@ -23,7 +23,7 @@ class OpsPajakReklameController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_pajak_reklames.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_pajak_reklame->orderBy($sortField, $sortOrder)
+        $query = $this->ops_pajak_reklame->select('ops_pajak_reklames.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_pajak_reklames.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 

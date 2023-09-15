@@ -12,7 +12,7 @@ class OpsSkOperasional extends Model
     protected $fillable = [
         'branch_id',
         'no_surat',
-        'masa_berlaku',
+        'expiry_date',
         'file',
         'note'
     ];

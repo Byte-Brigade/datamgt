@@ -12,7 +12,7 @@ class SkOperasionalResource extends JsonResource
             'id' => $this->id,
             'no_surat' => $this->no_surat,
             'branch_id' => $this->branch_id,
-            'masa_berlaku' => $this->masa_berlaku,
+            'expiry_date' => $this->expiry_date,
             'note' => $this->note,
             'file' => $this->file,
             'penerima_kuasa' => $this->penerima_kuasa,

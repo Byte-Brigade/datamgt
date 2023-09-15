@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('branch_code', 9)->unique()->nullable();
             $table->string('branch_name', 20);
             $table->text('address');
-            $table->string('telp', 13)->nullable();
+            $table->string('telp', 22)->nullable();
             $table->timestamps();
 
             $table->foreign('branch_type_id')->references('id')->on('branch_types')->onDelete('cascade');

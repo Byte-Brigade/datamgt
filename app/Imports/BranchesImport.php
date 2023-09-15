@@ -7,10 +7,10 @@ use App\Models\BranchType;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithUpsertColumns;
 use Maatwebsite\Excel\Concerns\WithUpserts;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithUpsertColumns
+class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValidation
 {
     use Importable;
     public function model(array $row)
@@ -27,7 +27,8 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithUpsert
             'branch_type_id' => $branch_type,
             'branch_code' => $row['kode_cabang'],
             'branch_name' => $branch_name,
-            'address' => $row['alamat']
+            'address' => $row['alamat'],
+            'telp' => $row['telp']
         ]);
     }
 
@@ -36,8 +37,11 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithUpsert
         return 'branch_code';
     }
 
-    public function upsertColumns()
+    public function rules(): array
     {
-        return ['address'];
+        return [
+            'nama_cabang' => ['required', 'string'],
+            'alamat' => ['required', 'string'],
+        ];
     }
 }

@@ -64,30 +64,34 @@ export default function SKBIRTGS({ sessions }) {
       field: "file",
       type: "custom",
       render: (data) =>
-        data.file ? (
-          <a
-            className="text-blue-500 hover:underline"
-            href={`/storage/ops/skbirtgs/${data.file}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file}
-          </a>
+        data.no_surat !== "Tidak Ada" ? (
+          data.file ? (
+            <a
+              className="text-blue-500 hover:underline"
+              href={`/storage/ops/skbirtgs/${data.file}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
         ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
+          "-"
         ),
     },
     {
@@ -125,7 +129,10 @@ export default function SKBIRTGS({ sessions }) {
     e.preventDefault();
     post(route("ops.skbirtgs.upload", data.id), {
       replace: true,
-      onFinish: () => setIsRefreshed(!isRefreshed),
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
     });
   };
 

@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use App\Models\Branch;
-use Laravel\Scout\Searchable;
 use App\Models\EmployeePosition;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'branch_id',
@@ -33,7 +32,7 @@ class Employee extends Model
         return $this->branches->branch_name;
     }
 
-    public function positions()
+    public function employee_positions()
     {
         return $this->belongsTo(EmployeePosition::class, 'position_id', 'id');
     }
@@ -41,18 +40,6 @@ class Employee extends Model
     public function getPosition()
     {
         return $this->positions->position_name;
-    }
-
-    public function toSearchableArray()
-    {
-        return [
-            'name' => $this->name,
-            'employee_id' => $this->employee_id,
-            'email' => $this->email,
-            'branches.branch_code' => '',
-            'branches.branch_name' => '',
-            'employee_positions.position_name' => ''
-        ];
     }
 
     public function ops_skbirtgs()

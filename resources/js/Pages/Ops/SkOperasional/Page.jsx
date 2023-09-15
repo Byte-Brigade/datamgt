@@ -59,8 +59,8 @@ export default function SkOperasional({ sessions }) {
     },
     { name: "Nomor Surat", field: "no_surat" },
     {
-      name: "Masa Berlaku",
-      field: "masa_berlaku",
+      name: "Expiry Date",
+      field: "expiry_date",
       type: "date",
       className: "text-center",
       sortable: true,
@@ -100,7 +100,7 @@ export default function SkOperasional({ sessions }) {
     {
       name: "Action",
       field: "action",
-      className: 'text-center',
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -132,7 +132,10 @@ export default function SkOperasional({ sessions }) {
     e.preventDefault();
     post(route("ops.sk-operasional.upload", data.id), {
       replace: true,
-      onFinish: () => setIsRefreshed(!isRefreshed),
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
     });
   };
 

@@ -247,7 +247,7 @@ export default function Cabang({ sessions, branch_types }) {
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Tipe Cabang"
-                value={`${data.branch_type_id || ''}`}
+                value={`${data.branch_type_id || ""}`}
                 disabled={processing}
                 onChange={(e) => setData("branch_type_id", e)}
               >
