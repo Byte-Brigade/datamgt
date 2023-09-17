@@ -42,7 +42,11 @@ export default function Sidebar() {
                 className="group"
               >
                 <svg
-                  className={`${route().current('dashboard') ? `text-gray-900` : `text-gray-500`} w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
+                  className={`${
+                    route().current("dashboard")
+                      ? `text-gray-900`
+                      : `text-gray-500`
+                  } w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -121,11 +125,15 @@ export default function Sidebar() {
             <li>
               <NavLink
                 href={route("branches")}
-                active={route().current('branches')}
+                active={route().current("branches")}
                 className="group"
               >
                 <svg
-                  className={`${route().current('branches') ? `text-gray-900` : `text-gray-500`} flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
+                  className={`${
+                    route().current("branches")
+                      ? `text-gray-900`
+                      : `text-gray-500`
+                  } flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -140,7 +148,7 @@ export default function Sidebar() {
             <li>
               <NavLink
                 href={route("employees")}
-                active={route().current('employees')}
+                active={route().current("employees")}
                 className="group"
               >
                 <svg
@@ -152,18 +160,24 @@ export default function Sidebar() {
                 >
                   <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                 </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">Karyawan Cabang</span>
+                <span className="flex-1 ml-3 whitespace-nowrap">
+                  Karyawan Cabang
+                </span>
               </NavLink>
             </li>
             {/* SK BI RTGS */}
             <li>
               <NavLink
                 href={route("ops.skbirtgs")}
-                active={route().current('ops.skbirtgs')}
+                active={route().current("ops.skbirtgs")}
                 className="group"
               >
                 <svg
-                  className={`${route().current('ops.skbirtgs') ? `text-gray-900` : `text-gray-500`} flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
+                  className={`${
+                    route().current("ops.skbirtgs")
+                      ? `text-gray-900`
+                      : `text-gray-500`
+                  } flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -171,18 +185,24 @@ export default function Sidebar() {
                 >
                   <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                 </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">SK BI RTGS</span>
+                <span className="flex-1 ml-3 whitespace-nowrap">
+                  SK BI RTGS
+                </span>
               </NavLink>
             </li>
             {/* Pajak Reklame */}
             <li>
               <NavLink
                 href={route("ops.pajak-reklame")}
-                active={route().current('ops.pajak-reklame')}
+                active={route().current("ops.pajak-reklame")}
                 className="group"
               >
                 <svg
-                  className={`${route().current('ops.pajak-reklame') ? `text-gray-900` : `text-gray-500`} flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
+                  className={`${
+                    route().current("ops.pajak-reklame")
+                      ? `text-gray-900`
+                      : `text-gray-500`
+                  } flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -190,7 +210,31 @@ export default function Sidebar() {
                 >
                   <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
                 </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">Pajak Reklame</span>
+                <span className="flex-1 ml-3 whitespace-nowrap">
+                  Pajak Reklame
+                </span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                href={route("ops.speciment")}
+                active={route().current("ops.speciment")}
+                className="group"
+              >
+                <svg
+                  className={`${
+                    route().current("ops.speciment")
+                      ? `text-gray-900`
+                      : `text-gray-500`
+                  } flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white`}
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 18 18"
+                >
+                  <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
+                </svg>
+                <span className="flex-1 ml-3 whitespace-nowrap">Speciment</span>
               </NavLink>
             </li>
             {/* <li>
