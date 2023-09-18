@@ -5,6 +5,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
+use App\Http\Controllers\OpsSpecimentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'update'])->name('pajak-reklame.update');
         Route::delete('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'destroy'])->name('pajak-reklame.delete');
         /* [END] Ops Pajak Reklame */
+
+        /* [START] Ops Speciment */
+        Route::get('/speciment', [OpsSpecimentController::class, 'index'])->name('speciment');
+        Route::post('/speciment', [OpsSpecimentController::class, 'import'])->name('speciment.import');
+        Route::put('/speciment/{id}', [OpsSpecimentController::class, 'update'])->name('speciment.update');
+        Route::delete('/speciment/{id}', [OpsSpecimentController::class, 'destroy'])->name('speciment.delete');
+        /* [END] Ops Speciment */
     });
 });
 
