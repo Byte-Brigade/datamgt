@@ -2,21 +2,20 @@
 
 namespace App\Models;
 
-use App\Models\Employee;
+use App\Models\Branch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EmployeePosition extends Model
+class BranchType extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'position_name'
+        'type_name',
     ];
 
-
-    public function employees()
+    public function branches()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Branch::class);
     }
 }

@@ -2,21 +2,29 @@
 
 namespace App\Models;
 
+use App\Models\BranchType;
 use App\Models\Employee;
-use Laravel\Scout\Searchable;
 use App\Models\OpsPajakReklame;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Branch extends Model
 {
     use HasFactory, Searchable;
 
-    protected $fillable= [
+    protected $fillable = [
+        'branch_type_id',
         'branch_code',
         'branch_name',
-        'address'
+        'address',
+        'telp'
     ];
+
+    public function branch_types()
+    {
+        return $this->belongsTo(BranchType::class, 'branch_type_id', 'id');
+    }
 
     public function employees()
     {

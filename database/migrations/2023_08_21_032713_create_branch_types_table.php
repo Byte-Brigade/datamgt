@@ -13,15 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ops_skbirtgs', function (Blueprint $table) {
+        Schema::create('branch_types', function (Blueprint $table) {
             $table->id();
-            $table->string('no_surat');
-            $table->unsignedBigInteger('branch_id')->unique();
-            $table->string('file')->nullable();
-            $table->string('status')->nullable();
+            $table->string('type_name', 5);
             $table->timestamps();
-
-            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
         });
     }
 
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ops_skbirtgs');
+        Schema::dropIfExists('branch_types');
     }
 };

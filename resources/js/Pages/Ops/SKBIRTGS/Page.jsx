@@ -4,6 +4,11 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import {
+  ArrowUpTrayIcon,
+  DocumentArrowDownIcon,
+  DocumentPlusIcon,
+} from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -45,7 +50,6 @@ export default function SKBIRTGS({ sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Jenis Surat", value: "Surat Kuasa BI RTGS" },
     { name: "Nomor Surat", field: "no_surat" },
     { name: "Kantor Cabang", field: "branches.branch_name" },
     {
@@ -60,31 +64,40 @@ export default function SKBIRTGS({ sessions }) {
       field: "file",
       type: "custom",
       render: (data) =>
-        data.file ? (
-          <a
-            className="text-blue-500 hover:underline"
-            href={`/storage/ops/skbirtgs/${data.file}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file}
-          </a>
+        data.no_surat !== "Tidak Ada" ? (
+          data.file ? (
+            <a
+              className="text-blue-500 hover:underline"
+              href={`/storage/ops/skbirtgs/${data.file}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
         ) : (
-          <button
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-            className="text-blue-500 hover:underline"
-          >
-            Upload Lampiran
-          </button>
+          "-"
         ),
     },
-    { name: "Status", field: "status" },
     {
       name: "Action",
       field: "action",
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -103,14 +116,23 @@ export default function SKBIRTGS({ sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.skbirtgs.import"));
+    post(route("ops.skbirtgs.import"), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
   };
 
   const handleSubmitUpload = (e) => {
     e.preventDefault();
     post(route("ops.skbirtgs.upload", data.id), {
       replace: true,
-      onFinish: () => setIsRefreshed(!isRefreshed),
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
     });
   };
 
@@ -173,28 +195,16 @@ export default function SKBIRTGS({ sessions }) {
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               onClick={toggleModalImport}
             >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
                 Import Excel
               </div>
             </PrimaryButton>
             <PrimaryButton onClick={toggleModalExport}>
-              Create Report
+              <div className="flex items-center gap-x-2">
+                <DocumentArrowDownIcon className="w-4 h-4" />
+                Create Report
+              </div>
             </PrimaryButton>
           </div>
           <DataTable
@@ -222,6 +232,7 @@ export default function SKBIRTGS({ sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"
@@ -244,7 +255,7 @@ export default function SKBIRTGS({ sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
-      {/* Modal Import */}
+      {/* Modal Upload */}
       <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
         <DialogHeader className="flex items-center justify-between">
           Upload Lampiran
@@ -262,6 +273,7 @@ export default function SKBIRTGS({ sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Upload Lampiran (.pdf)"
                 disabled={processing}
                 type="file"
@@ -317,6 +329,16 @@ export default function SKBIRTGS({ sessions }) {
                 value={data.status}
                 disabled={processing}
                 onChange={(e) => setData("status", e.target.value)}
+              />
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
               />
             </div>
           </DialogBody>

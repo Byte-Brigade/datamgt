@@ -25,7 +25,7 @@ class EmployeeResource extends JsonResource
             'birth_date' => $this->birth_date,
             'hiring_date' => $this->hiring_date,
             'branches' => $this->branches,
-            'positions' => $this->positions
+            'employee_positions' => $this->employee_positions
         ];
     }
 }

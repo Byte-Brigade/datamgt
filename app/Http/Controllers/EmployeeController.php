@@ -8,13 +8,15 @@ use App\Imports\EmployeesImport;
 use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\EmployeePosition;
+use App\Models\ErrorLog;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
 {
-    protected array $sortFields = ['employee_id', 'name', 'email'];
+    protected array $sortFields = ['employee_id', 'name', 'branches.branch_name', 'employee_positions.position_name'];
 
     public function __construct(public Employee $employee)
     {
@@ -23,19 +25,25 @@ class EmployeeController extends Controller
     public function api(Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'employee_id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'employees.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->employee->orderBy($sortField, $sortOrder);
+        $query = $this->employee->select('employees.*')->orderBy($sortField, $sortOrder)
+            ->join('branches', 'employees.branch_id', 'branches.id')
+            ->join('employee_positions', 'employees.position_id', 'employee_positions.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('employee_id', 'like', $searchQuery)->orWhere('name', 'like', $searchQuery)->orWhere(
-                'email',
-                'like',
-                $searchQuery
-            );
+            $query = $query->where('employee_id', 'like', $searchQuery)
+                ->orWhere('name', 'like', $searchQuery)
+                ->orWhere('email', 'like', $searchQuery)
+                ->orWhereHas('branches', function (Builder $q) use ($searchQuery) {
+                    $q->where('branch_name', 'like', $searchQuery);
+                })
+                ->orWhereHas('employee_positions', function (Builder $q) use ($searchQuery) {
+                    $q->where('position_name', 'like', $searchQuery);
+                });
         }
         $employees = $query->paginate($perpage);
         return EmployeeResource::collection($employees);
@@ -60,14 +68,22 @@ class EmployeeController extends Controller
             return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Success']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
-
+            $list_error = collect([]);
+            // dd($failures);
             foreach ($failures as $failure) {
                 $failure->row(); // row that went wrong
                 $failure->attribute(); // either heading key (if using heading row concern) or column index
                 $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                $failure->values(); // The values of the row that has failed
+                $error = ErrorLog::create([
+                    'row' => $failure->row(),
+                    'attribute' => $failure->attribute(),
+                    'error_message' => json_encode($failure->errors(), JSON_FORCE_OBJECT),
+                    'value' => json_encode($failure->values(), JSON_FORCE_OBJECT),
+                ]);
+
+                $list_error->push($error);
             }
-            dd($failures);
             return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }

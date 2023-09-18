@@ -4,6 +4,7 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -14,7 +15,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -63,10 +64,10 @@ export default function PajakReklame({ sessions }) {
       sortable: true,
     },
     { name: "Keterangan", field: "note" },
-    { name: "Info Tambahan", field: "additional_info" },
     {
       name: "Action",
       field: "action",
+      className: 'text-center',
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -151,7 +152,7 @@ export default function PajakReklame({ sessions }) {
 
   return (
     <AuthenticatedLayout>
-      <Head title="Pajak Reklame Cabang" />
+      <Head title="OPS | Pajak Reklame Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
@@ -160,23 +161,8 @@ export default function PajakReklame({ sessions }) {
               className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               onClick={toggleModalImport}
             >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
                 Import Excel
               </div>
             </PrimaryButton>
@@ -209,6 +195,7 @@ export default function PajakReklame({ sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"
