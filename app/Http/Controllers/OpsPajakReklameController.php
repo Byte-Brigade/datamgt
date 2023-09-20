@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class OpsPajakReklameController extends Controller
 {
-    protected array $sortFields = ['periode_awal', 'periode_akhir'];
+    protected array $sortFields = ['ops_pajak_reklames.id', 'branches.branch_code', 'branches.branch_name', 'periode_awal', 'periode_akhir'];
 
     public function __construct(public OpsPajakReklame $ops_pajak_reklame)
     {
@@ -19,7 +19,7 @@ class OpsPajakReklameController extends Controller
 
     public function api(Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'id');
+        $sortFieldInput = $request->input('sort_field', 'ops_pajak_reklames.id');
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_pajak_reklames.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;

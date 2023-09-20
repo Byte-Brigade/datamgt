@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('ops_speciments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('branch_id')->unique();
             $table->date('tgl_speciment');
             $table->text('hasil_konfirmasi_cabang')->nullable();
             $table->text('keterangan')->nullable();

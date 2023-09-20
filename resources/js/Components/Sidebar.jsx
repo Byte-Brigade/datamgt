@@ -193,8 +193,8 @@ export default function Sidebar() {
             {/* Pajak Reklame */}
             <li>
               <NavLink
-                href={route("ops.sk-operasional")}
-                active={route().current("ops.sk-operasional")}
+                href={route("ops.pajak-reklame")}
+                active={route().current("ops.pajak-reklame")}
                 className="group"
               >
                 <svg
@@ -218,8 +218,8 @@ export default function Sidebar() {
             {/* Sk Operasional Cabang */}
             <li>
               <NavLink
-                href={route("ops.pajak-reklame")}
-                active={route().current("ops.pajak-reklame")}
+                href={route("ops.sk-operasional")}
+                active={route().current("ops.sk-operasional")}
                 className="group"
               >
                 <svg

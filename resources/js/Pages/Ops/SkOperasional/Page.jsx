@@ -27,7 +27,7 @@ export default function SkOperasional({ sessions }) {
       branch_code: null,
       branch_name: null,
     },
-    masa_berlaku: null,
+    expiry_date: null,
     note: null,
   };
   const {
@@ -48,8 +48,8 @@ export default function SkOperasional({ sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code" },
-    { name: "Branch Name", field: "branches.branch_name" },
+    { name: "Branch ID", field: "branches.branch_code", sortable: true },
+    { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa.name",
@@ -63,7 +63,6 @@ export default function SkOperasional({ sessions }) {
       field: "expiry_date",
       type: "date",
       className: "text-center",
-      sortable: true,
     },
     {
       name: "Lampiran",
@@ -316,10 +315,10 @@ export default function SkOperasional({ sessions }) {
               />
               <Input
                 label="Masa Berlaku"
-                value={data.masa_berlaku || ""}
+                value={data.expiry_date || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("masa_berlaku", e.target.value)}
+                onChange={(e) => setData("expiry_date", e.target.value)}
               />
               <Input
                 label="Keterangan"

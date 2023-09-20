@@ -16,6 +16,7 @@ import {
   IconButton,
   Input,
   Option,
+  Radio,
   Select,
   Typography,
 } from "@material-tailwind/react";
@@ -28,6 +29,7 @@ export default function Cabang({ sessions, branch_types }) {
     branch_name: null,
     address: null,
     branch_type_id: null,
+    layanan_atm: null,
   };
   const {
     data,
@@ -51,6 +53,7 @@ export default function Cabang({ sessions, branch_types }) {
     { name: "Nama Cabang", field: "branch_name", sortable: true },
     { name: "Alamat", field: "address" },
     { name: "Telp", field: "telp" },
+    { name: "Layanan ATM", field: "layanan_atm" },
     {
       name: "Action",
       field: "action",
@@ -275,6 +278,25 @@ export default function Cabang({ sessions, branch_types }) {
                 disabled={processing}
                 onChange={(e) => setData("address", e.target.value)}
               />
+              <div className="flex flex-col">
+                <span className="text-sm font-light">Layanan ATM</span>
+                <div className="flex gap-x-4">
+                  <Radio
+                    name="layanan_atm"
+                    label="24 Jam"
+                    checked={data.layanan_atm === "24-jam"}
+                    value="24-jam"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Jam Operasional"
+                    checked={data.layanan_atm === "jam-operasional"}
+                    value="jam-operasional"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
           </DialogBody>
           <DialogFooter>

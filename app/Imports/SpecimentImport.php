@@ -39,13 +39,6 @@ class SpecimentImport implements ToModel, WithHeadingRow, WithUpserts
             ]);
         }
     }
-    // public function collection(Collection $rows)
-    // {
-    //     // dd($rows);
-    //     foreach ($rows as $row) {
-    //         dd(Date::excelToDateTimeObject($rows[2]['tgl_spesimen']));
-    //     }
-    // }
 
     public function uniqueBy()
     {

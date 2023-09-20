@@ -70,6 +70,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/sk-operasional', [OpsSkOperasionalController::class, 'index'])->name('sk-operasional');
         Route::post('/sk-operasional', [OpsSkOperasionalController::class, 'import'])->name('sk-operasional.import');
         Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
+        Route::put('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'update'])->name('sk-operasional.update');
+        Route::delete('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'destroy'])->name('sk-operasional.delete');
         /* [END] Ops SK Operasional Cabang */
 
         /* [START] Ops Pajak Reklame */

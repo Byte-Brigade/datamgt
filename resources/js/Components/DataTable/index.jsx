@@ -1,11 +1,10 @@
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
-import { ArrowSmallUpIcon } from "@heroicons/react/24/solid";
-import { ArrowSmallDownIcon } from "@heroicons/react/24/outline";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -140,15 +139,24 @@ export default function DataTable({
                     >
                       <div className="flex items-center gap-x-1">
                         {column.name}
-                        {column.field === sortColumn ? (
-                          <span>
-                            {sortOrder === SORT_ASC ? (
-                              <ArrowSmallUpIcon className="w-4 h-4" />
-                            ) : (
-                              <ArrowSmallDownIcon className="w-4 h-4" />
-                            )}
-                          </span>
-                        ) : null}
+                        <span className="flex flex-col gap-y-1">
+                          <ChevronUpIcon
+                            className={`${
+                              sortOrder === SORT_ASC &&
+                              column.field === sortColumn
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
+                          />
+                          <ChevronDownIcon
+                            className={`${
+                              sortOrder === SORT_DESC &&
+                              column.field === sortColumn
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
+                          />
+                        </span>
                       </div>
                     </div>
                   ) : (
