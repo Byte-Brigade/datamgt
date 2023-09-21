@@ -23,6 +23,7 @@ class BranchResource extends JsonResource
             'branch_name' => $this->branch_name,
             'address' => $this->address,
             'telp' => $this->telp,
+            'layanan_atm' => $this->layanan_atm,
             'branch_types' => $this->branch_types
         ];
     }

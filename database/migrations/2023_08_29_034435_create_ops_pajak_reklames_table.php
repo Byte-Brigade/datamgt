@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('periode_awal')->nullable();
             $table->date('periode_akhir')->nullable();
             $table->text('note')->nullable();
-            $table->text('additional_info')->nullable();
             $table->timestamps();
 
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');

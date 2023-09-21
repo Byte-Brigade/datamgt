@@ -30,7 +30,6 @@ export default function PajakReklame({ sessions }) {
     periode_awal: null,
     periode_akhir: null,
     note: null,
-    additional_info: null,
   };
   const {
     data,
@@ -49,8 +48,8 @@ export default function PajakReklame({ sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code" },
-    { name: "Branch Name", field: "branches.branch_name" },
+    { name: "Branch ID", field: "branches.branch_code", sortable: true },
+    { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Periode Awal",
       field: "periode_awal",
@@ -67,7 +66,7 @@ export default function PajakReklame({ sessions }) {
     {
       name: "Action",
       field: "action",
-      className: 'text-center',
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -254,12 +253,6 @@ export default function PajakReklame({ sessions }) {
                 value={data.note || ""}
                 disabled={processing}
                 onChange={(e) => setData("note", e.target.value)}
-              />
-              <Input
-                label="Info Tambahan"
-                value={data.additional_info || ""}
-                disabled={processing}
-                onChange={(e) => setData("additional_info", e.target.value)}
               />
             </div>
           </DialogBody>

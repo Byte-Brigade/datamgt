@@ -34,6 +34,7 @@ class BranchController extends Controller
             $query = $query->where('branch_code', 'like', $searchQuery)
                 ->orWhere('branch_name', 'like', $searchQuery)
                 ->orWhere('address', 'like', $searchQuery)
+                ->orWhere('layanan_atm', 'like', $searchQuery)
                 ->orWhereHas('branch_types', function (Builder $q) use ($searchQuery) {
                     $q->where('type_name', 'like', $searchQuery);
                 });
@@ -79,12 +80,15 @@ class BranchController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $layanan_atm = $request->layanan_atm != '' ? $request->layanan_atm : null;
             $branch = Branch::find($id);
             $branch->update([
                 'branch_type_id' => $request->branch_type_id,
                 'branch_code' => $request->branch_code,
                 'branch_name' => $request->branch_name,
-                'address' => $request->address
+                'address' => $request->address,
+                'telp' => $request->telp,
+                'layanan_atm' => $layanan_atm,
             ]);
 
             return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);

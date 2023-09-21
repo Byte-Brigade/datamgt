@@ -23,18 +23,12 @@ class PajakReklameImport implements ToModel, WithHeadingRow, WithUpserts
         $branch_type = array_shift($branch_arr);
         $branch_type_id = BranchType::where('type_name', $branch_type)->pluck('id')->first();
         $branch = join(' ', $branch_arr);
-        $branch_id = Branch::where('branch_code', $row['kode_cab'])
-            ->orWhere(function (Builder $query) use ($branch, $branch_type_id) {
+        $branch_id = $row['kode_cab'] != null
+            ? Branch::where('branch_code', $row['kode_cab'])->pluck('id')->first()
+            : Branch::where(function (Builder $query) use ($branch, $branch_type_id) {
                 $query->where('branch_type_id', $branch_type_id)
                     ->where('branch_name', 'like', "%$branch%");
-            })
-            ->pluck('id')->first();
-
-        if ($row['kode_cab'] == null) {
-            if ($branch !== 'Kelapa Gading') {
-                dd($branch, $branch_type, $branch_id, $branch_type_id);
-            }
-        }
+            })->pluck('id')->first();
 
         return new OpsPajakReklame([
             'branch_id' => $branch_id,

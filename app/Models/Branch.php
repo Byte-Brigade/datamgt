@@ -18,7 +18,8 @@ class Branch extends Model
         'branch_code',
         'branch_name',
         'address',
-        'telp'
+        'telp',
+        'layanan_atm'
     ];
 
     public function branch_types()
@@ -34,14 +35,5 @@ class Branch extends Model
     public function ops_pajak_reklames()
     {
         return $this->hasOne(OpsPajakReklame::class, 'branch_id');
-    }
-
-    public function toSearchableArray()
-    {
-        return [
-            'branch_code' => $this->branch_code,
-            'branch_name' => $this->branch_name,
-            'address' => $this->address
-        ];
     }
 }

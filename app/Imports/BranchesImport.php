@@ -23,12 +23,14 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             $branch_type = BranchType::where('type_name', $type_name)->pluck('id')->first();
         }
         $branch_name = join(' ', $branch_name_arr);
+
         return new Branch([
             'branch_type_id' => $branch_type,
             'branch_code' => $row['kode_cabang'],
             'branch_name' => $branch_name,
             'address' => $row['alamat'],
-            'telp' => $row['telp']
+            'telp' => $row['telp'],
+            'layanan_atm' => $row['layanan_atm'],
         ]);
     }
 
