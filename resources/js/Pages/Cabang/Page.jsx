@@ -278,21 +278,36 @@ export default function Cabang({ sessions, branch_types }) {
                 disabled={processing}
                 onChange={(e) => setData("address", e.target.value)}
               />
+              <Input
+                label="Telp"
+                value={data.telp}
+                disabled={processing}
+                onChange={(e) => setData("telp", e.target.value)}
+              />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Layanan ATM</span>
                 <div className="flex gap-x-4">
                   <Radio
                     name="layanan_atm"
                     label="24 Jam"
-                    checked={data.layanan_atm === "24-jam"}
-                    value="24-jam"
+                    checked={data.layanan_atm === "24 Jam"}
+                    value="24 Jam"
                     onChange={(e) => setData("layanan_atm", e.target.value)}
                   />
                   <Radio
                     name="layanan_atm"
                     label="Jam Operasional"
-                    checked={data.layanan_atm === "jam-operasional"}
-                    value="jam-operasional"
+                    checked={data.layanan_atm === "Jam Operasional"}
+                    value="Jam Operasional"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Tidak Ada"
+                    checked={
+                      data.layanan_atm === null || data.layanan_atm === ""
+                    }
+                    value=""
                     onChange={(e) => setData("layanan_atm", e.target.value)}
                   />
                 </div>
