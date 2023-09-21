@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSpecimentController;
@@ -82,6 +83,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/speciment/{id}', [OpsSpecimentController::class, 'update'])->name('speciment.update');
         Route::delete('/speciment/{id}', [OpsSpecimentController::class, 'destroy'])->name('speciment.delete');
         /* [END] Ops Speciment */
+
+
+        /* [START] Ops APAR */
+        Route::get('/apar', [OpsAparController::class, 'index'])->name('apar');
+        Route::post('/apar', [OpsAparController::class, 'import'])->name('apar.import');
+        Route::put('/apar/{id}', [OpsAparController::class, 'update'])->name('apar.update');
+        Route::delete('/apar/{id}', [OpsAparController::class, 'destroy'])->name('apar.delete');
+        /* [END] Ops APAR */
     });
 });
 
