@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AparResource;
 use App\Imports\AparImport;
 use App\Models\OpsApar;
+use App\Models\OpsAparDetail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -32,9 +33,17 @@ class OpsAparController extends Controller
         return AparResource::collection($employees);
     }
 
-    public function index(Request $request)
+    public function index()
     {
         return Inertia::render('Ops/APAR/Page');
+    }
+
+    public function detail($id)
+    {
+        $ops_apar = OpsApar::with(['branches', 'detail'])->find($id);
+        return Inertia::render('Ops/APAR/Detail', [
+            'ops_apar' => $ops_apar
+        ]);
     }
 
     public function import(Request $request)

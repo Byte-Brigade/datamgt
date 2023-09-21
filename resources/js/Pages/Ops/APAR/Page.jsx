@@ -18,7 +18,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function apar({ sessions }) {
+export default function Apar({ sessions }) {
   const initialData = {
     branch: 0,
     branches: {
@@ -57,18 +57,22 @@ export default function apar({ sessions }) {
     {
       name: "Action",
       field: "action",
+      className: "text-center",
       render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
+        // <DropdownMenu
+        //   placement="left-start"
+        //   onEditClick={() => {
+        //     toggleModalEdit();
+        //     setData(data);
+        //   }}
+        //   onDeleteClick={() => {
+        //     toggleModalDelete();
+        //     setData(data);
+        //   }}
+        // />
+        <Button variant="outlined" onClick={() => console.log(data.id)}>
+          Detail
+        </Button>
       ),
     },
   ];
