@@ -37,3 +37,4 @@ class OpsSkOperasional extends Model
         return $this->belongsToMany(Employee::class, 'sk_operasional_has_penerima_kuasa', 'ops_sk_operasional_id', 'employee_id');
     }
 }
+

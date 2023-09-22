@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Exports\SpecimentsExport;
 use App\Http\Resources\SpecimentResource;
 use App\Imports\SpecimentImport;
 use App\Models\OpsSpeciment;
@@ -55,6 +55,12 @@ class OpsSpecimentController extends Controller
             dd($failures);
             return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_Speciment_' . date('d-m-y') . '.xlsx';
+        return (new SpecimentsExport)->download($fileName);
     }
 
     public function update(Request $request, $id)

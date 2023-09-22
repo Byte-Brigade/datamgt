@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/speciment', [OpsSpecimentController::class, 'import'])->name('speciment.import');
         Route::put('/speciment/{id}', [OpsSpecimentController::class, 'update'])->name('speciment.update');
         Route::delete('/speciment/{id}', [OpsSpecimentController::class, 'destroy'])->name('speciment.delete');
+        Route::get('/speciment/export', [OpsSpecimentController::class, 'export'])->name('speciment.export');
         /* [END] Ops Speciment */
 
 
