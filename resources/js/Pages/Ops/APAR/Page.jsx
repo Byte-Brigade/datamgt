@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -19,6 +19,10 @@ import {
 import { useState } from "react";
 
 export default function Apar({ sessions }) {
+
+
+
+
   const initialData = {
     branch: 0,
     branches: {
@@ -37,6 +41,8 @@ export default function Apar({ sessions }) {
     processing,
     errors,
   } = useForm(initialData);
+
+
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
@@ -70,9 +76,9 @@ export default function Apar({ sessions }) {
         //     setData(data);
         //   }}
         // />
-        <Button variant="outlined" onClick={() => console.log(data.id)}>
-          Detail
-        </Button>
+        <Link href={route('ops.apar.detail', data.branches.branch_code)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
       ),
     },
   ];

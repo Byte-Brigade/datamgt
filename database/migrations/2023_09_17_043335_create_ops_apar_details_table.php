@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('ops_apar_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('ops_apar_id');
-            $table->string('titik_posisi')->nullable();
-            $table->string('expired_date')->nullable();
+            $table->string('titik_posisi');
+            $table->date('expired_date');
             $table->foreign('ops_apar_id')->references('id')->on('ops_apars')->onDelete('cascade');
             $table->timestamps();
         });
