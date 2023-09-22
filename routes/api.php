@@ -32,3 +32,4 @@ Route::get('/ops/sk-operasional', [OpsSkOperasionalController::class, 'api']);
 Route::get('/ops/pajak-reklame', [OpsPajakReklameController::class, 'api']);
 Route::get('/ops/speciment', [OpsSpecimentController::class, 'api']);
 Route::get('/ops/apar', [OpsAparController::class, 'api']);
+Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);

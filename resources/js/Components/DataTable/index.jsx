@@ -13,6 +13,7 @@ export default function DataTable({
   columns = { name: "", value: "", field: "", type: "", render: (any) => any },
   fetchUrl,
   refreshUrl = false,
+  dataArr,
 }) {
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(10);
@@ -57,11 +58,20 @@ export default function DataTable({
       search,
     };
 
-    const { data } = await axios.get(fetchUrl, { params });
-    console.log(data);
-    setData(data.data);
-    setPagination(data.meta);
-    setLoading(false);
+    if (fetchUrl) {
+      const { data } = await axios.get(fetchUrl, { params });
+      console.log(data);
+      setData(data.data);
+      setPagination(data.meta);
+      setLoading(false);
+    }
+
+    if (dataArr) {
+      console.log(dataArr)
+      setData(dataArr)
+      setLoading(false)
+    }
+
   };
 
   useEffect(() => {
@@ -191,7 +201,7 @@ export default function DataTable({
                   key={index}
                   className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
                 >
-                  <td className="text-center">{pagination.from + index}</td>
+                  <td className="text-center">{Object.keys(pagination).length === 0 ? index + 1: pagination.from + index}</td>
                   {columns.map((column, id) =>
                     column.field ? (
                       column.field === "action" ? (

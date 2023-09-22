@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AparResource;
+use App\Http\Resources\AparDetailResource;
 use App\Imports\AparImport;
 use App\Models\OpsApar;
 use App\Models\OpsAparDetail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
+use Throwable;
 
 class OpsAparController extends Controller
 {
@@ -23,6 +25,7 @@ class OpsAparController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $this->ops_apar->orderBy($sortField, $sortOrder);
+
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
@@ -33,18 +36,40 @@ class OpsAparController extends Controller
         return AparResource::collection($employees);
     }
 
+    public function api_detail(OpsAparDetail $ops_apar_detail, Request $request, $id)
+    {
+        $sortField = 'id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $ops_apar_detail->where('ops_apar_id', $id)->orderBy($sortField, $sortOrder);
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('expired_date', 'like', $searchQuery);
+        }
+        $employees = $query->paginate($perpage);
+        return AparDetailResource::collection($employees);
+    }
+
+
+
     public function index()
     {
         return Inertia::render('Ops/APAR/Page');
     }
 
-    public function detail($id)
+    public function detail($branch_code)
     {
-        $ops_apar = OpsApar::with(['branches', 'detail'])->find($id);
+        $ops_apar = OpsApar::whereHas('branches', function($query) use($branch_code) {
+            $query->where('branch_code', $branch_code);
+        })->get()->first();
         return Inertia::render('Ops/APAR/Detail', [
-            'ops_apar' => $ops_apar
+            'ops_apar_id' => $ops_apar->id
         ]);
     }
+
 
     public function import(Request $request)
     {
@@ -52,16 +77,9 @@ class OpsAparController extends Controller
             (new AparImport)->import($request->file('file')->store('temp'));
 
             return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Success']);
-        } catch (ValidationException $e) {
-            $failures = $e->failures();
+        } catch (Throwable $e) {
 
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
-            }
-            dd($failures);
+            dd($e);
             return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
@@ -81,11 +99,35 @@ class OpsAparController extends Controller
         }
     }
 
+
+    public function update_detail(Request $request, $id)
+    {
+        try {
+            $apar = OpsAparDetail::find($id);
+            $apar->update([
+                'titik_posisi' => $request->titik_posisi,
+                'expired_date' => $request->expired_date,
+            ]);
+
+            return redirect(route('ops.apar.detail', $id))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.apar.detail', $id))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
     public function destroy($id)
     {
         $apar = OpsApar::find($id);
         $apar->delete();
 
         return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+    }
+
+    public function destroy_detail($id)
+    {
+        $apar_detail = OpsAparDetail::find($id);
+        $apar_detail->delete();
+
+        return redirect(route('ops.apar.detail', $id))->wiith(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

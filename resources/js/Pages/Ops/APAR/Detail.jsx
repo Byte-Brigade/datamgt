@@ -1,11 +1,102 @@
 import Alert from "@/Components/Alert";
-import PrimaryButton from "@/Components/PrimaryButton";
+import DropdownMenu from "@/Components/DropdownMenu";
+import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import React from "react";
+import DataTable from "@/Components/DataTable";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, useForm } from "@inertiajs/react";
+import React, { useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  IconButton,
+  Input,
+  Typography,
+} from "@material-tailwind/react";
 
-export default function Detail({ sessions, ops_apar }) {
-  console.log({ ops_apar });
+export default function Detail({ sessions, ops_apar_id }) {
+  const initialData = {
+    titik_posisi: null,
+    expired_date: null,
+    id: null,
+  };
+
+
+  const {
+    data,
+    setData,
+    post,
+    put,
+    delete: destroy,
+    processing,
+    errors,
+  } = useForm(initialData);
+
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+  const [isRefreshed, setIsRefreshed] = useState(false);
+
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    put(route("ops.apar.detail.update", data.id), {
+      method: "put",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalEditOpen(!isModalEditOpen);
+      },
+    });
+  };
+
+  const handleSubmitDelete = (e) => {
+    e.preventDefault();
+    destroy(route("ops.apar.detail.delete", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalDeleteOpen(!isModalDeleteOpen);
+      },
+    });
+  };
+
+  const toggleModalEdit = () => {
+    setIsModalEditOpen(!isModalEditOpen);
+  };
+
+  const toggleModalDelete = () => {
+    setIsModalDeleteOpen(!isModalDeleteOpen);
+  };
+
+  const columns = [
+    { name: "Titik Posisi", field: "titik_posisi", sortable: true },
+    { name: "Expired Date", field: "expired_date", sortable: true },
+    {
+      name: "Action",
+      field: "action",
+      className: 'text-center',
+      render: (data) => (
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
+      ),
+    },
+
+  ];
+
+
+
   return (
     <AuthenticatedLayout>
       <Head title="Apar" />
@@ -13,11 +104,11 @@ export default function Detail({ sessions, ops_apar }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4"></div>
-          {/* <DataTable
+          <DataTable
             columns={columns}
-            fetchUrl={"/api/ops/apar"}
+            fetchUrl={`/api/ops/apar/detail/${ops_apar_id}`}
             refreshUrl={isRefreshed}
-          /> */}
+          />
         </div>
       </div>
       {/* Modal Import */}
@@ -61,7 +152,7 @@ export default function Detail({ sessions, ops_apar }) {
         </form>
       </Dialog> */}
       {/* Modal Edit */}
-      {/* <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
+      <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
           Ubah Data
           <IconButton
@@ -78,17 +169,18 @@ export default function Detail({ sessions, ops_apar }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Titik Posisi"
+                value={data.titik_posisi || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("expired_date", e.target.value)}
+
+                onChange={(e) => setData("titik_posisi", e.target.value)}
               />
               <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
+                label="Jangka Waktu (Expired Date)"
+                value={data.expired_date || ""}
+                // type="date"
                 disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
+                onChange={(e) => setData("expired_date", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -103,9 +195,9 @@ export default function Detail({ sessions, ops_apar }) {
             </div>
           </DialogFooter>
         </form>
-      </Dialog> */}
+      </Dialog>
       {/* Modal Delete */}
-      {/* <Dialog open={isModalDeleteOpen} handler={toggleModalDelete} size="md">
+      <Dialog open={isModalDeleteOpen} handler={toggleModalDelete} size="md">
         <DialogHeader className="flex items-center justify-between">
           Hapus Data
           <IconButton
@@ -122,7 +214,7 @@ export default function Detail({ sessions, ops_apar }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.titik_posisi} - {data.expired_date}
             </span>{" "}
             ?
           </Typography>
@@ -140,7 +232,7 @@ export default function Detail({ sessions, ops_apar }) {
             </SecondaryButton>
           </form>
         </DialogFooter>
-      </Dialog> */}
+      </Dialog>
     </AuthenticatedLayout>
   );
 }

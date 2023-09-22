@@ -92,11 +92,16 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Ops APAR */
         Route::get('/apar', [OpsAparController::class, 'index'])->name('apar');
-        Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
         Route::post('/apar', [OpsAparController::class, 'import'])->name('apar.import');
         Route::put('/apar/{id}', [OpsAparController::class, 'update'])->name('apar.update');
         Route::delete('/apar/{id}', [OpsAparController::class, 'destroy'])->name('apar.delete');
+
+        Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
+        Route::put('/apar/detail/{id}', [OpsAparController::class, 'update_detail'])->name('apar.detail.update');
+        Route::delete('/apar/detail/{id}', [OpsAparController::class, 'destroy_detail'])->name('apar.detail.delete');
         /* [END] Ops APAR */
+
+
     });
 });
 
