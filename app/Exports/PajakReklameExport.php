@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\Models\OpsSkbirtgs;
+use App\Models\OpsPajakReklame;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class SkBirtgsExport implements FromView
+class PajakReklameExport implements FromView
 {
     use Exportable;
 
@@ -21,7 +21,7 @@ class SkBirtgsExport implements FromView
     public function view(): View
     {
         $branch_id = $this->branch_id;
-        $data = OpsSkbirtgs::with(['branches', 'penerima_kuasa'])->newQuery();
+        $data = OpsPajakReklame::with('branches')->newQuery();
         if (isset($branch_id) && $branch_id != '0') {
             $data = $data->whereHas('branches', function ($query) use ($branch_id) {
                 $query->where('id', $branch_id);
@@ -29,8 +29,9 @@ class SkBirtgsExport implements FromView
         }
 
         $data = $data->get();
-        return view('exports.skbirtgs', [
-            'ops_skbirtgs' => $data
+
+        return view('exports.pajakreklames', [
+            'pajakreklames' => $data
         ]);
     }
 }

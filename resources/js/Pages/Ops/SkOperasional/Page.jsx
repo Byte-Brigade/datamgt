@@ -16,10 +16,13 @@ import {
   IconButton,
   Input,
   Typography,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { useState } from "react";
+import Modal from "@/Components/Reports/Modal";
 
-export default function SkOperasional({ sessions }) {
+export default function SkOperasional({ branches, sessions }) {
   const initialData = {
     file: null,
     branch: 0,
@@ -52,10 +55,7 @@ export default function SkOperasional({ sessions }) {
     { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Penerima Kuasa",
-      field: "penerima_kuasa.name",
-      type: "custom",
-      render: (data) =>
-        data.penerima_kuasa.map((employee) => employee.name).join(" - ") || "-",
+      field: "penerima_kuasa",
     },
     { name: "Nomor Surat", field: "no_surat" },
     {
@@ -125,6 +125,12 @@ export default function SkOperasional({ sessions }) {
         setIsModalImportOpen(!isModalImportOpen);
       },
     });
+  };
+
+  const handleSubmitExport = (e) => {
+    const { branch } = data;
+    e.preventDefault();
+    window.open(route("ops.sk-operasional.export") + `?branch=${branch}`, "_self");
   };
 
   const handleSubmitUpload = (e) => {
@@ -290,6 +296,30 @@ export default function SkOperasional({ sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">

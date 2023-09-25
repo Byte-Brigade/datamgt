@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AparExport;
 use App\Http\Resources\AparResource;
 use App\Http\Resources\AparDetailResource;
 use App\Imports\AparImport;
+use App\Models\Branch;
 use App\Models\OpsApar;
 use App\Models\OpsAparDetail;
 use Illuminate\Http\Request;
@@ -57,7 +59,8 @@ class OpsAparController extends Controller
 
     public function index()
     {
-        return Inertia::render('Ops/APAR/Page');
+        $branchesProps = Branch::get();
+        return Inertia::render('Ops/APAR/Page', ['branches' => $branchesProps]);
     }
 
     public function detail($branch_code)
@@ -79,9 +82,16 @@ class OpsAparController extends Controller
             return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Success']);
         } catch (Throwable $e) {
 
-            dd($e);
-            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+
+            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'Data_APAR_' . date('d-m-y') . '.xlsx';
+
+        return (new AparExport($request->branch))->download($fileName);
     }
 
     public function update(Request $request, $id)

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PajakReklameExport;
 use App\Http\Resources\PajakReklameResource;
 use App\Imports\PajakReklameImport;
+use App\Models\Branch;
 use App\Models\OpsPajakReklame;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -40,7 +42,8 @@ class OpsPajakReklameController extends Controller
 
     public function index(Request $request)
     {
-        return Inertia::render('Ops/PajakReklame/Page');
+        $branchesProps = Branch::get();
+        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branchesProps]);
     }
 
     public function import(Request $request)
@@ -61,6 +64,13 @@ class OpsPajakReklameController extends Controller
             dd($failures);
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'Data_Pajak_Reklame_' . date('d-m-y') . '.xlsx';
+
+        return (new PajakReklameExport($request->branch))->download($fileName);
     }
 
     public function update(Request $request, $id)

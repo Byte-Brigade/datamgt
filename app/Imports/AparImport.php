@@ -20,30 +20,10 @@ use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Row;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class AparImport implements ToCollection, WithHeadingRow, WithUpserts, OnEachRow
+class AparImport implements ToCollection, WithHeadingRow, WithUpserts
 {
     use Importable;
-    // public function model(array $row)
-    // {
-    //     if (isset($row['tgl_spesimen'])) {
 
-
-    //         $branch = explode(' ', $row['cabang']);
-    //         array_shift($branch);
-
-    //         $branch = implode(' ', $branch);
-    //         $id = Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first();
-
-
-    //         return new OpsSpeciment([
-    //             'branch_id' => Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first(),
-    //             'tgl_speciment' =>  Date::excelToDateTimeObject($row['tgl_spesimen']),
-    //             'hasil_konfirmasi_cabang' => isset($row['hasil_konfirmasi_cabang'])  ? $row['hasil_konfirmasi_cabang'] : null,
-    //             'keterangan' => isset($row['keterangan']) ? $row['keterangan'] : null,
-
-    //         ]);
-    //     }
-    // }
     public function collection(Collection $rows)
     {
 
@@ -91,7 +71,7 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts, OnEachRow
 
                     }
                         catch(Throwable $th) {
-                            throw new Exception("Data must be date format at " .$num + 1 ." row and apar ".$number);
+                            throw new Exception("Format expired_date harus berupa date pada baris ke-" .$num + 1 ." dan apar ke-".$number);
                            }
 
                         }
@@ -111,15 +91,6 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts, OnEachRow
         return 'branch_id';
     }
 
-    public function onRow(Row $row)
-    {
-        dd($row);
-    }
-
-    // public function startRow(): int
-    // {
-    //     return 6;
-    // }
 
 
 
