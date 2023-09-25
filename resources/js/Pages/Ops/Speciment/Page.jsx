@@ -87,6 +87,11 @@ export default function Speciment({ sessions }) {
     });
   };
 
+  const handleSubmitExport = (e) => {
+    e.preventDefault();
+    window.open(route("ops.speciment.export"), "_self");
+  };
+
   const handleSubmitEdit = (e) => {
     e.preventDefault();
     put(route("ops.speciment.update", data.id), {
@@ -223,6 +228,40 @@ export default function Speciment({ sessions }) {
             </div>
           </DialogFooter>
         </form>
+      </Dialog>
+      {/* Modal Export */}
+      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Create Report
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalExport}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <div className="flex flex-col gap-y-4">
+            <Typography>Buat Report Data Cabang?</Typography>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-row-reverse gap-x-4">
+            <Button
+              onClick={handleSubmitExport}
+              disabled={processing}
+              type="submit"
+            >
+              Buat
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalImport}>
+              Tutup
+            </SecondaryButton>
+          </div>
+        </DialogFooter>
       </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
