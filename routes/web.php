@@ -8,6 +8,7 @@ use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
 use App\Http\Controllers\ProfileController;
+use App\Models\OpsPajakReklame;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,14 +24,11 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+        ->name('login');
 });
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -73,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
         Route::put('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'update'])->name('sk-operasional.update');
         Route::delete('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'destroy'])->name('sk-operasional.delete');
+        Route::get('/sk-operasional/export', [OpsSkOperasionalController::class, 'export'])->name('sk-operasional.export');
         /* [END] Ops SK Operasional Cabang */
 
         /* [START] Ops Pajak Reklame */
@@ -80,6 +79,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
         Route::put('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'update'])->name('pajak-reklame.update');
         Route::delete('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'destroy'])->name('pajak-reklame.delete');
+        Route::get('/pajak-reklame/export', [OpsPajakReklameController::class, 'export'])->name('pajak-reklame.export');
         /* [END] Ops Pajak Reklame */
 
         /* [START] Ops Speciment */
@@ -100,9 +100,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
         Route::put('/apar/detail/{id}', [OpsAparController::class, 'update_detail'])->name('apar.detail.update');
         Route::delete('/apar/detail/{id}', [OpsAparController::class, 'destroy_detail'])->name('apar.detail.delete');
+        Route::get('/apar/export', [OpsAparController::class, 'export'])->name('apar.export');
+
         /* [END] Ops APAR */
-
-
     });
 });
 

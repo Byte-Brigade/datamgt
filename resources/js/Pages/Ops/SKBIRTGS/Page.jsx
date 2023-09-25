@@ -2,6 +2,7 @@ import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
@@ -23,9 +24,10 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function SKBIRTGS({ sessions }) {
+export default function SKBIRTGS({ branches, sessions }) {
   const initialData = {
     no_surat: null,
+    branch: 0,
     branches: {
       branch_name: null,
     },
@@ -52,13 +54,7 @@ export default function SKBIRTGS({ sessions }) {
   const columns = [
     { name: "Nomor Surat", field: "no_surat" },
     { name: "Kantor Cabang", field: "branches.branch_name" },
-    {
-      name: "Penerima Kuasa",
-      field: "penerima_kuasa.name",
-      type: "custom",
-      render: (data) =>
-        data.penerima_kuasa.map((employee) => employee.name).join(" - ") || "-",
-    },
+    { name: "Penerima Kuasa", field: "penerima_kuasa"},
     {
       name: "Lampiran",
       field: "file",
@@ -123,6 +119,12 @@ export default function SKBIRTGS({ sessions }) {
         setIsModalImportOpen(!isModalImportOpen);
       },
     });
+  };
+
+  const handleSubmitExport = (e) => {
+    const { branch } = data;
+    e.preventDefault();
+    window.open(route("ops.skbirtgs.export") + `?branch=${branch}`, "_self");
   };
 
   const handleSubmitUpload = (e) => {
@@ -296,6 +298,30 @@ export default function SKBIRTGS({ sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">

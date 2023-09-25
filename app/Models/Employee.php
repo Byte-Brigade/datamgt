@@ -39,7 +39,7 @@ class Employee extends Model
 
     public function getPosition()
     {
-        return $this->positions->position_name;
+        return $this->employee_positions->position_name;
     }
 
     public function ops_skbirtgs()

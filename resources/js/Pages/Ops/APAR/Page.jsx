@@ -2,6 +2,7 @@ import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { XMarkIcon } from "@heroicons/react/24/solid";
@@ -18,7 +19,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Apar({ sessions }) {
+export default function Apar({ branches, sessions }) {
 
 
 
@@ -92,6 +93,13 @@ export default function Apar({ sessions }) {
         setIsModalImportOpen(!isModalImportOpen);
       },
     });
+  };
+
+  const handleSubmitExport = (e) => {
+    const { branch } = data;
+    e.preventDefault();
+    window.open(route("ops.apar.export") + `?branch=${branch}`, "_self");
+    setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
@@ -231,6 +239,30 @@ export default function Apar({ sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">

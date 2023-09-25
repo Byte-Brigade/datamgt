@@ -15,7 +15,9 @@ class SkOperasionalResource extends JsonResource
             'expiry_date' => $this->expiry_date,
             'note' => $this->note,
             'file' => $this->file,
-            'penerima_kuasa' => $this->penerima_kuasa,
+            'penerima_kuasa' => implode(' - ', $this->penerima_kuasa()->get()->map(function($employee) {
+                return !is_null($employee->getPosition()) ? '['.$employee->getPosition().'] '.$employee->name : $employee->name;
+            })->toArray()),
             'branches' => $this->branches
         ];
     }

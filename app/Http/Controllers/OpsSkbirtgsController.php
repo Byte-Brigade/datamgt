@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SkBirtgsExport;
 use App\Http\Resources\SkbirtgsResource;
 use App\Imports\SkBirtgsImport;
+use App\Models\Branch;
 use App\Models\ErrorLog;
 use App\Models\OpsSkbirtgs;
 use Exception;
@@ -37,7 +39,8 @@ class OpsSkbirtgsController extends Controller
 
     public function index()
     {
-        return Inertia::render('Ops/SKBIRTGS/Page');
+        $branchesProps = Branch::get();
+        return Inertia::render('Ops/SKBIRTGS/Page', ['branches' => $branchesProps]);
     }
 
     public function import(Request $request)
@@ -111,7 +114,10 @@ class OpsSkbirtgsController extends Controller
         }
     }
 
-    public function export(Request $request, $id)
+    public function export(Request $request)
     {
+        $fileName = 'Data_SK_BI_RTGS_' . date('d-m-y') . '.xlsx';
+
+        return (new SkBirtgsExport($request->branch))->download($fileName);
     }
 }

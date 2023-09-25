@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SkOperasionalExport;
 use Exception;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\OpsSkOperasional;
 use App\Imports\SkOperasionalsImport;
 use App\Http\Resources\SkOperasionalResource;
+use App\Models\Branch;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class OpsSkOperasionalController extends Controller
@@ -40,7 +42,11 @@ class OpsSkOperasionalController extends Controller
 
     public function index()
     {
-        return Inertia::render('Ops/SkOperasional/Page');
+
+        $branchesProps = Branch::get();
+
+
+        return Inertia::render('Ops/SkOperasional/Page', ['branches' => $branchesProps]);
     }
 
     public function import(Request $request)
@@ -69,6 +75,12 @@ class OpsSkOperasionalController extends Controller
             // }
             return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'Data_SK_Operasional_' . date('d-m-y') . '.xlsx';
+        return (new SkOperasionalExport($request->branch))->download($fileName);
     }
 
     public function upload(Request $request, $id)
