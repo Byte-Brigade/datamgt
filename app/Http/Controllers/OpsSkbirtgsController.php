@@ -24,10 +24,17 @@ class OpsSkbirtgsController extends Controller
         $sortField = 'ops_skbirtgs.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
+        $filters = $request->filters;
+
+
         $query = $this->ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
+        if(isset($filters)) {
 
+
+            $query->select($filters);
+        }
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('no_surat', 'like', $searchQuery)

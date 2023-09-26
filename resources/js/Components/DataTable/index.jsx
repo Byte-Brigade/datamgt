@@ -5,6 +5,19 @@ import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
+import {
+  IconButton,
+  Collapse,
+  Card,
+  CardBody,
+  Typography,
+  Select,
+  Option,
+  Checkbox,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
+} from "@material-tailwind/react";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -22,8 +35,13 @@ export default function DataTable({
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = () => setOpen((cur) => !cur);
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -43,6 +61,15 @@ export default function DataTable({
     }, 500)
   ).current;
 
+  const handleCheckbox = (filter) => {
+    console.log(filters);
+    setFilters((prevFilter) =>
+      prevFilter.includes(filter)
+        ? prevFilter.filter((c) => c !== filter)
+        : [...prevFilter, filter]
+    );
+  };
+
   const handlePerPage = (perPage) => {
     setCurrentPage(1);
     setPerPage(perPage);
@@ -56,6 +83,7 @@ export default function DataTable({
       sort_field: sortColumn,
       sort_order: sortOrder,
       search,
+      filters,
     };
 
     if (fetchUrl) {
@@ -67,16 +95,23 @@ export default function DataTable({
     }
 
     if (dataArr) {
-      console.log(dataArr)
-      setData(dataArr)
-      setLoading(false)
+      console.log(dataArr);
+      setData(dataArr);
+      setLoading(false);
     }
-
   };
 
   useEffect(() => {
     fetchData();
-  }, [perPage, sortColumn, sortOrder, search, currentPage, refreshUrl]);
+  }, [
+    perPage,
+    sortColumn,
+    sortOrder,
+    search,
+    currentPage,
+    refreshUrl,
+    filters,
+  ]);
 
   const getNestedValue = (obj, field) => {
     const keys = field.split(".");
@@ -124,7 +159,7 @@ export default function DataTable({
           </select>
           entries
         </div>
-        <div>
+        <div className="flex gap-2">
           <div className="flex items-center gap-2">
             <InputLabel htmlFor="search">Search : </InputLabel>
             <TextInput
@@ -133,47 +168,135 @@ export default function DataTable({
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
+
+          <IconButton onClick={toggleOpen}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+              />
+            </svg>
+          </IconButton>
         </div>
+      </div>
+      <div>
+        <Collapse open={open}>
+          <div className="flex flex-col my-4 mx-auto w-full">
+            <span className="ml-3">category</span>
+
+            <div className="flex flex-wrap">
+              {columns.map((column, i) => {
+                if (column.name !== "Action") {
+                  return (
+                    <Checkbox
+                      label={column.name}
+                      key={column.field}
+                      checked={filters.includes(column.field)}
+                      value={column.field}
+                      onChange={(e) => handleCheckbox(e.target.value)}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </div>
+        </Collapse>
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
         <table className="w-full text-sm">
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
-              {columns.map((column, i) => (
-                <th key={column.name}>
-                  {column.sortable === true ? (
-                    <div
-                      className="cursor-pointer hover:underline"
-                      onClick={(e) => handleSort(column.field)}
-                    >
-                      <div className="flex items-center gap-x-1">
-                        {column.name}
-                        <span className="flex flex-col gap-y-1">
-                          <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                          <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>{column.name}</div>
-                  )}
-                </th>
-              ))}
+              {columns
+                .filter((column) =>
+                  filters.length > 0 ? filters.includes(column.field) : true
+                )
+                .map((column, i) => (
+                  <Popover placement="bottom">
+                    <PopoverHandler>
+                      <th key={column.name}>
+                        {column.sortable === true ? (
+                          <div
+                            className="cursor-pointer hover:underline"
+                            onClick={(e) => handleSort(column.field)}
+                          >
+                            <div className="flex items-center gap-x-1">
+                              {column.name}
+                              <span className="flex flex-col gap-y-1">
+                                <ChevronUpIcon
+                                  className={`${
+                                    sortOrder === SORT_ASC &&
+                                    column.field === sortColumn
+                                      ? "text-slate-900"
+                                      : "text-gray-400"
+                                  } w-3 h-3`}
+                                />
+                                <ChevronDownIcon
+                                  className={`${
+                                    sortOrder === SORT_DESC &&
+                                    column.field === sortColumn
+                                      ? "text-slate-900"
+                                      : "text-gray-400"
+                                  } w-3 h-3`}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div>{column.name}</div>
+                        )}
+                      </th>
+                    </PopoverHandler>
+
+                    <PopoverContent className="flex flex-col">
+                      {data.map((data) =>
+                        column.field ? (
+                          column.field === "action" ? (
+                            <td key={column.field} className={column.className}>
+                              {column.render(data)}
+                            </td>
+                          ) : (
+                            <Checkbox
+                              label={
+                                column.type === "date"
+                                  ? convertDate(
+                                      getNestedValue(data, column.field)
+                                    )
+                                  : column.type === "custom"
+                                  ? column.render(data)
+                                  : getNestedValue(data, column.field) || "-"
+                              }
+                              key={column.field}
+                              className={column.className}
+                              value={
+                                column.type === "date"
+                                  ? convertDate(
+                                      getNestedValue(data, column.field)
+                                    )
+                                  : column.type === "custom"
+                                  ? column.render(data)
+                                  : getNestedValue(data, column.field) || "-"
+                              }
+
+                            />
+                          )
+                        ) : (
+                          <td key={id} className={column.className}>
+                            {column.value || "-"}
+                          </td>
+                        )
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -201,28 +324,36 @@ export default function DataTable({
                   key={index}
                   className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
                 >
-                  <td className="text-center">{Object.keys(pagination).length === 0 ? index + 1: pagination.from + index}</td>
-                  {columns.map((column, id) =>
-                    column.field ? (
-                      column.field === "action" ? (
-                        <td key={column.field} className={column.className}>
-                          {column.render(data)}
-                        </td>
+                  <td className="text-center">
+                    {Object.keys(pagination).length === 0
+                      ? index + 1
+                      : pagination.from + index}
+                  </td>
+                  {columns
+                    .filter((column) =>
+                      filters.length > 0 ? filters.includes(column.field) : true
+                    )
+                    .map((column, id) =>
+                      column.field ? (
+                        column.field === "action" ? (
+                          <td key={column.field} className={column.className}>
+                            {column.render(data)}
+                          </td>
+                        ) : (
+                          <td key={column.field} className={column.className}>
+                            {column.type === "date"
+                              ? convertDate(getNestedValue(data, column.field))
+                              : column.type === "custom"
+                              ? column.render(data)
+                              : getNestedValue(data, column.field) || "-"}
+                          </td>
+                        )
                       ) : (
-                        <td key={column.field} className={column.className}>
-                          {column.type === "date"
-                            ? convertDate(getNestedValue(data, column.field))
-                            : column.type === "custom"
-                            ? column.render(data)
-                            : getNestedValue(data, column.field) || "-"}
+                        <td key={id} className={column.className}>
+                          {column.value || "-"}
                         </td>
                       )
-                    ) : (
-                      <td key={id} className={column.className}>
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )}
+                    )}
                 </tr>
               ))
             )}
