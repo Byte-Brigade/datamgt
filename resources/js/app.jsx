@@ -19,9 +19,36 @@ createInertiaApp({
     ),
   setup({ el, App, props }) {
     const root = createRoot(el);
+    const theme = {
+      drawer: {
+        defaultProps: {
+          overlay: false,
+          placement: "left",
+          overlayProps: undefined,
+          className: "",
+          dismiss: undefined,
+          onClose: undefined,
+          transition: {
+            type: "tween",
+            duration: 0.3,
+          },
+        },
+        styles: {
+          base: {
+            drawer: {
+              position: "fixed",
+              zIndex: "z-[9999]",
+              pointerEvents: "pointer-events-auto",
+              backgroundColor: "bg-white",
+              width: "w-64",
+            },
 
+          },
+        },
+      },
+    };
     root.render(
-      <ThemeProvider>
+      <ThemeProvider value={theme}>
         <App {...props} />
       </ThemeProvider>
     );

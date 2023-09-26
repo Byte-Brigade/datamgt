@@ -1,6 +1,7 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
+import Filter from "@/Components/Filter";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -46,7 +47,7 @@ export default function Cabang({ sessions, branch_types }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const columns = [
     { name: "Kode Cabang", field: "branch_code", sortable: true },
     { name: "Tipe Cabang", field: "branch_types.type_name", sortable: true },
@@ -131,6 +132,7 @@ export default function Cabang({ sessions, branch_types }) {
 
   return (
     <AuthenticatedLayout>
+
       <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -148,6 +150,10 @@ export default function Cabang({ sessions, branch_types }) {
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
+
+          </div>
+          <div>
+          <Filter open={open} setOpen={setOpen} />
           </div>
           <DataTable
             columns={columns}

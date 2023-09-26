@@ -1,22 +1,16 @@
 import { useState } from "react";
 import Sidebar from "@/Components/Sidebar";
+import { SidebarWithLogo } from "@/Components/Menu/Sidebar";
 
 export default function Authenticated({ auth, header, children }) {
-  const [showingNavigationDropdown, setShowingNavigationDropdown] =
-    useState(false);
+  const [sidebarOpen, setSidebarOpen] =
+    useState(true);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* {header && (
-        <header className="bg-white shadow">
-          <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            {header}
-          </div>
-        </header>
-      )} */}
+    <div className={`w-full grid min-h-screen ${!sidebarOpen ? 'grid-cols-sidebarCollapsed' : 'grid-cols-sidebar' } transition-[grid-template-columns] duration-300 ease-in-out bg-gray-100`}>
 
-      <Sidebar />
-      <main className="p-4 sm:ml-64">{children}</main>
+      <SidebarWithLogo sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <main className="p-4">{children}</main>
     </div>
   );
 }
