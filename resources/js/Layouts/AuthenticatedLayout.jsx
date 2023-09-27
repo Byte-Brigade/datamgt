@@ -6,16 +6,18 @@ export default function Authenticated({ auth, header, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div
-      className={`grid min-h-screen ${
-        !sidebarOpen ? "grid-cols-sidebar" : "grid-cols-sidebarCollapse"
-      } transition-[grid-template-columns] duration-300 ease-in-out bg-gray-100`}
-    >
+    <div className={`min-h-screen bg-gray-100`}>
       <SidebarWithLogo
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      <main>{children}</main>
+      <main
+        className={`p-4 ${
+          sidebarOpen ? "ml-16" : "ml-64"
+        } transition-[margin] duration-150 ease-in-out`}
+      >
+        {children}
+      </main>
     </div>
   );
 }

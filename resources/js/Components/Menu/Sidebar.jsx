@@ -28,6 +28,7 @@ import {
   CubeTransparentIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "@inertiajs/react";
 
 export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [open, setOpen] = useState(0);
@@ -39,16 +40,16 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   };
 
   return (
-    <Card
-      className={`fixed z-40 h-screen ${
+    <aside
+      className={`flex flex-col fixed h-screen top-0 left-0 z-40 ${
         !sidebarOpen ? "p-4 w-64 -x-translate-full" : "py-4 px-2 w-16"
-      }  shadow-xl shadow-blue-gray-900/5`}
+      } bg-white shadow-xl shadow-blue-gray-900/5`}
     >
       {/* Logo and collapse button */}
       <div
         className={`flex items-center gap-4 ${
           !sidebarOpen ? "p-4" : "py-4 justify-center"
-        }  mb-2`}
+        }`}
       >
         {!sidebarOpen && (
           <>
@@ -79,9 +80,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </svg>
         </IconButton>
       </div>
-      <List className={`${!sidebarOpen ? "" : "px-0"}`}>
+      <List className={`${!sidebarOpen ? "" : "px-0 min-w-0"}`}>
         <Accordion
           open={open === 1}
+          className={`${!sidebarOpen ? "" : "w-12"}`}
           icon={
             <ChevronDownIcon
               strokeWidth={2.5}
@@ -99,36 +101,77 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
               <ListItemPrefix>
                 <PresentationChartBarIcon className="w-5 h-5" />
               </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                Dashboard
-              </Typography>
+              {!sidebarOpen && (
+                <Typography color="blue-gray" className="mr-auto font-normal">
+                  Branch OPS
+                </Typography>
+              )}
             </AccordionHeader>
           </ListItem>
           <AccordionBody className="py-1">
             <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                </ListItemPrefix>
-                Analytics
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                </ListItemPrefix>
-                Reporting
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
-                </ListItemPrefix>
-                Projects
-              </ListItem>
+              <Link href={route("branches")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  Data Cabang
+                </ListItem>
+              </Link>
+              <Link href={route("employees")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  Karyawan Cabang
+                </ListItem>
+              </Link>
+              <Link href={route("ops.apar")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  APAR
+                </ListItem>
+              </Link>
+              <Link href={route("ops.pajak-reklame")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  Pajak Reklame
+                </ListItem>
+              </Link>
+              <Link href={route("ops.skbirtgs")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  SK BI RTGS
+                </ListItem>
+              </Link>
+              <Link href={route("ops.sk-operasional")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  SK Operasional Cabang
+                </ListItem>
+              </Link>
+              <Link href={route("ops.speciment")}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="w-5 h-3" />
+                  </ListItemPrefix>
+                  Speciment
+                </ListItem>
+              </Link>
             </List>
           </AccordionBody>
         </Accordion>
         <Accordion
           open={open === 2}
+          className={`${!sidebarOpen ? "" : "w-12"}`}
           icon={
             <ChevronDownIcon
               strokeWidth={2.5}
@@ -146,9 +189,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
               <ListItemPrefix>
                 <ShoppingBagIcon className="w-5 h-5" />
               </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                E-Commerce
-              </Typography>
+              {!sidebarOpen && (
+                <Typography color="blue-gray" className="mr-auto font-normal">
+                  E-Commerce
+                </Typography>
+              )}
             </AccordionHeader>
           </ListItem>
           <AccordionBody className="py-1">
@@ -168,7 +213,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </List>
           </AccordionBody>
         </Accordion>
-        <hr className="my-2 border-blue-gray-50" />
+        {/* <hr className="my-2 border-blue-gray-50" />
         <ListItem>
           <ListItemPrefix>
             <InboxIcon className="w-5 h-5" />
@@ -201,7 +246,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             <PowerIcon className="w-5 h-5" />
           </ListItemPrefix>
           Log Out
-        </ListItem>
+        </ListItem> */}
       </List>
       <Alert
         open={openAlert}
@@ -231,6 +276,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </Typography>
         </div>
       </Alert>
-    </Card>
+    </aside>
   );
 }
