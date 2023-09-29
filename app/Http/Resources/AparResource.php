@@ -17,7 +17,6 @@ class AparResource extends JsonResource
         return [
             'id' => $this->id,
             'branch_id' => $this->branch_id,
-            'expired_date' => $this->expired_date,
             'details' => $this->detail,
             'keterangan' => $this->keterangan,
             'branches' => $this->branches

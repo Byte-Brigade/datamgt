@@ -60,7 +60,7 @@ export default function SKBIRTGS({ branches, sessions }) {
       field: "file",
       type: "custom",
       render: (data) =>
-        data.no_surat !== "Tidak Ada" ? (
+        data.no_surat !== "-" ? (
           data.file ? (
             <a
               className="text-blue-500 hover:underline"
@@ -213,6 +213,7 @@ export default function SKBIRTGS({ branches, sessions }) {
             columns={columns}
             fetchUrl={"/api/ops/skbirtgs"}
             refreshUrl={isRefreshed}
+            reverseArray={true}
           />
         </div>
       </div>

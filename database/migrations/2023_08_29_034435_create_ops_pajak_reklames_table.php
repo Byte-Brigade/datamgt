@@ -16,6 +16,10 @@ return new class extends Migration
         Schema::create('ops_pajak_reklames', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id')->unique();
+            $table->string('no_izin')->nullable();
+            $table->unsignedBigInteger('nilai_pajak')->nullable();
+            $table->string('file_izin_reklame')->nullable();
+            $table->string('file_skpd')->nullable();
             $table->date('periode_awal')->nullable();
             $table->date('periode_akhir')->nullable();
             $table->text('note')->nullable();

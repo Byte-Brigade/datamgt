@@ -52,17 +52,11 @@ export default function Apar({ branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code" },
     { name: "Branch Name", field: "branches.branch_name" },
-    {
-      name: "Jangka Waktu (Expired Date)",
-      field: "expired_date",
-      type: "date",
-      sortable: true,
-    },
+
     { name: "Keterangan", field: "keterangan" },
     {
-      name: "Action",
+      name: "Data Detail",
       field: "action",
       className: "text-center",
       render: (data) => (

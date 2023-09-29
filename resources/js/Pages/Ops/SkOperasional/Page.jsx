@@ -31,7 +31,6 @@ export default function SkOperasional({ branches, sessions }) {
       branch_name: null,
     },
     expiry_date: null,
-    note: null,
   };
   const {
     data,
@@ -51,7 +50,6 @@ export default function SkOperasional({ branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code", sortable: true },
     { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Penerima Kuasa",
@@ -95,7 +93,6 @@ export default function SkOperasional({ branches, sessions }) {
           </Button>
         ),
     },
-    { name: "Keterangan", field: "note" },
     {
       name: "Action",
       field: "action",
@@ -350,12 +347,7 @@ export default function SkOperasional({ branches, sessions }) {
                 type="date"
                 onChange={(e) => setData("expiry_date", e.target.value)}
               />
-              <Input
-                label="Keterangan"
-                value={data.note || ""}
-                disabled={processing}
-                onChange={(e) => setData("note", e.target.value)}
-              />
+
               <Input
                 variant="standard"
                 label="Upload Lampiran (.pdf)"

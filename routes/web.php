@@ -79,12 +79,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
         Route::put('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'update'])->name('pajak-reklame.update');
         Route::delete('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'destroy'])->name('pajak-reklame.delete');
+        Route::post('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'upload'])->name('pajak-reklame.upload');
         Route::get('/pajak-reklame/export', [OpsPajakReklameController::class, 'export'])->name('pajak-reklame.export');
         /* [END] Ops Pajak Reklame */
+
 
         /* [START] Ops Speciment */
         Route::get('/speciment', [OpsSpecimentController::class, 'index'])->name('speciment');
         Route::post('/speciment', [OpsSpecimentController::class, 'import'])->name('speciment.import');
+        Route::post('/speciment/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
         Route::put('/speciment/{id}', [OpsSpecimentController::class, 'update'])->name('speciment.update');
         Route::delete('/speciment/{id}', [OpsSpecimentController::class, 'destroy'])->name('speciment.delete');
         Route::get('/speciment/export', [OpsSpecimentController::class, 'export'])->name('speciment.export');

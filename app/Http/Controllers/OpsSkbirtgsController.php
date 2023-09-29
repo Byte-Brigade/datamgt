@@ -24,10 +24,22 @@ class OpsSkbirtgsController extends Controller
         $sortField = 'ops_skbirtgs.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
+        $filters = $request->filters;
+
+
         $query = $this->ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
-        $perpage = $request->perpage ?? 10;
 
+
+        $perpage = $request->perpage ?? 10;
+        if(isset($filters)) {
+            // $filters = array_map(function ($filter) {
+            //     return $filter == 'penerima_kuasa' ? "CONCAT('[',employee_positions.position_name,']',' ',employees.name) as penerima_kuasa" : $filter;
+            // }, $filters);
+
+
+            $query->selectRaw(implode(', ', $filters));
+        }
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('no_surat', 'like', $searchQuery)
@@ -48,7 +60,7 @@ class OpsSkbirtgsController extends Controller
         try {
             (new SkBirtgsImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             $list_error = collect([]);
@@ -66,7 +78,7 @@ class OpsSkbirtgsController extends Controller
 
                 $list_error->push($error);
             }
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'gagal', 'message' => 'Import Failed']);
         }
     }
 
@@ -81,11 +93,11 @@ class OpsSkbirtgsController extends Controller
             $ops_skbirtgs->file = $fileName;
             $ops_skbirtgs->save();
 
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'berhasil', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'gagal', 'message' => 'File gagal diupload!']);
         }
     }
 
@@ -97,9 +109,9 @@ class OpsSkbirtgsController extends Controller
                 'no_surat' => $request->no_surat,
                 'status' => $request->status,
             ]);
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
         } catch (Exception $e) {
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 
@@ -108,9 +120,9 @@ class OpsSkbirtgsController extends Controller
         try {
             $ops_skbirtgs = OpsSkbirtgs::find($id);
             $ops_skbirtgs->delete();
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
         } catch (Exception $e) {
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.skbirtgs'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 

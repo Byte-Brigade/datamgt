@@ -37,7 +37,6 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
                 $ops_sk_operasional = OpsSkOperasional::updateOrCreate([
                     'no_surat' => $row['no_surat'],
                     'branch_id' => $branch_id,
-                    'note' => $row['keterangan'],
                     'expiry_date' => Date::excelToDateTimeObject($row['expiry_date'])->format('Y-m-d')
                 ]);
                 $ops_sk_operasional->penerima_kuasa()->sync($penerima_kuasa_id);

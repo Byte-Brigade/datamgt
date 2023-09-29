@@ -32,7 +32,7 @@ class OpsAparController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('expired_date', 'like', $searchQuery);
+            $query = $query->where('id', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return AparResource::collection($employees);
@@ -49,7 +49,7 @@ class OpsAparController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('expired_date', 'like', $searchQuery);
+            $query = $query->where('id', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return AparDetailResource::collection($employees);
@@ -79,11 +79,11 @@ class OpsAparController extends Controller
         try {
             (new AparImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.apar'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
         } catch (Throwable $e) {
 
 
-            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.apar'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 
@@ -99,13 +99,12 @@ class OpsAparController extends Controller
         try {
             $apar = OpsApar::find($id);
             $apar->update([
-                'expired_date' => $request->expired_date,
                 'keterangan' => $request->keterangan,
             ]);
 
-            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.apar'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.apar'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 
@@ -119,9 +118,9 @@ class OpsAparController extends Controller
                 'expired_date' => $request->expired_date,
             ]);
 
-            return redirect(route('ops.apar.detail', $id))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.apar.detail', $id))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('ops.apar.detail', $id))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.apar.detail', $id))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 
@@ -130,7 +129,7 @@ class OpsAparController extends Controller
         $apar = OpsApar::find($id);
         $apar->delete();
 
-        return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.apar'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
     }
 
     public function destroy_detail($id)
@@ -138,6 +137,6 @@ class OpsAparController extends Controller
         $apar_detail = OpsAparDetail::find($id);
         $apar_detail->delete();
 
-        return redirect(route('ops.apar.detail', $id))->wiith(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.apar.detail', $id))->wiith(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
     }
 }

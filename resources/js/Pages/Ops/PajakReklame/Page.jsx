@@ -5,9 +5,10 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
+
 import {
   Button,
   Dialog,
@@ -31,6 +32,10 @@ export default function PajakReklame({ branches, sessions }) {
     periode_awal: null,
     periode_akhir: null,
     note: null,
+    no_izin: null,
+    nilai_pajak: null,
+    file_izin_reklame: null,
+    file_skpd: null,
   };
   const {
     data,
@@ -44,10 +49,11 @@ export default function PajakReklame({ branches, sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
+  const [fileType, setFileType] = useState("file");
   const columns = [
     { name: "Branch ID", field: "branches.branch_code", sortable: true },
     { name: "Branch Name", field: "branches.branch_name", sortable: true },
@@ -63,7 +69,73 @@ export default function PajakReklame({ branches, sessions }) {
       type: "date",
       sortable: true,
     },
+    { name: "No Izin", field: "no_izin" },
+    { name: "Nilai Pajak", field: "nilai_pajak" },
     { name: "Keterangan", field: "note" },
+    {
+      name: "SKPD",
+      field: "file_skpd",
+      type: "custom",
+      render: (data) =>
+        data.file_skpd ? (
+          <a
+            className="text-blue-500 hover:underline"
+            href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
+            target="__blank"
+          >
+            {" "}
+            {data.file_skpd}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setFileType("file_skpd");
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ),
+    },
+    {
+      name: "Izin Reklame",
+      field: "file_izin_reklame",
+      type: "custom",
+      render: (data) =>
+        data.file_izin_reklame ? (
+          <a
+            className="text-blue-500 hover:underline"
+            href={`/storage/ops/pajak-reklame/${data.file_izin_reklame}`}
+            target="__blank"
+          >
+            {" "}
+            {data.file_izin_reklame}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setFileType("file_izin_reklame");
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ),
+    },
     {
       name: "Action",
       field: "action",
@@ -98,7 +170,21 @@ export default function PajakReklame({ branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("ops.pajak-reklame.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("ops.pajak-reklame.export") + `?branch=${branch}`,
+      "_self"
+    );
+  };
+
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("ops.pajak-reklame.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
@@ -131,7 +217,7 @@ export default function PajakReklame({ branches, sessions }) {
   //     branch !== 0 && position !== 0
   //       ? `?branch=${branch}&position=${position}`
   //       : branch !== 0
-  //       ? `?branch=${branch}`
+  //       ? `?branch=${brancsh}`
   //       : position !== 0
   //       ? `?position=${position}`
   //       : "";
@@ -146,6 +232,10 @@ export default function PajakReklame({ branches, sessions }) {
 
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
+  };
+
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
   };
 
   const toggleModalEdit = () => {
@@ -224,6 +314,47 @@ export default function PajakReklame({ branches, sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData(fileType, e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
       {/* Modal Export */}
       <Modal
         isProcessing={processing}
@@ -237,7 +368,7 @@ export default function PajakReklame({ branches, sessions }) {
             label="Branch"
             disabled={processing}
             value={data.branch}
-            onChange={(e) => setData('branch', e.target.value)}
+            onChange={(e) => setData("branch", e.target.value)}
           >
             <option value="0">All</option>
             {branches.map((branch) => (

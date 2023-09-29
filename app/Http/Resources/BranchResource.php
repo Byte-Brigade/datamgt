@@ -23,7 +23,7 @@ class BranchResource extends JsonResource
             'branch_name' => $this->branch_name,
             'address' => $this->address,
             'telp' => $this->telp,
-            'layanan_atm' => $this->layanan_atm,
+            'layanan_atm' => str_contains($this->layanan_atm, '24') ? 'Ada ('.$this->layanan_atm.')' : 'Ada',
             'branch_types' => $this->branch_types
         ];
     }

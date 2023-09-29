@@ -53,7 +53,7 @@ export default function Cabang({ sessions, branch_types }) {
     { name: "Nama Cabang", field: "branch_name", sortable: true },
     { name: "Alamat", field: "address" },
     { name: "Telp", field: "telp" },
-    { name: "Layanan ATM", field: "layanan_atm" },
+    { name: "Fasilitas ATM", field: "layanan_atm" },
     {
       name: "Action",
       field: "action",
@@ -285,7 +285,7 @@ export default function Cabang({ sessions, branch_types }) {
                 onChange={(e) => setData("telp", e.target.value)}
               />
               <div className="flex flex-col">
-                <span className="text-sm font-light">Layanan ATM</span>
+                <span className="text-sm font-light">Fasilitas ATM</span>
                 <div className="flex gap-x-4">
                   <Radio
                     name="layanan_atm"
