@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Cabang({ sessions, branch_types }) {
+export default function Cabang({ auth, sessions, branch_types }) {
   const initialData = {
     file: null,
     branch_code: null,
@@ -131,8 +131,7 @@ export default function Cabang({ sessions, branch_types }) {
   };
 
   return (
-    <AuthenticatedLayout>
-
+    <AuthenticatedLayout auth={auth}>
       <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -150,10 +149,9 @@ export default function Cabang({ sessions, branch_types }) {
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
-
           </div>
           <div>
-          <Filter open={open} setOpen={setOpen} />
+            <Filter open={open} setOpen={setOpen} />
           </div>
           <DataTable
             columns={columns}

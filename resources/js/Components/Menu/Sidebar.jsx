@@ -80,7 +80,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </svg>
         </IconButton>
       </div>
-      <List className={`${!sidebarOpen ? "" : "px-0 min-w-0"}`}>
+      <List className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"}`}>
         <Accordion
           open={open === 1}
           className={`${!sidebarOpen ? "" : "w-12"}`}
@@ -89,14 +89,14 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
               strokeWidth={2.5}
               className={`mx-auto h-4 w-4 transition-transform ${
                 open === 1 ? "rotate-180" : ""
-              }`}
+              } ${!sidebarOpen ? "" : "hidden"}`}
             />
           }
         >
           <ListItem className="p-0" selected={open === 1}>
             <AccordionHeader
               onClick={() => handleOpen(1)}
-              className="p-3 border-b-0"
+              className={`p-3 border-b-0`}
             >
               <ListItemPrefix>
                 <PresentationChartBarIcon className="w-5 h-5" />
@@ -213,8 +213,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </List>
           </AccordionBody>
         </Accordion>
-        {/* <hr className="my-2 border-blue-gray-50" />
-        <ListItem>
+        <hr className="my-2 border-blue-gray-50" />
+        {/* <ListItem>
           <ListItemPrefix>
             <InboxIcon className="w-5 h-5" />
           </ListItemPrefix>
