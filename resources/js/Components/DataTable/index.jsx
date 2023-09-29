@@ -36,6 +36,7 @@ export default function DataTable({
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState([]);
+  const [filterData, setFilterData] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -70,6 +71,15 @@ export default function DataTable({
     );
   };
 
+  const handleCheckboxData = (filter) => {
+    console.log(filterData);
+    setFilterData((prevFilter) =>
+      prevFilter.includes(filter)
+        ? prevFilter.filter((c) => c !== filter)
+        : [...prevFilter, filter]
+    );
+  };
+
   const handlePerPage = (perPage) => {
     setCurrentPage(1);
     setPerPage(perPage);
@@ -84,6 +94,7 @@ export default function DataTable({
       sort_order: sortOrder,
       search,
       filters,
+      filterData,
     };
 
     if (fetchUrl) {
@@ -111,6 +122,7 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     filters,
+    filterData,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -257,7 +269,7 @@ export default function DataTable({
                     </PopoverHandler>
 
                     <PopoverContent className="flex flex-col">
-                      {data.map((data) =>
+                      {data.filter((value, index, array) => array.indexOf(value) === index).map((data) =>
                         column.field ? (
                           column.field === "action" ? (
                             <td key={column.field} className={column.className}>
@@ -265,6 +277,8 @@ export default function DataTable({
                             </td>
                           ) : (
                             <Checkbox
+                              onChange={(e) => handleCheckboxData(e.target.value)}
+
                               label={
                                 column.type === "date"
                                   ? convertDate(
@@ -274,7 +288,15 @@ export default function DataTable({
                                   ? column.render(data)
                                   : getNestedValue(data, column.field) || "-"
                               }
-                              key={column.field}
+                              key={
+                                column.type === "date"
+                                  ? convertDate(
+                                      getNestedValue(data, column.field)
+                                    )
+                                  : column.type === "custom"
+                                  ? column.render(data)
+                                  : getNestedValue(data, column.field) || "-"
+                              }
                               className={column.className}
                               value={
                                 column.type === "date"
@@ -285,7 +307,6 @@ export default function DataTable({
                                   ? column.render(data)
                                   : getNestedValue(data, column.field) || "-"
                               }
-
                             />
                           )
                         ) : (

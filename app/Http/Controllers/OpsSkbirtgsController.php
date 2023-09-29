@@ -29,11 +29,16 @@ class OpsSkbirtgsController extends Controller
 
         $query = $this->ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
+
+
         $perpage = $request->perpage ?? 10;
         if(isset($filters)) {
+            // $filters = array_map(function ($filter) {
+            //     return $filter == 'penerima_kuasa' ? "CONCAT('[',employee_positions.position_name,']',' ',employees.name) as penerima_kuasa" : $filter;
+            // }, $filters);
 
 
-            $query->select($filters);
+            $query->selectRaw(implode(', ', $filters));
         }
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
