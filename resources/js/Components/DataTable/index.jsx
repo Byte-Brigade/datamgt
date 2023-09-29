@@ -62,8 +62,8 @@ export default function DataTable({
     if (fetchUrl) {
       const { data } = await axios.get(fetchUrl, { params });
       console.log(data);
-      setData(data.data);
-      setPagination(data.meta);
+      setData(data.data instanceof Object ? Object.values(data.data) : data.data);
+      setPagination(data.meta ? data.meta : data);
       setLoading(false);
     }
 

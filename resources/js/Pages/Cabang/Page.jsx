@@ -51,9 +51,11 @@ export default function Cabang({ sessions, branch_types }) {
     { name: "Kode Cabang", field: "branch_code", sortable: true },
     { name: "Tipe Cabang", field: "branch_types.type_name", sortable: true },
     { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "NPWP", field: "npwp" },
     { name: "Alamat", field: "address" },
     { name: "Telp", field: "telp" },
-    { name: "Fasilitas ATM", field: "layanan_atm" },
+    { name: "Fasilitas ATM", field: "fasilitas_atm" },
+    { name: "Layanan ATM", field: "layanan_atm" },
     {
       name: "Action",
       field: "action",
