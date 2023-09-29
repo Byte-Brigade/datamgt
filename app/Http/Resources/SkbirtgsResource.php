@@ -20,12 +20,12 @@ class SkbirtgsResource extends JsonResource
             'branch_id' => $this->branch_id,
             'status' => $this->status,
             'file' => $this->file,
-            'penerima_kuasa' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name')->toArray() : 'Central - KP',
+            'reverse' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name')->toArray() : 'Central - KP',
             'target' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name') : 'Central - KP',
-            'reverse_data' => $this->penerima_kuasa()->get()->map(function($employee) {
-                return ['request' => $employee->name, 'position' => $employee->getPosition()];
-            })->toArray(),
-        
+            'penerima_kuasa' => $this->penerima_kuasa()->get()->count() > 0 ? implode(' - ', $this->penerima_kuasa()->get()->map(function($employee) {
+                return '['.$employee->getPosition().']'.' '.$employee->name;
+            })->toArray()): 'Central - KP',
+
             'branches' => $this->branches
         ];
     }

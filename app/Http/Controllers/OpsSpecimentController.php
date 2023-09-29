@@ -62,7 +62,7 @@ class OpsSpecimentController extends Controller
         try {
             (new SpecimentImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
+            return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -73,7 +73,7 @@ class OpsSpecimentController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.speciment'))->with(['status' => 'gagal', 'message' => 'Import Failed']);
+            return redirect(route('ops.speciment'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
         }
     }
 

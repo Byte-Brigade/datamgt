@@ -54,7 +54,12 @@ export default function SKBIRTGS({ branches, sessions }) {
   const columns = [
     { name: "Nomor Surat", field: "no_surat" },
     { name: "Kantor Cabang", field: "branches.branch_name" },
-    { name: "Penerima Kuasa", field: "penerima_kuasa"},
+    {
+      name: "Penerima Kuasa",
+      field: "penerima_kuasa",
+      // render: (data) =>
+      //   data.penerima_kuasa.map((employee) => employee.name).join(" - "),
+    },
     {
       name: "Lampiran",
       field: "file",
@@ -213,7 +218,6 @@ export default function SKBIRTGS({ branches, sessions }) {
             columns={columns}
             fetchUrl={"/api/ops/skbirtgs"}
             refreshUrl={isRefreshed}
-            reverseArray={true}
           />
         </div>
       </div>

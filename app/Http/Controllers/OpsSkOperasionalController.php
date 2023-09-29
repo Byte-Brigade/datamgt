@@ -54,7 +54,7 @@ class OpsSkOperasionalController extends Controller
         try {
             (new SkOperasionalsImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             dd($failures);
@@ -73,7 +73,7 @@ class OpsSkOperasionalController extends Controller
 
             //     $list_error->push($error);
             // }
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => 'Import Failed']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
         }
     }
 

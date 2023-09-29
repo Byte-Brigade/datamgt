@@ -52,7 +52,7 @@ class OpsPajakReklameController extends Controller
         try {
             (new PajakReklameImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -63,7 +63,7 @@ class OpsPajakReklameController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'Import Failed']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
         }
     }
 

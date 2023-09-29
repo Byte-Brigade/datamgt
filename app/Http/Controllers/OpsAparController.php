@@ -79,7 +79,7 @@ class OpsAparController extends Controller
         try {
             (new AparImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.apar'))->with(['status' => 'berhasil', 'message' => 'Import Success']);
+            return redirect(route('ops.apar'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
 
 
