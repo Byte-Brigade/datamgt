@@ -48,9 +48,9 @@ export default function Cabang({ sessions, branch_types }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Kode Cabang", field: "branch_code", sortable: true },
-    { name: "Tipe Cabang", field: "branch_types.type_name", sortable: true },
-    { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "Kode Cabang", field: "branch_code", sortable: false },
+    { name: "Tipe Cabang", field: "branch_types.type_name", sortable: false },
+    { name: "Nama Cabang", field: "branch_name", sortable: false },
     { name: "Alamat", field: "address" },
     { name: "Telp", field: "telp" },
     { name: "Layanan ATM", field: "layanan_atm" },

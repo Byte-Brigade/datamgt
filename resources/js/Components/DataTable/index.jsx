@@ -219,6 +219,60 @@ export default function DataTable({
                 }
               })}
             </div>
+
+            <div className="flex flex-wrap">
+              {loading ?? columns.map((column, i) =>
+
+
+                data.length > 0 ?? (
+                  data.filter((value, index, array) => array.indexOf(value) === index).map((data) =>
+                    column.field ? (
+                      column.field === "action" ? (
+                        <td key={column.field} className={column.className}>
+                          {column.render(data)}
+                        </td>
+                      ) : (
+                        <Checkbox
+                          onChange={(e) => handleCheckboxData(e.target.value)}
+
+                          label={
+                            column.type === "date"
+                              ? convertDate(
+                                getNestedValue(data, column.field)
+                              )
+                              : column.type === "custom"
+                                ? column.render(data)
+                                : getNestedValue(data, column.field) || "-"
+                          }
+                          key={
+                            column.type === "date"
+                              ? convertDate(
+                                getNestedValue(data, column.field)
+                              )
+                              : column.type === "custom"
+                                ? column.render(data)
+                                : getNestedValue(data, column.field) || "-"
+                          }
+                          className={column.className}
+                          value={
+                            column.type === "date"
+                              ? convertDate(
+                                getNestedValue(data, column.field)
+                              )
+                              : column.type === "custom"
+                                ? column.render(data)
+                                : getNestedValue(data, column.field) || "-"
+                          }
+                        />
+                      )
+                    ) : (
+                      <td key={id} className={column.className}>
+                        {column.value || "-"}
+                      </td>
+                    )
+                  )
+                ))}
+            </div>
           </div>
         </Collapse>
       </div>
@@ -244,20 +298,18 @@ export default function DataTable({
                               {column.name}
                               <span className="flex flex-col gap-y-1">
                                 <ChevronUpIcon
-                                  className={`${
-                                    sortOrder === SORT_ASC &&
+                                  className={`${sortOrder === SORT_ASC &&
                                     column.field === sortColumn
-                                      ? "text-slate-900"
-                                      : "text-gray-400"
-                                  } w-3 h-3`}
+                                    ? "text-slate-900"
+                                    : "text-gray-400"
+                                    } w-3 h-3`}
                                 />
                                 <ChevronDownIcon
-                                  className={`${
-                                    sortOrder === SORT_DESC &&
+                                  className={`${sortOrder === SORT_DESC &&
                                     column.field === sortColumn
-                                      ? "text-slate-900"
-                                      : "text-gray-400"
-                                  } w-3 h-3`}
+                                    ? "text-slate-900"
+                                    : "text-gray-400"
+                                    } w-3 h-3`}
                                 />
                               </span>
                             </div>
@@ -282,30 +334,30 @@ export default function DataTable({
                               label={
                                 column.type === "date"
                                   ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
+                                    getNestedValue(data, column.field)
+                                  )
                                   : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
                               }
                               key={
                                 column.type === "date"
                                   ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
+                                    getNestedValue(data, column.field)
+                                  )
                                   : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
                               }
                               className={column.className}
                               value={
                                 column.type === "date"
                                   ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
+                                    getNestedValue(data, column.field)
+                                  )
                                   : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
                               }
                             />
                           )
@@ -365,8 +417,8 @@ export default function DataTable({
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                              ? column.render(data)
-                              : getNestedValue(data, column.field) || "-"}
+                                ? column.render(data)
+                                : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (
