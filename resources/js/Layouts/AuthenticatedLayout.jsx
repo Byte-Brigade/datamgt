@@ -1,10 +1,9 @@
-import { useState } from "react";
-import Sidebar from "@/Components/Sidebar";
 import { SidebarWithLogo } from "@/Components/Menu/Sidebar";
+import { useState } from "react";
 
 export default function Authenticated({ auth, header, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  console.log({ auth, header });
+
   return (
     <div className={`min-h-screen bg-gray-100`}>
       {/* <nav className="fixed top-0 left-0 z-50 w-full bg-white border-b border-slate-200">
