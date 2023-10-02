@@ -72,38 +72,7 @@ export default function PajakReklame({ branches, sessions }) {
     { name: "No Izin", field: "no_izin" },
     { name: "Nilai Pajak", field: "nilai_pajak" },
     { name: "Keterangan", field: "note" },
-    {
-      name: "SKPD",
-      field: "file_skpd",
-      type: "custom",
-      render: (data) =>
-        data.file_skpd ? (
-          <a
-            className="text-blue-500 hover:underline"
-            href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file_skpd}
-          </a>
-        ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setFileType("file_skpd");
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
-        ),
-    },
+
     {
       name: "Izin Reklame",
       field: "file_izin_reklame",
@@ -126,6 +95,38 @@ export default function PajakReklame({ branches, sessions }) {
             onClick={() => {
               toggleModalUpload();
               setFileType("file_izin_reklame");
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ),
+    },
+    {
+      name: "SKPD",
+      field: "file_skpd",
+      type: "custom",
+      render: (data) =>
+        data.file_skpd ? (
+          <a
+            className="text-blue-500 hover:underline"
+            href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
+            target="__blank"
+          >
+            {" "}
+            {data.file_skpd}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setFileType("file_skpd");
               setData(data);
             }}
           >

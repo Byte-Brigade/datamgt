@@ -49,11 +49,11 @@ class OpsSpecimentController extends Controller
             $ops_speciment->file = $fileName;
             $ops_speciment->save();
 
-            return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
-            return redirect(route('ops.speciment'))->with(['status' => 'gagal', 'message' => 'File gagal diupload!']);
+            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
 
@@ -62,7 +62,7 @@ class OpsSpecimentController extends Controller
         try {
             (new SpecimentImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -73,7 +73,7 @@ class OpsSpecimentController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.speciment'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
+            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
@@ -92,9 +92,9 @@ class OpsSpecimentController extends Controller
 
             ]);
 
-            return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('ops.speciment'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
+            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -103,6 +103,6 @@ class OpsSpecimentController extends Controller
         $speciment = OpsSpeciment::find($id);
         $speciment->delete();
 
-        return redirect(route('ops.speciment'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

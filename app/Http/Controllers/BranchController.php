@@ -95,9 +95,9 @@ class BranchController extends Controller
                 'layanan_atm' => $layanan_atm,
             ]);
 
-            return redirect(route('branches'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
+            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('branches'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
+            return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -106,6 +106,6 @@ class BranchController extends Controller
         $branch = Branch::find($id);
         $branch->delete();
 
-        return redirect(route('branches'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

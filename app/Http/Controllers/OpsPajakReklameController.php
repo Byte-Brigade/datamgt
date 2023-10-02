@@ -52,7 +52,7 @@ class OpsPajakReklameController extends Controller
         try {
             (new PajakReklameImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -63,7 +63,7 @@ class OpsPajakReklameController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
@@ -85,9 +85,9 @@ class OpsPajakReklameController extends Controller
                 'additional_info' => $request->additional_info,
             ]);
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -112,11 +112,11 @@ class OpsPajakReklameController extends Controller
 
             $ops_pajak_reklame->save();
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'File gagal diupload!']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
 
@@ -126,6 +126,6 @@ class OpsPajakReklameController extends Controller
         $pajak_reklame = OpsPajakReklame::find($id);
         $pajak_reklame->delete();
 
-        return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

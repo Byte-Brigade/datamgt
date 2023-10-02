@@ -51,13 +51,12 @@ export default function Cabang({ auth, sessions, branch_types }) {
   const columns = [
     { name: "Kode Cabang", field: "branch_code", sortable: false },
     { name: "Tipe Cabang", field: "branch_types.type_name", sortable: false, filterable: true },
-    { name: "Nama Cabang", field: "branch_name", sortable: false, filterable: true },
-      { name: "NPWP", field: "npwp" },
-    { name: "Alamat", field: "address" },
-    { name: "Telp", field: "telp" },
+    { name: "Nama Cabang", field: "branch_name", sortable: false},
+    { name: "NPWP", field: "npwp" },
+    { name: "Alamat", field: "address" , className:"w-[300px]" },
+    { name: "No Telpon", field: "telp" },
     { name: "Fasilitas ATM", field: "fasilitas_atm" },
     { name: "Layanan ATM", field: "layanan_atm", filterable: true },
-
     {
       name: "Action",
       field: "action",
@@ -154,12 +153,12 @@ export default function Cabang({ auth, sessions, branch_types }) {
             </PrimaryButton>
           </div>
           <div>
-            <Filter open={open} setOpen={setOpen} />
           </div>
           <DataTable
             columns={columns}
             fetchUrl={"/api/branches"}
             refreshUrl={isRefreshed}
+            className="w-[1500px]"
           />
         </div>
       </div>

@@ -124,7 +124,7 @@ class OpsSkOperasionalController extends Controller
         try {
             (new SkOperasionalsImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             dd($failures);
@@ -143,7 +143,7 @@ class OpsSkOperasionalController extends Controller
 
             //     $list_error->push($error);
             // }
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => 'Import Failed']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => 'Import Failed']);
         }
     }
 
@@ -164,11 +164,11 @@ class OpsSkOperasionalController extends Controller
             $ops_skoperasional->file = $fileName;
             $ops_skoperasional->save();
 
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => 'File gagal diupload!']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
 
@@ -181,9 +181,9 @@ class OpsSkOperasionalController extends Controller
                 'expiry_date' => $request->expiry_date,
 
             ]);
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (Exception $e) {
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -192,9 +192,9 @@ class OpsSkOperasionalController extends Controller
         try {
             $ops_skoperasional = OpsSkOperasional::find($id);
             $ops_skoperasional->delete();
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
         } catch (Exception $e) {
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
+            return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 }
