@@ -227,133 +227,32 @@ export default function DataTable({
                 onChange={(e) => setSelected(e.target.value)}
               >
                 <option value="0">All</option>
-                {columns.filter(column => column.filterable).map((column, i) => (
-                  <option key={i} value={`${column.field}`}>
-                    {column.name}
-                  </option>
-                ))}
+                {columns
+                  .filter((column) => column.filterable)
+                  .map((column, i) => (
+                    <option key={i} value={`${column.field}`}>
+                      {column.name}
+                    </option>
+                  ))}
               </select>
               {!loading
-                ? columns.filter(column => column.filterable).map((column, i) => {
-                    if (data.length > 0 && column.field === selected) {
-                      const uniqueValues = new Set(
-                        data.map((item) => getNestedValue(item, column.field))
-                      );
+                ? columns
+                    .filter((column) => column.filterable)
+                    .map((column, i) => {
+                      if (data.length > 0 && column.field === selected) {
+                        const uniqueValues = new Set(
+                          data.map((item) => getNestedValue(item, column.field))
+                        );
 
-                      const filteredData = Array.from(uniqueValues).map(
-                        (uniqueValue) =>
-                          data.find(
-                            (item) =>
-                              getNestedValue(item, column.field) === uniqueValue
-                          )
-                      );
-                      return filteredData.map((data) =>
-                        column.field ? (
-                          column.field === "action" ? (
-                            <td key={column.field} className={column.className}>
-                              {column.render(data)}
-                            </td>
-                          ) : (
-                            <Checkbox
-                              onChange={(e) =>
-                                handleCheckboxData(e.target.value)
-                              }
-                              label={
-                                column.type === "date"
-                                  ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
-                                  : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
-                              }
-                              key={
-                                column.type === "date"
-                                  ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
-                                  : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
-                              }
-                              className={column.className}
-                              value={
-                                column.type === "date"
-                                  ? convertDate(
-                                      getNestedValue(data, column.field)
-                                    )
-                                  : column.type === "custom"
-                                  ? column.render(data)
-                                  : getNestedValue(data, column.field) || "-"
-                              }
-                            />
-                          )
-                        ) : (
-                          <td key={id} className={column.className}>
-                            {column.value || "-"}
-                          </td>
-                        )
-                      );
-                    }
-                  })
-                : console.log("a")}
-            </div>
-          </div>
-        </Collapse>
-      </div>
-      <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-        <table className="w-full text-sm">
-          <thead className="border-b-2 border-slate-200">
-            <tr className="[&>th]:p-2 bg-slate-100">
-              <th className="text-center">No</th>
-              {columns
-                .filter((column) =>
-                  filters.length > 0 ? filters.includes(column.field) : true
-                )
-                .map((column, i) => (
-                  <Popover placement="bottom">
-                    <PopoverHandler>
-                      <th key={column.name}>
-                        {column.sortable === true ? (
-                          <div
-                            className="cursor-pointer hover:underline"
-                            onClick={(e) => handleSort(column.field)}
-                          >
-                            <div className="flex items-center gap-x-1">
-                              {column.name}
-                              <span className="flex flex-col gap-y-1">
-                                <ChevronUpIcon
-                                  className={`${
-                                    sortOrder === SORT_ASC &&
-                                    column.field === sortColumn
-                                      ? "text-slate-900"
-                                      : "text-gray-400"
-                                  } w-3 h-3`}
-                                />
-                                <ChevronDownIcon
-                                  className={`${
-                                    sortOrder === SORT_DESC &&
-                                    column.field === sortColumn
-                                      ? "text-slate-900"
-                                      : "text-gray-400"
-                                  } w-3 h-3`}
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div>{column.name}</div>
-                        )}
-                      </th>
-                    </PopoverHandler>
-
-                    <PopoverContent className="flex flex-col">
-                      {data
-                        .filter(
-                          (value, index, array) =>
-                            array.indexOf(value) === index
-                        )
-                        .map((data) =>
+                        const filteredData = Array.from(uniqueValues).map(
+                          (uniqueValue) =>
+                            data.find(
+                              (item) =>
+                                getNestedValue(item, column.field) ===
+                                uniqueValue
+                            )
+                        );
+                        return filteredData.map((data) =>
                           column.field ? (
                             column.field === "action" ? (
                               <td
@@ -367,7 +266,6 @@ export default function DataTable({
                                 onChange={(e) =>
                                   handleCheckboxData(e.target.value)
                                 }
-                                checked={filterData.includes(getNestedValue(data, column.field))}
                                 label={
                                   column.type === "date"
                                     ? convertDate(
@@ -403,9 +301,56 @@ export default function DataTable({
                               {column.value || "-"}
                             </td>
                           )
-                        )}
-                    </PopoverContent>
-                  </Popover>
+                        );
+                      }
+                    })
+                : console.log("a")}
+            </div>
+          </div>
+        </Collapse>
+      </div>
+      <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
+        <table className="w-full text-sm">
+          <thead className="border-b-2 border-slate-200">
+            <tr className="[&>th]:p-2 bg-slate-100">
+              <th className="text-center">No</th>
+              {columns
+                .filter((column) =>
+                  filters.length > 0 ? filters.includes(column.field) : true
+                )
+                .map((column, i) => (
+                  <th key={column.name}>
+                    {column.sortable === true ? (
+                      <div
+                        className="cursor-pointer hover:underline"
+                        onClick={(e) => handleSort(column.field)}
+                      >
+                        <div className="flex items-center gap-x-1">
+                          {column.name}
+                          <span className="flex flex-col gap-y-1">
+                            <ChevronUpIcon
+                              className={`${
+                                sortOrder === SORT_ASC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                            <ChevronDownIcon
+                              className={`${
+                                sortOrder === SORT_DESC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>{column.name}</div>
+                    )}
+                  </th>
                 ))}
             </tr>
           </thead>
