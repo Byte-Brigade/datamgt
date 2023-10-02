@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValidation
 {
@@ -24,6 +25,23 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
         }
         $branch_name = join(' ', $branch_name_arr);
 
+        # Generate kode baru untuk kode_cabang yang kosong
+        if (is_null($row['kode_cabang'])) {
+            $branch = Branch::where('branch_type_id', $branch_type)->where('branch_name', $branch_name)->get()->first();
+            if (isset($branch)) {
+                return;
+            }
+
+            $branch = Branch::where('branch_name', $branch_name)
+                ->get()->first();
+            if (isset($branch)) {
+                $row['kode_cabang'] = $type_name . '001' . substr($branch->branch_code, -3);
+            } else {
+                $row['kode_cabang'] = $type_name . '001' . str_pad(mt_rand(10, 99), 3, "0", STR_PAD_LEFT);
+            }
+
+        }
+
         return new Branch([
             'branch_type_id' => $branch_type,
             'branch_code' => $row['kode_cabang'],
@@ -31,6 +49,7 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             'address' => $row['alamat'],
             'telp' => $row['telp'],
             'layanan_atm' => $row['layanan_atm'],
+            'npwp' => $row['npwp']
         ]);
     }
 

@@ -1,22 +1,27 @@
+import { SidebarWithLogo } from "@/Components/Menu/Sidebar";
 import { useState } from "react";
-import Sidebar from "@/Components/Sidebar";
 
 export default function Authenticated({ auth, header, children }) {
-  const [showingNavigationDropdown, setShowingNavigationDropdown] =
-    useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* {header && (
-        <header className="bg-white shadow">
-          <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            {header}
-          </div>
-        </header>
-      )} */}
-
-      <Sidebar />
-      <main className="p-4 sm:ml-64">{children}</main>
+    <div className={`min-h-screen bg-gray-100`}>
+      {/* <nav className="fixed top-0 left-0 z-50 w-full bg-white border-b border-slate-200">
+        <div className="flex flex-wrap items-center max-w-screen-xl p-4 mx-auto justify between">
+          <h2 className="text-xl font-semibold">Navbar</h2>
+        </div>
+      </nav> */}
+      <SidebarWithLogo
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
+      <main
+        className={`p-4 ${
+          sidebarOpen ? "ml-16" : "ml-64"
+        } transition-[margin] duration-150 ease-in-out`}
+      >
+        {children}
+      </main>
     </div>
   );
 }

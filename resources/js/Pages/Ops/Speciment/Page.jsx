@@ -5,6 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -27,8 +28,7 @@ export default function Speciment({ sessions }) {
       branch_name: null,
     },
     tgl_speciment: null,
-    hasil_konfirmasi_cabang: null,
-    keterangan: null,
+    file: null
   };
   const {
     data,
@@ -42,12 +42,12 @@ export default function Speciment({ sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code" },
     { name: "Branch Name", field: "branches.branch_name" },
     {
       name: "Tanggal Spesimen",
@@ -56,8 +56,41 @@ export default function Speciment({ sessions }) {
       sortable: true,
     },
 
-    { name: "Hasil Konfirmasi Cabang", field: "hasil_konfirmasi_cabang" },
-    { name: "Keterangan", field: "keterangan" },
+    {
+      name: "Lampiran",
+      field: "file",
+      type: "custom",
+      render: (data) =>
+        data.no_surat !== "-" ? (
+          data.file ? (
+            <a
+              className="text-blue-500 hover:underline"
+              href={`/storage/ops/speciment/${data.file}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
+        ) : (
+          "-"
+        ),
+    },
     {
       name: "Action",
       field: "action",
@@ -91,6 +124,17 @@ export default function Speciment({ sessions }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     window.open(route("ops.speciment.export"), "_self");
+  };
+
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("ops.speciment.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
@@ -139,6 +183,11 @@ export default function Speciment({ sessions }) {
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
   };
+
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
+  };
+
 
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
@@ -230,6 +279,47 @@ export default function Speciment({ sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
+       {/* Modal Upload */}
+       <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
       {/* Modal Export */}
       <Modal
         isProcessing={processing}
@@ -267,20 +357,7 @@ export default function Speciment({ sessions }) {
                 type="date"
                 onChange={(e) => setData("tgl_speciment", e.target.value)}
               />
-              <Input
-                label="Hasil Konfirmasi Cabang"
-                value={data.hasil_konfirmasi_cabang || ""}
-                disabled={processing}
-                onChange={(e) =>
-                  setData("hasil_konfirmasi_cabang", e.target.value)
-                }
-              />
-              <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
-                disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
-              />
+
             </div>
           </DialogBody>
           <DialogFooter>

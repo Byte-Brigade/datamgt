@@ -46,7 +46,6 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts
 
                 $ops_apar = OpsApar::create([
                     'branch_id' => is_null(Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first()) ? 1 : Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first(),
-                    'expired_date' => is_string($row['jangka_waktu_expired_date']) ? Carbon::createFromFormat('d M Y', $row['jangka_waktu_expired_date']) : Date::excelToDateTimeObject($row['jangka_waktu_expired_date']),
                     'keterangan' => $row['keterangan']
                 ]);
 

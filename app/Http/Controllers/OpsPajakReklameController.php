@@ -7,6 +7,7 @@ use App\Http\Resources\PajakReklameResource;
 use App\Imports\PajakReklameImport;
 use App\Models\Branch;
 use App\Models\OpsPajakReklame;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -51,7 +52,7 @@ class OpsPajakReklameController extends Controller
         try {
             (new PajakReklameImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -62,7 +63,7 @@ class OpsPajakReklameController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
         }
     }
 
@@ -84,17 +85,47 @@ class OpsPajakReklameController extends Controller
                 'additional_info' => $request->additional_info,
             ]);
 
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
+
+    public function upload(Request $request, $id)
+    {
+        try {
+            $ops_pajak_reklame = OpsPajakReklame::find($id);
+            $file = $request->file('file_izin_reklame');
+
+            if(!is_null($request->file('file_skpd'))) {
+                $file = $request->file('file_skpd');
+            }
+
+            $fileName = $file->getClientOriginalName();
+            $file->storeAs('ops/pajak-reklame/', $fileName, ["disk" => 'public']);
+
+            if(!is_null($request->file('file_skpd'))) {
+                $ops_pajak_reklame->file_skpd = $fileName;
+            } else {
+                $ops_pajak_reklame->file_izin_reklame = $fileName;
+            }
+
+            $ops_pajak_reklame->save();
+
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'File berhasil diupload!']);
+        } catch (Exception $e) {
+            dd($e);
+
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'gagal', 'message' => 'File gagal diupload!']);
+        }
+    }
+
 
     public function destroy($id)
     {
         $pajak_reklame = OpsPajakReklame::find($id);
         $pajak_reklame->delete();
 
-        return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.pajak-reklame'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
     }
 }

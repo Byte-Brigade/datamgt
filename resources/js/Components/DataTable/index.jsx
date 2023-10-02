@@ -27,9 +27,10 @@ export default function DataTable({
   fetchUrl,
   refreshUrl = false,
   dataArr,
+  reverseArray = false,
 }) {
   const [data, setData] = useState([]);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState(columns[0].field);
   const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
@@ -101,8 +102,8 @@ export default function DataTable({
     if (fetchUrl) {
       const { data } = await axios.get(fetchUrl, { params });
       console.log(data);
-      setData(data.data);
-      setPagination(data.meta);
+      setData(data.data instanceof Object ? Object.values(data.data) : data.data);
+      setPagination(data.meta ? data.meta : data);
       setLoading(false);
     }
 
@@ -165,10 +166,10 @@ export default function DataTable({
             value={perPage}
             onChange={(e) => handlePerPage(e.target.value)}
           >
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
           </select>
           entries
         </div>
@@ -178,6 +179,7 @@ export default function DataTable({
             <TextInput
               type="search"
               name="search"
+              id="search"
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
@@ -310,7 +312,7 @@ export default function DataTable({
         </Collapse>
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm leading-3">
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
@@ -373,6 +375,46 @@ export default function DataTable({
                   Tidak ada data tersedia
                 </td>
               </tr>
+            ) : reverseArray ? (
+              data.map((main, index) => (
+                <tr
+                  key={index}
+                  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
+                >
+                  <td className="text-center p-0">
+                    {Object.keys(pagination).length === 0
+                      ? index + 1
+                      : pagination.from + index}
+                  </td>
+                  {columns.map((column, id) =>
+                    column.field ? (
+                      column.field === "action" ? (
+                        <td
+                          key={column.field}
+                          className={column.className + " p-0"}
+                        >
+                          {column.render(data)}
+                        </td>
+                      ) : (
+                        <td
+                          key={column.field}
+                          className={column.className + " p-0"}
+                        >
+                          {column.type === "date"
+                            ? convertDate(getNestedValue(data, column.field))
+                            : column.type === "custom"
+                            ? column.render(data)
+                            : getNestedValue(data, column.field) || "-"}
+                        </td>
+                      )
+                    ) : (
+                      <td key={id} className={column.className + " p-0"}>
+                        {column.value || "-"}
+                      </td>
+                    )
+                  )}
+                </tr>
+              ))
             ) : (
               data.map((data, index) => (
                 <tr
@@ -403,6 +445,7 @@ export default function DataTable({
                               : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
+
                       ) : (
                         <td key={id} className={column.className}>
                           {column.value || "-"}

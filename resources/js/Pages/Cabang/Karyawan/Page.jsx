@@ -56,7 +56,6 @@ export default function Karyawan({ branches, positions, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code", sortable: true },
     { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Position",

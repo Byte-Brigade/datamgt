@@ -1,8 +1,7 @@
 import React from "react";
 
 export default function Alert({ sessions }) {
-  const status =
-    sessions.status[0].toUpperCase() + sessions.status.substring(1);
+  const status = sessions.status === 'success' ? 'Berhasil' : (sessions.status === 'failed') ? 'Gagal' : sessions.status;
   return (
     <div
       className={`border-l-4 ${

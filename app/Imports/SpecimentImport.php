@@ -33,8 +33,6 @@ class SpecimentImport implements ToModel, WithHeadingRow, WithUpserts
             return new OpsSpeciment([
                 'branch_id' => Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first(),
                 'tgl_speciment' =>  Date::excelToDateTimeObject($row['tgl_spesimen']),
-                'hasil_konfirmasi_cabang' => isset($row['hasil_konfirmasi_cabang'])  ? $row['hasil_konfirmasi_cabang'] : null,
-                'keterangan' => isset($row['keterangan']) ? $row['keterangan'] : null,
 
             ]);
         }

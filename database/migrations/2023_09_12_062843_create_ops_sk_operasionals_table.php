@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string('no_surat');
             $table->date('expiry_date');
             $table->string('file')->nullable();
-            $table->string('note')->nullable();
             $table->timestamps();
 
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');

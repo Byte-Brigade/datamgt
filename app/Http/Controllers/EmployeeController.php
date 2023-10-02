@@ -28,7 +28,7 @@ class EmployeeController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'employees.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->employee->select('employees.*')->orderBy($sortField, $sortOrder)
+        $query = $this->employee->select('employees.*')->orderBy($sortField, $sortOrder)->orderBy('employee_id','asc')
             ->join('branches', 'employees.branch_id', 'branches.id')
             ->join('employee_positions', 'employees.position_id', 'employee_positions.id');
         $perpage = $request->perpage ?? 10;
@@ -65,7 +65,7 @@ class EmployeeController extends Controller
         try {
             (new EmployeesImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('employees'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             $list_error = collect([]);
@@ -84,7 +84,7 @@ class EmployeeController extends Controller
 
                 $list_error->push($error);
             }
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('employees'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
         }
     }
 
@@ -108,9 +108,9 @@ class EmployeeController extends Controller
                 'hiring_date' => $request->hiring_date,
             ]);
 
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('employees'))->with(['status' => 'berhasil', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('employees'))->with(['status' => 'gagal', 'message' => $e->getMessage()]);
         }
     }
 
@@ -119,6 +119,6 @@ class EmployeeController extends Controller
         $employee = Employee::find($id);
         $employee->delete();
 
-        return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('employees'))->with(['status' => 'berhasil', 'message' => 'Data berhasil dihapus']);
     }
 }

@@ -54,13 +54,18 @@ export default function SKBIRTGS({ branches, sessions }) {
   const columns = [
     { name: "Nomor Surat", field: "no_surat" },
     { name: "Kantor Cabang", field: "branches.branch_name" },
-    { name: "Penerima Kuasa", field: "penerima_kuasa"},
+    {
+      name: "Penerima Kuasa",
+      field: "penerima_kuasa",
+      // render: (data) =>
+      //   data.penerima_kuasa.map((employee) => employee.name).join(" - "),
+    },
     {
       name: "Lampiran",
       field: "file",
       type: "custom",
       render: (data) =>
-        data.no_surat !== "Tidak Ada" ? (
+        data.no_surat !== "-" ? (
           data.file ? (
             <a
               className="text-blue-500 hover:underline"
