@@ -28,6 +28,10 @@ module.exports = withMT({
           800: "#1e293b",
           900: "#0f172a",
         }
+      },
+      gridTemplateColumns: {
+        sidebar: '256px auto',
+        sidebarCollapse: '64px auto'
       }
     },
   },

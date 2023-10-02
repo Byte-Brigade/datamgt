@@ -130,6 +130,7 @@ export default function DataTable({
             <TextInput
               type="search"
               name="search"
+              id="search"
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
