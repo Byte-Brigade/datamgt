@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -34,3 +35,7 @@ Route::get('/ops/speciment', [OpsSpecimentController::class, 'api']);
 Route::get('/ops/apar', [OpsAparController::class, 'api']);
 Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
 
+Route::prefix('component')->name('component.')->group(function () {
+    Route::get('branches', [ComponentController::class, 'branches']);
+    Route::get('branch_types', [ComponentController::class, 'branch_types']);
+});
