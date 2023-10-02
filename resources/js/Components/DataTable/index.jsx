@@ -37,6 +37,7 @@ export default function DataTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState([]);
   const [filterData, setFilterData] = useState([]);
+  const [selected, setSelected] = useState("0");
 
   const [loading, setLoading] = useState(false);
 
@@ -221,57 +222,80 @@ export default function DataTable({
             </div>
 
             <div className="flex flex-wrap">
-              {loading ?? columns.map((column, i) =>
-
-
-                data.length > 0 ?? (
-                  data.filter((value, index, array) => array.indexOf(value) === index).map((data) =>
-                    column.field ? (
-                      column.field === "action" ? (
-                        <td key={column.field} className={column.className}>
-                          {column.render(data)}
-                        </td>
-                      ) : (
-                        <Checkbox
-                          onChange={(e) => handleCheckboxData(e.target.value)}
-
-                          label={
-                            column.type === "date"
-                              ? convertDate(
-                                getNestedValue(data, column.field)
-                              )
-                              : column.type === "custom"
-                                ? column.render(data)
-                                : getNestedValue(data, column.field) || "-"
-                          }
-                          key={
-                            column.type === "date"
-                              ? convertDate(
-                                getNestedValue(data, column.field)
-                              )
-                              : column.type === "custom"
-                                ? column.render(data)
-                                : getNestedValue(data, column.field) || "-"
-                          }
-                          className={column.className}
-                          value={
-                            column.type === "date"
-                              ? convertDate(
-                                getNestedValue(data, column.field)
-                              )
-                              : column.type === "custom"
-                                ? column.render(data)
-                                : getNestedValue(data, column.field) || "-"
-                          }
-                        />
-                      )
-                    ) : (
-                      <td key={id} className={column.className}>
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )
+              <select
+                label="Branch"
+                onChange={(e) => setSelected(e.target.value)}
+              >
+                <option value="0">All</option>
+                {columns.map((column, i) => (
+                  <option key={i} value={`${column.field}`}>
+                    {column.name}
+                  </option>
                 ))}
+              </select>
+              {!loading
+                ? columns.map((column, i) =>
+                    data.length > 0 && column.field === selected
+                      ? data
+                          .map((data) =>
+                            column.field ? (
+                              column.field === "action" ? (
+                                <td
+                                  key={column.field}
+                                  className={column.className}
+                                >
+                                  {column.render(data)}
+                                </td>
+                              ) : (
+                                <Checkbox
+                                  onChange={(e) =>
+                                    handleCheckboxData(e.target.value)
+                                  }
+                                  label={
+                                    column.type === "date"
+                                      ? convertDate(
+                                          getNestedValue(data, column.field)
+                                        )
+                                      : column.type === "custom"
+                                      ? column.render(data)
+                                      : getNestedValue(data, column.field) ||
+                                        "-"
+                                  }
+                                  key={
+                                    column.type === "date"
+                                      ? convertDate(
+                                          getNestedValue(data, column.field)
+                                        )
+                                      : column.type === "custom"
+                                      ? column.render(data)
+                                      : getNestedValue(data, column.field) ||
+                                        "-"
+                                  }
+                                  className={column.className}
+                                  value={
+                                    column.type === "date"
+                                      ? convertDate(
+                                          getNestedValue(data, column.field)
+                                        )
+                                      : column.type === "custom"
+                                      ? column.render(data)
+                                      : getNestedValue(data, column.field) ||
+                                        "-"
+                                  }
+                                />
+                              )
+                            ) : (
+                              <td key={id} className={column.className}>
+                                {column.value || "-"}
+                              </td>
+                            )
+                          ).filter(
+                            (value, index, array) =>
+                              array.indexOf(value) === index
+                          )
+                      : console.log("b")
+                  )
+                : console.log("a")}
             </div>
           </div>
         </Collapse>
@@ -298,18 +322,20 @@ export default function DataTable({
                               {column.name}
                               <span className="flex flex-col gap-y-1">
                                 <ChevronUpIcon
-                                  className={`${sortOrder === SORT_ASC &&
+                                  className={`${
+                                    sortOrder === SORT_ASC &&
                                     column.field === sortColumn
-                                    ? "text-slate-900"
-                                    : "text-gray-400"
-                                    } w-3 h-3`}
+                                      ? "text-slate-900"
+                                      : "text-gray-400"
+                                  } w-3 h-3`}
                                 />
                                 <ChevronDownIcon
-                                  className={`${sortOrder === SORT_DESC &&
+                                  className={`${
+                                    sortOrder === SORT_DESC &&
                                     column.field === sortColumn
-                                    ? "text-slate-900"
-                                    : "text-gray-400"
-                                    } w-3 h-3`}
+                                      ? "text-slate-900"
+                                      : "text-gray-400"
+                                  } w-3 h-3`}
                                 />
                               </span>
                             </div>
@@ -321,52 +347,61 @@ export default function DataTable({
                     </PopoverHandler>
 
                     <PopoverContent className="flex flex-col">
-                      {data.filter((value, index, array) => array.indexOf(value) === index).map((data) =>
-                        column.field ? (
-                          column.field === "action" ? (
-                            <td key={column.field} className={column.className}>
-                              {column.render(data)}
-                            </td>
-                          ) : (
-                            <Checkbox
-                              onChange={(e) => handleCheckboxData(e.target.value)}
-
-                              label={
-                                column.type === "date"
-                                  ? convertDate(
-                                    getNestedValue(data, column.field)
-                                  )
-                                  : column.type === "custom"
-                                    ? column.render(data)
-                                    : getNestedValue(data, column.field) || "-"
-                              }
-                              key={
-                                column.type === "date"
-                                  ? convertDate(
-                                    getNestedValue(data, column.field)
-                                  )
-                                  : column.type === "custom"
-                                    ? column.render(data)
-                                    : getNestedValue(data, column.field) || "-"
-                              }
-                              className={column.className}
-                              value={
-                                column.type === "date"
-                                  ? convertDate(
-                                    getNestedValue(data, column.field)
-                                  )
-                                  : column.type === "custom"
-                                    ? column.render(data)
-                                    : getNestedValue(data, column.field) || "-"
-                              }
-                            />
-                          )
-                        ) : (
-                          <td key={id} className={column.className}>
-                            {column.value || "-"}
-                          </td>
+                      {data
+                        .filter(
+                          (value, index, array) =>
+                            array.indexOf(value) === index
                         )
-                      )}
+                        .map((data) =>
+                          column.field ? (
+                            column.field === "action" ? (
+                              <td
+                                key={column.field}
+                                className={column.className}
+                              >
+                                {column.render(data)}
+                              </td>
+                            ) : (
+                              <Checkbox
+                                onChange={(e) =>
+                                  handleCheckboxData(e.target.value)
+                                }
+                                label={
+                                  column.type === "date"
+                                    ? convertDate(
+                                        getNestedValue(data, column.field)
+                                      )
+                                    : column.type === "custom"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
+                                }
+                                key={
+                                  column.type === "date"
+                                    ? convertDate(
+                                        getNestedValue(data, column.field)
+                                      )
+                                    : column.type === "custom"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
+                                }
+                                className={column.className}
+                                value={
+                                  column.type === "date"
+                                    ? convertDate(
+                                        getNestedValue(data, column.field)
+                                      )
+                                    : column.type === "custom"
+                                    ? column.render(data)
+                                    : getNestedValue(data, column.field) || "-"
+                                }
+                              />
+                            )
+                          ) : (
+                            <td key={id} className={column.className}>
+                              {column.value || "-"}
+                            </td>
+                          )
+                        )}
                     </PopoverContent>
                   </Popover>
                 ))}
@@ -417,8 +452,8 @@ export default function DataTable({
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                                ? column.render(data)
-                                : getNestedValue(data, column.field) || "-"}
+                              ? column.render(data)
+                              : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (
