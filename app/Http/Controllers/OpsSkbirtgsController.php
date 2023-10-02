@@ -34,6 +34,8 @@ class OpsSkbirtgsController extends Controller
 
 
         $perpage = $request->perpage ?? 10;
+
+
         if (isset($filters)) {
             // $filters = array_map(function ($filter) {
             //     return $filter == 'penerima_kuasa' ? "CONCAT('[',employee_positions.position_name,']',' ',employees.name) as penerima_kuasa" : $filter;

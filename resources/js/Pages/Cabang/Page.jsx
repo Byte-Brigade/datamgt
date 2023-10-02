@@ -49,14 +49,15 @@ export default function Cabang({ auth, sessions, branch_types }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [open, setOpen] = useState(false);
   const columns = [
-    { name: "Kode Cabang", field: "branch_code", sortable: true },
-    { name: "Tipe Cabang", field: "branch_types.type_name", sortable: true },
-    { name: "Nama Cabang", field: "branch_name", sortable: true },
-    { name: "NPWP", field: "npwp" },
+    { name: "Kode Cabang", field: "branch_code", sortable: false },
+    { name: "Tipe Cabang", field: "branch_types.type_name", sortable: false, filterable: true },
+    { name: "Nama Cabang", field: "branch_name", sortable: false, filterable: true },
+      { name: "NPWP", field: "npwp" },
     { name: "Alamat", field: "address" },
     { name: "Telp", field: "telp" },
     { name: "Fasilitas ATM", field: "fasilitas_atm" },
-    { name: "Layanan ATM", field: "layanan_atm" },
+    { name: "Layanan ATM", field: "layanan_atm", filterable: true },
+
     {
       name: "Action",
       field: "action",
