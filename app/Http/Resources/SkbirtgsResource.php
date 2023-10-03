@@ -22,9 +22,9 @@ class SkbirtgsResource extends JsonResource
             'file' => $this->file,
             'reverse' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name')->toArray() : 'Central - KP',
             'target' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name') : 'Central - KP',
-            'penerima_kuasa' => $this->penerima_kuasa()->get()->count() > 0 ? implode(' - ', $this->penerima_kuasa()->get()->map(function($employee) {
-                return '['.$employee->getPosition().']'.' '.$employee->name;
-            })->toArray()): 'Central - KP',
+            'penerima_kuasa' => $this->penerima_kuasa()->get()->count() > 0 ? implode(' - ', $this->penerima_kuasa()->get()->map(function ($employee) {
+                return '[' . $employee->getPosition() . ']' . ' ' . $employee->name;
+            })->toArray()) : (str_contains($this->status, 'Kanwil') ? $this->status : 'Centralize - SKN'),
 
             'branches' => $this->branches
         ];

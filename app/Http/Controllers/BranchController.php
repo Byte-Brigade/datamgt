@@ -29,23 +29,49 @@ class BranchController extends Controller
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 10;
 
+
+        $input = $request->all();
+        if (isset($input['branch_types_type_name'])) {
+            $type_name =$input['branch_types_type_name'];
+            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
+                $q->whereIn('type_name', $type_name);
+            });
+        }
+
+        if (isset($request->layanan_atm)) {
+            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('branch_code', 'like', $searchQuery)
+            $query = $query->where(function($query) use($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
                 ->orWhere('branch_name', 'like', $searchQuery)
-                ->orWhere('address', 'like', $searchQuery)
-                ->orWhere('layanan_atm', 'like', $searchQuery)
-                ->orWhereHas('branch_types', function (Builder $q) use ($searchQuery) {
-                    $q->where('type_name', 'like', $searchQuery);
-                });
+                ->orWhere('address', 'like', $searchQuery);
+            });
         }
+
+
         $branches = $query->paginate($perpage);
+
         return BranchResource::collection($branches);
+    }
+
+    private function handleColumn($column)
+    {
+        if (str_contains($column, '.')) {
+            $arr = explode('.', $column);
+            $column = array_shift($arr);
+            $column = $arr[0];
+        }
+        return $column;
     }
 
     public function index(Request $request)
     {
+
         return Inertia::render('Cabang/Page', [
+            'branches' => Branch::get(),
             'branch_types' => BranchType::all(),
         ]);
     }
@@ -57,7 +83,6 @@ class BranchController extends Controller
 
 
             return redirect(route('branches'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
-
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -70,9 +95,7 @@ class BranchController extends Controller
             dd($failures);
 
             return redirect(route('branches'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
-
         }
-
     }
 
     public function export()

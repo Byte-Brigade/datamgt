@@ -24,7 +24,7 @@ class BranchResource extends JsonResource
             'npwp' => $this->npwp,
             'address' => $this->address,
             'telp' => $this->telp,
-            'fasilitas_atm' => isset($this->layanan_atm) ? 'Ada' : 'Tidak Ada',
+            'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada'  ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
             'branch_types' => $this->branch_types
         ];

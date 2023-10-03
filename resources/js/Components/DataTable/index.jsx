@@ -29,6 +29,7 @@ export default function DataTable({
   dataArr,
   reverseArray = false,
   className = "w-full",
+  component = [],
 }) {
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(15);
@@ -38,8 +39,9 @@ export default function DataTable({
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState([]);
-  const [filterData, setFilterData] = useState([]);
+  const [filterData, setFilterData] = useState({});
   const [selected, setSelected] = useState("0");
+  // const [component, setComponent] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -65,21 +67,58 @@ export default function DataTable({
     }, 500)
   ).current;
 
-  const handleCheckbox = (filter) => {
+  const handleCheckbox = async (filter, d, field) => {
     console.log(filters);
     setFilters((prevFilter) =>
       prevFilter.includes(filter)
         ? prevFilter.filter((c) => c !== filter)
         : [...prevFilter, filter]
     );
+    // const params = {
+    //   field: field,
+    // };
+    // console.log(field);
+    // const { data } = await axios.get(`api/component/${d}`, { params });
+    // setComponent((prevComponent) => {
+    //   // Menggunakan JSON.stringify untuk mengonversi objek ke dalam string dan membandingkannya
+    //   const isDuplicate = prevComponent.some(
+    //     (item) => JSON.stringify(item) === JSON.stringify(data)
+    //   );
+
+    //   // Jika objek tidak ada dalam array, tambahkan objek baru ke dalam components
+    //   if (!isDuplicate) {
+    //     return [...prevComponent, data];
+    //   }
+
+    //   return prevComponent;
+    // });
+    // console.log(component);
   };
 
-  const handleCheckboxData = (filter) => {
-    setFilterData((prevFilter) =>
-      prevFilter.includes(filter)
-        ? prevFilter.filter((c) => c !== filter)
-        : [...prevFilter, filter]
-    );
+  const handleCheckboxData = (filter, field) => {
+    setFilterData((prevFilter) => {
+      // Membuat salinan dari prevFilter
+      const updatedFilter = { ...prevFilter };
+
+      // Jika field belum ada dalam updatedFilter, tambahkan field dengan array filter ke dalam updatedFilter
+      if (!updatedFilter.hasOwnProperty(field)) {
+        updatedFilter[field] = [filter];
+      } else {
+        // Jika field sudah ada dalam updatedFilter, periksa apakah filter sudah ada dalam array tersebut
+        // Jika belum, tambahkan filter ke dalam array filter
+        if (!updatedFilter[field].includes(filter)) {
+          updatedFilter[field].push(filter);
+        } else {
+          // Jika filter sudah ada dalam array filter, hapus filter dari array
+          updatedFilter[field] = updatedFilter[field].filter(
+            (item) => item !== filter
+          );
+        }
+      }
+
+      return updatedFilter;
+    });
+
     console.log(filterData);
   };
 
@@ -96,7 +135,7 @@ export default function DataTable({
       sort_field: sortColumn,
       sort_order: sortOrder,
       search,
-      filters,
+      ...filterData,
     };
 
     if (fetchUrl) {
@@ -125,8 +164,7 @@ export default function DataTable({
     search,
     currentPage,
     refreshUrl,
-    // filters,
-    // filterData,
+    filterData,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -221,7 +259,13 @@ export default function DataTable({
                           key={column.field}
                           checked={filters.includes(column.field)}
                           value={column.field}
-                          onChange={(e) => handleCheckbox(e.target.value)}
+                          onChange={(e) =>
+                            handleCheckbox(
+                              e.target.value,
+                              column.component,
+                              column.field
+                            )
+                          }
                         />
 
                         <div></div>
@@ -232,58 +276,32 @@ export default function DataTable({
             </div>
 
             <div className="flex flex-wrap">
-              {!loading
-                ? columns
-                    .filter((column) => column.filterable)
-                    .map((column, i) => {
-                      if (data.length > 0 && filters.includes(column.field)) {
-                        const uniqueValues = new Set(
-                          data.map((item) => getNestedValue(item, column.field))
-                        );
-
-                        const filteredData = Array.from(uniqueValues).map(
-                          (uniqueValue) =>
-                            data.find(
-                              (item) =>
-                                getNestedValue(item, column.field) ===
-                                uniqueValue
-                            )
-                        );
-                        return filteredData.map((data, i) =>
-                          column.field ? (
-                            column.field === "action" ? (
-                              <td
-                                key={column.field}
-                                className={column.className}
-                              >
-                                {column.render(data)}
-                              </td>
-                            ) : (
-                              <Checkbox
-                                onChange={(e) =>
-                                  handleCheckboxData(e.target.value)
-                                }
-                                label={getNestedValue(data, column.field)}
-                                key={i}
-                                className={column.className}
-                                value={getNestedValue(data, column.field)}
-                              />
-                            )
-                          ) : (
-                            <td key={id} className={column.className}>
-                              {column.value || "-"}
-                            </td>
-                          )
-                        );
-                      }
-                    })
-                : console.log("a")}
+              {columns
+                .filter((column) => column.filterable)
+                .map((column, i) => {
+                  if (component.length > 0 && filters.includes(column.field)) {
+                    return component.map(({ data, field }, i) =>
+                      column.field == field ?data.map((item, index) => (
+                        <Checkbox
+                          onChange={(e) =>
+                            handleCheckboxData(e.target.value, field)
+                          }
+                          checked={filterData[field] ? filterData[field].includes(item) : false}
+                          label={item}
+                          key={index}
+                          className={column.className}
+                          value={item}
+                        />
+                      )) : ""
+                    );
+                  }
+                })}
             </div>
           </div>
         </Collapse>
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-        <table className={`${className} text-sm leading-3`}>
+        <table className={`w-full text-sm leading-3`}>
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>

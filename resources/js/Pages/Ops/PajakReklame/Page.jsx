@@ -71,7 +71,7 @@ export default function PajakReklame({ branches, sessions }) {
     },
     { name: "No Izin", field: "no_izin" },
     { name: "Nilai Pajak", field: "nilai_pajak" },
-    { name: "Keterangan", field: "note" },
+    { name: "Keterangan", field: "note" , className: 'w-[300px]'},
 
     {
       name: "Izin Reklame",
@@ -269,6 +269,7 @@ export default function PajakReklame({ branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
+            className="w-[1500px]"
             fetchUrl={"/api/ops/pajak-reklame"}
             refreshUrl={isRefreshed}
           />

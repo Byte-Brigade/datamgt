@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('npwp', 20)->nullable();
             $table->text('address');
             $table->string('telp', 22)->nullable();
-            $table->enum('layanan_atm', ['24 Jam', 'Jam Operasional'])->nullable();
+            $table->enum('layanan_atm', ['24 Jam', 'Jam Operasional', 'Tidak Ada'])->nullable();
             $table->timestamps();
 
             $table->foreign('branch_type_id')->references('id')->on('branch_types')->onDelete('cascade');

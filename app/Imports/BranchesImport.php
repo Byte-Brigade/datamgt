@@ -48,7 +48,7 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             'branch_name' => $branch_name,
             'address' => $row['alamat'],
             'telp' => $row['telp'],
-            'layanan_atm' => $row['layanan_atm'],
+            'layanan_atm' => is_null($row['layanan_atm']) ? "Tidak Ada" : $row['layanan_atm'],
             'npwp' => $row['npwp']
         ]);
     }
