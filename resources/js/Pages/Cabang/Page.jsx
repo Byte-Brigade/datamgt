@@ -55,7 +55,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       field: "branch_types.type_name",
       sortable: false,
       filterable: true,
-      component: "branch_types",
     },
     { name: "Nama Cabang", field: "branch_name", sortable: false },
     { name: "NPWP", field: "npwp" },

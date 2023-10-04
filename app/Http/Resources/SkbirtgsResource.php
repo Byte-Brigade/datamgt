@@ -24,7 +24,7 @@ class SkbirtgsResource extends JsonResource
             'target' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name') : 'Central - KP',
             'penerima_kuasa' => $this->penerima_kuasa()->get()->count() > 0 ? implode(' - ', $this->penerima_kuasa()->get()->map(function ($employee) {
                 return '[' . $employee->getPosition() . ']' . ' ' . $employee->name;
-            })->toArray()) : (str_contains($this->status, 'Kanwil') ? $this->status : 'Centralize - SKN'),
+            })->toArray()) : 'Central - KP',
 
             'branches' => $this->branches
         ];

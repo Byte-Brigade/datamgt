@@ -61,6 +61,7 @@ export default function Karyawan({ branches, positions, sessions }) {
       name: "Posisi",
       field: "employee_positions.position_name",
       sortable: true,
+      filterable: true,
     },
     { name: "NIK", field: "employee_id", sortable: true },
     { name: "Nama Lengkap", field: "name", sortable: true, className: "w-[300px]"},
@@ -183,6 +184,14 @@ export default function Karyawan({ branches, positions, sessions }) {
             columns={columns}
             fetchUrl={"/api/employees"}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: Array.from(
+                  new Set(positions.map((position) => position.position_name))
+                ),
+                field: "employee_positions.position_name",
+              },
+            ]}
           />
         </div>
       </div>

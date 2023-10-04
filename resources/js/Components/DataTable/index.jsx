@@ -8,15 +8,8 @@ import Paginator from "./Paginator";
 import {
   IconButton,
   Collapse,
-  Card,
-  CardBody,
-  Typography,
-  Select,
-  Option,
   Checkbox,
-  Popover,
-  PopoverHandler,
-  PopoverContent,
+  Button,
 } from "@material-tailwind/react";
 
 const SORT_ASC = "asc";
@@ -27,7 +20,6 @@ export default function DataTable({
   fetchUrl,
   refreshUrl = false,
   dataArr,
-  reverseArray = false,
   className = "w-full",
   component = [],
 }) {
@@ -38,14 +30,14 @@ export default function DataTable({
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState([]);
-  const [filterData, setFilterData] = useState({});
-  const [selected, setSelected] = useState("0");
-  // const [component, setComponent] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
+
+  // filters
+  const [filters, setFilters] = useState([]);
+  const [filterData, setFilterData] = useState({});
+  const [clearFilter, setClearFilter] = useState(false);
 
   const toggleOpen = () => setOpen((cur) => !cur);
 
@@ -67,34 +59,23 @@ export default function DataTable({
     }, 500)
   ).current;
 
-  const handleCheckbox = async (filter, d, field) => {
-    console.log(filters);
+  const handleFilter = () => {
+    fetchData(1);
+  };
+
+  const handleCheckbox = async (filter, field) => {
     setFilters((prevFilter) =>
       prevFilter.includes(filter)
         ? prevFilter.filter((c) => c !== filter)
         : [...prevFilter, filter]
     );
-    // const params = {
-    //   field: field,
-    // };
-    // console.log(field);
-    // const { data } = await axios.get(`api/component/${d}`, { params });
-    // setComponent((prevComponent) => {
-    //   // Menggunakan JSON.stringify untuk mengonversi objek ke dalam string dan membandingkannya
-    //   const isDuplicate = prevComponent.some(
-    //     (item) => JSON.stringify(item) === JSON.stringify(data)
-    //   );
-
-    //   // Jika objek tidak ada dalam array, tambahkan objek baru ke dalam components
-    //   if (!isDuplicate) {
-    //     return [...prevComponent, data];
-    //   }
-
-    //   return prevComponent;
-    // });
-    // console.log(component);
   };
+  const handleClearFilter = () => {
+    setFilters([]);
+    setFilterData([]);
 
+    setClearFilter((prevClear) => !prevClear);
+  };
   const handleCheckboxData = (filter, field) => {
     setFilterData((prevFilter) => {
       // Membuat salinan dari prevFilter
@@ -118,8 +99,6 @@ export default function DataTable({
 
       return updatedFilter;
     });
-
-    console.log(filterData);
   };
 
   const handlePerPage = (perPage) => {
@@ -127,10 +106,10 @@ export default function DataTable({
     setPerPage(perPage);
   };
 
-  const fetchData = async () => {
+  const fetchData = async (currPage = 0) => {
     setLoading(true);
     const params = {
-      page: currentPage,
+      page: currPage > 0 ? currPage : currentPage,
       perpage: perPage,
       sort_field: sortColumn,
       sort_order: sortOrder,
@@ -164,7 +143,7 @@ export default function DataTable({
     search,
     currentPage,
     refreshUrl,
-    filterData,
+    clearFilter,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -281,27 +260,37 @@ export default function DataTable({
                 .map((column, i) => {
                   if (component.length > 0 && filters.includes(column.field)) {
                     return component.map(({ data, field }, i) =>
-                      column.field == field ?data.map((item, index) => (
-                        <Checkbox
-                          onChange={(e) =>
-                            handleCheckboxData(e.target.value, field)
-                          }
-                          checked={filterData[field] ? filterData[field].includes(item) : false}
-                          label={item}
-                          key={index}
-                          className={column.className}
-                          value={item}
-                        />
-                      )) : ""
+                      column.field == field
+                        ? data.map((item, index) => (
+                            <Checkbox
+                              onChange={(e) =>
+                                handleCheckboxData(e.target.value, field)
+                              }
+                              checked={
+                                filterData[field]
+                                  ? filterData[field].includes(item)
+                                  : false
+                              }
+                              label={item}
+                              key={index}
+                              className={column.className}
+                              value={item}
+                            />
+                          ))
+                        : ""
                     );
                   }
                 })}
+            </div>
+            <div>
+              <Button onClick={handleClearFilter}>Clear</Button>
+              <Button onClick={handleFilter}>Filter</Button>
             </div>
           </div>
         </Collapse>
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-        <table className={`w-full text-sm leading-3`}>
+        <table className={`${className} text-sm leading-3`}>
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
@@ -360,46 +349,6 @@ export default function DataTable({
                   Tidak ada data tersedia
                 </td>
               </tr>
-            ) : reverseArray ? (
-              data.map((main, index) => (
-                <tr
-                  key={index}
-                  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
-                >
-                  <td className="text-center p-0">
-                    {Object.keys(pagination).length === 0
-                      ? index + 1
-                      : pagination.from + index}
-                  </td>
-                  {columns.map((column, id) =>
-                    column.field ? (
-                      column.field === "action" ? (
-                        <td
-                          key={column.field}
-                          className={column.className + " p-0"}
-                        >
-                          {column.render(data)}
-                        </td>
-                      ) : (
-                        <td
-                          key={column.field}
-                          className={column.className + " p-0"}
-                        >
-                          {column.type === "date"
-                            ? convertDate(getNestedValue(data, column.field))
-                            : column.type === "custom"
-                            ? column.render(data)
-                            : getNestedValue(data, column.field) || "-"}
-                        </td>
-                      )
-                    ) : (
-                      <td key={id} className={column.className + " p-0"}>
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )}
-                </tr>
-              ))
             ) : (
               data.map((data, index) => (
                 <tr

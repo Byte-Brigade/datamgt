@@ -55,7 +55,7 @@ class OpsSkOperasionalController extends Controller
             'expiry_date' => $item->expiry_date,
             'note' => $item->note,
             'file' => $item->file,
-            'penerima_kuasa' => 'Central - KP',
+            'penerima_kuasa' => 'Centralize - SKN',
             'branches' => $item->branches
         ];
             $penerima_kuasa = $item->penerima_kuasa()->get();
