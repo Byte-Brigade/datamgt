@@ -16,13 +16,16 @@ class SkbirtgsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'no_surat' => $this->no_surat,
+            'no_surat' => str_contains($this->no_surat, 'SK') ? $this->no_surat : '-',
             'branch_id' => $this->branch_id,
             'status' => $this->status,
             'file' => $this->file,
-            'penerima_kuasa' =>  implode(' - ', $this->penerima_kuasa()->get()->map(function($employee) {
-                return !is_null($employee->getPosition()) ? '['.$employee->getPosition().'] '.$employee->name : $employee->name;
-            })->toArray()),
+            'reverse' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name')->toArray() : 'Central - KP',
+            'target' =>  $this->penerima_kuasa()->get()->count() > 0 ? $this->penerima_kuasa()->pluck('name') : 'Central - KP',
+            'penerima_kuasa' => $this->penerima_kuasa()->get()->count() > 0 ? implode(' - ', $this->penerima_kuasa()->get()->map(function ($employee) {
+                return '[' . $employee->getPosition() . ']' . ' ' . $employee->name;
+            })->toArray()) : 'Central - KP',
+
             'branches' => $this->branches
         ];
     }

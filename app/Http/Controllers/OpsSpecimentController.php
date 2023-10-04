@@ -5,6 +5,7 @@ use App\Exports\SpecimentsExport;
 use App\Http\Resources\SpecimentResource;
 use App\Imports\SpecimentImport;
 use App\Models\OpsSpeciment;
+use FFI\Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -37,12 +38,31 @@ class OpsSpecimentController extends Controller
         return Inertia::render('Ops/Speciment/Page');
     }
 
+    public function upload(Request $request, $id)
+    {
+        try {
+            $ops_speciment = OpsSpeciment::find($id);
+
+            $fileName = $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('ops/speciment/', $fileName, ["disk" => 'public']);
+
+            $ops_speciment->file = $fileName;
+            $ops_speciment->save();
+
+            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+        } catch (Exception $e) {
+            dd($e);
+
+            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
+        }
+    }
+
     public function import(Request $request)
     {
         try {
             (new SpecimentImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -53,7 +73,7 @@ class OpsSpecimentController extends Controller
                 $failure->values(); // The values of the row that has failed.
             }
             dd($failures);
-            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
@@ -69,8 +89,7 @@ class OpsSpecimentController extends Controller
             $speciment = OpsSpeciment::find($id);
             $speciment->update([
                 'tgl_speciment' => $request->tgl_speciment,
-                'hasil_konfirmasi_cabang' => $request->hasil_konfirmasi_cabang,
-                'keterangan' => $request->keterangan,
+
             ]);
 
             return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);

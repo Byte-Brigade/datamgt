@@ -19,7 +19,8 @@ class Branch extends Model
         'branch_name',
         'address',
         'telp',
-        'layanan_atm'
+        'layanan_atm',
+        'npwp'
     ];
 
     public function branch_types()

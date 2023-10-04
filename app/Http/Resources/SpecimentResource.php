@@ -18,8 +18,7 @@ class SpecimentResource extends JsonResource
             'id' => $this->id,
             'branch_id' => $this->branch_id,
             'tgl_speciment' => $this->tgl_speciment,
-            'hasil_konfirmasi_cabang' => $this->hasil_konfirmasi_cabang,
-            'keterangan' => $this->keterangan,
+            'file' => $this->file,
             'branches' => $this->branches
         ];
     }

@@ -32,7 +32,7 @@ class OpsAparController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('expired_date', 'like', $searchQuery);
+            $query = $query->where('id', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return AparResource::collection($employees);
@@ -49,7 +49,7 @@ class OpsAparController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('expired_date', 'like', $searchQuery);
+            $query = $query->where('id', 'like', $searchQuery);
         }
         $employees = $query->paginate($perpage);
         return AparDetailResource::collection($employees);
@@ -79,7 +79,7 @@ class OpsAparController extends Controller
         try {
             (new AparImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
 
 
@@ -99,7 +99,6 @@ class OpsAparController extends Controller
         try {
             $apar = OpsApar::find($id);
             $apar->update([
-                'expired_date' => $request->expired_date,
                 'keterangan' => $request->keterangan,
             ]);
 

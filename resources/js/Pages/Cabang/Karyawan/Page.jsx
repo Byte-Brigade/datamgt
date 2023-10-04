@@ -56,19 +56,19 @@ export default function Karyawan({ branches, positions, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code", sortable: true },
-    { name: "Branch Name", field: "branches.branch_name", sortable: true },
+    { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
-      name: "Position",
+      name: "Posisi",
       field: "employee_positions.position_name",
       sortable: true,
+      filterable: true,
     },
-    { name: "Employee ID", field: "employee_id", sortable: true },
-    { name: "Employee Name", field: "name", sortable: true },
-    { name: "Email", field: "email" },
-    { name: "Gender", field: "gender", className: "text-center" },
-    { name: "Tanggal Lahir", field: "birth_date", type: "date" },
-    { name: "Hiring Date", field: "hiring_date", type: "date" },
+    { name: "NIK", field: "employee_id", sortable: true },
+    { name: "Nama Lengkap", field: "name", sortable: true, className: "w-[300px]"},
+    { name: "Email (@banksampoerna.com)", field: "email" },
+    { name: "Jenis Kelamin", field: "gender", className: "text-center" },
+    { name: "Tanggal Lahir", field: "birth_date", type: "date", className: "text-center w-[300px]" },
+    { name: "Hiring Date", field: "hiring_date", type: "date", className: "text-center w-[300px]" },
     {
       name: "Action",
       field: "action",
@@ -184,6 +184,14 @@ export default function Karyawan({ branches, positions, sessions }) {
             columns={columns}
             fetchUrl={"/api/employees"}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: Array.from(
+                  new Set(positions.map((position) => position.position_name))
+                ),
+                field: "employee_positions.position_name",
+              },
+            ]}
           />
         </div>
       </div>

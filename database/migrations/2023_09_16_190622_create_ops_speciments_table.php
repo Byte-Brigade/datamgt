@@ -17,8 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id')->unique();
             $table->date('tgl_speciment');
-            $table->text('hasil_konfirmasi_cabang')->nullable();
-            $table->text('keterangan')->nullable();
+            $table->string('file')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
         });

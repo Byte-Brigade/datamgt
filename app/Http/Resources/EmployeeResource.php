@@ -20,7 +20,7 @@ class EmployeeResource extends JsonResource
             'position_id' => $this->position_id,
             'employee_id' => $this->employee_id,
             'name' => $this->name,
-            'email' => $this->email,
+            'email' => strtolower(strtok($this->email, '@')),
             'gender' => $this->gender,
             'birth_date' => $this->birth_date,
             'hiring_date' => $this->hiring_date,

@@ -28,22 +28,30 @@ class EmployeeController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'employees.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->employee->select('employees.*')->orderBy($sortField, $sortOrder)
+        $query = $this->employee->select('employees.*')->orderBy($sortField, $sortOrder)->orderBy('employee_id', 'asc')
             ->join('branches', 'employees.branch_id', 'branches.id')
             ->join('employee_positions', 'employees.position_id', 'employee_positions.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('employee_id', 'like', $searchQuery)
-                ->orWhere('name', 'like', $searchQuery)
-                ->orWhere('email', 'like', $searchQuery)
-                ->orWhereHas('branches', function (Builder $q) use ($searchQuery) {
-                    $q->where('branch_name', 'like', $searchQuery);
-                })
-                ->orWhereHas('employee_positions', function (Builder $q) use ($searchQuery) {
-                    $q->where('position_name', 'like', $searchQuery);
-                });
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('employee_id', 'like', $searchQuery)
+                    ->orWhere('name', 'like', $searchQuery)
+                    ->orWhere('email', 'like', $searchQuery)
+                    ->orWhereHas('branches', function (Builder $q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    })
+                    ->orWhereHas('employee_positions', function (Builder $q) use ($searchQuery) {
+                        $q->where('position_name', 'like', $searchQuery);
+                    });
+            });
+        }
+
+        if (!is_null($request->input('employee_positions_position_name'))) {
+            $query = $query->whereHas('employee_positions', function (Builder $q) use ($request) {
+                $q->whereIn('position_name', $request->get('employee_positions_position_name'));
+            });
         }
         $employees = $query->paginate($perpage);
         return EmployeeResource::collection($employees);
@@ -65,7 +73,7 @@ class EmployeeController extends Controller
         try {
             (new EmployeesImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Success']);
+            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             $list_error = collect([]);
@@ -84,7 +92,7 @@ class EmployeeController extends Controller
 
                 $list_error->push($error);
             }
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
