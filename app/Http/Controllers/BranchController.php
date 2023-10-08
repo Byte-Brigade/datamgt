@@ -82,7 +82,7 @@ class BranchController extends Controller
             (new BranchesImport)->import($request->file('file')->store('temp'));
 
 
-            return redirect(route('branches'))->with(['status' => 'berhasil', 'message' => 'Import Berhasil']);
+            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -94,7 +94,7 @@ class BranchController extends Controller
             }
             dd($failures);
 
-            return redirect(route('branches'))->with(['status' => 'gagal', 'message' => 'Import Gagal']);
+            return redirect(route('branches'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 

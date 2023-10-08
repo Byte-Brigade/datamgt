@@ -8,6 +8,7 @@ use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
+use App\Http\Controllers\UAMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,7 @@ Route::get('/ops/pajak-reklame', [OpsPajakReklameController::class, 'api']);
 Route::get('/ops/speciment', [OpsSpecimentController::class, 'api']);
 Route::get('/ops/apar', [OpsAparController::class, 'api']);
 Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
+Route::get('uam', [UAMController::class, 'api']);
 
 Route::prefix('component')->name('component.')->group(function () {
     Route::get('branches', [ComponentController::class, 'branches']);

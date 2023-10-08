@@ -3,6 +3,7 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   PresentationChartBarIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "@inertiajs/react";
 import {
@@ -79,6 +80,12 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             )
           }
         >
+          <ListItem>
+          <ListItemPrefix>
+            <ShoppingBagIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Users
+        </ListItem>
           <ListItem className="p-0" selected={open === 1}>
             <Tooltip
               content="Branch OPS"

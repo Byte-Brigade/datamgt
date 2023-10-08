@@ -9,6 +9,7 @@ use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UAMController;
 use App\Models\OpsPajakReklame;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
     Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
     /* [END] Employees */
+
+    /* [START] User Access Management */
+    Route::get('/uam', [UAMController::class, 'index'])->name('uam');
+    Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');
+    Route::put('/uam/{id}', [UAMController::class, 'index'])->name('uam.update');
+    Route::delete('/uam/{id}', [UAMController::class, 'index'])->name('uam.delete');
+    /* [END] User Access Management*/
+
 
     Route::prefix('ops')->name('ops.')->group(function () {
         /* [START] Ops SKBIRTGS */
