@@ -10,8 +10,6 @@ use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UAMController;
-use App\Models\OpsPajakReklame;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -57,13 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
     /* [END] Employees */
 
-    /* [START] User Access Management */
-    Route::get('/uam', [UAMController::class, 'index'])->name('uam');
-    Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');
-    Route::put('/uam/{id}', [UAMController::class, 'index'])->name('uam.update');
-    Route::delete('/uam/{id}', [UAMController::class, 'index'])->name('uam.delete');
-    /* [END] User Access Management*/
-
+    Route::middleware('role:superadmin')->group(function () {
+        /* [START] User Access Management */
+        Route::get('/uam', [UAMController::class, 'index'])->name('uam');
+        Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');
+        Route::put('/uam/{id}', [UAMController::class, 'index'])->name('uam.update');
+        Route::delete('/uam/{id}', [UAMController::class, 'index'])->name('uam.delete');
+        /* [END] User Access Management*/
+    });
 
     Route::prefix('ops')->name('ops.')->group(function () {
         /* [START] Ops SKBIRTGS */

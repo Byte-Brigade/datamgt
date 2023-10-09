@@ -20,21 +20,25 @@ class UAMController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function api(User $user, Request $request)
-     {
-         $sortField = 'id';
-         $sortOrder = $request->input('sort_order', 'asc');
-         $searchInput = $request->search;
-         $query = $user->orderBy($sortField, $sortOrder);
-         $perpage = $request->perpage ?? 10;
+    public function __construct(public User $user)
+    {
+    }
+
+    public function api(Request $request)
+    {
+        $sortField = 'id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $this->user->orderBy($sortField, $sortOrder);
+        $perpage = $request->perpage ?? 10;
 
         //  if (!is_null($searchInput)) {
         //      $searchQuery = "%$searchInput%";
         //      $query = $query->where('tgl_speciment', 'like', $searchQuery);
         //  }
-         $employees = $query->paginate($perpage);
-         return UserResource::collection($employees);
-     }
+        $users = $query->paginate($perpage);
+        return UserResource::collection($users);
+    }
 
     public function index()
     {
@@ -44,11 +48,6 @@ class UAMController extends Controller
         return Inertia::render('UAM/Page', ['branches' => $branchesProps, 'positions' => $positionProps, 'permissions' => $permissionProps]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
@@ -63,9 +62,17 @@ class UAMController extends Controller
     public function store(Request $request)
     {
         try {
+            $name = strtolower($request->name);
+            $names = explode(' ', $name);
+            if (count($names) > 1) {
+                $email = $names[0] . '.' . end($names);
+            } else {
+                $email = $names[0] . '.' . $names[0];
+            }
+
             $user = User::create([
                 'name' => $request->name,
-                'email' => rand(1, 1000) .'aawd'.rand(1, 1000).'@gmail.com',
+                'email' => $email . '@banksampoerna.com',
                 'nik' => $request->nik,
                 'password' => Hash::make($request->password),
             ]);
@@ -77,46 +84,21 @@ class UAMController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

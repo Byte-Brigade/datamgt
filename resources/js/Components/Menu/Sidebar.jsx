@@ -3,7 +3,7 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   PresentationChartBarIcon,
-  ShoppingBagIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "@inertiajs/react";
 import {
@@ -19,7 +19,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
+export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
   const [open, setOpen] = useState(1);
   const [collapse, setCollapse] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
@@ -52,7 +52,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           <>
             {/* <img src="/img/logo-ct-dark.png" alt="brand" className="w-8 h-8" /> */}
             <Typography variant="h5" color="blue-gray">
-              Sidebar
+              PDBOM
             </Typography>
           </>
         )}
@@ -65,7 +65,19 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
         </IconButton>
       </div>
       <hr className="mb-2 border-blue-gray-50" />
-      <List className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"}`}>
+      <List
+        className={`${
+          !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"
+        } overflow-y-scroll`}
+      >
+        <Link href={route("uam")}>
+          <ListItem>
+            <ListItemPrefix>
+              <UserGroupIcon className="w-5 h-5" />
+            </ListItemPrefix>
+            Users
+          </ListItem>
+        </Link>
         <Accordion
           open={open === 1}
           className={`${sidebarOpen && "w-12"}`}
@@ -80,12 +92,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             )
           }
         >
-          <ListItem>
-          <ListItemPrefix>
-            <ShoppingBagIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Users
-        </ListItem>
           <ListItem className="p-0" selected={open === 1}>
             <Tooltip
               content="Branch OPS"
@@ -188,7 +194,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 sidebarOpen && "justify-center"
               } hover:bg-red-500/10 hover:text-red-500 focus:bg-red-500/10 active:bg-red-500/10`}
             >
-              <ListItemPrefix className={sidebarOpen && "m-0"}>
+              <ListItemPrefix className={sidebarOpen ? "m-0" : ""}>
                 <ArrowLeftOnRectangleIcon
                   strokeWidth={3}
                   className={`w-5 h-5 ${sidebarOpen && "my-1"}`}

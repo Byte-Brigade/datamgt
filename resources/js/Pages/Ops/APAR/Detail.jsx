@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-export default function Detail({ sessions, ops_apar_id }) {
+export default function Detail({ auth, sessions, ops_apar_id }) {
   const initialData = {
     titik_posisi: null,
     expired_date: null,
@@ -98,7 +98,7 @@ export default function Detail({ sessions, ops_apar_id }) {
 
 
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout auth={auth}>
       <Head title="Apar" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">

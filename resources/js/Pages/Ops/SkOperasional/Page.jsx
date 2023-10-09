@@ -22,7 +22,7 @@ import {
 import { useState } from "react";
 import Modal from "@/Components/Reports/Modal";
 
-export default function SkOperasional({ branches, sessions }) {
+export default function SkOperasional({ auth, branches, sessions }) {
   const initialData = {
     file: null,
     branch: 0,
@@ -185,7 +185,7 @@ export default function SkOperasional({ branches, sessions }) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout auth={auth}>
       <Head title="OPS | SK Operasional Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">

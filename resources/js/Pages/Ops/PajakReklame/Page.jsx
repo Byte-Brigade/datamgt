@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function PajakReklame({ branches, sessions }) {
+export default function PajakReklame({ auth, branches, sessions }) {
   const initialData = {
     file: null,
     branch: 0,
@@ -248,7 +248,7 @@ export default function PajakReklame({ branches, sessions }) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout auth={auth}>
       <Head title="OPS | Pajak Reklame Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
