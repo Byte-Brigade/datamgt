@@ -19,7 +19,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
+export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [open, setOpen] = useState(1);
   const [collapse, setCollapse] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
@@ -68,16 +68,23 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
       <hr className="mb-2 border-blue-gray-50" />
       <List
         className={`${
-          !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"
-        } overflow-y-scroll`}
+          !sidebarOpen ? "min-w-[200px] overflow-y-scroll" : "px-0 min-w-0"
+        }`}
       >
         {auth.role === "superadmin" && (
           <Link href={route("uam")}>
-            <ListItem>
-              <ListItemPrefix>
+            <ListItem
+              className={`${sidebarOpen && "justify-center"}`}
+              selected={route().current("uam")}
+            >
+              <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                 <UserGroupIcon className="w-5 h-5" />
               </ListItemPrefix>
-              Users
+              {!sidebarOpen && (
+                <Typography color="blue-gray" className={`mr-auto font-normal`}>
+                  Users
+                </Typography>
+              )}
             </ListItem>
           </Link>
         )}
@@ -133,7 +140,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
                 className={`${!sidebarOpen && "hidden"}`}
               >
                 <Link href={route("branches")}>
-                  <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                  <ListItem
+                    className={`${sidebarOpen && "justify-center"}`}
+                    selected={route().current("branches")}
+                  >
                     <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                       <ChevronRightIcon
                         strokeWidth={3}
@@ -150,8 +160,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
                 className={`${!sidebarOpen && "hidden"}`}
               >
                 <Link href={route("employees")}>
-                  <ListItem>
-                    <ListItemPrefix>
+                  <ListItem
+                    className={`${sidebarOpen && "justify-center"}`}
+                    selected={route().current("employees")}
+                  >
+                    <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                       <ChevronRightIcon
                         strokeWidth={3}
                         className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
@@ -169,8 +182,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
                   className={`${!sidebarOpen && "hidden"}`}
                 >
                   <Link href={route(router.path)}>
-                    <ListItem selected={route().current(router.path)}>
-                      <ListItemPrefix>
+                    <ListItem
+                      className={`${sidebarOpen && "justify-center"}`}
+                      selected={route().current(router.path)}
+                    >
+                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
                           strokeWidth={3}
                           className={`w-5 h-3 ${sidebarOpen && "my-1"}`}

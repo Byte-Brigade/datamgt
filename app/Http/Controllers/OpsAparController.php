@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AparExport;
-use App\Http\Resources\AparResource;
 use App\Http\Resources\AparDetailResource;
+use App\Http\Resources\AparResource;
 use App\Imports\AparImport;
 use App\Models\Branch;
 use App\Models\OpsApar;
 use App\Models\OpsAparDetail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class OpsAparController extends Controller
 {
 
+    protected array $sortFields = ['titik_posisi', 'expired_date'];
     public function __construct(public OpsApar $ops_apar)
     {
     }
@@ -40,7 +40,8 @@ class OpsAparController extends Controller
 
     public function api_detail(OpsAparDetail $ops_apar_detail, Request $request, $id)
     {
-        $sortField = 'id';
+        $sortFieldInput = $request->input('sort_field', 'id');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $ops_apar_detail->where('ops_apar_id', $id)->orderBy($sortField, $sortOrder);
@@ -67,9 +68,9 @@ class OpsAparController extends Controller
     {
         $ops_apar = OpsApar::whereHas('branches', function($query) use($branch_code) {
             $query->where('branch_code', $branch_code);
-        })->get()->first();
+        })->with('branches')->get()->first();
         return Inertia::render('Ops/APAR/Detail', [
-            'ops_apar_id' => $ops_apar->id
+            'ops_apar' => $ops_apar
         ]);
     }
 

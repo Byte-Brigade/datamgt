@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('branch_code', 9)->unique()->nullable();
             $table->string('branch_name', 20);
             $table->string('npwp', 20)->nullable();
+            $table->string('nitku', 22)->nullable();
             $table->text('address');
             $table->string('telp', 22)->nullable();
             $table->enum('layanan_atm', ['24 Jam', 'Jam Operasional', 'Tidak Ada'])->nullable();
