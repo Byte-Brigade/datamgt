@@ -5,7 +5,7 @@ import {
   PresentationChartBarIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/solid";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import {
   Accordion,
   AccordionBody,
@@ -23,6 +23,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
   const [open, setOpen] = useState(1);
   const [collapse, setCollapse] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
+  const { auth } = usePage().props;
 
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
@@ -70,14 +71,17 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen, role }) {
           !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"
         } overflow-y-scroll`}
       >
-        <Link href={route("uam")}>
-          <ListItem>
-            <ListItemPrefix>
-              <UserGroupIcon className="w-5 h-5" />
-            </ListItemPrefix>
-            Users
-          </ListItem>
-        </Link>
+        {auth.role === "superadmin" && (
+          <Link href={route("uam")}>
+            <ListItem>
+              <ListItemPrefix>
+                <UserGroupIcon className="w-5 h-5" />
+              </ListItemPrefix>
+              Users
+            </ListItem>
+          </Link>
+        )}
+
         <Accordion
           open={open === 1}
           className={`${sidebarOpen && "w-12"}`}

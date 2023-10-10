@@ -48,12 +48,11 @@ export default function Speciment({ auth, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch Name", field: "branches.branch_name" },
+    { name: "Branch Name", field: "branches.branch_name" , sortable: true},
     {
       name: "Tanggal Spesimen",
       field: "tgl_speciment",
       type: "date",
-      sortable: true,
     },
 
     {

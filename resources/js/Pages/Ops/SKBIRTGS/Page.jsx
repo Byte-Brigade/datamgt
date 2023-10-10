@@ -11,7 +11,7 @@ import {
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -43,7 +43,8 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
     processing,
     errors,
   } = useForm(initialData);
-
+  const pages = usePage().props;
+  console.log(pages);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
