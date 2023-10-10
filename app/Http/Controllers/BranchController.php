@@ -72,7 +72,7 @@ class BranchController extends Controller
 
         return Inertia::render('Cabang/Page', [
             'branches' => Branch::get(),
-            'branch_types' => BranchType::all(),
+            'branch_types' => BranchType::whereIn('type_name',['KC', 'KCP', 'KF', 'KFNO'])->get(),
         ]);
     }
 

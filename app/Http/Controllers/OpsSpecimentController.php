@@ -16,13 +16,16 @@ class OpsSpecimentController extends Controller
     public function __construct(public OpsSpeciment $ops_speciment)
     {
     }
+    protected array $sortFields = ['branches.branch_name', 'employee_positions.position_name'];
 
     public function api(Request $request)
     {
-        $sortField = 'id';
+        $sortFieldInput = $request->input('sort_field', 'id');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_speciments.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->ops_speciment->orderBy($sortField, $sortOrder);
+        $query = $this->ops_speciment->select('ops_speciments.*')->orderBy($sortField, $sortOrder)
+        ->join('branches', 'ops_speciments.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {

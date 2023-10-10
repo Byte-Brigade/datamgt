@@ -51,7 +51,7 @@ export default function Apar({ auth, branches, sessions }) {
     { name: "Jumlah Tabung", field: "keterangan", className: "text-center" },
     {
       name: "Data Detail",
-      field: "action",
+      field: "detail",
       className: "text-center",
       render: (data) => (
         <Link href={route("ops.apar.detail", data.branches.branch_code)}>

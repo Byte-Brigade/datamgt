@@ -5,6 +5,7 @@ import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
+import { usePage } from "@inertiajs/react";
 import {
   IconButton,
   Collapse,
@@ -40,7 +41,8 @@ export default function DataTable({
   const [clearFilter, setClearFilter] = useState(false);
 
   const toggleOpen = () => setOpen((cur) => !cur);
-
+  const { auth } = usePage().props;
+  const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
     if (column === sortColumn) {
       sortOrder === SORT_ASC ? setSortOrder(SORT_DESC) : setSortOrder(SORT_ASC);
@@ -296,40 +298,50 @@ export default function DataTable({
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
-              {columns.map((column, i) => (
-                <th key={column.name}>
-                  {column.sortable === true ? (
-                    <div
-                      className="cursor-pointer hover:underline"
-                      onClick={(e) => handleSort(column.field)}
-                    >
-                      <div className="flex items-center gap-x-1">
-                        {column.name}
-                        <span className="flex flex-col gap-y-1">
-                          <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                          <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                        </span>
+              {columns
+                .filter((column) =>
+                  column.field === "action"
+                    ? auth.permissions.some((permission) =>
+                        initialPermission.includes(permission)
+                      )
+                      ? true
+                      : false
+                    : true
+                )
+                .map((column, i) => (
+                  <th key={column.name}>
+                    {column.sortable === true ? (
+                      <div
+                        className="cursor-pointer hover:underline"
+                        onClick={(e) => handleSort(column.field)}
+                      >
+                        <div className="flex items-center gap-x-1">
+                          {column.name}
+                          <span className="flex flex-col gap-y-1">
+                            <ChevronUpIcon
+                              className={`${
+                                sortOrder === SORT_ASC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                            <ChevronDownIcon
+                              className={`${
+                                sortOrder === SORT_DESC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div>{column.name}</div>
-                  )}
-                </th>
-              ))}
+                    ) : (
+                      <div>{column.name}</div>
+                    )}
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -362,27 +374,37 @@ export default function DataTable({
                       ? index + 1
                       : pagination.from + index}
                   </td>
-                  {columns.map((column, id) =>
-                    column.field ? (
-                      column.field === "action" ? (
-                        <td key={column.field} className={column.className}>
-                          {column.render(data)}
-                        </td>
+                  {columns
+                    .filter((column) =>
+                      column.field === "action"
+                        ? auth.permissions.some((permission) =>
+                            initialPermission.includes(permission)
+                          )
+                          ? true
+                          : false
+                        : true
+                    )
+                    .map((column, id) =>
+                      column.field ? (
+                        column.field === "action" || column.field === 'detail' ? (
+                          <td key={column.field} className={column.className}>
+                            {column.render(data)}
+                          </td>
+                        ) : (
+                          <td key={column.field} className={column.className}>
+                            {column.type === "date"
+                              ? convertDate(getNestedValue(data, column.field))
+                              : column.type === "custom"
+                              ? column.render(data)
+                              : getNestedValue(data, column.field) || "-"}
+                          </td>
+                        )
                       ) : (
-                        <td key={column.field} className={column.className}>
-                          {column.type === "date"
-                            ? convertDate(getNestedValue(data, column.field))
-                            : column.type === "custom"
-                            ? column.render(data)
-                            : getNestedValue(data, column.field) || "-"}
+                        <td key={id} className={column.className}>
+                          {column.value || "-"}
                         </td>
                       )
-                    ) : (
-                      <td key={id} className={column.className}>
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )}
+                    )}
                 </tr>
               ))
             )}
