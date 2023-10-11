@@ -299,15 +299,6 @@ export default function DataTable({
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
               {columns
-                .filter((column) =>
-                  column.field === "action"
-                    ? auth.permissions.some((permission) =>
-                        initialPermission.includes(permission)
-                      )
-                      ? true
-                      : false
-                    : true
-                )
                 .map((column, i) => (
                   <th key={column.name}>
                     {column.sortable === true ? (
@@ -375,15 +366,6 @@ export default function DataTable({
                       : pagination.from + index}
                   </td>
                   {columns
-                    .filter((column) =>
-                      column.field === "action"
-                        ? auth.permissions.some((permission) =>
-                            initialPermission.includes(permission)
-                          )
-                          ? true
-                          : false
-                        : true
-                    )
                     .map((column, id) =>
                       column.field ? (
                         column.field === "action" || column.field === 'detail' ? (

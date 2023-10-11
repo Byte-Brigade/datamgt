@@ -12,7 +12,7 @@ class BranchTypeSeeder extends Seeder
         $types = [
             ['type_name' => 'KC'],
             ['type_name' => 'KCP'],
-            ['type_name' => 'KF'],
+            ['type_name' => 'KFO'],
             ['type_name' => 'KFNO'],
             ['type_name' => 'SFI'],
         ];

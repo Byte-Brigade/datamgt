@@ -17,7 +17,7 @@ class BranchResource extends JsonResource
     {
         /** @var Branch $this */
         $branch_types = $this->branch_types;
-        $branch_types['type_name'] = $branch_types->type_name == 'KF' ? 'KFO & KFNO' : $branch_types->type_name;
+        $branch_types['type_name'] = $branch_types->type_name == 'KFO' ? 'KFO & KFNO' : $branch_types->type_name;
 
 
         return [

@@ -31,8 +31,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
-                <Typography variant="h5">Jumlah BSO</Typography>
-                <Typography>{data.jumlahKaryawanBSO}</Typography>
+                <Typography variant="h5">Jumlah ...</Typography>
+                <Typography>...</Typography>
               </div>
             </div>
           </div>

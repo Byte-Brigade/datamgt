@@ -34,25 +34,18 @@ export default function DropdownMenu({
         </MenuHandler>
       </Tooltip>
       <MenuList>
-        {auth.permissions.includes("can edit") && (
-          <MenuItem className="flex items-center gap-x-2" onClick={onEditClick}>
-            <PencilIcon className="w-4 h-4" />
-            <Typography variant="small" color="gray" className="font-normal">
-              Edit
-            </Typography>
-          </MenuItem>
-        )}
-        {auth.permissions.includes("can delete") && (
-          <MenuItem
-            className="flex items-center gap-x-2"
-            onClick={onDeleteClick}
-          >
-            <TrashIcon className="w-4 h-4 text-red-500" />
-            <Typography variant="small" color="red" className="font-normal">
-              Delete
-            </Typography>
-          </MenuItem>
-        )}
+        <MenuItem className="flex items-center gap-x-2" onClick={onEditClick}>
+          <PencilIcon className="w-4 h-4" />
+          <Typography variant="small" color="gray" className="font-normal">
+            Edit
+          </Typography>
+        </MenuItem>
+        <MenuItem className="flex items-center gap-x-2" onClick={onDeleteClick}>
+          <TrashIcon className="w-4 h-4 text-red-500" />
+          <Typography variant="small" color="red" className="font-normal">
+            Delete
+          </Typography>
+        </MenuItem>
       </MenuList>
     </Menu>
   );

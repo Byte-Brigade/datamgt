@@ -112,7 +112,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       render: (data) =>
         data.file_skpd ? (
           <a
-            className="text-blue-500 hover:underline"
+            className="text-blue-500 hover:underline text-ellipsis"
             href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
             target="__blank"
           >
