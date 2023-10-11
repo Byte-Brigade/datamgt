@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\Branch;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -29,7 +30,9 @@ class UAMController extends Controller
         $sortField = 'id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->user->orderBy($sortField, $sortOrder);
+        $query = $this->user->whereHas('roles', function ($q) {
+            return $q->where('name', '!=', 'superadmin');
+        })->orderBy($sortField, $sortOrder);
         $perpage = $request->perpage ?? 10;
 
         //  if (!is_null($searchInput)) {
@@ -96,13 +99,30 @@ class UAMController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $user = User::find($id);
+            $role = Role::where('name', $request->position)->get();
+            $user->update([
+                'name' => $request->name,
+                'nik' => $request->nik,
+                'password' => Hash::make($request->password)
+            ]);
+            $user->syncRoles($role);
+            $user->syncPermissions($request->permissions);
+        return redirect(route('uam'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+    } catch (Exception $e) {
+        return redirect(route('uam'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     public function destroy($id)
     {
-        //
+        try {
+            $user = User::find($id);
+            $user->delete();
+            return redirect(route('uam'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        } catch (Exception $e) {
+            return redirect(route('uam'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
-
-
 }

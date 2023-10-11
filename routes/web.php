@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 
     /* [START] Branches */
     Route::get('/branches', [BranchController::class, 'index'])->name('branches');
-    Route::post('/branches', [BranchController::class, 'import'])->name('branches.import');
+    Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
 
     Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
     Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
@@ -59,8 +59,8 @@ Route::middleware('auth')->group(function () {
         /* [START] User Access Management */
         Route::get('/uam', [UAMController::class, 'index'])->name('uam');
         Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');
-        Route::put('/uam/{id}', [UAMController::class, 'index'])->name('uam.update');
-        Route::delete('/uam/{id}', [UAMController::class, 'index'])->name('uam.delete');
+        Route::put('/uam/{id}', [UAMController::class, 'update'])->name('uam.update');
+        Route::delete('/uam/{id}', [UAMController::class, 'destroy'])->name('uam.delete');
         /* [END] User Access Management*/
     });
 

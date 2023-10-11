@@ -24,7 +24,7 @@ class RoleSeeder extends Seeder
             'can export',
         ];
 
-        $default_access = ['can view', 'can add'];
+        $default_access = ['can view'];
         $superadmin = Role::create(['name' => 'superadmin']);
         $branch_ops = Role::create(['name' => 'branch_ops', 'alt_name' => 'Branch Ops']);
         $procurement = Role::create(['name' => 'procurement', 'alt_name' => 'Procurement']);
