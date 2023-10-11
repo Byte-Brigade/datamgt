@@ -352,12 +352,12 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
-                  <Option key={position.id} value={`${position.id}`}>
+                  <Option key={position.name} value={`${position.name}`}>
                     {position.alt_name}
                   </Option>
                 ))}
               </Select>
-              <Input
+              {/* <Input
                 type="password"
                 label="Password"
                 value={data.password}
@@ -370,7 +370,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 value={data.confirm_password}
                 disabled={processing}
                 onChange={(e) => setData("confirm_password", e.target.value)}
-              />
+              /> */}
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
                 <div className="flex gap-x-4">
