@@ -34,7 +34,10 @@ class BranchController extends Controller
         if (isset($input['branch_types_type_name'])) {
             $type_name =$input['branch_types_type_name'];
             $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
-                $q->whereIn('type_name', $type_name);
+                if(in_array('KF',$type_name)) {
+                    return $q->whereIn('type_name',['KF','KFNO']);
+                }
+                return $q->whereIn('type_name', $type_name);
             });
         }
 
@@ -69,10 +72,9 @@ class BranchController extends Controller
 
     public function index(Request $request)
     {
-
         return Inertia::render('Cabang/Page', [
             'branches' => Branch::get(),
-            'branch_types' => BranchType::whereIn('type_name',['KC', 'KCP', 'KFO', 'KFNO'])->get(),
+            'branch_types' => BranchType::whereIn('type_name',['KC', 'KCP', 'KF'])->get(),
         ]);
     }
 
@@ -103,6 +105,7 @@ class BranchController extends Controller
         $fileName = 'Data_Cabang_' . date('d-m-y') . '.xlsx';
         return (new BranchesExport)->download($fileName);
     }
+
 
     public function update(Request $request, $id)
     {
