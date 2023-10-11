@@ -30,8 +30,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   };
 
   const inqueryRouter = [
-    { name: "Branch", path: "" },
-    { name: "Staff", path: "" },
+    { name: "Branch", path: "inquery.branch" },
+    { name: "Staff", path: "inquery.branch" },
   ];
 
   const reportRouter = [
@@ -135,7 +135,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   placement="right"
                   className={`${!sidebarOpen && "hidden"}`}
                 >
-                  <Link href="#">
+                  <Link href={route(router.path)}>
                     <ListItem className={`${sidebarOpen && "justify-center"}`}>
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
