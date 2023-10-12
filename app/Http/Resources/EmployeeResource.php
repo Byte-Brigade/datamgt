@@ -16,8 +16,8 @@ class EmployeeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'branch_id' => $this->branch_id,
-            'position_id' => $this->position_id,
+            'branch' => $this->branch_id,
+            'position' => $this->position_id,
             'employee_id' => $this->employee_id,
             'name' => $this->name,
             'email' => strtolower(strtok($this->email, '@')),
