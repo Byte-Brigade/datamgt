@@ -1,13 +1,12 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -16,9 +15,9 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography,
-  Select,
   Option,
+  Select,
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -173,7 +172,7 @@ export default function Apar({ auth, branches, sessions }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalCreate}
               >
                 <div className="flex items-center gap-x-2">
@@ -325,7 +324,7 @@ export default function Apar({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className=" overflow-y-scroll" divider>
+          <DialogBody className="overflow-y-auto max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -341,7 +340,6 @@ export default function Apar({ auth, branches, sessions }) {
               </Select>
 
               {data.apars.map((apar, index) => (
-
                 <div className="flex flex-col gap-y-4 " key={index}>
                   <span>APAR {index + 1}</span>
                   <Input

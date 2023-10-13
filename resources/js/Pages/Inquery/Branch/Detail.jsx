@@ -1,16 +1,26 @@
+import BreadcrumbsWithLogo from "@/Components/Breadcrumbs";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import React from "react";
 
-export default function Detail({ auth, seesions, branch, positions, licenses }) {
-  console.log(branch);
+export default function Detail({
+  auth,
+  seesions,
+  branch,
+  positions,
+  licenses,
+}) {
+  const crumbs = [
+    { name: "Inquery Data" },
+    { name: "Branch" },
+    { name: branch.branch_name },
+  ];
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`Inquery Data | Branch | ${branch.branch_name}`} />
-
+      <BreadcrumbsWithLogo crumbs={crumbs} />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <table className="w-full min-w-max table-auto text-left">
+          <table className="w-full text-left table-auto min-w-max">
             <thead className="border-b-2 border-slate-200">
               <tr className="[&>th]:p-2 bg-slate-100">
                 <th>Nama Cabang</th>
@@ -35,7 +45,7 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
             </tbody>
           </table>
 
-          <div className="grid gap-2 grid-cols-2 mt-4">
+          <div className="grid grid-cols-2 gap-2 mt-4">
             <div className="flex flex-col">
               <span className="mb-2">Staff Cabang</span>
               <table className="w-full text-left">
@@ -46,8 +56,11 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
                   </tr>
                 </thead>
                 <tbody>
-                  {positions.map((position) => (
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                  {positions.map((position, index) => (
+                    <tr
+                      key={index}
+                      className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
+                    >
                       <td>{position.position_name}</td>
                       <td>
                         {
@@ -63,7 +76,7 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
             </div>
             <div className="flex flex-col">
               <span className="mb-2">Lisensi</span>
-              <table className="w-full  text-left">
+              <table className="w-full text-left">
                 <thead className="border-b-2 border-slate-200">
                   <tr className="[&>th]:p-2 bg-slate-100">
                     <th>Jenis</th>
@@ -72,15 +85,16 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
                   </tr>
                 </thead>
                 <tbody>
-                  {licenses.map(license => (
-
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                    <td>{license.name}</td>
-                    <td>{license.remark}</td>
-                    <td>{license.jatuh_tempo}</td>
-                  </tr>
+                  {licenses.map((license, index) => (
+                    <tr
+                      key={index}
+                      className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
+                    >
+                      <td>{license.name}</td>
+                      <td>{license.remark}</td>
+                      <td>{license.jatuh_tempo}</td>
+                    </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>

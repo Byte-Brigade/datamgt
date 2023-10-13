@@ -1,6 +1,5 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
-  ArrowLeftOnRectangleIcon,
   Bars3Icon,
   PresentationChartBarIcon,
   UserGroupIcon,
@@ -78,8 +77,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       <hr className="mb-2 border-blue-gray-50" />
       <List
         className={`${
-          !sidebarOpen ? "min-w-[200px] overflow-y-scroll" : "px-0 min-w-0"
-        }`}
+          !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0 overflow-x-hidden"
+        } overflow-y-auto`}
       >
         {/* Inquery */}
         {/* <h2 className="text-lg font-semibold">Inquery Data</h2> */}
@@ -226,7 +225,9 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
         {/* Data Maintenance */}
         <hr className="my-2 border-blue-gray-50" />
-        {!sidebarOpen && (<h2 className="text-lg font-semibold">Data Maintenance</h2>)}
+        {!sidebarOpen && (
+          <h2 className="text-lg font-semibold">Data Maintenance</h2>
+        )}
         <Accordion
           open={open === 3}
           className={`${sidebarOpen && "w-12"}`}
@@ -339,7 +340,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </AccordionBody>
         </Accordion>
         <hr className="my-2 border-blue-gray-50" />
-        {!sidebarOpen && (<h2 className="text-lg font-semibold">Admin</h2>)}
+        {!sidebarOpen && <h2 className="text-lg font-semibold">Admin</h2>}
         {auth.role === "superadmin" && (
           <Link href={route("uam")}>
             <ListItem
@@ -358,30 +359,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </Link>
         )}
       </List>
-      <hr className="mt-auto border-blue-gray-50" />
-      {/* <Tooltip
-        content="Keluar"
-        placement="right"
-        className={`${!sidebarOpen && "hidden"}`}
-      >
-        <List className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"}`}>
-          <Link href={route("logout")} method="post" as="button" type="button">
-            <ListItem
-              className={`${
-                sidebarOpen && "justify-center"
-              } hover:bg-red-500/10 hover:text-red-500 focus:bg-red-500/10 active:bg-red-500/10`}
-            >
-              <ListItemPrefix className={sidebarOpen ? "m-0" : ""}>
-                <ArrowLeftOnRectangleIcon
-                  strokeWidth={3}
-                  className={`w-5 h-5 ${sidebarOpen && "my-1"}`}
-                />
-              </ListItemPrefix>
-              {!sidebarOpen && <Typography>Keluar</Typography>}
-            </ListItem>
-          </Link>
-        </List>
-      </Tooltip> */}
       {/* <Alert
         open={openAlert}
         className="mt-auto"
