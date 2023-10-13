@@ -30,8 +30,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   };
 
   const inqueryRouter = [
-    { name: "Branch", path: "" },
-    { name: "Staff", path: "" },
+    { name: "Branch", path: "inquery.branch" },
+    { name: "Staff", path: "inquery.branch" },
   ];
 
   const reportRouter = [
@@ -49,7 +49,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <aside
-      className={`flex flex-col fixed h-screen top-0 left-0 z-40 ${
+      className={`flex flex-col fixed h-screen top-0 left-0 z-5 ${
         !sidebarOpen ? "p-4 w-64 -x-translate-full" : "py-4 px-2 w-16"
       } bg-white shadow-xl shadow-blue-gray-900/5`}
     >
@@ -135,7 +135,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   placement="right"
                   className={`${!sidebarOpen && "hidden"}`}
                 >
-                  <Link href="#">
+                  <Link href={route(router.path)}>
                     <ListItem className={`${sidebarOpen && "justify-center"}`}>
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
@@ -226,7 +226,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
         {/* Data Maintenance */}
         <hr className="my-2 border-blue-gray-50" />
-        <h2 className="text-lg font-semibold">Data Maintenance</h2>
+        {!sidebarOpen && (<h2 className="text-lg font-semibold">Data Maintenance</h2>)}
         <Accordion
           open={open === 3}
           className={`${sidebarOpen && "w-12"}`}
@@ -339,7 +339,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </AccordionBody>
         </Accordion>
         <hr className="my-2 border-blue-gray-50" />
-        <h2 className="text-lg font-semibold">Admin</h2>
+        {!sidebarOpen && (<h2 className="text-lg font-semibold">Admin</h2>)}
         {auth.role === "superadmin" && (
           <Link href={route("uam")}>
             <ListItem
@@ -359,7 +359,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
         )}
       </List>
       <hr className="mt-auto border-blue-gray-50" />
-      <Tooltip
+      {/* <Tooltip
         content="Keluar"
         placement="right"
         className={`${!sidebarOpen && "hidden"}`}
@@ -381,7 +381,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </ListItem>
           </Link>
         </List>
-      </Tooltip>
+      </Tooltip> */}
       {/* <Alert
         open={openAlert}
         className="mt-auto"

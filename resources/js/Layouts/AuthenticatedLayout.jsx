@@ -1,4 +1,5 @@
 import { SidebarWithLogo } from "@/Components/Menu/Sidebar";
+import { ComplexNavbar } from "@/Components/Menu/Navbar";
 import { useState } from "react";
 
 export default function Authenticated({ auth, header, children }) {
@@ -10,6 +11,10 @@ export default function Authenticated({ auth, header, children }) {
           <h2 className="text-xl font-semibold">Navbar</h2>
         </div>
       </nav> */}
+      <ComplexNavbar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
       <SidebarWithLogo
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
