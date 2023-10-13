@@ -31,14 +31,12 @@ class PajakReklameImport implements ToModel, WithHeadingRow, WithUpserts
                     ->where('branch_name', 'like', "%$branch%");
             })->pluck('id')->first();
         try {
-            if (!is_null($branch_id)) {
-                return new OpsPajakReklame([
-                    'branch_id' => $branch_id,
-                    'periode_awal' => isset($periode[0]) ? Carbon::createFromFormat('d/m/Y', trim($periode[0])) : null,
-                    'periode_akhir' => isset($periode[1]) ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
-                    'note' => $row['keterangan'],
-                ]);
-            }
+            return new OpsPajakReklame([
+                'branch_id' => $branch_id,
+                'periode_awal' => isset($periode[0]) ? Carbon::createFromFormat('d/m/Y', trim($periode[0])) : null,
+                'periode_akhir' => isset($periode[1]) ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
+                'note' => $row['keterangan'],
+            ]);
         } catch (Throwable $th) {
             dd($branch);
         }

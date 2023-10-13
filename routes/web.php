@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     /* [START] Branches */
     Route::get('/branches', [BranchController::class, 'index'])->name('branches');
     Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
-    Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
 
     Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
     Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
@@ -50,8 +49,7 @@ Route::middleware('auth')->group(function () {
 
     /* [START] Employees */
     Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-    Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
-    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+    Route::post('/employees', [EmployeeController::class, 'import'])->name('employees.import');
     Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
     Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
@@ -87,8 +85,7 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Ops Pajak Reklame */
         Route::get('/pajak-reklame', [OpsPajakReklameController::class, 'index'])->name('pajak-reklame');
-        Route::post('/pajak-reklame/import', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
-        Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'store'])->name('pajak-reklame.store');
+        Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
 
         Route::post('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'upload'])->name('pajak-reklame.upload');
         Route::get('/pajak-reklame/export', [OpsPajakReklameController::class, 'export'])->name('pajak-reklame.export');
@@ -97,8 +94,7 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Ops Speciment */
         Route::get('/speciment', [OpsSpecimentController::class, 'index'])->name('speciment');
-        Route::post('/speciment/import', [OpsSpecimentController::class, 'import'])->name('speciment.import');
-        Route::post('/speciment', [OpsSpecimentController::class, 'store'])->name('speciment.store');
+        Route::post('/speciment', [OpsSpecimentController::class, 'import'])->name('speciment.import');
         Route::post('/speciment/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
 
         Route::get('/speciment/export', [OpsSpecimentController::class, 'export'])->name('speciment.export');

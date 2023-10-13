@@ -6,7 +6,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 
 import {
@@ -17,8 +17,6 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
@@ -26,7 +24,7 @@ import { useState } from "react";
 export default function PajakReklame({ auth, branches, sessions }) {
   const initialData = {
     file: null,
-    branch_id: 0,
+    branch: 0,
     branches: {
       branch_code: null,
       branch_name: null,
@@ -52,7 +50,6 @@ export default function PajakReklame({ auth, branches, sessions }) {
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
-  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -74,7 +71,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
     },
     { name: "No Izin", field: "no_izin" },
     { name: "Nilai Pajak", field: "nilai_pajak" },
-    { name: "Keterangan", field: "note", className: "w-[300px]" },
+    { name: "Keterangan", field: "note" , className: 'w-[300px]'},
 
     {
       name: "Izin Reklame",
@@ -202,17 +199,6 @@ export default function PajakReklame({ auth, branches, sessions }) {
       },
     });
   };
-  const handleSubmitCreate = (e) => {
-    e.preventDefault();
-    post(route("ops.pajak-reklame.store", data.id), {
-      method: "post",
-      replace: true,
-      onFinish: () => {
-        setIsRefreshed(!isRefreshed);
-        setIsModalCreateOpen(!isModalCreateOpen);
-      },
-    });
-  };
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
@@ -253,10 +239,6 @@ export default function PajakReklame({ auth, branches, sessions }) {
     setIsModalUploadOpen(!isModalUploadOpen);
   };
 
-  const toggleModalCreate = () => {
-    setIsModalCreateOpen(!isModalCreateOpen);
-  };
-
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -272,26 +254,15 @@ export default function PajakReklame({ auth, branches, sessions }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add Pajak Reklame
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
+            <PrimaryButton
+              className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+              onClick={toggleModalImport}
+            >
+              <div className="flex items-center gap-x-2">
+                <DocumentPlusIcon className="w-4 h-4" />
+                Import Excel
+              </div>
+            </PrimaryButton>
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
@@ -455,69 +426,6 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
-                Tutup
-              </SecondaryButton>
-            </div>
-          </DialogFooter>
-        </form>
-      </Dialog>
-      {/* Modal Create */}
-      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Create Data
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalCreate}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-            <Select
-                label="Branch"
-                value={`${data.branch_id}`}
-                disabled={processing}
-                onChange={(e) => setData("branch_id", e)}
-              >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
-              <Input
-                label="Periode Awal"
-                value={data.periode_awal || ""}
-                disabled={processing}
-                type="date"
-                onChange={(e) => setData("periode_awal", e.target.value)}
-              />
-              <Input
-                label="Periode Akhir"
-                value={data.periode_akhir || ""}
-                disabled={processing}
-                type="date"
-                onChange={(e) => setData("periode_akhir", e.target.value)}
-              />
-              <Input
-                label="Keterangan"
-                value={data.note || ""}
-                disabled={processing}
-                onChange={(e) => setData("note", e.target.value)}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <div className="flex flex-row-reverse gap-x-4">
-              <Button disabled={processing} type="submit">
-                Create
-              </Button>
-              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>

@@ -102,31 +102,14 @@ class EmployeeController extends Controller
         return (new EmployeesExport($request->branch, $request->position))->download($fileName);
     }
 
-    public function store(Request $request)
-    {
-        try {
-            Employee::create([
-                'employee_id' => $request->employee_id,
-                'branch_id' => $request->branch,
-                'position_id' => $request->position,
-                'name' => $request->name,
-                'email' => $request->email,
-                'birth_date' => $request->birth_date,
-                'hiring_date' => $request->hiring_date,
-            ]);
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil ditambahkan']);
-        } catch (\Exception $e) {
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
-        }
-    }
     public function update(Request $request, $id)
     {
         try {
             $employee = Employee::find($id);
             $employee->update([
                 'employee_id' => $request->employee_id,
-                'branch_id' => $request->branch,
-                'position_id' => $request->position,
+                'branch_id' => $request->branch_id,
+                'position_id' => $request->position_id,
                 'name' => $request->name,
                 'email' => $request->email,
                 'birth_date' => $request->birth_date,

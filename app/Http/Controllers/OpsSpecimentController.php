@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Exports\SpecimentsExport;
 use App\Http\Resources\SpecimentResource;
 use App\Imports\SpecimentImport;
-use App\Models\Branch;
 use App\Models\OpsSpeciment;
 use FFI\Exception;
 use Illuminate\Http\Request;
@@ -39,8 +38,7 @@ class OpsSpecimentController extends Controller
 
     public function index(Request $request)
     {
-        $branchesProp = Branch::get();
-        return Inertia::render('Ops/Speciment/Page', ['branches' => $branchesProp]);
+        return Inertia::render('Ops/Speciment/Page');
     }
 
     public function upload(Request $request, $id)
@@ -88,20 +86,6 @@ class OpsSpecimentController extends Controller
         return (new SpecimentsExport)->download($fileName);
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $speciment = OpsSpeciment::create([
-                'branch_id' => $request->branch_id,
-                'tgl_speciment' => $request->tgl_speciment,
-
-            ]);
-
-            return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Data berhasil ditambahkan']);
-        } catch (\Exception $e) {
-            return redirect(route('ops.speciment'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
-        }
-    }
     public function update(Request $request, $id)
     {
         try {
