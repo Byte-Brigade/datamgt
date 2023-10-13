@@ -11,6 +11,7 @@ use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UAMController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -42,6 +43,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/inquery')->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+
+    });
+
+    Route::prefix('/reporting')->name('reporting.')->group(function () {
+        Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
+        Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
     });
 
     /* [START] Branches */

@@ -35,8 +35,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const reportRouter = [
-    { name: "Branch", path: "" },
-    { name: "Staff", path: "" },
+    { name: "Branch", path: "reporting.branches" },
+    { name: "Staff", path: "reporting.branches" },
   ];
 
   const opsRouter = [
@@ -200,14 +200,14 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             <List
               className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"}`}
             >
-              {inqueryRouter.map((router, index) => (
+              {reportRouter.map((router, index) => (
                 <Tooltip
                   key={index}
                   content={router.name}
                   placement="right"
                   className={`${!sidebarOpen && "hidden"}`}
                 >
-                  <Link href="#">
+                  <Link href={route(router.path)}>
                     <ListItem className={`${sidebarOpen && "justify-center"}`}>
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon

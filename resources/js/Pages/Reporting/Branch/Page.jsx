@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Cabang({ auth, sessions, branch_types, branches }) {
+export default function Branch({ auth, sessions, branch_types, branches }) {
   const initialData = {
     file: null,
     branch_code: null,
@@ -70,24 +70,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       component: "branches",
     },
 
-    {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
-    },
+
   ];
 
   const handleSubmitImport = (e) => {
@@ -104,7 +87,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("branches.export"), "_self");
+    window.open(route("reporting.branches.export"), "_self");
   };
 
   const handleSubmitEdit = (e) => {
@@ -168,26 +151,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add Branch
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>

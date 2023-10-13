@@ -20,7 +20,16 @@ class Branch extends Model
         'address',
         'telp',
         'layanan_atm',
-        'npwp'
+        'npwp',
+        'nitku',
+        'izin',
+        'status',
+        'masa_sewa',
+        'open_date',
+        'expired_date',
+        'owner',
+        'sewa_per_tahun',
+        'total_biaya_sewa',
     ];
 
     public function branch_types()
