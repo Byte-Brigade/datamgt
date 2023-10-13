@@ -398,7 +398,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
           <select
             label="Branch"
             disabled={processing}
-            value={data.branch}
+            value={data.branch_id}
             onChange={(e) => setData("branch", e.target.value)}
           >
             <option value="0">All</option>
@@ -478,7 +478,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
-            <Select
+              <Select
                 label="Branch"
                 value={`${data.branch_id}`}
                 disabled={processing}

@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
@@ -37,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::prefix('/inquery')->group(function () {
+        Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
+        Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+    });
 
     /* [START] Branches */
     Route::get('/branches', [BranchController::class, 'index'])->name('branches');
@@ -72,8 +78,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
         Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
         Route::post('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
-
-
         Route::get('/skbirtgs/export', [OpsSkbirtgsController::class, 'export'])->name('skbirtgs.export');
         /* [END] Ops SKBIRTGS */
 
@@ -81,7 +85,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/sk-operasional', [OpsSkOperasionalController::class, 'index'])->name('sk-operasional');
         Route::post('/sk-operasional', [OpsSkOperasionalController::class, 'import'])->name('sk-operasional.import');
         Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
-
         Route::get('/sk-operasional/export', [OpsSkOperasionalController::class, 'export'])->name('sk-operasional.export');
         /* [END] Ops SK Operasional Cabang */
 
@@ -100,20 +103,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/speciment/import', [OpsSpecimentController::class, 'import'])->name('speciment.import');
         Route::post('/speciment', [OpsSpecimentController::class, 'store'])->name('speciment.store');
         Route::post('/speciment/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
-
         Route::get('/speciment/export', [OpsSpecimentController::class, 'export'])->name('speciment.export');
         /* [END] Ops Speciment */
 
 
         /* [START] Ops APAR */
         Route::get('/apar', [OpsAparController::class, 'index'])->name('apar');
-        Route::post('/apar', [OpsAparController::class, 'import'])->name('apar.import');
+        Route::post('/apar/import', [OpsAparController::class, 'import'])->name('apar.import');
+        Route::post('/apar', [OpsAparController::class, 'store'])->name('apar.store');
 
 
         Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
-
         Route::get('/apar/export', [OpsAparController::class, 'export'])->name('apar.export');
-
         /* [END] Ops APAR */
 
         Route::group(['middleware' => ['role:branch-ops|superadmin']], function () {
