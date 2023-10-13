@@ -74,6 +74,21 @@ class OpsPajakReklameController extends Controller
         return (new PajakReklameExport($request->branch))->download($fileName);
     }
 
+    public function store(Request $request)
+    {
+        try {
+            $pajak_reklame = OpsPajakReklame::create([
+                'branch_id' => $request->branch_id,
+                'periode_awal' => $request->periode_awal,
+                'periode_akhir' => $request->periode_akhir,
+                'note' => $request->note,
+            ]);
+
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
     public function update(Request $request, $id)
     {
         try {
