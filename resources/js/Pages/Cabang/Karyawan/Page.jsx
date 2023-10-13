@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -51,6 +51,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
   } = useForm(initialData);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -64,15 +65,30 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
       filterable: true,
     },
     { name: "NIK", field: "employee_id", sortable: true },
-    { name: "Nama Lengkap", field: "name", sortable: true, className: "w-[300px]"},
+    {
+      name: "Nama Lengkap",
+      field: "name",
+      sortable: true,
+      className: "w-[300px]",
+    },
     { name: "Email (@banksampoerna.com)", field: "email" },
     { name: "Jenis Kelamin", field: "gender", className: "text-center" },
-    { name: "Tanggal Lahir", field: "birth_date", type: "date", className: "text-center w-[300px]" },
-    { name: "Hiring Date", field: "hiring_date", type: "date", className: "text-center w-[300px]" },
+    {
+      name: "Tanggal Lahir",
+      field: "birth_date",
+      type: "date",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Hiring Date",
+      field: "hiring_date",
+      type: "date",
+      className: "text-center w-[300px]",
+    },
     {
       name: "Action",
       field: "action",
-      className: 'text-center',
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -108,6 +124,17 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalEditOpen(!isModalEditOpen);
+      },
+    });
+  };
+  const handleSubmitCreate = (e) => {
+    e.preventDefault();
+    post(route("employees.store", data.id), {
+      method: "post",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalCreateOpen(!isModalCreateOpen);
       },
     });
   };
@@ -149,6 +176,9 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
+  const toggleModalCreate = () => {
+    setIsModalCreateOpen(!isModalCreateOpen);
+  };
 
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
@@ -167,15 +197,26 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-            <PrimaryButton
-              className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              onClick={toggleModalImport}
-            >
-              <div className="flex items-center gap-x-2">
-                <DocumentPlusIcon className="w-4 h-4" />
-                Import Excel
-              </div>
-            </PrimaryButton>
+            <div>
+              <PrimaryButton
+                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add Employee
+                </div>
+              </PrimaryButton>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
+                <div className="flex items-center gap-x-2">
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
+                </div>
+              </PrimaryButton>
+            </div>
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
@@ -332,9 +373,9 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
               />
               <Select
                 label="Branch"
-                value={`${data.branches.id}`}
+                value={`${data.branch}`}
                 disabled={processing}
-                onChange={(e) => setData("branches.id", e)}
+                onChange={(e) => setData("branch", e)}
               >
                 {branches.map((branch) => (
                   <Option key={branch.id} value={`${branch.id}`}>
@@ -344,9 +385,9 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
               </Select>
               <Select
                 label="Position"
-                value={`${data.employee_positions.id}`}
+                value={`${data.position}`}
                 disabled={processing}
-                onChange={(e) => setData("employee_positions.id", e)}
+                onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
                   <Option key={position.id} value={`${position.id}`}>
@@ -394,6 +435,113 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                 Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Create */}
+      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Tambah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitCreate}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Employee ID"
+                value={data.employee_id}
+                disabled={processing}
+                maxLength={8}
+                onInput={(e) => onInputNumber(e)}
+                onChange={(e) => setData("employee_id", e.target.value)}
+              />
+              <Input
+                label="Employee Name"
+                value={data.name}
+                disabled={processing}
+                onChange={(e) => setData("name", e.target.value)}
+              />
+              <Input
+                label="Email"
+                value={data.email}
+                disabled={processing}
+                onChange={(e) => setData("email", e.target.value)}
+              />
+              <Select
+                label="Branch"
+                value={`${data.branch}`}
+                disabled={processing}
+                onChange={(e) => setData("branch", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                label="Position"
+                value={`${data.position}`}
+                disabled={processing}
+                onChange={(e) => setData("position", e)}
+              >
+                {positions.map((position) => (
+                  <Option key={position.id} value={`${position.id}`}>
+                    {position.position_name}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Tanggal Lahir"
+                value={data.birth_date || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("birth_date", e.target.value)}
+              />
+              <Input
+                label="Hiring Date"
+                value={data.hiring_date || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("hiring_date", e.target.value)}
+              />
+              <div className="flex gap-x-4">
+                <Radio
+                  name="gender"
+                  label="Laki-laki"
+                  color="blue"
+                  checked={data.gender === "L"}
+                  value="L"
+                  onChange={(e) => setData("gender", e.target.value)}
+                />
+                <Radio
+                  name="gender"
+                  label="Perempuan"
+                  color="pink"
+                  checked={data.gender === "P"}
+                  value="P"
+                  onChange={(e) => setData("gender", e.target.value)}
+                />
+              </div>
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Tambah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>

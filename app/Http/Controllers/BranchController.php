@@ -72,9 +72,10 @@ class BranchController extends Controller
 
     public function index(Request $request)
     {
+
         return Inertia::render('Cabang/Page', [
             'branches' => Branch::get(),
-            'branch_types' => BranchType::whereIn('type_name',['KC', 'KCP', 'KF'])->get(),
+            'branch_types' => BranchType::get(),
         ]);
     }
 
@@ -104,6 +105,26 @@ class BranchController extends Controller
     {
         $fileName = 'Data_Cabang_' . date('d-m-y') . '.xlsx';
         return (new BranchesExport)->download($fileName);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+
+            Branch::create([
+                'branch_type_id' => $request->branch_type_id,
+                'branch_code' => $request->branch_code,
+                'branch_name' => $request->branch_name,
+                'address' => $request->address,
+                'telp' => $request->telp,
+                'layanan_atm' => $request->layanan_atm,
+                'npwp' => $request->npwp
+            ]);
+
+            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
 
