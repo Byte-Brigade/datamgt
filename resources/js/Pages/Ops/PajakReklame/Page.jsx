@@ -369,7 +369,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
           <select
             label="Branch"
             disabled={processing}
-            value={data.branch}
+            value={data.branch_id}
             onChange={(e) => setData("branch", e.target.value)}
           >
             <option value="0">All</option>
@@ -426,6 +426,69 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Create */}
+      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Create Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitCreate}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Periode Awal"
+                value={data.periode_awal || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("periode_awal", e.target.value)}
+              />
+              <Input
+                label="Periode Akhir"
+                value={data.periode_akhir || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("periode_akhir", e.target.value)}
+              />
+              <Input
+                label="Keterangan"
+                value={data.note || ""}
+                disabled={processing}
+                onChange={(e) => setData("note", e.target.value)}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Create
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>

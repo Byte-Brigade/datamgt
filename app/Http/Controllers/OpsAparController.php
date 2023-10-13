@@ -108,6 +108,23 @@ class OpsAparController extends Controller
             return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+    public function store(Request $request)
+    {
+
+
+        try {
+            $apar = OpsApar::create([
+                'branch_id' => $request->branch_id,
+                'keterangan' => isset($request->apars) ? count($request->apars). 'Tabung' : 'Tidak Ada',
+            ]);
+
+            $apar->detail()->createMany($request->apars);
+
+            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
 
 
     public function update_detail(Request $request, $id)

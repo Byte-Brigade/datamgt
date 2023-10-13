@@ -5,7 +5,8 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm, Link } from "@inertiajs/react";
 import {
   Button,
@@ -16,18 +17,21 @@ import {
   IconButton,
   Input,
   Typography,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function Apar({ auth, branches, sessions }) {
   const initialData = {
-    branch: 0,
+    branch_id: 0,
     branches: {
       branch_code: null,
       branch_name: null,
     },
     expired_date: null,
     keterangan: null,
+    apars: [{ titik_posisi: null, expired_date: null }],
   };
   const {
     data,
@@ -41,6 +45,7 @@ export default function Apar({ auth, branches, sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -60,6 +65,17 @@ export default function Apar({ auth, branches, sessions }) {
       ),
     },
   ];
+
+  const handleAparChange = (index, fieldName, value) => {
+    const newApars = [...data.apars];
+    newApars[index][fieldName] = value;
+    setData("apars", newApars);
+  };
+
+  const handleApar = (e) => {
+    e.preventDefault();
+    setData("apars", [...data.apars, { titik_posisi: "", expired_date: "" }]);
+  };
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
@@ -87,6 +103,17 @@ export default function Apar({ auth, branches, sessions }) {
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalEditOpen(!isModalEditOpen);
+      },
+    });
+  };
+  const handleSubmitCreate = (e) => {
+    e.preventDefault();
+    post(route("ops.apar.store", data.id), {
+      method: "post",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalCreateOpen(!isModalCreateOpen);
       },
     });
   };
@@ -129,6 +156,9 @@ export default function Apar({ auth, branches, sessions }) {
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
+  const toggleModalCreate = () => {
+    setIsModalCreateOpen(!isModalCreateOpen);
+  };
 
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
@@ -141,30 +171,26 @@ export default function Apar({ auth, branches, sessions }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-            <PrimaryButton
-              className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              onClick={toggleModalImport}
-            >
-              <div className="flex items-center gap-x-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-plus"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 5l0 14"></path>
-                  <path d="M5 12l14 0"></path>
-                </svg>
-                Import Excel
-              </div>
-            </PrimaryButton>
+            <div>
+              <PrimaryButton
+                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add APAR
+                </div>
+              </PrimaryButton>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
+                <div className="flex items-center gap-x-2">
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
+                </div>
+              </PrimaryButton>
+            </div>
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
@@ -228,7 +254,7 @@ export default function Apar({ auth, branches, sessions }) {
           <select
             label="Branch"
             disabled={processing}
-            value={data.branch}
+            value={data.branch_id}
             onChange={(e) => setData("branch", e.target.value)}
           >
             <option value="0">All</option>
@@ -278,6 +304,74 @@ export default function Apar({ auth, branches, sessions }) {
                 Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Create */}
+      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Tambah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitCreate}>
+          <DialogBody className=" overflow-y-scroll" divider>
+            <div className="flex flex-col gap-y-4">
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
+
+              {data.apars.map((apar, index) => (
+
+                <div className="flex flex-col gap-y-4 " key={index}>
+                  <span>APAR {index + 1}</span>
+                  <Input
+                    label="Titik Posisi"
+                    value={apar.titik_posisi || ""}
+                    disabled={processing}
+                    onChange={(e) =>
+                      handleAparChange(index, "titik_posisi", e.target.value)
+                    }
+                  />
+                  <Input
+                    label="Jangka Waktu (Expired Date)"
+                    value={apar.expired_date || ""}
+                    disabled={processing}
+                    type="date"
+                    onChange={(e) =>
+                      handleAparChange(index, "expired_date", e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+              <button onClick={handleApar}>Tambah APAR</button>
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Tambah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>

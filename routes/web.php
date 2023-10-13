@@ -104,7 +104,10 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Ops APAR */
         Route::get('/apar', [OpsAparController::class, 'index'])->name('apar');
-        Route::post('/apar', [OpsAparController::class, 'import'])->name('apar.import');
+        Route::post('/apar/import', [OpsAparController::class, 'import'])->name('apar.import');
+        Route::post('/apar', [OpsAparController::class, 'store'])->name('apar.store');
+
+
         Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
         Route::get('/apar/export', [OpsAparController::class, 'export'])->name('apar.export');
         /* [END] Ops APAR */
