@@ -6,6 +6,8 @@ namespace Database\Seeders;
 use Database\Seeders\BranchTypeSeeder;
 use Database\Seeders\EmployeePositionSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +20,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class,
             BranchTypeSeeder::class,
             EmployeePositionSeeder::class

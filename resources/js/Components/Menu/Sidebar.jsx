@@ -3,8 +3,9 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   PresentationChartBarIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/solid";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import {
   Accordion,
   AccordionBody,
@@ -22,10 +23,21 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [open, setOpen] = useState(1);
   const [collapse, setCollapse] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
+  const { auth } = usePage().props;
 
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
   };
+
+  const inqueryRouter = [
+    { name: "Branch", path: "" },
+    { name: "Staff", path: "" },
+  ];
+
+  const reportRouter = [
+    { name: "Branch", path: "" },
+    { name: "Staff", path: "" },
+  ];
 
   const opsRouter = [
     { name: "APAR", path: "ops.apar" },
@@ -51,7 +63,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           <>
             {/* <img src="/img/logo-ct-dark.png" alt="brand" className="w-8 h-8" /> */}
             <Typography variant="h5" color="blue-gray">
-              Sidebar
+              PDBOM
             </Typography>
           </>
         )}
@@ -64,7 +76,13 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
         </IconButton>
       </div>
       <hr className="mb-2 border-blue-gray-50" />
-      <List className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"}`}>
+      <List
+        className={`${
+          !sidebarOpen ? "min-w-[200px] overflow-y-scroll" : "px-0 min-w-0"
+        }`}
+      >
+        {/* Inquery */}
+        {/* <h2 className="text-lg font-semibold">Inquery Data</h2> */}
         <Accordion
           open={open === 1}
           className={`${sidebarOpen && "w-12"}`}
@@ -81,7 +99,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
         >
           <ListItem className="p-0" selected={open === 1}>
             <Tooltip
-              content="Branch OPS"
+              content="Inquery Data"
               placement="right"
               className={`${!sidebarOpen && "hidden"}`}
             >
@@ -100,7 +118,151 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     color="blue-gray"
                     className={`mr-auto font-normal`}
                   >
-                    Branch OPS
+                    Inquery Data
+                  </Typography>
+                )}
+              </AccordionHeader>
+            </Tooltip>
+          </ListItem>
+          <AccordionBody className="py-1">
+            <List
+              className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"}`}
+            >
+              {inqueryRouter.map((router, index) => (
+                <Tooltip
+                  key={index}
+                  content={router.name}
+                  placement="right"
+                  className={`${!sidebarOpen && "hidden"}`}
+                >
+                  <Link href="#">
+                    <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                        <ChevronRightIcon
+                          strokeWidth={3}
+                          className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
+                        />
+                      </ListItemPrefix>
+                      {!sidebarOpen && <Typography>{router.name}</Typography>}
+                    </ListItem>
+                  </Link>
+                </Tooltip>
+              ))}
+            </List>
+          </AccordionBody>
+        </Accordion>
+
+        {/* Report */}
+        <hr className="my-2 border-blue-gray-50" />
+        {/* <h2 className="text-lg font-semibold">Report</h2> */}
+        <Accordion
+          open={open === 2}
+          className={`${sidebarOpen && "w-12"}`}
+          icon={
+            !sidebarOpen && (
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  open === 2 ? "rotate-180" : ""
+                }`}
+              />
+            )
+          }
+        >
+          <ListItem className="p-0" selected={open === 2}>
+            <Tooltip
+              content="Report"
+              placement="right"
+              className={`${!sidebarOpen && "hidden"}`}
+            >
+              <AccordionHeader
+                onClick={() => {
+                  handleOpen(2);
+                  sidebarOpen && setSidebarOpen(!sidebarOpen);
+                }}
+                className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
+              >
+                <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                  <PresentationChartBarIcon className="w-5 h-5" />
+                </ListItemPrefix>
+                {!sidebarOpen && (
+                  <Typography
+                    color="blue-gray"
+                    className={`mr-auto font-normal`}
+                  >
+                    Report
+                  </Typography>
+                )}
+              </AccordionHeader>
+            </Tooltip>
+          </ListItem>
+          <AccordionBody className="py-1">
+            <List
+              className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"}`}
+            >
+              {inqueryRouter.map((router, index) => (
+                <Tooltip
+                  key={index}
+                  content={router.name}
+                  placement="right"
+                  className={`${!sidebarOpen && "hidden"}`}
+                >
+                  <Link href="#">
+                    <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                        <ChevronRightIcon
+                          strokeWidth={3}
+                          className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
+                        />
+                      </ListItemPrefix>
+                      {!sidebarOpen && <Typography>{router.name}</Typography>}
+                    </ListItem>
+                  </Link>
+                </Tooltip>
+              ))}
+            </List>
+          </AccordionBody>
+        </Accordion>
+
+        {/* Data Maintenance */}
+        <hr className="my-2 border-blue-gray-50" />
+        <h2 className="text-lg font-semibold">Data Maintenance</h2>
+        <Accordion
+          open={open === 3}
+          className={`${sidebarOpen && "w-12"}`}
+          icon={
+            !sidebarOpen && (
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  open === 3 ? "rotate-180" : ""
+                }`}
+              />
+            )
+          }
+        >
+          <ListItem className="p-0" selected={open === 3}>
+            <Tooltip
+              content="Branch OPS"
+              placement="right"
+              className={`${!sidebarOpen && "hidden"}`}
+            >
+              <AccordionHeader
+                onClick={() => {
+                  handleOpen(3);
+                  sidebarOpen && setSidebarOpen(!sidebarOpen);
+                }}
+                className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
+              >
+                <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                  <PresentationChartBarIcon className="w-5 h-5" />
+                </ListItemPrefix>
+                {!sidebarOpen && (
+                  <Typography
+                    color="blue-gray"
+                    className={`mr-auto font-normal`}
+                  >
+                    Branches
                   </Typography>
                 )}
               </AccordionHeader>
@@ -116,7 +278,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 className={`${!sidebarOpen && "hidden"}`}
               >
                 <Link href={route("branches")}>
-                  <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                  <ListItem
+                    className={`${sidebarOpen && "justify-center"}`}
+                    selected={route().current("branches")}
+                  >
                     <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                       <ChevronRightIcon
                         strokeWidth={3}
@@ -133,8 +298,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 className={`${!sidebarOpen && "hidden"}`}
               >
                 <Link href={route("employees")}>
-                  <ListItem>
-                    <ListItemPrefix>
+                  <ListItem
+                    className={`${sidebarOpen && "justify-center"}`}
+                    selected={route().current("employees")}
+                  >
+                    <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                       <ChevronRightIcon
                         strokeWidth={3}
                         className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
@@ -152,8 +320,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   className={`${!sidebarOpen && "hidden"}`}
                 >
                   <Link href={route(router.path)}>
-                    <ListItem selected={route().current(router.path)}>
-                      <ListItemPrefix>
+                    <ListItem
+                      className={`${sidebarOpen && "justify-center"}`}
+                      selected={route().current(router.path)}
+                    >
+                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
                           strokeWidth={3}
                           className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
@@ -167,6 +338,25 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </List>
           </AccordionBody>
         </Accordion>
+        <hr className="my-2 border-blue-gray-50" />
+        <h2 className="text-lg font-semibold">Admin</h2>
+        {auth.role === "superadmin" && (
+          <Link href={route("uam")}>
+            <ListItem
+              className={`${sidebarOpen && "justify-center"}`}
+              selected={route().current("uam")}
+            >
+              <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                <UserGroupIcon className="w-5 h-5" />
+              </ListItemPrefix>
+              {!sidebarOpen && (
+                <Typography color="blue-gray" className={`mr-auto font-normal`}>
+                  Users
+                </Typography>
+              )}
+            </ListItem>
+          </Link>
+        )}
       </List>
       <hr className="mt-auto border-blue-gray-50" />
       <Tooltip
@@ -181,7 +371,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 sidebarOpen && "justify-center"
               } hover:bg-red-500/10 hover:text-red-500 focus:bg-red-500/10 active:bg-red-500/10`}
             >
-              <ListItemPrefix className={sidebarOpen && "m-0"}>
+              <ListItemPrefix className={sidebarOpen ? "m-0" : ""}>
                 <ArrowLeftOnRectangleIcon
                   strokeWidth={3}
                   className={`w-5 h-5 ${sidebarOpen && "my-1"}`}

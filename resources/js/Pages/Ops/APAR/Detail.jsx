@@ -1,11 +1,10 @@
 import Alert from "@/Components/Alert";
+import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import DataTable from "@/Components/DataTable";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
-import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -16,19 +15,19 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
+import { useState } from "react";
 
-export default function Detail({ sessions, ops_apar_id }) {
+export default function Detail({ auth, sessions, ops_apar }) {
+  console.log(ops_apar);
   const initialData = {
     titik_posisi: null,
     expired_date: null,
     id: null,
   };
 
-
   const {
     data,
     setData,
-    post,
     put,
     delete: destroy,
     processing,
@@ -38,7 +37,6 @@ export default function Detail({ sessions, ops_apar_id }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
@@ -73,11 +71,16 @@ export default function Detail({ sessions, ops_apar_id }) {
 
   const columns = [
     { name: "Titik Posisi", field: "titik_posisi", sortable: true },
-    { name: "Expired Date", field: "expired_date", sortable: true },
+    {
+      name: "Expired Date",
+      field: "expired_date",
+      type: "date",
+      sortable: true,
+    },
     {
       name: "Action",
       field: "action",
-      className: 'text-center',
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"
@@ -92,65 +95,24 @@ export default function Detail({ sessions, ops_apar_id }) {
         />
       ),
     },
-
   ];
 
-
-
   return (
-    <AuthenticatedLayout>
-      <Head title="Apar" />
+    <AuthenticatedLayout auth={auth}>
+      <Head title={`OPS | Apar - ${ops_apar.branches.branch_name}`} />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4"></div>
+          <h2 className="mb-4 text-xl font-semibold text-center">
+            {ops_apar.branches.branch_name}
+          </h2>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/ops/apar/detail/${ops_apar_id}`}
+            fetchUrl={`/api/ops/apar/detail/${ops_apar.id}`}
             refreshUrl={isRefreshed}
           />
         </div>
       </div>
-      {/* Modal Import */}
-      {/* <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Import Data
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalImport}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <form onSubmit={handleSubmitImport} encType="multipart/form-data">
-          <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-              <Input
-                label="Import Excel (.xlsx)"
-                disabled={processing}
-                type="file"
-                name="import"
-                id="import"
-                accept=".xlsx"
-                onChange={(e) => setData("file", e.target.files[0])}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <div className="flex flex-row-reverse gap-x-4">
-              <Button disabled={processing} type="submit">
-                Simpan
-              </Button>
-              <SecondaryButton type="button" onClick={toggleModalImport}>
-                Tutup
-              </SecondaryButton>
-            </div>
-          </DialogFooter>
-        </form>
-      </Dialog> */}
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -172,13 +134,12 @@ export default function Detail({ sessions, ops_apar_id }) {
                 label="Titik Posisi"
                 value={data.titik_posisi || ""}
                 disabled={processing}
-
                 onChange={(e) => setData("titik_posisi", e.target.value)}
               />
               <Input
                 label="Jangka Waktu (Expired Date)"
                 value={data.expired_date || ""}
-                // type="date"
+                type="date"
                 disabled={processing}
                 onChange={(e) => setData("expired_date", e.target.value)}
               />

@@ -16,6 +16,10 @@ class BranchResource extends JsonResource
     public function toArray($request)
     {
         /** @var Branch $this */
+        $branch_types = $this->branch_types;
+        $branch_types['type_name'] = $branch_types->type_name == 'KF' ? 'KFO & KFNO' : $branch_types->type_name;
+
+
         return [
             'id' => $this->id,
             'branch_type_id' => $this->branch_type_id,
@@ -26,7 +30,7 @@ class BranchResource extends JsonResource
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada'  ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
-            'branch_types' => $this->branch_types
+            'branch_types' => $branch_types
         ];
     }
 }

@@ -11,13 +11,14 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
+use Throwable;
 
 class PajakReklameImport implements ToModel, WithHeadingRow, WithUpserts
 {
     use Importable;
     public function model(array $row)
     {
-        $periode = $row['periode_pajak_reklame'] != '-' ? explode(' - ', $row['periode_pajak_reklame']) : [null, null];
+        $periode = trim($row['periode_pajak_reklame']) != '-' ? explode(' - ', $row['periode_pajak_reklame']) : [null, null];
         $branch = trim($row['cabang']);
         $branch_arr = explode(' ', $branch);
         $branch_type = array_shift($branch_arr);
@@ -29,13 +30,16 @@ class PajakReklameImport implements ToModel, WithHeadingRow, WithUpserts
                 $query->where('branch_type_id', $branch_type_id)
                     ->where('branch_name', 'like', "%$branch%");
             })->pluck('id')->first();
-
-        return new OpsPajakReklame([
-            'branch_id' => $branch_id,
-            'periode_awal' => isset($periode[0]) ? Carbon::createFromFormat('d/m/Y', trim($periode[0])) : null,
-            'periode_akhir' => isset($periode[1]) ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
-            'note' => $row['keterangan'],
-        ]);
+        try {
+            return new OpsPajakReklame([
+                'branch_id' => $branch_id,
+                'periode_awal' => isset($periode[0]) ? Carbon::createFromFormat('d/m/Y', trim($periode[0])) : null,
+                'periode_akhir' => isset($periode[1]) ? Carbon::createFromFormat('d/m/Y', trim($periode[1])) : null,
+                'note' => $row['keterangan'],
+            ]);
+        } catch (Throwable $th) {
+            dd($branch);
+        }
     }
 
     public function uniqueBy()

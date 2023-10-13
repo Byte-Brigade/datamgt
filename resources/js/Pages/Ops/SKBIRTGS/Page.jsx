@@ -11,7 +11,7 @@ import {
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function SKBIRTGS({ branches, sessions }) {
+export default function SKBIRTGS({ auth, branches, sessions }) {
   const initialData = {
     no_surat: null,
     branch: 0,
@@ -43,7 +43,8 @@ export default function SKBIRTGS({ branches, sessions }) {
     processing,
     errors,
   } = useForm(initialData);
-
+  const pages = usePage().props;
+  console.log(pages);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
@@ -192,7 +193,7 @@ export default function SKBIRTGS({ branches, sessions }) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout auth={auth}>
       <Head title="OPS | Surat Kuasa BI RGTS" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">

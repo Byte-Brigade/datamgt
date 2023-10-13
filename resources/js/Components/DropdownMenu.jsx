@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-
+import { usePage } from "@inertiajs/react";
 import { WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
 
 export default function DropdownMenu({
@@ -17,6 +17,7 @@ export default function DropdownMenu({
   onEditClick,
   onDeleteClick,
 }) {
+  const { auth } = usePage().props;
   return (
     <Menu
       animate={{

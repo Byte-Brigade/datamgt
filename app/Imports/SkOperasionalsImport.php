@@ -26,13 +26,14 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
                 $row['cabang'] = $mergedCells[$key - 1] ?? null;
             }
 
-            $penerima_kuasa = isset($row['nama_penerima_kuasa']) ? $row['nama_penerima_kuasa'] : null;
-            $penerima_kuasa_id = isset($penerima_kuasa) ? Employee::where('name', 'like', "%$penerima_kuasa%")->pluck('id')->first() : null;
-
             $branch_name = trim($row['cabang']);
             $branch_id = Branch::where('branch_name', 'like', "%$branch_name%")->whereHas('branch_types', function (Builder $q) {
                 $q->where('type_name', 'KC')->orWhere('type_name', 'KCP');
             })->pluck('id')->first();
+
+            $penerima_kuasa = isset($row['nama_penerima_kuasa']) ? $row['nama_penerima_kuasa'] : null;
+            $penerima_kuasa_id = isset($penerima_kuasa) ? Employee::where('name', 'like', "%$penerima_kuasa%")->where('branch_id', $branch_id)->pluck('id')->first() : null;
+
             if (isset($row['no_surat'])) {
                 $ops_sk_operasional = OpsSkOperasional::updateOrCreate([
                     'no_surat' => $row['no_surat'],

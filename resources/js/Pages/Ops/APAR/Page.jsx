@@ -19,11 +19,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Apar({ branches, sessions }) {
-
-
-
-
+export default function Apar({ auth, branches, sessions }) {
   const initialData = {
     branch: 0,
     branches: {
@@ -43,8 +39,6 @@ export default function Apar({ branches, sessions }) {
     errors,
   } = useForm(initialData);
 
-
-
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
@@ -54,24 +48,13 @@ export default function Apar({ branches, sessions }) {
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
 
-    { name: "Jumlah Tabung", field: "keterangan",className: "text-center", },
+    { name: "Jumlah Tabung", field: "keterangan", className: "text-center" },
     {
       name: "Data Detail",
-      field: "action",
+      field: "detail",
       className: "text-center",
       render: (data) => (
-        // <DropdownMenu
-        //   placement="left-start"
-        //   onEditClick={() => {
-        //     toggleModalEdit();
-        //     setData(data);
-        //   }}
-        //   onDeleteClick={() => {
-        //     toggleModalDelete();
-        //     setData(data);
-        //   }}
-        // />
-        <Link href={route('ops.apar.detail', data.branches.branch_code)}>
+        <Link href={route("ops.apar.detail", data.branches.branch_code)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -152,8 +135,8 @@ export default function Apar({ branches, sessions }) {
   };
 
   return (
-    <AuthenticatedLayout>
-      <Head title="Apar" />
+    <AuthenticatedLayout auth={auth}>
+      <Head title="OPS | Apar" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

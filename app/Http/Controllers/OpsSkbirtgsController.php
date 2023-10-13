@@ -66,7 +66,7 @@ class OpsSkbirtgsController extends Controller
                 'branch_id' => $item->branch_id,
                 'status' => $item->status,
                 'file' => $item->file,
-                'penerima_kuasa' => str_contains($item->status, 'Kanwil') ? $item->status : 'Centralize - SKN',
+                'penerima_kuasa' => str_contains($item->status, 'Kanwil') ? $item->status : 'Centralized - SKN',
                 'branches' => $item->branches
             ];
             $penerima_kuasa = $item->penerima_kuasa()->get();

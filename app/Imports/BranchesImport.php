@@ -9,7 +9,6 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValidation
 {
@@ -37,7 +36,7 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             if (isset($branch)) {
                 $row['kode_cabang'] = $type_name . '001' . substr($branch->branch_code, -3);
             } else {
-                $row['kode_cabang'] = $type_name . '001' . str_pad(mt_rand(10, 99), 3, "0", STR_PAD_LEFT);
+                $row['kode_cabang'] = $type_name . '01' . str_pad(mt_rand(10, 99), 3, "0", STR_PAD_LEFT);
             }
 
         }

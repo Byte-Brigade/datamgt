@@ -5,6 +5,7 @@ import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import Paginator from "./Paginator";
+import { usePage } from "@inertiajs/react";
 import {
   IconButton,
   Collapse,
@@ -40,7 +41,8 @@ export default function DataTable({
   const [clearFilter, setClearFilter] = useState(false);
 
   const toggleOpen = () => setOpen((cur) => !cur);
-
+  const { auth } = usePage().props;
+  const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
     if (column === sortColumn) {
       sortOrder === SORT_ASC ? setSortOrder(SORT_DESC) : setSortOrder(SORT_ASC);
@@ -208,13 +210,13 @@ export default function DataTable({
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              className="w-6 h-6"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
               />
             </svg>
@@ -223,7 +225,7 @@ export default function DataTable({
       </div>
       <div>
         <Collapse open={open}>
-          <div className="flex flex my-4 mx-auto w-full">
+          <div className="flex justify-between w-full mx-auto my-2">
             <div className="flex flex-col flex-wrap">
               <span className="ml-3">Category</span>
 
@@ -246,8 +248,6 @@ export default function DataTable({
                             )
                           }
                         />
-
-                        <div></div>
                       </>
                     );
                   }
@@ -282,9 +282,13 @@ export default function DataTable({
                   }
                 })}
             </div>
-            <div>
-              <Button onClick={handleClearFilter}>Clear</Button>
-              <Button onClick={handleFilter}>Filter</Button>
+            <div className="flex flex-col justify-center gap-y-2">
+              <Button size="sm" onClick={handleClearFilter}>
+                Clear
+              </Button>
+              <Button size="sm" color="green" onClick={handleFilter}>
+                Filter
+              </Button>
             </div>
           </div>
         </Collapse>
@@ -294,40 +298,41 @@ export default function DataTable({
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
-              {columns.map((column, i) => (
-                <th key={column.name}>
-                  {column.sortable === true ? (
-                    <div
-                      className="cursor-pointer hover:underline"
-                      onClick={(e) => handleSort(column.field)}
-                    >
-                      <div className="flex items-center gap-x-1">
-                        {column.name}
-                        <span className="flex flex-col gap-y-1">
-                          <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                          <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
-                              column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
-                          />
-                        </span>
+              {columns
+                .map((column, i) => (
+                  <th key={column.name}>
+                    {column.sortable === true ? (
+                      <div
+                        className="cursor-pointer hover:underline"
+                        onClick={(e) => handleSort(column.field)}
+                      >
+                        <div className="flex items-center gap-x-1">
+                          {column.name}
+                          <span className="flex flex-col gap-y-1">
+                            <ChevronUpIcon
+                              className={`${
+                                sortOrder === SORT_ASC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                            <ChevronDownIcon
+                              className={`${
+                                sortOrder === SORT_DESC &&
+                                column.field === sortColumn
+                                  ? "text-slate-900"
+                                  : "text-gray-400"
+                              } w-3 h-3`}
+                            />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div>{column.name}</div>
-                  )}
-                </th>
-              ))}
+                    ) : (
+                      <div>{column.name}</div>
+                    )}
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -360,27 +365,28 @@ export default function DataTable({
                       ? index + 1
                       : pagination.from + index}
                   </td>
-                  {columns.map((column, id) =>
-                    column.field ? (
-                      column.field === "action" ? (
-                        <td key={column.field} className={column.className}>
-                          {column.render(data)}
-                        </td>
+                  {columns
+                    .map((column, id) =>
+                      column.field ? (
+                        column.field === "action" || column.field === 'detail' ? (
+                          <td key={column.field} className={column.className}>
+                            {column.render(data)}
+                          </td>
+                        ) : (
+                          <td key={column.field} className={column.className}>
+                            {column.type === "date"
+                              ? convertDate(getNestedValue(data, column.field))
+                              : column.type === "custom"
+                              ? column.render(data)
+                              : getNestedValue(data, column.field) || "-"}
+                          </td>
+                        )
                       ) : (
-                        <td key={column.field} className={column.className}>
-                          {column.type === "date"
-                            ? convertDate(getNestedValue(data, column.field))
-                            : column.type === "custom"
-                            ? column.render(data)
-                            : getNestedValue(data, column.field) || "-"}
+                        <td key={id} className={column.className}>
+                          {column.value || "-"}
                         </td>
                       )
-                    ) : (
-                      <td key={id} className={column.className}>
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )}
+                    )}
                 </tr>
               ))
             )}

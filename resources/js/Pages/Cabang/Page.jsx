@@ -162,7 +162,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
               Create Report
             </PrimaryButton>
           </div>
-          <div></div>
           <DataTable
             columns={columns}
             fetchUrl={"/api/branches"}
