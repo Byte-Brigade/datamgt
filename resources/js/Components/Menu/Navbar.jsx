@@ -64,7 +64,7 @@ function ProfileMenu() {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
             <MenuItem
-              key={label}
+              key={key}
               onClick={closeMenu}
               href={link}
               className={`flex items-center gap-2 rounded ${
@@ -95,9 +95,9 @@ function ProfileMenu() {
 
 export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
   return (
-    <Navbar className="sticky top-0 z-10 max-w-full rounded-none shadow-none h-max lg:px-0 lg:py-1">
+    <Navbar className="sticky top-0 z-10 max-w-full rounded-none shadow-none h-max lg:px-0 lg:py-1 bg-white">
       <div className="relative flex items-center mx-auto text-blue-gray-900">
-        <div className="flex items-center justify-between w-full gap-4 px-4 py-2">
+        <div className="flex items-center justify-between w-full gap-4 px-3">
           <IconButton
             variant="text"
             color="blue-gray"

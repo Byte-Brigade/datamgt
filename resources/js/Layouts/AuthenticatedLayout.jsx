@@ -1,6 +1,7 @@
 import { SidebarWithLogo } from "@/Components/Menu/Sidebar";
 import { ComplexNavbar } from "@/Components/Menu/Navbar";
 import { useState } from "react";
+import Sidebar from "@/Components/Sidebar";
 
 export default function Authenticated({ auth, header, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,15 +12,18 @@ export default function Authenticated({ auth, header, children }) {
           <h2 className="text-xl font-semibold">Navbar</h2>
         </div>
       </nav> */}
-      <ComplexNavbar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-      />
-      <SidebarWithLogo
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        role={auth.user}
-      />
+      <div className="relative">
+        <ComplexNavbar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <SidebarWithLogo
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          role={auth.user}
+        />
+      </div>
+      {/* <Sidebar /> */}
       <main
         className={`p-4 ${
           sidebarOpen ? "ml-16" : "ml-64"
