@@ -56,8 +56,8 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             'expired_date' => !is_null($row['jatuh_tempo']) ? Date::excelToDateTimeObject($row['jatuh_tempo']) : null,
             'open_date' => !is_null($row['open_date']) ? Date::excelToDateTimeObject($row['open_date']) : null,
             'owner' => $row['pemilik'],
-            'sewa_per_tahun' => $row['sewa_per_tahun'],
-            'total_biaya_sewa' => $row['total_biaya_sewa'],
+            'sewa_per_tahun' => is_int($row['sewa_per_tahun'])  ? $row['sewa_per_tahun'] : null,
+            'total_biaya_sewa' => is_int($row['total_biaya_sewa']) ? $row['total_biaya_sewa'] : null,
 
         ]);
     }

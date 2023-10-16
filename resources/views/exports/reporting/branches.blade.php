@@ -29,19 +29,25 @@
                 <td>{{ $branch->branch_name }}</td>
                 <td>{{ $branch->branch_types->type_name }}</td>
                 <td>{{ $branch->status }}</td>
-                <td>{{ isset($branch->masa_sewa) ? $branch->masa_sewa.' Tahun' : '-' }}</td>
+                <td>{{ isset($branch->masa_sewa) ? $branch->masa_sewa . ' Tahun' : '-' }}</td>
                 <td>{{ $branch->open_date }}</td>
                 <td>{{ $branch->expired_date }}</td>
                 <td>{{ $branch->owner }}</td>
-                <td>{{ $branch->status == 'Milik' ? $branch->total_biaya_sewa : '-'}}</td>
-                <td>{{ $branch->status != 'Milik' ? $branch->total_biaya_sewa : '-'}}</td>
+                <td>{{ $branch->status == 'Milik' ? number_format($branch->total_biaya_sewa, 0, ',', '.') : '-' }}</td>
+                <td>{{ $branch->status != 'Milik' ? number_format($branch->total_biaya_sewa, 0, ',', '.') : '-' }}</td>
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td>-</td>
-                <td>{{ $branch->employees->count(). ' Orang'}}</td>
-                <td>-</td>
+                <td>{{ $branch->izin }}</td>
+                <td>{{ $branch->employees->count() > 0 ? $branch->employees->count() . ' Orang' : 'Tidak Ada' }}</td>
+                <td>
+                    <ol>
+                        @foreach ($branch->ga_izins as $index => $izin)
+                            <li>{{ ($index+1).'. '.$izin->jenis_perizinan->name }}</li>
+                        @endforeach
+                    </ol>
+                </td>
             </tr>
         @endforeach
     </tbody>

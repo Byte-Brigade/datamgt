@@ -28,8 +28,8 @@ return new class extends Migration {
             $table->date('open_date')->nullable();
             $table->date('expired_date')->nullable();
             $table->string('owner')->nullable();
-            $table->string('sewa_per_tahun')->nullable();
-            $table->string('total_biaya_sewa')->nullable();
+            $table->bigInteger('sewa_per_tahun')->nullable();
+            $table->bigInteger('total_biaya_sewa')->nullable();
             $table->timestamps();
             $table->foreign('branch_type_id')->references('id')->on('branch_types')->onDelete('cascade');
         });
