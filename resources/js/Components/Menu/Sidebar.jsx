@@ -47,6 +47,13 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Speciment Cabang", path: "ops.speciment" },
   ];
 
+  const gaProcurementRouter = [
+    {
+      name: "Perizinan",
+      path: "ga.izin",
+    },
+  ];
+
   return (
     <aside
       className={`flex flex-col fixed h-screen top-0 left-0 z-5 ${
@@ -226,7 +233,9 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
         {/* Data Maintenance */}
         <hr className="my-2 border-blue-gray-50" />
-        {!sidebarOpen && (<h2 className="text-lg font-semibold">Data Maintenance</h2>)}
+        {!sidebarOpen && (
+          <h2 className="text-lg font-semibold">Data Maintenance</h2>
+        )}
         <Accordion
           open={open === 3}
           className={`${sidebarOpen && "w-12"}`}
@@ -338,8 +347,80 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </List>
           </AccordionBody>
         </Accordion>
+        <Accordion
+          open={open === 4}
+          className={`${sidebarOpen && "w-12"}`}
+          icon={
+            !sidebarOpen && (
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  open === 4 ? "rotate-180" : ""
+                }`}
+              />
+            )
+          }
+        >
+          <ListItem className="p-0" selected={open === 4}>
+            <Tooltip
+              content="GA Procurement"
+              placement="right"
+              className={`${!sidebarOpen && "hidden"}`}
+            >
+              <AccordionHeader
+                onClick={() => {
+                  handleOpen(4);
+                  sidebarOpen && setSidebarOpen(!sidebarOpen);
+                }}
+                className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
+              >
+                <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                  <PresentationChartBarIcon className="w-5 h-5" />
+                </ListItemPrefix>
+                {!sidebarOpen && (
+                  <Typography
+                    color="blue-gray"
+                    className={`mr-auto font-normal`}
+                  >
+                    GA Procurement
+                  </Typography>
+                )}
+              </AccordionHeader>
+            </Tooltip>
+          </ListItem>
+          <AccordionBody className="py-1">
+            <List
+              className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"}`}
+            >
+
+              {gaProcurementRouter.map((router, index) => (
+                <Tooltip
+                  key={index}
+                  content={router.name}
+                  placement="right"
+                  className={`${!sidebarOpen && "hidden"}`}
+                >
+                  <Link href={route(router.path)}>
+                    <ListItem
+                      className={`${sidebarOpen && "justify-center"}`}
+                      selected={route().current(router.path)}
+                    >
+                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                        <ChevronRightIcon
+                          strokeWidth={3}
+                          className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
+                        />
+                      </ListItemPrefix>
+                      {!sidebarOpen && <Typography>{router.name}</Typography>}
+                    </ListItem>
+                  </Link>
+                </Tooltip>
+              ))}
+            </List>
+          </AccordionBody>
+        </Accordion>
         <hr className="my-2 border-blue-gray-50" />
-        {!sidebarOpen && (<h2 className="text-lg font-semibold">Admin</h2>)}
+        {!sidebarOpen && <h2 className="text-lg font-semibold">Admin</h2>}
         {auth.role === "superadmin" && (
           <Link href={route("uam")}>
             <ListItem

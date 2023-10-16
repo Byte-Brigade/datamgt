@@ -3,6 +3,7 @@
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GaIzinController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
@@ -37,7 +38,6 @@ Route::get('/ops/apar', [OpsAparController::class, 'api']);
 Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
 Route::get('uam', [UAMController::class, 'api']);
 
-Route::prefix('component')->name('component.')->group(function () {
-    Route::get('branches', [ComponentController::class, 'branches']);
-    Route::get('branch_types', [ComponentController::class, 'branch_types']);
+Route::prefix('ga')->name('ga.')->group(function () {
+    Route::get('izin', [GaIzinController::class, 'api']);
 });

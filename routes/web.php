@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GaIzinController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -77,6 +78,18 @@ Route::middleware('auth')->group(function () {
         Route::put('/uam/{id}', [UAMController::class, 'update'])->name('uam.update');
         Route::delete('/uam/{id}', [UAMController::class, 'destroy'])->name('uam.delete');
         /* [END] User Access Management*/
+    });
+
+    Route::prefix('ga')->name('ga.')->group(function() {
+        /* [START] GA Izin */
+        Route::get('/izin', [GaIzinController::class, 'index'])->name('izin');
+        Route::post('/izin/import', [GaIzinController::class, 'import'])->name('izin.import');
+        Route::post('/izin', [GaIzinController::class, 'store'])->name('izin.store');
+
+
+        Route::get('/izin/detail/{id}', [GaIzinController::class, 'detail'])->name('izin.detail');
+        Route::get('/izin/export', [GaIzinController::class, 'export'])->name('izin.export');
+        /* [END] GA Izin */
     });
 
     Route::prefix('ops')->name('ops.')->group(function () {

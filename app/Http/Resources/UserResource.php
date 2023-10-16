@@ -18,7 +18,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'nik' => $this->nik,
-            'position' => $this->getRoleNames(),
+            'position' => $this->roles->first()->alt_name,
             'permissions' => $this->getAllPermissions()->map(function($permission) {
                 return $permission->name;
             })->toArray(),

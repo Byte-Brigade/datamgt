@@ -46,4 +46,9 @@ class Branch extends Model
     {
         return $this->hasOne(OpsPajakReklame::class, 'branch_id');
     }
+
+    public function ga_izins()
+    {
+        return $this->hasMany(GaIzin::class, 'branch_id');
+    }
 }
