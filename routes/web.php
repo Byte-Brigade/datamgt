@@ -28,24 +28,22 @@ use Inertia\Inertia;
 |
 */
 
-Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('/inquery')->group(function () {
+    Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
+    Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
 });
 
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+    ->name('login');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::prefix('/inquery')->group(function () {
-        Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-        Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
 
-    });
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
@@ -80,7 +78,7 @@ Route::middleware('auth')->group(function () {
         /* [END] User Access Management*/
     });
 
-    Route::prefix('ga')->name('ga.')->group(function() {
+    Route::prefix('ga')->name('ga.')->group(function () {
         /* [START] GA Izin */
         Route::get('/izin', [GaIzinController::class, 'index'])->name('izin');
         Route::post('/izin/import', [GaIzinController::class, 'import'])->name('izin.import');

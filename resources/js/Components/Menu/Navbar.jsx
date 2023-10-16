@@ -27,7 +27,7 @@ import {
   Bars2Icon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 // profile menu component
 const profileMenuItems = [
@@ -111,6 +111,41 @@ function ProfileMenu() {
   );
 }
 
+const getFormattedDate = () => {
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const today = new Date();
+  const dayOfWeek = daysOfWeek[today.getDay()];
+  const dayOfMonth = today.getDate();
+  const month = months[today.getMonth()];
+  const year = today.getFullYear();
+
+  const formattedDate = `${dayOfWeek} - ${dayOfMonth} ${month} ${year}`;
+
+  return formattedDate;
+};
 // nav list menu
 const navListMenuItems = [
   {
@@ -229,7 +264,8 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
 
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
-
+  const { auth } = usePage().props;
+  console.log(auth);
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -240,25 +276,57 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
   return (
     <Navbar className="sticky top-0 z-10 h-max max-w-full shadow-sm rounded-none py-1 px-2 lg:px-0 lg:py-1">
       <div className="relative mx-auto flex items-center text-blue-gray-900">
-        <div className="flex items-center gap-4 px-4 py-2 justify-between">
-          <IconButton
-            variant="text"
-            color="blue-gray"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <Bars3Icon className="w-5 h-5" />
-          </IconButton>
-        </div>
-        <IconButton
-          size="sm"
-          color="blue-gray"
-          variant="text"
-          onClick={toggleIsNavOpen}
-          className="ml-auto mr-2 lg:hidden"
-        >
-          <Bars2Icon className="h-6 w-6" />
-        </IconButton>
-        <ProfileMenu />
+
+          {!Array.isArray(auth.user) ? (
+            <div className="flex items-center gap-4 px-4 py-2 justify-between w-full">
+              <IconButton
+                variant="text"
+                color="blue-gray"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                <Bars3Icon className="w-5 h-5" />
+              </IconButton>
+
+              <IconButton
+                size="sm"
+                color="blue-gray"
+                variant="text"
+                onClick={toggleIsNavOpen}
+                className="ml-auto mr-2 lg:hidden block w-full"
+              >
+                <Bars2Icon className="h-6 w-6" />
+              </IconButton>
+              <ProfileMenu />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-4 px-4 py-2 w-full">
+              <div className="flex w-full justify-between">
+                <Typography
+                  as="a"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="mr-4 cursor-pointer py-1.5 font-medium"
+                >
+                  BRANCH OPERATION MANAGEMENT
+                </Typography>
+                {/* <a href={route("login")}>
+                  <Button>Login</Button>
+                </a> */}
+              </div>
+              <div className="flex w-full justify-between">
+                <Typography
+                  as="a"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="mr-4 cursor-pointer py-1.5 font-medium"
+                >
+                  {getFormattedDate()}
+                </Typography>
+                <a href={route("login")}>
+                  <Button>Login</Button>
+                </a>
+              </div>
+            </div>
+          )}
+
       </div>
       <Collapse open={isNavOpen} className="overflow-scroll">
         <NavList />
