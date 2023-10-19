@@ -110,8 +110,6 @@ class OpsAparController extends Controller
     }
     public function store(Request $request)
     {
-
-
         try {
             $apar = OpsApar::create([
                 'branch_id' => $request->branch_id,

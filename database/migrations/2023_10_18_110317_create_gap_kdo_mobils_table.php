@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ga_izins', function (Blueprint $table) {
+        Schema::create('gap_kdo_mobils', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
-            $table->unsignedBigInteger('jenis_perizinan_id');
-            $table->date('tgl_pengesahan')->nullable();
-            $table->date('tgl_masa_berlaku')->nullable();
-            $table->text('progress_resertifikasi')->nullable();
+            $table->unsignedBigInteger('gap_kdo_id');
+            $table->string('vendor')->nullable();
+            $table->string('nopol')->nullable();
+            $table->date('awal_sewa')->nullable();
+            $table->date('akhir_sewa')->nullable();
+            $table->json('biaya_sewa')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-            $table->foreign('jenis_perizinan_id')->references('id')->on('jenis_perizinans')->onDelete('cascade');
+            $table->foreign('gap_kdo_id')->references('id')->on('gap_kdos')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ga_izins');
+        Schema::dropIfExists('gap_kdo_mobils');
     }
 };

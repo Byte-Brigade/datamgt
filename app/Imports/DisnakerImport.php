@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Branch;
-use App\Models\GaIzin;
+use App\Models\GapDisnaker;
 use App\Models\JenisPerizinan;
 use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
@@ -23,7 +23,7 @@ use Maatwebsite\Excel\Row;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
-class IzinImport implements ToCollection, WithHeadingRow, WithUpserts
+class DisnakerImport implements ToCollection, WithHeadingRow, WithUpserts
 {
     use Importable;
     use Importable;
@@ -42,7 +42,7 @@ class IzinImport implements ToCollection, WithHeadingRow, WithUpserts
 
             $jenis_perizinan = JenisPerizinan::where('name', 'like', '%' . $row['jenis_perizinan'] . '%')->get()->first();
             $izin = isset($jenis_perizinan) ? $jenis_perizinan : JenisPerizinan::create(['name' => $row['jenis_perizinan']]);
-            GaIzin::create([
+            GapDisnaker::create([
                 'branch_id' => $branch->id,
                 'jenis_perizinan_id' => $izin->id,
                 'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,

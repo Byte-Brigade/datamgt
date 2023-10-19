@@ -64,7 +64,11 @@ class UAMController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
         try {
+
             $name = strtolower($request->name);
             $names = explode(' ', $name);
             if (count($names) > 1) {

@@ -140,6 +140,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
                 BRANCH OPERATION MANAGEMENT
               </Typography>
             </div>
+
             <div className="flex justify-between w-full">
               <Typography
                 as="a"

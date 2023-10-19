@@ -5,7 +5,7 @@ import Filter from "@/Components/Filter";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -45,6 +45,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -69,7 +70,37 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       filterable: true,
       component: "branches",
     },
-
+    {
+      name: "Photo",
+      field: "photo",
+      type: "custom",
+      render: (data) =>
+        data.photo ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/branches/${data.id}/${data.photo}`}
+            target="__blank"
+          >
+            {" "}
+            {data.photo}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Photo
+            </div>
+          </Button>
+        ),
+    },
     {
       name: "Action",
       field: "action",
@@ -97,6 +128,17 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
+  };
+
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("branches.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
       },
     });
   };
@@ -148,6 +190,10 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
+  };
+
+    const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
   };
 
   const toggleModalCreate = () => {
@@ -253,6 +299,47 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 Simpan
               </Button>
               <SecondaryButton type="button" onClick={toggleModalImport}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Photo"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".jpg,.jpeg,.png"
+                onChange={(e) => setData("photo", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Tutup
               </SecondaryButton>
             </div>

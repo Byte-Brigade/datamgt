@@ -43,8 +43,12 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const gaProcurementRouter = [
     {
-      name: "Perizinan",
-      path: "ga.izin",
+      name: "Izin Disnaker",
+      path: "gap.disnaker",
+    },
+    {
+      name: "KDO",
+      path: "gap.kdo",
     },
   ];
 

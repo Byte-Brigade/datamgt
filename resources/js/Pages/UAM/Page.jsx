@@ -30,7 +30,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
     position: null,
     permissions: ["can view"],
     password: null,
-    confirm_password: null,
+    password_confirmation: null,
   };
   const {
     data,
@@ -143,11 +143,17 @@ export default function UAM({ positions, sessions, permissions, auth }) {
     post(route("uam.store"), {
       method: "post",
       replace: true,
-      onFinish: () => {
+      onSuccess: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalCreateOpen(!isModalCreateOpen);
         setData(initialData);
       },
+      onError: (errors) => {
+        // Handle validation errors
+        setData('errors', errors);
+    },
+
+
     });
   };
 
@@ -266,6 +272,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 ))}
               </Select>
               <Input
+                v-model="password"
                 type="password"
                 label="Password"
                 value={data.password}
@@ -273,12 +280,18 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 onChange={(e) => setData("password", e.target.value)}
               />
               <Input
+                v-model="password_confirmation"
                 type="password"
                 label="Confirm Password"
-                value={data.confirm_password}
+                value={data.password_confirmation}
                 disabled={processing}
-                onChange={(e) => setData("confirm_password", e.target.value)}
+                onChange={(e) =>
+                  setData("password_confirmation", e.target.value)
+                }
               />
+              {errors.password && (
+                <div className="error text-red-700">{errors.password}</div>
+              )}
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
                 <div className="flex gap-x-4">
@@ -367,9 +380,9 @@ export default function UAM({ positions, sessions, permissions, auth }) {
               <Input
                 type="password"
                 label="Confirm Password"
-                value={data.confirm_password}
+                value={data.password_confirmation}
                 disabled={processing}
-                onChange={(e) => setData("confirm_password", e.target.value)}
+                onChange={(e) => setData("password_confirmation", e.target.value)}
               /> */}
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>

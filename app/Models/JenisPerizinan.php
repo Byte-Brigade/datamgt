@@ -14,8 +14,8 @@ class JenisPerizinan extends Model
         'keterangan'
     ];
 
-    public function ga_izins()
+    public function gap_disnaker()
     {
-        return $this->hasMany(GaIzin::class, 'jenis_perizinan_id');
+        return $this->hasMany(GapDisnaker::class, 'jenis_perizinan_id');
     }
 }

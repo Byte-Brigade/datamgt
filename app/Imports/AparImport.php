@@ -4,20 +4,14 @@ namespace App\Imports;
 
 use App\Models\Branch;
 use App\Models\OpsApar;
-use App\Models\OpsPajakReklame;
-use App\Models\OpsSpeciment;
 use Carbon\Carbon;
 use Exception;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Throwable;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Concerns\OnEachRow;
-use Maatwebsite\Excel\Row;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class AparImport implements ToCollection, WithHeadingRow, WithUpserts
@@ -29,7 +23,7 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts
 
 
         $rows->shift(1);
-        // dd($rows);
+        dd($rows);
         foreach ($rows as $num => $row) {
             // Temukan indeks kunci 'keterangan'
             $row = $row->toArray();
@@ -59,23 +53,18 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts
                 $number = 1;
                 foreach ($aparKeys as $index => $aparKey) {
 
-                    if(!is_null($row[$aparKey]) && !is_null($row[$index + 1])) {
+                    if (!is_null($row[$aparKey]) && !is_null($row[$index + 1])) {
                         try {
-                        array_push($apars, [
-                            'ops_apar_id' => $ops_apar->id,
-                            'titik_posisi' => $row[$aparKey],
-                            'expired_date' =>   Date::excelToDateTimeObject($row[$index + 1]),
-                        ]);
-                        $number++;
-
-                    }
-                        catch(Throwable $th) {
-                            throw new Exception("Format expired_date harus berupa date pada baris ke-" .$num + 1 ." dan apar ke-".$number);
-                           }
-
+                            array_push($apars, [
+                                'ops_apar_id' => $ops_apar->id,
+                                'titik_posisi' => $row[$aparKey],
+                                'expired_date' =>   Date::excelToDateTimeObject($row[$index + 1]),
+                            ]);
+                            $number++;
+                        } catch (Throwable $th) {
+                            throw new Exception("Format expired_date harus berupa date pada baris ke-" . $num + 1 . " dan apar ke-" . $number);
                         }
-
-
+                    }
                 }
 
 

@@ -7,6 +7,7 @@ use App\Http\Resources\BranchResource;
 use App\Imports\BranchesImport;
 use App\Models\Branch;
 use App\Models\BranchType;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,10 +33,10 @@ class BranchController extends Controller
 
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
-            $type_name =$input['branch_types_type_name'];
+            $type_name = $input['branch_types_type_name'];
             $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
-                if(in_array('KF',$type_name)) {
-                    return $q->whereIn('type_name',['KF','KFNO']);
+                if (in_array('KF', $type_name)) {
+                    return $q->whereIn('type_name', ['KF', 'KFNO']);
                 }
                 return $q->whereIn('type_name', $type_name);
             });
@@ -47,10 +48,10 @@ class BranchController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where(function($query) use($searchQuery) {
+            $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('branch_code', 'like', $searchQuery)
-                ->orWhere('branch_name', 'like', $searchQuery)
-                ->orWhere('address', 'like', $searchQuery);
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
             });
         }
 
@@ -126,7 +127,25 @@ class BranchController extends Controller
             return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+    public function upload(Request $request, $id)
+    {
+        try {
+            $branch = Branch::find($id);
+            $file = $request->file('photo');
 
+            $fileName = $file->getClientOriginalName();
+            $file->storeAs('branches/' . $branch->id . '/', $fileName, ["disk" => 'public']);
+
+            $branch->photo = $fileName;
+            $branch->save();
+
+            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+        } catch (Exception $e) {
+            dd($e);
+
+            return redirect(route('branches'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
+        }
+    }
 
     public function update(Request $request, $id)
     {

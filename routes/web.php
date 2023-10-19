@@ -4,7 +4,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\GaIzinController;
+use App\Http\Controllers\GapDisnakerController;
+use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -54,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/branches', [BranchController::class, 'index'])->name('branches');
     Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
     Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+    Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
 
     Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
     Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
@@ -78,16 +80,22 @@ Route::middleware('auth')->group(function () {
         /* [END] User Access Management*/
     });
 
-    Route::prefix('ga')->name('ga.')->group(function () {
-        /* [START] GA Izin */
-        Route::get('/izin', [GaIzinController::class, 'index'])->name('izin');
-        Route::post('/izin/import', [GaIzinController::class, 'import'])->name('izin.import');
-        Route::post('/izin', [GaIzinController::class, 'store'])->name('izin.store');
+    Route::prefix('gap')->name('gap.')->group(function () {
+        /* [START] GA Procurement Disnaker */
+        Route::get('/disnaker', [GapDisnakerController::class, 'index'])->name('disnaker');
+        Route::post('/disnaker/import', [GapDisnakerController::class, 'import'])->name('disnaker.import');
+        Route::post('/disnaker', [GapDisnakerController::class, 'store'])->name('disnaker.store');
+        Route::get('/disnaker/detail/{id}', [GapDisnakerController::class, 'detail'])->name('disnaker.detail');
+        Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
+        /* [END] GA Procurement Disnaker */
 
-
-        Route::get('/izin/detail/{id}', [GaIzinController::class, 'detail'])->name('izin.detail');
-        Route::get('/izin/export', [GaIzinController::class, 'export'])->name('izin.export');
-        /* [END] GA Izin */
+        /* [START] GA Procurement KDO */
+        Route::get('/kdo', [GapKdoController::class, 'index'])->name('kdo');
+        Route::post('/kdo/import', [GapKdoController::class, 'import'])->name('kdo.import');
+        Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
+        Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
+        Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
+        /* [END] GA Procurement KDO */
     });
 
     Route::prefix('ops')->name('ops.')->group(function () {

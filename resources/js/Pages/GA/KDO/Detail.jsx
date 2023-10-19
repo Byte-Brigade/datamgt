@@ -17,8 +17,8 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, ops_apar }) {
-  console.log(ops_apar);
+export default function Detail({ auth, sessions, kdo_mobil }) {
+  console.log(kdo_mobil);
   const initialData = {
     titik_posisi: null,
     expired_date: null,
@@ -40,7 +40,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.apar.detail.update", data.id), {
+    put(route("gap.kdo.mobil.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -52,7 +52,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.apar.detail.delete", data.id), {
+    destroy(route("gap.kdo.mobil.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -70,12 +70,70 @@ export default function Detail({ auth, sessions, ops_apar }) {
   };
 
   const columns = [
-    { name: "Titik Posisi", field: "titik_posisi", sortable: true },
+    { name: "Vendor", field: "vendor", sortable: true },
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
+    { name: "Nopol", field: "nopol", sortable: true },
+    { name: "Awal Sewa", type: "date",field: "awal_sewa", sortable: true },
+    { name: "Akhir Sewa", type: "date",field: "akhir_sewa", sortable: true },
     {
-      name: "Expired Date",
-      field: "expired_date",
-      type: "date",
-      sortable: true,
+      name: "January 2023",
+      field: "biaya_sewa.january",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "February 2023",
+      field: "biaya_sewa.february",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "March 2023",
+      field: "biaya_sewa.march",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "April 2023",
+      field: "biaya_sewa.april",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "May 2023",
+      field: "biaya_sewa.may",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "June 2023",
+      field: "biaya_sewa.june",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "July 2023",
+      field: "biaya_sewa.july",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "August 2023",
+      field: "biaya_sewa.august",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "September 2023",
+      field: "biaya_sewa.september",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "October 2023",
+      field: "biaya_sewa.october",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "November 2023",
+      field: "biaya_sewa.november",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "December 2023",
+      field: "biaya_sewa.december",
+      className: "text-center w-[300px]",
     },
     {
       name: "Action",
@@ -99,16 +157,16 @@ export default function Detail({ auth, sessions, ops_apar }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title={`OPS | Apar - ${ops_apar.branches.branch_name}`} />
+      <Head title={`GA Procurement | KDO Mobil`} />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <h2 className="mb-4 text-xl font-semibold text-center">
-            {ops_apar.branches.branch_name}
+            {kdo_mobil.branches.branch_name}
           </h2>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/ops/apar/detail/${ops_apar.id}`}
+            fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
             refreshUrl={isRefreshed}
           />
         </div>
