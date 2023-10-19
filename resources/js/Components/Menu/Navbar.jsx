@@ -316,7 +316,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
                 <Typography
                   as="a"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="mr-4 cursor-pointer py-1.5 font-medium"
+                  className="mr-4 my-auto cursor-pointerfont-medium"
                 >
                   {getFormattedDate()}
                 </Typography>

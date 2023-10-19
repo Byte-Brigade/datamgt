@@ -3,7 +3,8 @@
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\GaIzinController;
+use App\Http\Controllers\GapDisnakerController;
+use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
@@ -38,6 +39,8 @@ Route::get('/ops/apar', [OpsAparController::class, 'api']);
 Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
 Route::get('uam', [UAMController::class, 'api']);
 
-Route::prefix('ga')->name('ga.')->group(function () {
-    Route::get('izin', [GaIzinController::class, 'api']);
+Route::prefix('gap')->name('gap.')->group(function () {
+    Route::get('disnaker', [GapDisnakerController::class, 'api']);
+    Route::get('kdo', [GapKdoController::class, 'api']);
+    Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
 });

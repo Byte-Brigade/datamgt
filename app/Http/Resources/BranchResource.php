@@ -25,12 +25,29 @@ class BranchResource extends JsonResource
             'branch_type_id' => $this->branch_type_id,
             'branch_code' => $this->branch_code,
             'branch_name' => $this->branch_name,
+            'status' => $this->status,
+            'masa_sewa' => isset($this->masa_sewa) ? $this->masa_sewa . ' Tahun' : '-',
+            'open_date' => $this->open_date,
+            'expired_date' => $this->expired_date,
+            'nitku' => $this->nitku,
+            'owner' => $this->owner,
+            'izin' => $this->izin,
+            'sewa_per_tahun' => $this->sewa_per_tahun,
+            'nilai_pembelian' => $this->status == 'Milik' ? number_format($this->total_biaya_sewa, 0, ',', '.') : '-',
+            'nilai_sewa' => $this->status != 'Milik' ? number_format($this->total_biaya_sewa, 0, ',', '.') : '-',
             'npwp' => $this->npwp,
             'address' => $this->address,
+            'jumlah_karyawan' => $this->employees->count() > 0 ? $this->employees->count() . ' Orang' : 'Tidak Ada',
+            // 'perizinan' => $this->gap_disnaker->map(function ($izin) {
+            //     return $izin->jenis_perizinan->name;
+            // })->toArray(),
+            'perizinan' => $this->gap_disnaker->count() > 0
+                ? 'Ada' : 'Tidak Ada',
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada'  ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
-            'branch_types' => $branch_types
+            'branch_types' => $branch_types,
+            'photo' => $this->photo
         ];
     }
 }

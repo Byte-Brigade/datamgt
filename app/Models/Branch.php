@@ -30,6 +30,7 @@ class Branch extends Model
         'owner',
         'sewa_per_tahun',
         'total_biaya_sewa',
+        'photo',
     ];
 
     public function branch_types()
@@ -47,8 +48,17 @@ class Branch extends Model
         return $this->hasOne(OpsPajakReklame::class, 'branch_id');
     }
 
-    public function ga_izins()
+    public function gap_disnaker()
     {
-        return $this->hasMany(GaIzin::class, 'branch_id');
+        return $this->hasMany(GapDisnaker::class, 'branch_id');
+    }
+
+    public function gap_kdo()
+    {
+        return $this->hasMany(GapKdo::class, 'branch_id');
+    }
+    public function gap_kdo_mobil()
+    {
+        return $this->hasMany(GapKdoMobil::class, 'branch_id');
     }
 }

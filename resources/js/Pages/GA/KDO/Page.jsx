@@ -22,17 +22,22 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, gaizins, sessions }) {
+export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    expired_date: null,
-    keterangan: null,
-    apars: [{ titik_posisi: null, expired_date: null }],
-
+    jumlah_kendaraan: null,
+    jumlah_driver: null,
+    sewa_kendaraan: null,
+    biaya_driver: null,
+    ot: null,
+    rfid: null,
+    non_rfid: null,
+    grab: null,
+    periode: null
   };
   const {
     data,
@@ -53,11 +58,78 @@ export default function Page({ auth, gaizins, sessions }) {
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
+    { name: "Jumlah Kendaraan", field: "jumlah_kendaraan" },
 
-    { name: "Jenis Perizinan", field: "jenis_perizinan.name", className: "text-center" },
-    { name: "Tgl Pengesahan", field: "tgl_pengesahan", className: "text-center" },
-    { name: "Tgl Masa Berlaku s/d", field: "tgl_masa_berlaku", className: "text-center" },
-    { name: "Progress Resertifikasi", field: "progress_resertifikasi", className: "text-center" },
+    {
+      name: "Sewa Kendaraan January 2023",
+      field: "sewa_kendaraan.january",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan February 2023",
+      field: "sewa_kendaraan.february",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan March 2023",
+      field: "sewa_kendaraan.march",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan April 2023",
+      field: "sewa_kendaraan.april",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan May 2023",
+      field: "sewa_kendaraan.may",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan June 2023",
+      field: "sewa_kendaraan.june",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan July 2023",
+      field: "sewa_kendaraan.july",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan August 2023",
+      field: "sewa_kendaraan.august",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan September 2023",
+      field: "sewa_kendaraan.september",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan October 2023",
+      field: "sewa_kendaraan.october",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan November 2023",
+      field: "sewa_kendaraan.november",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Sewa Kendaraan December 2023",
+      field: "sewa_kendaraan.december",
+      className: "text-center w-[300px]",
+    },
+    {
+      name: "Detail KDO",
+      field: "detail",
+      className: "text-center",
+      render: (data) => (
+        <Link href={route("gap.kdo.mobil", data.branches.branch_code)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
+    },
     {
       name: "Action",
       field: "action",
@@ -78,20 +150,9 @@ export default function Page({ auth, gaizins, sessions }) {
     },
   ];
 
-  const handleAparChange = (index, fieldName, value) => {
-    const newApars = [...data.apars];
-    newApars[index][fieldName] = value;
-    setData("apars", newApars);
-  };
-
-  const handleApar = (e) => {
-    e.preventDefault();
-    setData("apars", [...data.apars, { titik_posisi: "", expired_date: "" }]);
-  };
-
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ga.izin.import"), {
+    post(route("gap.kdo.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -103,13 +164,13 @@ export default function Page({ auth, gaizins, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("ga.izin.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.kdo.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ga.izin.update", data.id), {
+    put(route("gap.kdo.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -120,7 +181,7 @@ export default function Page({ auth, gaizins, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("ga.izin.store", data.id), {
+    post(route("gap.kdo.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -132,7 +193,7 @@ export default function Page({ auth, gaizins, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ga.izin.delete", data.id), {
+    destroy(route("gap.kdo.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -162,7 +223,7 @@ export default function Page({ auth, gaizins, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="OPS | Apar" />
+      <Head title="GA Procurement | KDO" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
@@ -193,8 +254,9 @@ export default function Page({ auth, gaizins, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/ga/izin"}
+            fetchUrl={"/api/gap/kdo"}
             refreshUrl={isRefreshed}
+            className="w-[1100px]"
           />
         </div>
       </div>
@@ -254,7 +316,7 @@ export default function Page({ auth, gaizins, sessions }) {
             onChange={(e) => setData("branch", e.target.value)}
           >
             <option value="0">All</option>
-            {gaizins.map((branch) => (
+            {branches.map((branch) => (
               <option key={branch.id} value={`${branch.id}`}>
                 {branch.branch_code} - {branch.branch_name}
               </option>
@@ -321,7 +383,7 @@ export default function Page({ auth, gaizins, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className=" overflow-y-scroll" divider>
+          <DialogBody className="max-h-96 overflow-y-scroll" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -329,37 +391,68 @@ export default function Page({ auth, gaizins, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {gaizins.map((branch) => (
+                {branches.map((branch) => (
                   <Option key={branch.id} value={`${branch.id}`}>
                     {branch.branch_code} - {branch.branch_name}
                   </Option>
                 ))}
               </Select>
 
-              {data.apars.map((apar, index) => (
-
-                <div className="flex flex-col gap-y-4 " key={index}>
-                  <span>APAR {index + 1}</span>
-                  <Input
-                    label="Titik Posisi"
-                    value={apar.titik_posisi || ""}
-                    disabled={processing}
-                    onChange={(e) =>
-                      handleAparChange(index, "titik_posisi", e.target.value)
-                    }
-                  />
-                  <Input
-                    label="Jangka Waktu (Expired Date)"
-                    value={apar.expired_date || ""}
-                    disabled={processing}
-                    type="date"
-                    onChange={(e) =>
-                      handleAparChange(index, "expired_date", e.target.value)
-                    }
-                  />
-                </div>
-              ))}
-              <button onClick={handleApar}>Tambah APAR</button>
+              <Input
+                label="Jumlah Kendaraan"
+                value={data.jumlah_kendaraan || ""}
+                disabled={processing}
+                onChange={(e) => setData("jumlah_kendaraan", e.target.value)}
+              />
+              <Input
+                label="Jumlah Driver"
+                value={data.jumlah_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("jumlah_driver", e.target.value)}
+              />
+              <Input
+                label="Sewa Kendaraan"
+                value={data.sewa_kendaraan || ""}
+                disabled={processing}
+                onChange={(e) => setData("sewa_kendaraan", e.target.value)}
+              />
+              <Input
+                label="Biaya Driver"
+                value={data.biaya_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("biaya_driver", e.target.value)}
+              />
+              <Input
+                label="OT"
+                value={data.ot || ""}
+                disabled={processing}
+                onChange={(e) => setData("ot", e.target.value)}
+              />
+              <Input
+                label="RFID"
+                value={data.rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("rfid", e.target.value)}
+              />
+              <Input
+                label="NON RFID"
+                value={data.non_rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("non_rfid", e.target.value)}
+              />
+              <Input
+                label="GRAB"
+                value={data.grab || ""}
+                disabled={processing}
+                onChange={(e) => setData("grab", e.target.value)}
+              />
+              <Input
+                label="Periode"
+                value={data.expired_date || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("periode", e.target.value)}
+              />
             </div>
           </DialogBody>
           <DialogFooter>

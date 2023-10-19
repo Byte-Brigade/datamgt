@@ -22,7 +22,7 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
             <tbody>
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">Opening Date</td>
-                <td>-</td>
+                <td>{branch.open_date}</td>
                 <td className="font-bold">Jatuh Tempo</td>
                 <td>{branch.expired_date}</td>
               </tr>
@@ -30,7 +30,7 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
                 <td className="font-bold">Alamat</td>
                 <td className="w-[200px]">{branch.address}</td>
                 <td className="font-bold">Biaya Sewa</td>
-                <td>{branch.total_biaya_sewa}</td>
+                <td>{branch.total_biaya_sewa ? branch.total_biaya_sewa.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) : '-'}</td>
               </tr>
             </tbody>
           </table>

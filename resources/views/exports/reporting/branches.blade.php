@@ -43,7 +43,7 @@
                 <td>{{ $branch->employees->count() > 0 ? $branch->employees->count() . ' Orang' : 'Tidak Ada' }}</td>
                 <td>
                     <ol>
-                        @foreach ($branch->ga_izins as $index => $izin)
+                        @foreach ($branch->gap_disnaker as $index => $izin)
                             <li>{{ ($index+1).'. '.$izin->jenis_perizinan->name }}</li>
                         @endforeach
                     </ol>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\EmployeePosition;
+use App\Models\GapDisnaker;
 use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
 use App\Models\OpsSkbirtgs;
@@ -38,6 +39,7 @@ class InqueryController extends Controller
         $ops_skbirtgs = OpsSkbirtgs::where('branch_id', $branch->id)->first();
         $ops_pajak_reklame = OpsPajakReklame::where('branch_id', $branch->id)->first();
         $ops_apar = OpsApar::where('branch_id', $branch->id)->first();
+        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->first();
         $lisensi = collect([
             [
                 'name' => 'SK Operation',
@@ -59,6 +61,11 @@ class InqueryController extends Controller
                 'remark' => isset($ops_apar) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => isset($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
             ],
+            [
+                'name' => 'Izin Disnaker',
+                'remark' => isset($izin_disnaker) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => isset($izin_disnaker->tgl_masa_berlaku) ? $izin_disnaker->tgl_masa_berlaku : '-'
+            ]
         ]);
 
         return Inertia::render('Inquery/Branch/Detail', [
