@@ -228,32 +228,28 @@ export default function DataTable({
           <div className="flex justify-between w-full mx-auto my-2">
             <div className="flex flex-col flex-wrap">
               <span className="ml-3">Category</span>
-
               {columns
-                .filter((column) => column.filterable)
-                .map((column, i) => {
+                .filter((column, index) => column.filterable)
+                .map((column, id) => {
                   if (column.name !== "Action") {
                     return (
-                      <>
-                        <Checkbox
-                          label={column.name}
-                          key={column.field}
-                          checked={filters.includes(column.field)}
-                          value={column.field}
-                          onChange={(e) =>
-                            handleCheckbox(
-                              e.target.value,
-                              column.component,
-                              column.field
-                            )
-                          }
-                        />
-                      </>
+                      <Checkbox
+                        label={column.name}
+                        key={id}
+                        checked={filters.includes(column.field)}
+                        value={column.field}
+                        onChange={(e) =>
+                          handleCheckbox(
+                            e.target.value,
+                            column.component,
+                            column.field
+                          )
+                        }
+                      />
                     );
                   }
                 })}
             </div>
-
             <div className="flex flex-wrap">
               {columns
                 .filter((column) => column.filterable)
@@ -294,45 +290,44 @@ export default function DataTable({
         </Collapse>
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-        <table className={`${className} text-sm leading-3`}>
+        <table className={`${className} text-sm leading-3 bg-white`}>
           <thead className="border-b-2 border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
-              {columns
-                .map((column, i) => (
-                  <th key={column.name}>
-                    {column.sortable === true ? (
-                      <div
-                        className="cursor-pointer hover:underline"
-                        onClick={(e) => handleSort(column.field)}
-                      >
-                        <div className="flex items-center gap-x-1">
-                          {column.name}
-                          <span className="flex flex-col gap-y-1">
-                            <ChevronUpIcon
-                              className={`${
-                                sortOrder === SORT_ASC &&
-                                column.field === sortColumn
-                                  ? "text-slate-900"
-                                  : "text-gray-400"
-                              } w-3 h-3`}
-                            />
-                            <ChevronDownIcon
-                              className={`${
-                                sortOrder === SORT_DESC &&
-                                column.field === sortColumn
-                                  ? "text-slate-900"
-                                  : "text-gray-400"
-                              } w-3 h-3`}
-                            />
-                          </span>
-                        </div>
+              {columns.map((column, i) => (
+                <th key={column.name}>
+                  {column.sortable === true ? (
+                    <div
+                      className="cursor-pointer hover:underline"
+                      onClick={(e) => handleSort(column.field)}
+                    >
+                      <div className="flex items-center gap-x-1">
+                        {column.name}
+                        <span className="flex flex-col gap-y-1">
+                          <ChevronUpIcon
+                            className={`${
+                              sortOrder === SORT_ASC &&
+                              column.field === sortColumn
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
+                          />
+                          <ChevronDownIcon
+                            className={`${
+                              sortOrder === SORT_DESC &&
+                              column.field === sortColumn
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
+                          />
+                        </span>
                       </div>
-                    ) : (
-                      <div>{column.name}</div>
-                    )}
-                  </th>
-                ))}
+                    </div>
+                  ) : (
+                    <div>{column.name}</div>
+                  )}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -365,28 +360,27 @@ export default function DataTable({
                       ? index + 1
                       : pagination.from + index}
                   </td>
-                  {columns
-                    .map((column, id) =>
-                      column.field ? (
-                        column.field === "action" || column.field === 'detail' ? (
-                          <td key={column.field} className={column.className}>
-                            {column.render(data)}
-                          </td>
-                        ) : (
-                          <td key={column.field} className={column.className}>
-                            {column.type === "date"
-                              ? convertDate(getNestedValue(data, column.field))
-                              : column.type === "custom"
-                              ? column.render(data)
-                              : getNestedValue(data, column.field) || "-"}
-                          </td>
-                        )
+                  {columns.map((column, id) =>
+                    column.field ? (
+                      column.field === "action" || column.field === "detail" ? (
+                        <td key={column.field} className={column.className}>
+                          {column.render(data)}
+                        </td>
                       ) : (
-                        <td key={id} className={column.className}>
-                          {column.value || "-"}
+                        <td key={column.field} className={column.className}>
+                          {column.type === "date"
+                            ? convertDate(getNestedValue(data, column.field))
+                            : column.type === "custom"
+                            ? column.render(data)
+                            : getNestedValue(data, column.field) || "-"}
                         </td>
                       )
-                    )}
+                    ) : (
+                      <td key={id} className={column.className}>
+                        {column.value || "-"}
+                      </td>
+                    )
+                  )}
                 </tr>
               ))
             )}
