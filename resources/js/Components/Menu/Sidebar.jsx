@@ -1,30 +1,24 @@
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
-  ArrowLeftOnRectangleIcon,
-  Bars3Icon,
   PresentationChartBarIcon,
-  UserGroupIcon,
+  UserGroupIcon
 } from "@heroicons/react/24/solid";
 import { Link, usePage } from "@inertiajs/react";
 import {
   Accordion,
   AccordionBody,
   AccordionHeader,
-  IconButton,
   List,
   ListItem,
   ListItemPrefix,
   Tooltip,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
 export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [open, setOpen] = useState(1);
-  const [collapse, setCollapse] = useState(true);
-  const [openAlert, setOpenAlert] = useState(false);
   const { auth } = usePage().props;
-  console.log(auth);
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
   };
@@ -60,40 +54,18 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <aside
-      className={`flex flex-col fixed h-screen top-0 left-0 ${Array.isArray(auth.user) ? 'pt-[4em]' : ''} z-5 ${
+      className={`flex flex-col fixed h-screen top-0 left-0 ${
+        Array.isArray(auth.user) ? "pt-[4em]" : ""
+      } z-5 ${
         !sidebarOpen ? "p-4 w-64 -x-translate-full" : "py-4 px-2 w-16"
-      } bg-white shadow-xl shadow-blue-gray-900/5`}
+      } pt-20 bg-white border-r border-gray-200 shadow-xl shadow-blue-gray-900/5`}
     >
-      {/* Logo and collapse button */}
-      <div
-        className={`flex items-center gap-4 ${
-          !sidebarOpen ? "p-4 justify-between" : "py-4 justify-center"
-        }`}
-      >
-        {!sidebarOpen && (
-          <>
-            {/* <img src="/img/logo-ct-dark.png" alt="brand" className="w-8 h-8" /> */}
-            <Typography variant="h5" color="blue-gray">
-              PDBOM
-            </Typography>
-          </>
-        )}
-        <IconButton
-          variant="text"
-          color="blue-gray"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          <Bars3Icon className="w-5 h-5" />
-        </IconButton>
-      </div>
-      <hr className="mb-2 border-blue-gray-50" />
       <List
         className={`${
-          !sidebarOpen ? "min-w-[200px] overflow-y-scroll" : "px-0 min-w-0"
-        }`}
+          !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0 overflow-x-hidden"
+        } overflow-y-auto`}
       >
         {/* Inquery */}
-        {/* <h2 className="text-lg font-semibold">Inquery Data</h2> */}
         <Accordion
           open={open === 1}
           className={`${sidebarOpen && "w-12"}`}
@@ -166,7 +138,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           <>
             {/* Report */}
             <hr className="my-2 border-blue-gray-50" />
-            {/* <h2 className="text-lg font-semibold">Report</h2> */}
             <Accordion
               open={open === 2}
               className={`${sidebarOpen && "w-12"}`}
@@ -464,58 +435,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </>
         )}
       </List>
-      <hr className="mt-auto border-blue-gray-50" />
-      {/* <Tooltip
-        content="Keluar"
-        placement="right"
-        className={`${!sidebarOpen && "hidden"}`}
-      >
-        <List className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0"}`}>
-          <Link href={route("logout")} method="post" as="button" type="button">
-            <ListItem
-              className={`${
-                sidebarOpen && "justify-center"
-              } hover:bg-red-500/10 hover:text-red-500 focus:bg-red-500/10 active:bg-red-500/10`}
-            >
-              <ListItemPrefix className={sidebarOpen ? "m-0" : ""}>
-                <ArrowLeftOnRectangleIcon
-                  strokeWidth={3}
-                  className={`w-5 h-5 ${sidebarOpen && "my-1"}`}
-                />
-              </ListItemPrefix>
-              {!sidebarOpen && <Typography>Keluar</Typography>}
-            </ListItem>
-          </Link>
-        </List>
-      </Tooltip> */}
-      {/* <Alert
-        open={openAlert}
-        className="mt-auto"
-        onClose={() => setOpenAlert(false)}
-      >
-        <CubeTransparentIcon className="w-12 h-12 mb-4" />
-        <Typography variant="h6" className="mb-1">
-          Upgrade to PRO
-        </Typography>
-        <Typography variant="small" className="font-normal opacity-80">
-          Upgrade to Material Tailwind PRO and get even more components,
-          plugins, advanced features and premium.
-        </Typography>
-        <div className="flex gap-3 mt-4">
-          <Typography
-            as="a"
-            href="#"
-            variant="small"
-            className="font-medium opacity-80"
-            onClick={() => setOpenAlert(false)}
-          >
-            Dismiss
-          </Typography>
-          <Typography as="a" href="#" variant="small" className="font-medium">
-            Upgrade Now
-          </Typography>
-        </div>
-      </Alert> */}
     </aside>
   );
 }

@@ -25,7 +25,9 @@ export default function Authenticated({ auth, header, children }) {
           sidebarOpen ? "ml-16" : "ml-64"
         } transition-[margin] duration-150 ease-in-out`}
       >
-        {children}
+        <div className="mt-16">
+          {children}
+        </div>
       </main>
     </div>
   );
