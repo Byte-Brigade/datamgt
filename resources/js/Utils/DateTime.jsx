@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 
 function DateTime() {
-  const [date, setDate] = useState(new Date());
+  // const [date, setDate] = useState(new Date());
 
-  useEffect(() => {
-    const timer = setInterval(() => setDate(new Date()), 1000);
+  // useEffect(() => {
+  //   const timer = setInterval(() => setDate(new Date()), 1000);
 
-    return function cleanup() {
-      clearInterval(timer);
-    };
-  });
+  //   return function cleanup() {
+  //     clearInterval(timer);
+  //   };
+  // }, []);
+
+  const date = new Date();
 
   const options = {
     weekday: "long",
@@ -18,7 +20,6 @@ function DateTime() {
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
   };
 
   return date.toLocaleString("id-ID", options);
