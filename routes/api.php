@@ -10,6 +10,7 @@ use App\Http\Controllers\OpsPajakReklameController;
 use App\Http\Controllers\OpsSkbirtgsController;
 use App\Http\Controllers\OpsSkOperasionalController;
 use App\Http\Controllers\OpsSpecimentController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UAMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,7 @@ Route::get('uam', [UAMController::class, 'api']);
 
 Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('disnaker', [GapDisnakerController::class, 'api']);
+    Route::get('disnaker/{id}/report', [ReportController::class, 'api_detail']);
     Route::get('kdo', [GapKdoController::class, 'api']);
     Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
 });
