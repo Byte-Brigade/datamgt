@@ -7,7 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -70,9 +70,17 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
     { name: "Nilai Sewa", field: "nilai_sewa" },
     { name: "Izin OJK", field: "izin" },
     { name: "Jumlah Karyawan", field: "jumlah_karyawan" },
+
+
     {
       name: "Izin Disnaker",
-      field: "perizinan",
+      field: "detail",
+      className: "text-center",
+      render: (data) => (
+        <Link href={route("reporting.disnaker", data.branch_code)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
     },
   ];
 

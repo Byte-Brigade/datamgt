@@ -32,6 +32,22 @@ class GapDisnakerController extends Controller
         $data = $query->paginate($perpage);
         return DisnakerResource::collection($data);
     }
+    public function api_detail(GapDisnaker $gap_disnaker, Request $request, $id)
+    {
+        $sortField = 'id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_disnaker->where('branch_id', $id)->orderBy($sortField, $sortOrder);
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+        $data = $query->paginate($perpage);
+        return DisnakerResource::collection($data);
+    }
 
 
     public function index()
