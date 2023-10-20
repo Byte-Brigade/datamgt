@@ -291,7 +291,7 @@ export default function DataTable({
       </div>
       <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
         <table className={`${className} text-sm leading-3 bg-white`}>
-          <thead className="border-b-2 border-slate-200">
+          <thead className="border-b-2 border-slate-200 table-fixed">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
               {columns.map((column, i) => (

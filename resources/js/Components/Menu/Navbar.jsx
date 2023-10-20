@@ -97,20 +97,17 @@ function ProfileMenu() {
 }
 
 export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
-  const [isNavOpen, setIsNavOpen] = React.useState(false);
-
-  const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
   const { auth } = usePage().props;
 
   return (
     <Navbar
       blurred={false}
       shadow={false}
-      className="fixed top-0 z-10 max-w-full px-2 py-1 border-b border-gray-200 rounded-none h-max lg:px-0 lg:py-1"
+      className="fixed top-0 z-10 max-w-full px-2 py-1 border-b border-gray-200 rounded-none h-max"
     >
       <div className="relative flex items-center mx-auto text-blue-gray-900">
-        {!Array.isArray(auth.user) ? (
-          <div className="flex items-center justify-between w-full gap-4 px-4 py-2">
+        {auth.role !== "cabang" ? (
+          <div className="flex items-center justify-between w-full gap-4 px-2 py-2">
             <IconButton
               variant="text"
               color="blue-gray"
@@ -118,41 +115,26 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
             >
               <Bars3Icon className="w-5 h-5" />
             </IconButton>
-            <IconButton
-              size="sm"
-              color="blue-gray"
-              variant="text"
-              onClick={toggleIsNavOpen}
-              className="block w-full ml-auto mr-2 lg:hidden"
-            >
-              <Bars2Icon className="w-6 h-6" />
-            </IconButton>
             <ProfileMenu />
           </div>
         ) : (
-          <div className="flex flex-col items-center w-full gap-4 px-4 py-2">
-            <div className="flex justify-between w-full">
-              <Typography
-                as="a"
+          <div className="flex items-center justify-between w-full px-2 py-2">
+            <div className="flex items-center gap-x-4">
+              <IconButton
+                variant="text"
+                color="blue-gray"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="mr-4 cursor-pointer py-1.5 font-medium"
               >
-                BRANCH OPERATION MANAGEMENT
-              </Typography>
+                <Bars3Icon className="w-5 h-5" />
+              </IconButton>
+              <div className="flex flex-col">
+                <Typography className="font-semibold">BRANCH OPERATION MANAGEMENT</Typography>
+                <Typography className="font-light text-sm">
+                  {DateTime()}
+                </Typography>
+              </div>
             </div>
-
-            <div className="flex justify-between w-full">
-              <Typography
-                as="a"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="mr-4 cursor-pointer py-1.5 font-medium"
-              >
-                {DateTime()}
-              </Typography>
-              <a href={route("login")}>
-                <Button>Login</Button>
-              </a>
-            </div>
+            <ProfileMenu />
           </div>
         )}
       </div>

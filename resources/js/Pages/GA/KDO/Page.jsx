@@ -58,67 +58,55 @@ export default function Page({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
-    { name: "Jumlah Kendaraan", field: "jumlah_kendaraan" },
+    { name: "Jumlah Kendaraan", field: "jumlah_kendaraan", className: "text-center" },
 
     {
       name: "Sewa Kendaraan January 2023",
       field: "sewa_kendaraan.january",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan February 2023",
       field: "sewa_kendaraan.february",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan March 2023",
       field: "sewa_kendaraan.march",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan April 2023",
       field: "sewa_kendaraan.april",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan May 2023",
       field: "sewa_kendaraan.may",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan June 2023",
       field: "sewa_kendaraan.june",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan July 2023",
       field: "sewa_kendaraan.july",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan August 2023",
       field: "sewa_kendaraan.august",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan September 2023",
       field: "sewa_kendaraan.september",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan October 2023",
       field: "sewa_kendaraan.october",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan November 2023",
       field: "sewa_kendaraan.november",
-      className: "text-center w-[300px]",
     },
     {
       name: "Sewa Kendaraan December 2023",
       field: "sewa_kendaraan.december",
-      className: "text-center w-[300px]",
     },
     {
       name: "Detail KDO",
@@ -256,7 +244,7 @@ export default function Page({ auth, branches, sessions }) {
             columns={columns}
             fetchUrl={"/api/gap/kdo"}
             refreshUrl={isRefreshed}
-            className="w-[1100px]"
+            className="w-[2000px]"
           />
         </div>
       </div>

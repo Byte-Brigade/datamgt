@@ -72,9 +72,21 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
   const columns = [
     { name: "Vendor", field: "vendor", sortable: true },
     { name: "Cabang", field: "branches.branch_name", sortable: true },
-    { name: "Nopol", field: "nopol", sortable: true },
-    { name: "Awal Sewa", type: "date",field: "awal_sewa", sortable: true },
-    { name: "Akhir Sewa", type: "date",field: "akhir_sewa", sortable: true },
+    { name: "Nopol", field: "nopol", className: "w-[300px]" },
+    {
+      name: "Awal Sewa",
+      type: "date",
+      field: "awal_sewa",
+      sortable: true,
+      className: "w-[300px]",
+    },
+    {
+      name: "Akhir Sewa",
+      type: "date",
+      field: "akhir_sewa",
+      sortable: true,
+      className: "w-[300px]",
+    },
     {
       name: "January 2023",
       field: "biaya_sewa.january",
@@ -168,6 +180,7 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
             columns={columns}
             fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
             refreshUrl={isRefreshed}
+            className="w-[2000px]"
           />
         </div>
       </div>
