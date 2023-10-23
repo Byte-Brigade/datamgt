@@ -43,6 +43,7 @@ class BranchResource extends JsonResource
             // })->toArray(),
             'perizinan' => $this->gap_disnaker->count() > 0
                 ? 'Ada' : 'Tidak Ada',
+            'kdo_mobil' => $this->gap_kdo_mobil->count(),
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada'  ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',

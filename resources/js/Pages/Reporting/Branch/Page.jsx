@@ -68,6 +68,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
     { name: "Owner/Pemilik Gedung", field: "owner" },
     { name: "Nilai Pembelian", field: "nilai_pembelian" },
     { name: "Nilai Sewa", field: "nilai_sewa" },
+    { name: "Jumlah KDO", field: "kdo_mobil", className:"text-center"},
     { name: "Izin OJK", field: "izin" },
     { name: "Jumlah Karyawan", field: "jumlah_karyawan" },
 
@@ -170,7 +171,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
             columns={columns}
             fetchUrl={"/api/branches"}
             refreshUrl={isRefreshed}
-            className="w-[1500px]"
+            className="w-[1800px]"
             component={[
               {
                 data: Array.from(
