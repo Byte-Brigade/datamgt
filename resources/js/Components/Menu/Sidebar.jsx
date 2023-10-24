@@ -24,6 +24,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [openAcc3, setOpenAcc3] = useState(false);
   const [openAcc4, setOpenAcc4] = useState(false);
   const [openAcc5, setOpenAcc5] = useState(false);
+  const [openAcc6, setOpenAcc6] = useState(false);
 
   const handleOpenAcc = (acc) => {
     switch (acc) {
@@ -41,6 +42,9 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
         break;
       case 5:
         setOpenAcc5((cur) => !cur);
+        break;
+      case 6:
+        setOpenAcc6((cur) => !cur);
         break;
       default:
         break;
@@ -70,14 +74,55 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const gaProcurementRouter = [
-    {
-      name: "Izin Disnaker",
-      path: "gap.disnaker",
-    },
+
     {
       name: "KDO Mobil",
       path: "gap.kdo",
     },
+    {
+      name: "Toner",
+      path: "gap.maintenance",
+    },
+    {
+      name: "Alih Daya",
+      path: "gap.maintenance",
+    },
+    {
+      name: "Hasil Scoring Vendor",
+      path: "gap.maintenance",
+    },
+    {
+      name: "Biaya Perjalanan Dinas",
+      path: "gap.maintenance",
+    },
+    {
+      name: "Hasil STO",
+      path: "gap.maintenance",
+    },
+
+  ];
+  const infraRouter = [
+    {
+      name: "Izin Disnaker",
+      path: "infra.disnaker",
+    },
+    {
+      name: "Sewa Gedung",
+      path: "infra.maintenance",
+    },
+    {
+      name: "Maintenance Cost Gedung",
+      path: "infra.maintenance",
+    },
+    {
+      name: "Hasil Self Asssessment",
+      path: "infra.maintenance",
+    },
+    {
+      name: "Hasil Scoring Vendor",
+      path: "infra.maintenance",
+    },
+
   ];
 
   return (
@@ -452,6 +497,83 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                       }`}
                     >
                       {gaProcurementRouter.map((router, index) => (
+                        <Tooltip
+                          key={index}
+                          content={router.name}
+                          placement="right"
+                          className={`${!sidebarOpen && "hidden"}`}
+                        >
+                          <Link href={route(router.path)}>
+                            <ListItem
+                              className={`${sidebarOpen && "justify-center"}`}
+                              selected={route().current(router.path)}
+                            >
+                              <ListItemPrefix
+                                className={`${sidebarOpen && "m-0"}`}
+                              >
+                                <ChevronRightIcon
+                                  strokeWidth={3}
+                                  className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
+                                />
+                              </ListItemPrefix>
+                              {!sidebarOpen && (
+                                <Typography>{router.name}</Typography>
+                              )}
+                            </ListItem>
+                          </Link>
+                        </Tooltip>
+                      ))}
+                    </List>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openAcc6}
+                  className={`${sidebarOpen && "w-12"}`}
+                  icon={
+                    !sidebarOpen && (
+                      <ChevronDownIcon
+                        strokeWidth={2.5}
+                        className={`mx-auto h-4 w-4 transition-transform ${
+                          openAcc6 ? "rotate-180" : ""
+                        }`}
+                      />
+                    )
+                  }
+                >
+                  <ListItem className="p-0" selected={openAcc6}>
+                    <Tooltip
+                      content="GA Infra"
+                      placement="right"
+                      className={`${!sidebarOpen && "hidden"}`}
+                    >
+                      <AccordionHeader
+                        onClick={() => {
+                          handleOpenAcc(6);
+                          sidebarOpen && setSidebarOpen(!sidebarOpen);
+                        }}
+                        className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
+                      >
+                        <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                          <PresentationChartBarIcon className="w-5 h-5" />
+                        </ListItemPrefix>
+                        {!sidebarOpen && (
+                          <Typography
+                            color="blue-gray"
+                            className={`mr-auto font-normal`}
+                          >
+                            GA Infra
+                          </Typography>
+                        )}
+                      </AccordionHeader>
+                    </Tooltip>
+                  </ListItem>
+                  <AccordionBody className="py-1">
+                    <List
+                      className={`p-0 ${
+                        !sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                      }`}
+                    >
+                      {infraRouter.map((router, index) => (
                         <Tooltip
                           key={index}
                           content={router.name}

@@ -96,7 +96,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.disnaker.import"), {
+    post(route("infra.disnaker.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -108,13 +108,13 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.disnaker.export") + `?branch=${branch}`, "_self");
+    window.open(route("infra.disnaker.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.disnaker.update", data.id), {
+    put(route("infra.disnaker.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -125,7 +125,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.disnaker.store", data.id), {
+    post(route("infra.disnaker.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -137,7 +137,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.disnaker.delete", data.id), {
+    destroy(route("infra.disnaker.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -198,7 +198,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/disnaker"}
+            fetchUrl={"/api/infra/disnaker"}
             refreshUrl={isRefreshed}
           />
         </div>

@@ -45,7 +45,7 @@ export default function Detail({ auth, disnaker, sessions }) {
           </h2>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/disnaker/${disnaker.branches.id}/report`}
+            fetchUrl={`/api/infra/disnaker/${disnaker.branches.id}/report`}
             refreshUrl={isRefreshed}
           />
         </div>

@@ -62,10 +62,10 @@ class GapDisnakerController extends Controller
         try {
             (new DisnakerImport)->import($request->file('file')->store('temp'));
 
-            return redirect(route('gap.disnaker'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);
-            return redirect(route('gap.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -89,9 +89,9 @@ class GapDisnakerController extends Controller
                 'tgl_masa_berlaku' => $request->tgl_masa_berlaku,
                 'progress_resertifikasi' => $request->progress_resertifikasi,
             ]);
-            return redirect(route('gap.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
-            return redirect(route('gap.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
     public function update()

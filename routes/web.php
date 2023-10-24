@@ -74,6 +74,18 @@ Route::middleware('auth')->group(function () {
         /* [END] Employees */
 
         Route::prefix('gap')->name('gap.')->group(function () {
+            /* [START] GA Procurement KDO */
+            Route::get('/kdo', [GapKdoController::class, 'index'])->name('kdo');
+            Route::post('/kdo/import', [GapKdoController::class, 'import'])->name('kdo.import');
+            Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
+            Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
+            Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
+            /* [END] GA Procurement KDO */
+            Route::get('/maintenance', function () {
+                abort(404);
+            })->name('maintenance');
+        });
+        Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */
             Route::get('/disnaker', [GapDisnakerController::class, 'index'])->name('disnaker');
             Route::post('/disnaker/import', [GapDisnakerController::class, 'import'])->name('disnaker.import');
@@ -82,14 +94,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
             /* [END] GA Procurement Disnaker */
 
-            /* [START] GA Procurement KDO */
-            Route::get('/kdo', [GapKdoController::class, 'index'])->name('kdo');
-            Route::post('/kdo/import', [GapKdoController::class, 'import'])->name('kdo.import');
-            Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
-            Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
-            Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
-            /* [END] GA Procurement KDO */
+            Route::get('/maintenance', function () {
+                abort(404);
+            })->name('maintenance');
         });
+
 
         Route::prefix('ops')->name('ops.')->group(function () {
 

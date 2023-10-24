@@ -41,8 +41,11 @@ Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
 Route::get('uam', [UAMController::class, 'api']);
 
 Route::prefix('gap')->name('gap.')->group(function () {
+    Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
+    Route::get('kdo', [GapKdoController::class, 'api']);
+});
+Route::prefix('infra')->name('infra.')->group(function () {
+
     Route::get('disnaker', [GapDisnakerController::class, 'api']);
     Route::get('disnaker/{id}/report', [ReportController::class, 'api_detail']);
-    Route::get('kdo', [GapKdoController::class, 'api']);
-    Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
 });
