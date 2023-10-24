@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('progress_resertifikasi')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->foreign('jenis_perizinan_id')->references('id')->on('jenis_perizinans')->onDelete('cascade');
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

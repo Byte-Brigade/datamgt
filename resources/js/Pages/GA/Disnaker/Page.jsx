@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm, Link } from "@inertiajs/react";
 import {
@@ -46,6 +46,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -62,11 +63,13 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
     {
       name: "Tgl Pengesahan",
       field: "tgl_pengesahan",
+      type: "date",
       className: "text-center",
     },
     {
       name: "Tgl Masa Berlaku s/d",
       field: "tgl_masa_berlaku",
+      type: "date",
       className: "text-center",
     },
     {
@@ -74,6 +77,38 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
       field: "progress_resertifikasi",
       className: "text-center",
     },
+    {
+      name: "Lampiran",
+      field: "file",
+      type: "custom",
+      render: (data) =>
+        data.file ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/infra/disnaker/${data.id}/${data.file}`}
+            target="__blank"
+          >
+            {" "}
+            {data.file}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ),
+    },
+
     {
       name: "Action",
       field: "action",
@@ -110,6 +145,16 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
     e.preventDefault();
     window.open(route("infra.disnaker.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
+  };
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("infra.disnaker.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
@@ -152,6 +197,10 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
+  };
+
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
   };
 
   const toggleModalEdit = () => {
@@ -237,6 +286,47 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
                 Simpan
               </Button>
               <SecondaryButton type="button" onClick={toggleModalImport}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Tutup
               </SecondaryButton>
             </div>

@@ -7,6 +7,7 @@ use App\Imports\DisnakerImport;
 use App\Models\Branch;
 use App\Models\GapDisnaker;
 use App\Models\JenisPerizinan;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
@@ -92,6 +93,25 @@ class GapDisnakerController extends Controller
             return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
             return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function upload(Request $request, $id)
+    {
+        try {
+            $disnaker = GapDisnaker::find($id);
+
+            $fileName = $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('infra/disnaker/'.$disnaker->id.'/', $fileName, ["disk" => 'public']);
+
+            $disnaker->file = $fileName;
+            $disnaker->save();
+
+            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+        } catch (Exception $e) {
+            dd($e);
+
+            return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
     public function update()

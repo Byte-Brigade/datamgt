@@ -72,80 +72,85 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
   const columns = [
     { name: "Vendor", field: "vendor", sortable: true },
     { name: "Cabang", field: "branches.branch_name", sortable: true },
-    { name: "Nopol", field: "nopol", className: "w-[300px]" },
+    { name: "Nopol", field: "nopol", className: "" },
     {
       name: "Awal Sewa",
       type: "date",
       field: "awal_sewa",
       sortable: true,
-      className: "w-[300px]",
+      className: "",
     },
     {
       name: "Akhir Sewa",
       type: "date",
       field: "akhir_sewa",
       sortable: true,
-      className: "w-[300px]",
+      className: "",
     },
     {
       name: "January 2023",
       field: "biaya_sewa.january",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "February 2023",
       field: "biaya_sewa.february",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "March 2023",
       field: "biaya_sewa.march",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "April 2023",
       field: "biaya_sewa.april",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "May 2023",
       field: "biaya_sewa.may",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "June 2023",
       field: "biaya_sewa.june",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "July 2023",
       field: "biaya_sewa.july",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "August 2023",
       field: "biaya_sewa.august",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "September 2023",
       field: "biaya_sewa.september",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "October 2023",
       field: "biaya_sewa.october",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "November 2023",
       field: "biaya_sewa.november",
-      className: "text-center w-[300px]",
+      className: "text-center ",
     },
     {
       name: "December 2023",
       field: "biaya_sewa.december",
-      className: "text-center w-[300px]",
+      className: "text-center ",
+    },
+    {
+      name: "Total Sewa",
+      field: "total_sewa",
+      className: "text-center ",
     },
     {
       name: "Action",
@@ -180,7 +185,7 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
             columns={columns}
             fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
             refreshUrl={isRefreshed}
-            className="w-[2000px]"
+            className="w-[2200px]"
           />
         </div>
       </div>

@@ -19,7 +19,7 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $branch = Branch::where('branch_name', 'like', '%' . $row['unit'] . '%')->first();
+            $branch = Branch::where('branch_name', 'like', '%' . str_contains($row['unit'], 'KF') ? trim(str_replace('KF','',$row['unit'])) : $row['unit'] . '%')->first();
             $row = $row->toArray();
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
 

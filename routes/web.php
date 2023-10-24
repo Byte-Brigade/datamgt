@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/disnaker', [GapDisnakerController::class, 'index'])->name('disnaker');
             Route::post('/disnaker/import', [GapDisnakerController::class, 'import'])->name('disnaker.import');
             Route::post('/disnaker', [GapDisnakerController::class, 'store'])->name('disnaker.store');
+            Route::post('/disnaker/{id}', [GapDisnakerController::class, 'upload'])->name('disnaker.upload');
             Route::get('/disnaker/detail/{id}', [GapDisnakerController::class, 'detail'])->name('disnaker.detail');
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
             /* [END] GA Procurement Disnaker */

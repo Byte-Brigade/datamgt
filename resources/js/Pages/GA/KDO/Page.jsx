@@ -37,7 +37,7 @@ export default function Page({ auth, branches, sessions }) {
     rfid: null,
     non_rfid: null,
     grab: null,
-    periode: null
+    periode: null,
   };
   const {
     data,
@@ -57,66 +57,26 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
-    { name: "Jumlah Kendaraan", field: "jumlah_kendaraan", className: "text-center" },
+    { name: "Cabang", field: "branches.branch_name", className: "text-center" },
+    { name: "Jumlah", field: "jumlah_kendaraan", className: "text-center" },
 
     {
-      name: "Sewa Kendaraan January 2023",
-      field: "sewa_kendaraan.january",
+      name: "Sewa Perbulan",
+      field: "sewa_perbulan",
+      className: "text-center",
     },
     {
-      name: "Sewa Kendaraan February 2023",
-      field: "sewa_kendaraan.february",
+      name: "Jatuh Tempo",
+      field: "jatuh_tempo",
+      type: "date",
+      className: "text-center",
     },
-    {
-      name: "Sewa Kendaraan March 2023",
-      field: "sewa_kendaraan.march",
-    },
-    {
-      name: "Sewa Kendaraan April 2023",
-      field: "sewa_kendaraan.april",
-    },
-    {
-      name: "Sewa Kendaraan May 2023",
-      field: "sewa_kendaraan.may",
-    },
-    {
-      name: "Sewa Kendaraan June 2023",
-      field: "sewa_kendaraan.june",
-    },
-    {
-      name: "Sewa Kendaraan July 2023",
-      field: "sewa_kendaraan.july",
-    },
-    {
-      name: "Sewa Kendaraan August 2023",
-      field: "sewa_kendaraan.august",
-    },
-    {
-      name: "Sewa Kendaraan September 2023",
-      field: "sewa_kendaraan.september",
-    },
-    {
-      name: "Sewa Kendaraan October 2023",
-      field: "sewa_kendaraan.october",
-    },
-    {
-      name: "Sewa Kendaraan November 2023",
-      field: "sewa_kendaraan.november",
-    },
-    {
-      name: "Sewa Kendaraan December 2023",
-      field: "sewa_kendaraan.december",
-    },
+
     {
       name: "Detail KDO",
       field: "detail",
       className: "text-center",
-      render: (data) => (
-        <Link href={route("gap.kdo.mobil", data.branches.branch_code)}>
-          <Button variant="outlined">Detail</Button>
-        </Link>
-      ),
+      render: (data) => console.log(data),
     },
     {
       name: "Action",
@@ -137,6 +97,8 @@ export default function Page({ auth, branches, sessions }) {
       ),
     },
   ];
+
+  const footerCols = [{ name: "Sum", span: 5 }, {name: 123123123}];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
@@ -241,10 +203,10 @@ export default function Page({ auth, branches, sessions }) {
             </PrimaryButton>
           </div>
           <DataTable
+            footCols={footerCols}
             columns={columns}
             fetchUrl={"/api/gap/kdo"}
             refreshUrl={isRefreshed}
-            className="w-[2000px]"
           />
         </div>
       </div>

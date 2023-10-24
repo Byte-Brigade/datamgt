@@ -27,6 +27,7 @@ class KdoMobilResource extends JsonResource
                 return [strtolower(Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? "Rp " . number_format($data['value'], 0, ',', '.') : '-'];
             }),
             'branches' => $this->branches,
+            'total_sewa' => "Rp. " . number_format(collect($this->biaya_sewa)->sum('value'), 0, ',', '.')
         ];
     }
 }

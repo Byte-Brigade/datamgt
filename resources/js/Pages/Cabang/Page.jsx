@@ -71,37 +71,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       component: "branches",
     },
     {
-      name: "Photo",
-      field: "photo",
-      type: "custom",
-      render: (data) =>
-        data.photo ? (
-          <a
-            className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/branches/${data.id}/${data.photo}`}
-            target="__blank"
-          >
-            {" "}
-            {data.photo}
-          </a>
-        ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Photo
-            </div>
-          </Button>
-        ),
-    },
-    {
       name: "Action",
       field: "action",
       className: "text-center",

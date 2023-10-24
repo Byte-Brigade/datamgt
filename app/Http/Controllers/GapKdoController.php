@@ -45,6 +45,11 @@ class GapKdoController extends Controller
                 'id' => $item->id,
                 'branches' => $item->branches,
                 'jumlah_kendaraan' => $item->gap_kdo_mobil->unique('nopol')->count(),
+                'sewa_perbulan' => "Rp " . number_format($item->gap_kdo_mobil->flatMap(function ($mobil) {
+                    $mobil->biaya_sewa = collect($mobil->biaya_sewa);
+                    return $mobil->biaya_sewa;
+                })->groupBy('periode')->sortKeysDesc()->first()->sum('value'), 0, ',', '.'),
+                'jatuh_tempo' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
                 'sewa_kendaraan' => collect(range(1, 12))->map(function ($num) use ($item, $year) {
                     $value = $item->gap_kdo_mobil->flatMap(function ($mobil) {
                         $mobil->biaya_sewa = collect($mobil->biaya_sewa);

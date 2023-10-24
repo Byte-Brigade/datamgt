@@ -24,13 +24,13 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">Opening Date</td>
                 <td>{ConvertDate(branch.open_date)}</td>
-                <td className="font-bold">Jatuh Tempo</td>
+                <td className="font-bold">Jatuh Tempo Sewa / Sertifikat</td>
                 <td>{ConvertDate(branch.expired_date)}</td>
               </tr>
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">Alamat</td>
                 <td className="w-[200px]">{branch.address}</td>
-                <td className="font-bold">Biaya Sewa</td>
+                <td className="font-bold">Biaya Sewa / Pembelian</td>
                 <td>{branch.total_biaya_sewa ? branch.total_biaya_sewa.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumSignificantDigits: 2 }) : '-'}</td>
               </tr>
             </tbody>

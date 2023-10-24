@@ -21,6 +21,7 @@ class DisnakerResource extends JsonResource
             'tgl_pengesahan' => $this->tgl_pengesahan,
             'tgl_masa_berlaku' => $this->tgl_masa_berlaku,
             'progress_resertifikasi' => $this->progress_resertifikasi,
+            'file' => $this->file,
             'branches' => $this->branches,
             'jenis_perizinan' => $this->jenis_perizinan
         ];
