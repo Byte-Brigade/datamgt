@@ -1,15 +1,29 @@
+import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import React from "react";
 
-export default function Branch({ sessions, branches, auth }) {
-  console.log(branches);
-  const { data } = branches;
+export default function Branch({ sessions, auth }) {
+  const { url } = usePage();
   const columns = [
-    { name: "Name" },
-    { name: "Tipe" },
-    { name: "Alamat" },
-    { name: "BM" },
+    {
+      name: "Nama",
+      field: "branch_code",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("inquery.branch.detail", data.branch_code)}>
+          {data.branch_name}
+        </Link>
+      ),
+    },
+    {
+      name: "Tipe",
+      field: "branch_types.type_name",
+      className: "w-28 text-center",
+    },
+    { name: "Alamat", field: "address", className: "w-[300px]" },
+    { name: "BM", field: "bm" },
   ];
 
   return (
@@ -17,43 +31,10 @@ export default function Branch({ sessions, branches, auth }) {
       <Head title="Inquery Data | Branch" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
-            <table className={`text-sm leading-3 w-full`}>
-              <thead className="border-b-2 border-slate-200">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-center">No</th>
-                  {columns.map((column, index) => (
-                    <th key={column.name}>
-                      <div>{column.name}</div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((branch, index) => (
-                  <tr
-                    key={index}
-                    className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
-                  >
-                    <td>{index + 1}</td>
-                    <td>
-                      <Link
-                        href={route(
-                          "inquery.branch.detail",
-                          branch.branch_code
-                        )}
-                      >
-                        {branch.branch_name}
-                      </Link>
-                    </td>
-                    <td>{branch.branch_types.type_name}</td>
-                    <td>{branch.address}</td>
-                    <td>{branch.employees[0].name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            fetchUrl={"/api/branches"}
+            columns={columns}
+          />
         </div>
       </div>
     </AuthenticatedLayout>

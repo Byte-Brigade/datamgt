@@ -19,12 +19,13 @@ import { useState } from "react";
 export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const { auth } = usePage().props;
   const [open, setOpen] = useState(3);
-  const [openAcc1, setOpenAcc1] = useState(false);
-  const [openAcc2, setOpenAcc2] = useState(false);
+  const [openAcc1, setOpenAcc1] = useState(route().current('inquery.*'));
+  const [openAcc2, setOpenAcc2] = useState(route().current('reporting.*'));
   const [openAcc3, setOpenAcc3] = useState(false);
-  const [openAcc4, setOpenAcc4] = useState(false);
-  const [openAcc5, setOpenAcc5] = useState(false);
-  const [openAcc6, setOpenAcc6] = useState(false);
+
+  const [openAcc4, setOpenAcc4] = useState(route().current('ops.*'));
+  const [openAcc5, setOpenAcc5] = useState(route().current('gap.*'));
+  const [openAcc6, setOpenAcc6] = useState(route().current('infra.*'));
 
   const handleOpenAcc = (acc) => {
     switch (acc) {
@@ -74,7 +75,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const gaProcurementRouter = [
-
     {
       name: "KDO Mobil",
       path: "gap.kdo",
@@ -99,8 +99,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       name: "Hasil STO",
       path: "gap.maintenance",
     },
-
   ];
+
   const infraRouter = [
     {
       name: "Izin Disnaker",
@@ -122,7 +122,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       name: "Hasil Scoring Vendor",
       path: "infra.maintenance",
     },
-
   ];
 
   return (

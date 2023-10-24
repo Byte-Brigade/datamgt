@@ -16,17 +16,7 @@ class InqueryController extends Controller
 {
     public function branch()
     {
-        $branches = Branch::with([
-            'branch_types',
-            'employees' => function ($query) {
-                return $query->whereHas('employee_positions', function ($q) {
-                    return $q->where('position_name', 'BM');
-                });
-            }
-        ])->paginate(15);
-        return Inertia::render('Inquery/Branch/Page', [
-            'branches' => $branches
-        ]);
+        return Inertia::render('Inquery/Branch/Page');
     }
 
     public function branchDetail($id)

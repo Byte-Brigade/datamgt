@@ -45,10 +45,11 @@ class BranchResource extends JsonResource
                 ? 'Ada' : 'Tidak Ada',
             'kdo_mobil' => $this->gap_kdo_mobil->count(),
             'telp' => $this->telp,
-            'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada'  ? 'Ada' : 'Tidak Ada',
+            'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada' ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
             'branch_types' => $branch_types,
-            'photo' => $this->photo
+            'photo' => $this->photo,
+            'bm' => $this->employees->where('position_id', 1)->pluck('name')->first()
         ];
     }
 }

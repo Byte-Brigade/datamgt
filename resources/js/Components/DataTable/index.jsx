@@ -12,6 +12,7 @@ import {
   Checkbox,
   Button,
 } from "@material-tailwind/react";
+import { CogIcon } from "@heroicons/react/24/outline";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -23,6 +24,7 @@ export default function DataTable({
   dataArr,
   className = "w-full",
   component = [],
+  footCols = { name: "", span: 0 },
 }) {
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(15);
@@ -32,8 +34,9 @@ export default function DataTable({
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-
   const [open, setOpen] = useState(false);
+  const [openSetting, setOpenSetting] = useState(false);
+  const [fixedTable, setFixedTable] = useState(false);
 
   // filters
   const [filters, setFilters] = useState([]);
@@ -41,6 +44,7 @@ export default function DataTable({
   const [clearFilter, setClearFilter] = useState(false);
 
   const toggleOpen = () => setOpen((cur) => !cur);
+
   const { auth } = usePage().props;
   const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
@@ -175,6 +179,15 @@ export default function DataTable({
     return d.toLocaleDateString("id-ID", options);
   };
 
+  const toggleOpenSetting = () => setOpenSetting((cur) => !cur);
+
+  const handleTableSettings = () => {
+    setFixedTable((cur) => !cur);
+  };
+
+  console.log(footCols)
+
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -221,9 +234,12 @@ export default function DataTable({
               />
             </svg>
           </IconButton>
+          <IconButton onClick={toggleOpenSetting}>
+            <CogIcon className="w-5 h-5" />
+          </IconButton>
         </div>
       </div>
-      <div>
+      <div id="filters">
         <Collapse open={open}>
           <div className="flex justify-between w-full mx-auto my-2">
             <div className="flex flex-col flex-wrap">
@@ -289,9 +305,29 @@ export default function DataTable({
           </div>
         </Collapse>
       </div>
-      <div className="relative overflow-x-auto border-2 rounded-lg border-slate-200">
+      <div id="settings">
+        <Collapse open={openSetting}>
+          <div className="flex justify-between w-full mx-auto my-2">
+            <div className="flex flex-col flex-wrap">
+              <span className="ml-3">Settings</span>
+              <div className="flex flex-wrap">
+                <Checkbox
+                  label="Fixed Table Height"
+                  checked={fixedTable}
+                  onChange={handleTableSettings}
+                />
+              </div>
+            </div>
+          </div>
+        </Collapse>
+      </div>
+      <div
+        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
+          fixedTable ? "max-h-96" : "h-full"
+        }`}
+      >
         <table className={`${className} text-sm leading-3 bg-white`}>
-          <thead className="border-b-2 border-slate-200 table-fixed">
+          <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
             <tr className="[&>th]:p-2 bg-slate-100">
               <th className="text-center">No</th>
               {columns.map((column, i) => (
@@ -330,7 +366,7 @@ export default function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="overflow-y-auto">
             {loading ? (
               <tr>
                 <td
@@ -385,6 +421,17 @@ export default function DataTable({
               ))
             )}
           </tbody>
+          {footCols.length > 0 && (
+            <tfoot className="sticky bottom-0 border-t-2 border-slate-200">
+              <tr className="[&>th]:p-2 bg-slate-100">
+                {footCols.map((col, index) => (
+                  <th key={index} colSpan={col.span}>
+                    {col.name}
+                  </th>
+                ))}
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
       {data.length > 0 && !loading && (
