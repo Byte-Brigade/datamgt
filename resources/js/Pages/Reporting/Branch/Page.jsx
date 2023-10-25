@@ -1,12 +1,9 @@
 import Alert from "@/Components/Alert";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
-import Filter from "@/Components/Filter";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -16,12 +13,10 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  List,
-  ListItem,
   Option,
   Radio,
   Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -63,20 +58,17 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
     },
     { name: "Status Cabang", field: "status" },
     { name: "Masa Sewa", field: "masa_sewa" },
-    { name: "Jatuh Tempo Sewa", field: "expired_date" },
-    { name: "Open Date Cabang", field: "open_date" },
+    { name: "Jatuh Tempo Sewa", field: "expired_date", type: "date" },
+    { name: "Open Date Cabang", field: "open_date", type: "date" },
     { name: "Owner/Pemilik Gedung", field: "owner" },
     { name: "Nilai Pembelian", field: "nilai_pembelian" },
-    { name: "Nilai Sewa", field: "nilai_sewa" },
-    { name: "Jumlah KDO", field: "kdo_mobil", className:"text-center"},
+    { name: "Jumlah KDO", field: "kdo_mobil", className: "text-center" },
     { name: "Izin OJK", field: "izin" },
     { name: "Jumlah Karyawan", field: "jumlah_karyawan" },
-
 
     {
       name: "Izin Disnaker",
       field: "detail",
-      className: "text-center",
       render: (data) => (
         <Link href={route("reporting.disnaker", data.branch_code)}>
           <Button variant="outlined">Detail</Button>

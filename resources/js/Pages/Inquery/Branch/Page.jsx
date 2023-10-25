@@ -1,7 +1,7 @@
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
-import React from "react";
 
 export default function Branch({ sessions, auth }) {
   const { url } = usePage();
@@ -29,6 +29,7 @@ export default function Branch({ sessions, auth }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="Inquery Data | Branch" />
+      <BreadcrumbsDefault url={url} />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <DataTable

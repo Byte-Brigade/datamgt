@@ -1,14 +1,21 @@
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ConvertDate } from "@/Utils/ConvertDate";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import React from "react";
 
-export default function Detail({ auth, seesions, branch, positions, licenses }) {
-  console.log(branch);
+export default function Detail({
+  auth,
+  seesions,
+  branch,
+  positions,
+  licenses,
+}) {
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`Inquery Data | Branch | ${branch.branch_name}`} />
-
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <table className="w-full text-left table-auto min-w-max">
@@ -31,7 +38,15 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
                 <td className="font-bold">Alamat</td>
                 <td className="w-[200px]">{branch.address}</td>
                 <td className="font-bold">Biaya Sewa / Pembelian</td>
-                <td>{branch.total_biaya_sewa ? branch.total_biaya_sewa.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumSignificantDigits: 2 }) : '-'}</td>
+                <td>
+                  {branch.total_biaya_sewa
+                    ? branch.total_biaya_sewa.toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        maximumSignificantDigits: 2,
+                      })
+                    : "-"}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -73,15 +88,13 @@ export default function Detail({ auth, seesions, branch, positions, licenses }) 
                   </tr>
                 </thead>
                 <tbody>
-                  {licenses.map(license => (
-
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                    <td>{license.name}</td>
-                    <td>{license.remark}</td>
-                    <td>{ConvertDate(license.jatuh_tempo)}</td>
-                  </tr>
+                  {licenses.map((license) => (
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                      <td>{license.name}</td>
+                      <td>{license.remark}</td>
+                      <td>{ConvertDate(license.jatuh_tempo)}</td>
+                    </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>

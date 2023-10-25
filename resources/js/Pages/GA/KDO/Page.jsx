@@ -57,26 +57,28 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name", className: "text-center" },
+    { name: "Cabang", field: "branches.branch_name" },
     { name: "Jumlah", field: "jumlah_kendaraan", className: "text-center" },
 
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
-      className: "text-center",
     },
     {
       name: "Jatuh Tempo",
       field: "jatuh_tempo",
       type: "date",
-      className: "text-center",
     },
 
     {
       name: "Detail KDO",
       field: "detail",
       className: "text-center",
-      render: (data) => console.log(data),
+      render: (data) => (
+        <Link href={route("gap.kdo.mobil", data.branches.branch_code)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
     },
     {
       name: "Action",
@@ -98,7 +100,7 @@ export default function Page({ auth, branches, sessions }) {
     },
   ];
 
-  const footerCols = [{ name: "Sum", span: 5 }, {name: 123123123}];
+  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
@@ -180,7 +182,7 @@ export default function Page({ auth, branches, sessions }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalCreate}
               >
                 <div className="flex items-center gap-x-2">
@@ -333,7 +335,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="max-h-96 overflow-y-scroll" divider>
+          <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"

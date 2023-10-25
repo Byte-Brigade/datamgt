@@ -23,7 +23,6 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts
 
 
         $rows->shift(1);
-        dd($rows);
         foreach ($rows as $num => $row) {
             // Temukan indeks kunci 'keterangan'
             $row = $row->toArray();
