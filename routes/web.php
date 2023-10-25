@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
         Route::get('/disnaker/{branch_code}', [ReportController::class, 'disnaker'])->name('disnaker');
+
+
     });
 
     Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {
@@ -93,6 +95,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/disnaker/{id}', [GapDisnakerController::class, 'upload'])->name('disnaker.upload');
             Route::get('/disnaker/detail/{id}', [GapDisnakerController::class, 'detail'])->name('disnaker.detail');
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
+            Route::delete('/disnaker/{id}', [GapDisnakerController::class, 'destroy'])->name('disnaker.delete');
             /* [END] GA Procurement Disnaker */
 
             Route::get('/maintenance', function () {

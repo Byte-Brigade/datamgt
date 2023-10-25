@@ -96,6 +96,25 @@ class GapDisnakerController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        try {
+            $disnaker = GapDisnaker::find($id);
+            $branch = Branch::find($request->branch_id);
+            $jenis_perizinan = JenisPerizinan::find($request->jenis_perizinan_id);
+            $disnaker->update([
+                'branch_id' => $branch->id,
+                'jenis_perizinan_id' => $jenis_perizinan->id,
+                'tgl_pengesahan' => $request->tgl_pengesahan,
+                'tgl_masa_berlaku' => $request->tgl_masa_berlaku,
+                'progress_resertifikasi' => $request->progress_resertifikasi,
+            ]);
+            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+        } catch (Throwable $e) {
+            return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
     public function upload(Request $request, $id)
     {
         try {
@@ -114,11 +133,12 @@ class GapDisnakerController extends Controller
             return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
-    public function update()
-    {
-    }
 
-    public function destroy()
+    public function destroy($id)
     {
+        $apar_detail = GapDisnaker::find($id);
+        $apar_detail->delete();
+
+        return redirect(route('infra.disnaker', $id))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

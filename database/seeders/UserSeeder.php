@@ -18,9 +18,103 @@ class UserSeeder extends Seeder
         $superadmin = User::create([
             'name' => 'admin',
             'password' => Hash::make('rahasia123'),
-            'email' => 'adm@email.com',
-            'nik' => '01100100'
+            'email' => 'admin@email.com',
+            'nik' => '3298123'
         ]);
+
+        User::create([
+            'name' => 'Siswoyo',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Siswoyo.Siswoyo@email.com',
+            'nik' => '00005488'
+        ])->assignRole('procurement');
+
+        User::create([
+            'name' => 'Mahardhika',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Mahardhika@email.com',
+            'nik' => '00006083'
+        ])->assignRole('procurement');
+        User::create([
+            'name' => 'Eep Pathurahman',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Eep.Pathurahman@email.com',
+            'nik' => '00006583'
+        ])->assignRole('procurement');
+        User::create([
+            'name' => 'Nadia Ristanti Afandi',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Nadia.Afandi@email.com',
+            'nik' => '00005714'
+        ])->assignRole('procurement');
+
+        User::create([
+            'name' => 'Risty Adelina',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Risty.Adelina@email.com',
+            'nik' => '00006350'
+        ])->assignRole('procurement');
+        User::create([
+            'name' => 'Faisal Ananda',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Faisal.Ananda@email.com',
+            'nik' => '50009981'
+        ])->assignRole('procurement');
+        User::create([
+            'name' => 'Heni Eka',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Heni.Eka@email.com',
+            'nik' => '50010777'
+        ])->assignRole('procurement');
+
+        User::create([
+            'name' => 'Istava Hartini',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Istava.Hartini@email.com',
+            'nik' => '00004313'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Mita Lestari',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Mita.Lestari@email.com',
+            'nik' => '00005538'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Budi Purwanto',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Budi.Purwanto@email.com',
+            'nik' => '00002655'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Nova Adimurti',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Nova.Adimurti@email.com',
+            'nik' => '00005660'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Nadim Hasba',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Nadim.Hasba@email.com',
+            'nik' => '00006578'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Rendy Fadjar Bakti',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Rendy.Bakti@email.com',
+            'nik' => '00006622'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Ferdinan Julianto',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Ferdinan.Julianto@email.com',
+            'nik' => '00006513'
+        ])->assignRole('ga');
+        User::create([
+            'name' => 'Ahmad Harefli',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'Ahmad.Harefli@email.com',
+            'nik' => '50010913'
+        ])->assignRole('ga');
 
         $superadmin->assignRole('superadmin');
     }

@@ -374,18 +374,52 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+            <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                label="Jenis Perizinan"
+                value={`${data.jenis_perizinan_id}`}
+                disabled={processing}
+                onChange={(e) => setData("jenis_perizinan_id", e)}
+              >
+                {jenis_perizinan.map((izin) => (
+                  <Option key={izin.id} value={`${izin.id}`}>
+                    {izin.name}
+                  </Option>
+                ))}
+              </Select>
+
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("expired_date", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
               />
               <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
                 disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
             </div>
           </DialogBody>

@@ -95,9 +95,9 @@ function ProfileMenu() {
     </Menu>
   );
 }
-
 export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
   const { auth } = usePage().props;
+  console.log(auth);
 
   return (
     <Navbar
@@ -115,7 +115,12 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
             >
               <Bars3Icon className="w-5 h-5" />
             </IconButton>
-            <ProfileMenu />
+            <div className="flex items-center gap-x-2">
+              <span className="text-sm text-slate-700">
+                {auth.user.name} | {auth.role}
+              </span>
+              <ProfileMenu />
+            </div>
           </div>
         ) : (
           <div className="flex items-center justify-between w-full px-2 py-2">
@@ -128,7 +133,9 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
                 <Bars3Icon className="w-5 h-5" />
               </IconButton>
               <div className="flex flex-col">
-                <Typography className="font-semibold">BRANCH OPERATION MANAGEMENT</Typography>
+                <Typography className="font-semibold">
+                  BRANCH OPERATION MANAGEMENT
+                </Typography>
                 <Typography className="font-light text-sm">
                   {DateTime()}
                 </Typography>

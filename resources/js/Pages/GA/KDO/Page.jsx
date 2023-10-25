@@ -182,15 +182,6 @@ export default function Page({ auth, branches, sessions }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add Izin
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
                 className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalImport}
               >
