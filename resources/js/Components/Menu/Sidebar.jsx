@@ -19,13 +19,13 @@ import { useState } from "react";
 export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const { auth } = usePage().props;
   const [open, setOpen] = useState(3);
-  const [openAcc1, setOpenAcc1] = useState(route().current('inquery.*'));
-  const [openAcc2, setOpenAcc2] = useState(route().current('reporting.*'));
+  const [openAcc1, setOpenAcc1] = useState(route().current("inquery.*"));
+  const [openAcc2, setOpenAcc2] = useState(route().current("reporting.*"));
   const [openAcc3, setOpenAcc3] = useState(false);
 
-  const [openAcc4, setOpenAcc4] = useState(route().current('ops.*'));
-  const [openAcc5, setOpenAcc5] = useState(route().current('gap.*'));
-  const [openAcc6, setOpenAcc6] = useState(route().current('infra.*'));
+  const [openAcc4, setOpenAcc4] = useState(route().current("ops.*"));
+  const [openAcc5, setOpenAcc5] = useState(route().current("gap.*"));
+  const [openAcc6, setOpenAcc6] = useState(route().current("infra.*"));
 
   const handleOpenAcc = (acc) => {
     switch (acc) {
@@ -59,11 +59,14 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const inqueryRouter = [
     { name: "Branch", path: "inquery.branch" },
     { name: "Staff", path: "inquery.branch" },
+    { name: "Asset", path: "inquery.branch" },
+    { name: "Lisensi", path: "inquery.branch" },
   ];
 
   const reportRouter = [
     { name: "Branch", path: "reporting.branches" },
-    { name: "Staff", path: "reporting.branches" },
+    { name: "Asset", path: "reporting.branches" },
+    { name: "Lisensi", path: "reporting.branches" },
   ];
 
   const opsRouter = [
@@ -191,7 +194,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   className={`${!sidebarOpen && "hidden"}`}
                 >
                   <Link href={route(router.path)}>
-                    <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                    <ListItem
+                      className={`${sidebarOpen && "justify-center"}`}
+                      selected={route().current(router.path)}
+                    >
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
                           strokeWidth={3}
@@ -261,7 +267,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   className={`${!sidebarOpen && "hidden"}`}
                 >
                   <Link href={route(router.path)}>
-                    <ListItem className={`${sidebarOpen && "justify-center"}`}>
+                    <ListItem
+                      className={`${sidebarOpen && "justify-center"}`}
+                      selected={route().current(router.path)}
+                    >
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
                           strokeWidth={3}
@@ -282,20 +291,20 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             {/* Data Maintenance */}
             <hr className="my-2 border-blue-gray-50" />
             <Accordion
-              open={openAcc5}
+              open={openAcc3}
               className={`${sidebarOpen && "w-12"}`}
               icon={
                 !sidebarOpen && (
                   <ChevronDownIcon
                     strokeWidth={2.5}
                     className={`mx-auto h-4 w-4 transition-transform ${
-                      openAcc5 ? "rotate-180" : ""
+                      openAcc3 ? "rotate-180" : ""
                     }`}
                   />
                 )
               }
             >
-              <ListItem className="p-0" selected={openAcc5}>
+              <ListItem className="p-0" selected={openAcc3}>
                 <Tooltip
                   content="Data Maintenance"
                   placement="right"
@@ -303,7 +312,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 >
                   <AccordionHeader
                     onClick={() => {
-                      handleOpenAcc(5);
+                      handleOpenAcc(3);
                       sidebarOpen && setSidebarOpen(!sidebarOpen);
                     }}
                     className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
@@ -324,7 +333,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
               </ListItem>
               <AccordionBody className="py-1">
                 <Accordion
-                  open={openAcc3}
+                  open={openAcc4}
                   className={`${sidebarOpen && "w-12"}`}
                   icon={
                     !sidebarOpen && (
@@ -337,7 +346,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     )
                   }
                 >
-                  <ListItem className="p-0" selected={openAcc3}>
+                  <ListItem className="p-0" selected={openAcc4}>
                     <Tooltip
                       content="Branch OPS"
                       placement="right"
@@ -345,7 +354,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     >
                       <AccordionHeader
                         onClick={() => {
-                          handleOpenAcc(3);
+                          handleOpenAcc(4);
                           sidebarOpen && setSidebarOpen(!sidebarOpen);
                         }}
                         className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
@@ -449,20 +458,20 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   </AccordionBody>
                 </Accordion>
                 <Accordion
-                  open={openAcc4}
+                  open={openAcc5}
                   className={`${sidebarOpen && "w-12"}`}
                   icon={
                     !sidebarOpen && (
                       <ChevronDownIcon
                         strokeWidth={2.5}
                         className={`mx-auto h-4 w-4 transition-transform ${
-                          openAcc4 ? "rotate-180" : ""
+                          openAcc5 ? "rotate-180" : ""
                         }`}
                       />
                     )
                   }
                 >
-                  <ListItem className="p-0" selected={openAcc4}>
+                  <ListItem className="p-0" selected={openAcc5}>
                     <Tooltip
                       content="GA Procurement"
                       placement="right"
@@ -470,7 +479,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     >
                       <AccordionHeader
                         onClick={() => {
-                          handleOpenAcc(4);
+                          handleOpenAcc(5);
                           sidebarOpen && setSidebarOpen(!sidebarOpen);
                         }}
                         className={`p-3 border-b-0 [&>span]:m-0 justify-center`}

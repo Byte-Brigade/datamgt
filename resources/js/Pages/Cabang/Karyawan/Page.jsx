@@ -1,11 +1,12 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -192,6 +193,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
+      <BreadcrumbsDefault />
       <Head title="Karyawan Bank OPS Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -199,7 +201,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalCreate}
               >
                 <div className="flex items-center gap-x-2">

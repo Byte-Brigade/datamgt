@@ -1,4 +1,5 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -6,8 +7,8 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -16,9 +17,9 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography,
-  Select,
   Option,
+  Select,
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -176,6 +177,7 @@ export default function Page({ auth, branches, sessions }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | KDO" />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

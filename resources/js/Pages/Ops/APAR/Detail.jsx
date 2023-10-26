@@ -1,4 +1,5 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -18,7 +19,6 @@ import {
 import { useState } from "react";
 
 export default function Detail({ auth, sessions, ops_apar }) {
-  console.log(ops_apar);
   const initialData = {
     titik_posisi: null,
     expired_date: null,
@@ -100,6 +100,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`OPS | Apar - ${ops_apar.branches.branch_name}`} />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

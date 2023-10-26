@@ -1,4 +1,5 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -175,6 +176,7 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`GA Procurement | KDO Mobil`} />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

@@ -1,10 +1,11 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -16,11 +17,12 @@ import {
   Option,
   Radio,
   Select,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function Branch({ auth, sessions, branch_types, branches }) {
+  const { url } = usePage();
   const initialData = {
     file: null,
     branch_code: null,
@@ -150,6 +152,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
+      <BreadcrumbsDefault url={url} />
       <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">

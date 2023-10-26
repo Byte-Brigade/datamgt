@@ -1,4 +1,5 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
@@ -6,8 +7,7 @@ import { Head } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function Detail({ auth, disnaker, sessions }) {
-
- const [isRefreshed, setIsRefreshed] = useState(false);
+  const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
@@ -37,6 +37,7 @@ export default function Detail({ auth, disnaker, sessions }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA | Izin Disnaker" />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

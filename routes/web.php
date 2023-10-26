@@ -42,16 +42,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('/inquery')->group(function () {
+        Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+        Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
     });
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
         Route::get('/disnaker/{branch_code}', [ReportController::class, 'disnaker'])->name('disnaker');
-
-
     });
 
     Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {

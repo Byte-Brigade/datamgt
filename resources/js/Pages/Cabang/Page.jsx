@@ -1,11 +1,11 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
-import Filter from "@/Components/Filter";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -161,7 +161,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-    const toggleModalUpload = () => {
+  const toggleModalUpload = () => {
     setIsModalUploadOpen(!isModalUploadOpen);
   };
 
@@ -178,6 +178,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
+      <BreadcrumbsDefault />
       <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -185,7 +186,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalCreate}
               >
                 <div className="flex items-center gap-x-2">
@@ -223,7 +224,9 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 data: Array.from(
                   new Set(
                     branch_types
-                      .filter((type) => ["KC", "KCP", "KF"].includes(type.type_name))
+                      .filter((type) =>
+                        ["KC", "KCP", "KF"].includes(type.type_name)
+                      )
                       .map((type) => type.type_name)
                   )
                 ),

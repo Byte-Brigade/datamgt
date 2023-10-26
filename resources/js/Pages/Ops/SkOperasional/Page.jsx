@@ -1,7 +1,9 @@
 import Alert from "@/Components/Alert";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
@@ -16,11 +18,8 @@ import {
   IconButton,
   Input,
   Typography,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import Modal from "@/Components/Reports/Modal";
 
 export default function SkOperasional({ auth, branches, sessions }) {
   const initialData = {
@@ -127,7 +126,10 @@ export default function SkOperasional({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("ops.sk-operasional.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("ops.sk-operasional.export") + `?branch=${branch}`,
+      "_self"
+    );
   };
 
   const handleSubmitUpload = (e) => {
@@ -187,6 +189,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="OPS | SK Operasional Cabang" />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>

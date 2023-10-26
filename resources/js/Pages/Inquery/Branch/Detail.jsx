@@ -1,8 +1,7 @@
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ConvertDate } from "@/Utils/ConvertDate";
-import { Head, usePage } from "@inertiajs/react";
-import React from "react";
+import { Head } from "@inertiajs/react";
 
 export default function Detail({
   auth,

@@ -42,7 +42,7 @@ const profileMenuItems = [
   },
 ];
 
-function ProfileMenu() {
+function ProfileMenu({ auth }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
   return (
@@ -54,6 +54,9 @@ function ProfileMenu() {
           className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
         >
           <UserCircleIcon className="w-8 h-8" />
+          <span className="text-sm capitalize text-slate-700">
+            {auth.user.name} | {auth.role}
+          </span>
           <ChevronDownIcon
             strokeWidth={2.5}
             className={`h-3 w-3 transition-transform ${
@@ -115,12 +118,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
             >
               <Bars3Icon className="w-5 h-5" />
             </IconButton>
-            <div className="flex items-center gap-x-2">
-              <span className="text-sm text-slate-700">
-                {auth.user.name} | {auth.role}
-              </span>
-              <ProfileMenu />
-            </div>
+            <ProfileMenu auth={auth} />
           </div>
         ) : (
           <div className="flex items-center justify-between w-full px-2 py-2">
@@ -136,7 +134,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
                 <Typography className="font-semibold">
                   BRANCH OPERATION MANAGEMENT
                 </Typography>
-                <Typography className="font-light text-sm">
+                <Typography className="text-sm font-light">
                   {DateTime()}
                 </Typography>
               </div>
