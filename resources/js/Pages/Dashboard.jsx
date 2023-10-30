@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
 import { Head } from "@inertiajs/react";
-import { Typography } from "@material-tailwind/react";
+import { Option, Select, Typography } from "@material-tailwind/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
@@ -23,7 +24,8 @@ ChartJS.register(
   Legend
 );
 
-export default function Dashboard({ auth, errors, sessions, data }) {
+export default function Dashboard({ auth, errors, sessions, data, branches }) {
+  const [branchId, setBranchId] = useState(0);
   const options = {
     responsive: true,
     plugins: {
@@ -37,6 +39,10 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     },
   };
 
+  const handleFilterBranch = (id) => {
+    setBranchId(parseInt(id));
+  };
+
   const labels = data.employee_positions.map(
     (position) => position.position_name
   );
@@ -47,12 +53,14 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       {
         label: "Karyawan",
         data: labels.map(
-          (label) =>
+          (label) => branchId ?
             data.employees.filter(
+              (employee) => employee.employee_positions.position_name === label
+            ).filter(employee => employee.branch_id === branchId).length : data.employees.filter(
               (employee) => employee.employee_positions.position_name === label
             ).length
         ),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        backgroundColor: "rgba(150, 255, 230  , 1)",
       },
     ],
   };
@@ -64,13 +72,37 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="mb-4 text-2xl font-semibold text-center">Dashboard</h2>
+          <div className="mb-4  flex items-center justify-between ">
+            <h2 className="text-2xl w-80 text-left font-semibold">Dashboard</h2>
+            <Select
+              label="Branch"
+              value={`${data.branch_id}`}
+              onChange={(e) => handleFilterBranch(e)}
+            >
+
+              {data.branches.map((branch, index) => {
+                if(index + 1 === 1) {
+                  return (<Option key={0} value="0">
+                  All
+                </Option>)
+                }
+                return (<Option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </Option>)
+              })}
+            </Select>
+          </div>
           <div className="grid grid-cols-4 gap-x-4">
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Cabang</Typography>
-                <Typography>{data.jumlahCabang}</Typography>
+                <Typography>
+                  {branchId
+                    ? data.branches.filter((branch) => branch.id == branchId)
+                        .length
+                    : data.branches.length}
+                </Typography>
               </div>
             </div>
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
@@ -79,21 +111,39 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 <Typography variant="h5">
                   Jumlah Layanan ATM (24 Jam)
                 </Typography>
-                <Typography>{data.jumlahATM24Jam}</Typography>
+                <Typography>
+                  {branchId
+                    ? data.jumlahATM24Jam.filter(
+                        (branch) => branch.id == branchId
+                      ).length
+                    : data.jumlahATM24Jam.length}
+                </Typography>
               </div>
             </div>
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Karyawan</Typography>
-                <Typography>{data.jumlahKaryawan}</Typography>
+                <Typography>
+                  {branchId
+                    ? data.jumlahKaryawan.filter(
+                        (karyawan) => karyawan.branch_id == branchId
+                      ).length
+                    : data.jumlahKaryawan.length}
+                </Typography>
               </div>
             </div>
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah BSO</Typography>
-                <Typography>{data.jumlahKaryawanBSO}</Typography>
+                <Typography>
+                  {branchId
+                    ? data.jumlahKaryawanBSO.filter(
+                        (karyawan) => karyawan.branch_id == branchId
+                      ).length
+                    : data.jumlahKaryawanBSO.length}
+                </Typography>
               </div>
             </div>
           </div>

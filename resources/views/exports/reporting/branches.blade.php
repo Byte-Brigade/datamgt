@@ -16,7 +16,7 @@
             <th>Jumlah KDO</th>
             <th>Asuransi Gedung</th>
             <th>No Telp Owner</th>
-            <th>Perizinan</th>
+            <th>Izin / OJK</th>
             <th>Jumlah Karyawan</th>
             <th>Izin Disnaker</th>
         </tr>

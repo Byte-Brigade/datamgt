@@ -13,6 +13,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { CogIcon } from "@heroicons/react/24/outline";
+import Datepicker from "react-tailwindcss-datepicker";
 
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
@@ -140,6 +141,16 @@ export default function DataTable({
     }
   };
 
+  const [value, setValue] = useState({
+    startDate: new Date(),
+    endDate: new Date().setMonth(11),
+  });
+
+  const handleValueChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setValue(newValue);
+  };
+
   useEffect(() => {
     fetchData();
   }, [
@@ -185,8 +196,7 @@ export default function DataTable({
     setFixedTable((cur) => !cur);
   };
 
-  console.log(footCols)
-
+  console.log(footCols);
 
   return (
     <>
@@ -239,6 +249,7 @@ export default function DataTable({
           </IconButton>
         </div>
       </div>
+          <Datepicker value={value} onChange={handleValueChange} />
       <div id="filters">
         <Collapse open={open}>
           <div className="flex justify-between w-full mx-auto my-2">

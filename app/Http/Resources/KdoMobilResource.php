@@ -24,10 +24,10 @@ class KdoMobilResource extends JsonResource
             'awal_sewa' => $this->awal_sewa,
             'akhir_sewa' => $this->akhir_sewa,
             'biaya_sewa' => collect($this->biaya_sewa)->flatMap(function ($data) {
-                return [strtolower(Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? "Rp " . number_format($data['value'], 0, ',', '.') : '-'];
+                return [strtolower(Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? number_format($data['value'], 0, ',', '.') : '-'];
             }),
             'branches' => $this->branches,
-            'total_sewa' => "Rp. " . number_format(collect($this->biaya_sewa)->sum('value'), 0, ',', '.')
+            'total_sewa' => number_format(collect($this->biaya_sewa)->sum('value'), 0, ',', '.')
         ];
     }
 }

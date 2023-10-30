@@ -22,6 +22,7 @@ export default function Branch({ sessions, auth }) {
       field: "branch_types.type_name",
       className: "w-28 text-center",
     },
+    { name: "Area", field: "area" },
     { name: "Alamat", field: "address", className: "w-[300px]" },
     { name: "BM", field: "bm" },
   ];

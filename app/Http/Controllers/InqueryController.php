@@ -29,7 +29,14 @@ class InqueryController extends Controller
         $ops_skbirtgs = OpsSkbirtgs::where('branch_id', $branch->id)->first();
         $ops_pajak_reklame = OpsPajakReklame::where('branch_id', $branch->id)->first();
         $ops_apar = OpsApar::where('branch_id', $branch->id)->first();
-        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->first();
+
+        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->get()->map(function($disnaker) {
+            return [
+                'name' => $disnaker->jenis_perizinan->name,
+                'remark' =>  'Ada',
+                'jatuh_tempo' => $disnaker->tgl_masa_berlaku
+            ];
+        });
         $lisensi = collect([
             [
                 'name' => 'SK Operation',
@@ -44,19 +51,19 @@ class InqueryController extends Controller
             [
                 'name' => 'Reklame',
                 'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => '-'
+                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-'
             ],
             [
                 'name' => 'APAR',
                 'remark' => isset($ops_apar) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => isset($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
             ],
-            [
-                'name' => 'Izin Disnaker',
-                'remark' => isset($izin_disnaker) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($izin_disnaker->tgl_masa_berlaku) ? $izin_disnaker->tgl_masa_berlaku : '-'
-            ]
+
         ]);
+
+        $lisensi = $lisensi->merge($izin_disnaker);
+
+
 
         return Inertia::render('Inquery/Branch/Detail', [
             'branch' => $branch,
