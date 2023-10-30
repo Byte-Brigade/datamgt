@@ -68,6 +68,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "View",
       field: "permissions",
       type: "custom",
+      key: 'view',
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can view")
@@ -77,6 +78,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Edit",
       field: "permissions",
       type: "custom",
+      key: 'edit',
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can edit")
@@ -86,6 +88,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Delete",
       field: "permissions",
       type: "custom",
+      key: 'delete',
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can delete")
@@ -95,6 +98,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Add",
       field: "permissions",
       type: "custom",
+      key: 'add',
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can add")
@@ -150,10 +154,8 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       },
       onError: (errors) => {
         // Handle validation errors
-        setData('errors', errors);
-    },
-
-
+        setData("errors", errors);
+      },
     });
   };
 
@@ -200,6 +202,8 @@ export default function UAM({ positions, sessions, permissions, auth }) {
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
+  console.log(data)
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="User Access Management" />
@@ -218,9 +222,9 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 </div>
               </PrimaryButton>
             </div>
-            <PrimaryButton onClick={toggleModalExport}>
+            {/* <PrimaryButton onClick={toggleModalExport}>
               Create Report
-            </PrimaryButton>
+            </PrimaryButton> */}
           </div>
           <DataTable
             columns={columns}
@@ -290,7 +294,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 }
               />
               {errors.password && (
-                <div className="error text-red-700">{errors.password}</div>
+                <div className="text-red-700 error">{errors.password}</div>
               )}
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
@@ -365,7 +369,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
-                  <Option key={position.name} value={`${position.name}`}>
+                  <Option key={position.alt_name} value={`${position.alt_name}`}>
                     {position.alt_name}
                   </Option>
                 ))}
@@ -412,7 +416,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
-                Tambah
+                Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
                 Tutup

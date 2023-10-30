@@ -21,7 +21,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [open, setOpen] = useState(3);
   const [openAcc1, setOpenAcc1] = useState(route().current("inquery.*"));
   const [openAcc2, setOpenAcc2] = useState(route().current("reporting.*"));
-  const [openAcc3, setOpenAcc3] = useState(false);
+  const [openAcc3, setOpenAcc3] = useState(
+    route().current("ops.*") ||
+      route().current("gap.*") ||
+      route().current("infra.*")
+  );
 
   const [openAcc4, setOpenAcc4] = useState(route().current("ops.*"));
   const [openAcc5, setOpenAcc5] = useState(route().current("gap.*"));
@@ -58,15 +62,15 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const inqueryRouter = [
     { name: "Branch", path: "inquery.branch" },
-    { name: "Staff", path: "inquery.branch" },
-    { name: "Asset", path: "inquery.branch" },
-    { name: "Lisensi", path: "inquery.branch" },
+    { name: "Staff", path: "maintenance" },
+    { name: "Asset", path: "maintenance" },
+    { name: "Lisensi", path: "maintenance" },
   ];
 
   const reportRouter = [
     { name: "Branch", path: "reporting.branches" },
-    { name: "Asset", path: "reporting.branches" },
-    { name: "Lisensi", path: "reporting.branches" },
+    { name: "Asset", path: "maintenance" },
+    { name: "Lisensi", path: "maintenance" },
   ];
 
   const opsRouter = [
@@ -140,7 +144,25 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0 overflow-x-hidden"
         } overflow-y-auto`}
       >
+        {/* Dashboard */}
+        <Link href={route("dashboard")}>
+          <ListItem
+            className={`${sidebarOpen && "justify-center"}`}
+            selected={route().current("dashboard")}
+          >
+            <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+              <PresentationChartBarIcon className="w-5 h-5" />
+            </ListItemPrefix>
+            {!sidebarOpen && (
+              <Typography color="blue-gray" className={`mr-auto font-normal`}>
+                Dashboard
+              </Typography>
+            )}
+          </ListItem>
+        </Link>
+
         {/* Inquery */}
+        <hr className="my-2 border-blue-gray-50" />
         <Accordion
           open={openAcc1}
           className={`${sidebarOpen && "w-12"}`}
@@ -340,7 +362,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                       <ChevronDownIcon
                         strokeWidth={2.5}
                         className={`mx-auto h-4 w-4 transition-transform ${
-                          openAcc3 ? "rotate-180" : ""
+                          openAcc4 ? "rotate-180" : ""
                         }`}
                       />
                     )

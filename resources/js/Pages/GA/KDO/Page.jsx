@@ -81,24 +81,24 @@ export default function Page({ auth, branches, sessions }) {
         </Link>
       ),
     },
-    {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
-    },
+    // {
+    //   name: "Action",
+    //   field: "action",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <DropdownMenu
+    //       placement="left-start"
+    //       onEditClick={() => {
+    //         toggleModalEdit();
+    //         setData(data);
+    //       }}
+    //       onDeleteClick={() => {
+    //         toggleModalDelete();
+    //         setData(data);
+    //       }}
+    //     />
+    //   ),
+    // },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];

@@ -33,6 +33,9 @@ use Inertia\Inertia;
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
     ->name('login');
 
+Route::get('/maintenance', function () {
+    abort(404);
+})->name('maintenance');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');

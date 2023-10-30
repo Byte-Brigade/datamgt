@@ -105,11 +105,10 @@ class UAMController extends Controller
     {
         try {
             $user = User::find($id);
-            $role = Role::where('name', $request->position)->get();
+            $role = Role::where('alt_name', $request->position)->get();
             $user->update([
                 'name' => $request->name,
                 'nik' => $request->nik,
-                'password' => Hash::make($request->password)
             ]);
             $user->syncRoles($role);
             $user->syncPermissions($request->permissions);

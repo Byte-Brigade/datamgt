@@ -35,7 +35,7 @@ const profileMenuItems = [
   {
     label: (
       <Link href={route("logout")} method="post" as="div">
-        <Typography>Sign Out</Typography>
+        <Typography>Keluar</Typography>
       </Link>
     ),
     icon: ArrowLeftOnRectangleIcon,

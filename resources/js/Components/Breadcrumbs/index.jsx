@@ -21,16 +21,23 @@ export function BreadcrumbsDefault() {
     });
   });
 
+  const TitleCrumb = (text) => {
+    if (text.includes("-")) {
+      return text.split("-").map((t) => t[0].toUpperCase() + t.substring(1)).join(" ");
+    }
+    return text[0].toUpperCase() + text.substring(1);
+  };
+
   return (
     <Breadcrumbs className="mb-2">
       {crumbs.map((crumb, index) =>
         index !== crumbs.length - 1 ? (
           <a key={crumb.name} href={crumb.url} className="opacity-60">
-            {crumb.name[0].toUpperCase() + crumb.name.substring(1)}
+            {TitleCrumb(crumb.name)}
           </a>
         ) : (
           <span key={crumb.name}>
-            {crumb.name[0].toUpperCase() + crumb.name.substring(1)}
+            {TitleCrumb(crumb.name)}
           </span>
         )
       )}

@@ -90,7 +90,7 @@ export default function Login({ status, canResetPassword }) {
               href={route("password.request")}
               className="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Forgot your password?
+              Lupa password?
             </Link>
           )}
         </div>
