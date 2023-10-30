@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DisnakersExport;
 use App\Http\Resources\DisnakerResource;
 use App\Imports\DisnakerImport;
 use App\Models\Branch;
@@ -70,9 +71,10 @@ class GapDisnakerController extends Controller
         }
     }
 
-
     public function export()
     {
+        $fileName = 'Data_Disnaker_' . date('d-m-y') . '.xlsx';
+        return (new DisnakersExport)->download($fileName);
     }
 
     public function store(Request $request)
@@ -134,6 +136,8 @@ class GapDisnakerController extends Controller
         }
     }
 
+
+
     public function destroy($id)
     {
         $apar_detail = GapDisnaker::find($id);
@@ -141,4 +145,6 @@ class GapDisnakerController extends Controller
 
         return redirect(route('infra.disnaker', $id))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
+
+
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\KDO\KdoExport;
+use App\Exports\KDO\KdosExport;
 use App\Helpers\PaginationHelper;
 use App\Http\Resources\KdoMobilResource;
 use App\Imports\KdoMobilImport;
@@ -30,7 +32,7 @@ class GapKdoController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $gap_kdo->select('gap_kdos.*')->orderBy($sortField, $sortOrder)->orderBy('branches.branch_code', 'asc')
-        ->join('branches', 'gap_kdos.branch_id', 'branches.id');
+            ->join('branches', 'gap_kdos.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
 
@@ -65,10 +67,10 @@ class GapKdoController extends Controller
                         return [strtolower(date('F', mktime(0, 0, 0, $num, 1))) => "Rp " . number_format($value, 0, ',', '.')];
                     }
                 })->filter(function ($value) {
-                return $value != null;
-            })->flatMap(function ($data) {
-                return $data;
-            }),
+                    return $value != null;
+                })->flatMap(function ($data) {
+                    return $data;
+                }),
             ];
 
             $collections->push($item);
@@ -101,9 +103,49 @@ class GapKdoController extends Controller
             $query->where('branch_code', $branch_code);
         })->with(['gap_kdo_mobil', 'branches'])->first();
 
+        $currentYear = date('Y');
+        $futureYears = range($currentYear, $currentYear + 10);
+        $months = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
         return Inertia::render('GA/KDO/Detail', [
-            'kdo_mobil' => $kdo_mobil
+            'kdo_mobil' => $kdo_mobil,
+            'years' => $futureYears,
+            'months' => $months
         ]);
+    }
+
+    public function kdo_mobil_store(Request $request, $id)
+    {
+        $branch = Branch::find($id);
+        try {
+            GapKdoMobil::create([
+                'branch_id' => $request->branch_id,
+                'gap_kdo_id' => $request->gap_kdo_id,
+                'vendor' => $request->vendor,
+                'nopol' => $request->nopol,
+                'awal_sewa' => $request->awal_sewa,
+                'akhir_sewa' => $request->akhir_sewa,
+                'biaya_sewa' => [['periode' => Carbon::create($request->year, $request->month, 1), 'value' => $request->biaya_sewa]],
+            ]);
+
+        return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+
+    public function kdo_mobil_destroy($branch_code, $id) {
+        try {
+            $kdo_mobil = GapKdoMobil::find($id);
+            $kdo_mobil->delete();
+
+            return redirect(route('gap.kdo.mobil', $branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.kdo.mobil', $branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
 
@@ -117,5 +159,11 @@ class GapKdoController extends Controller
             dd($e);
             return redirect(route('gap.kdo'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_KDO_' . date('d-m-y') . '.xlsx';
+        return (new KdosExport)->download($fileName);
     }
 }

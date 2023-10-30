@@ -17,11 +17,11 @@ class OpsSpecimentController extends Controller
     public function __construct(public OpsSpeciment $ops_speciment)
     {
     }
-    protected array $sortFields = ['branches.branch_name', 'employee_positions.position_name'];
+    protected array $sortFields = ['branches.branch_code'];
 
     public function api(Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'id');
+        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_speciments.id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;

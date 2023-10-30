@@ -2,9 +2,10 @@ import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
+import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -14,31 +15,53 @@ import {
   DialogHeader,
   IconButton,
   Input,
+  Option,
+  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, kdo_mobil }) {
+export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
   console.log(kdo_mobil);
+  const currentDate = new Date();
   const initialData = {
-    titik_posisi: null,
-    expired_date: null,
     id: null,
+    branch_id: kdo_mobil.branches.id,
+    gap_kdo_id: kdo_mobil.id,
+    vendor: null,
+    nopol: null,
+    awal_sewa: null,
+    akhir_sewa: null,
+    year: currentDate.getFullYear(),
+    month: currentDate.getMonth() + 1,
   };
 
   const {
     data,
     setData,
+    post,
     put,
     delete: destroy,
     processing,
     errors,
   } = useForm(initialData);
 
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
+  const handleSubmitCreate = (e) => {
+    e.preventDefault();
+    post(route("gap.kdo.mobil.store", data.branch_id), {
+      method: "post",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalCreateOpen(!isModalCreateOpen);
+      },
+    });
+  };
   const handleSubmitEdit = (e) => {
     e.preventDefault();
     put(route("gap.kdo.mobil.update", data.id), {
@@ -53,7 +76,7 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.kdo.mobil.delete", data.id), {
+    destroy(route("gap.kdo.mobil.destroy", {branch_code: kdo_mobil.branches.branch_code, id: data.id}), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -62,6 +85,9 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
     });
   };
 
+  const toggleModalCreate = () => {
+    setIsModalCreateOpen(!isModalCreateOpen);
+  };
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -180,9 +206,20 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="mb-4 text-xl font-semibold text-center">
-            {kdo_mobil.branches.branch_name}
-          </h2>
+          <div className="flex items-center justify-between">
+            <PrimaryButton
+              className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+              onClick={toggleModalCreate}
+            >
+              <div className="flex items-center gap-x-2">
+                <PlusIcon className="w-4 h-4" />
+                Add KDO Mobil
+              </div>
+            </PrimaryButton>
+            <h2 className="mb-4 text-xl font-semibold text-center">
+              {kdo_mobil.branches.branch_name}
+            </h2>
+          </div>
           <DataTable
             columns={columns}
             fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
@@ -191,6 +228,92 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
           />
         </div>
       </div>
+      {/* Modal Create */}
+      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Tambah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitCreate}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                label="Vendor"
+                value={data.vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("vendor", e.target.value)}
+              />
+              <Input
+                label="Nopol"
+                value={data.nopol || ""}
+                disabled={processing}
+                onChange={(e) => setData("nopol", e.target.value)}
+              />
+              <Input
+                label="Awal Sewa"
+                value={data.awal_sewa || ""}
+                type="date"
+                disabled={processing}
+                onChange={(e) => setData("awal_sewa", e.target.value)}
+              />
+              <Input
+                label="Akhir Sewa"
+                value={data.akhir_sewa || ""}
+                type="date"
+                disabled={processing}
+                onChange={(e) => setData("akhir_sewa", e.target.value)}
+              />
+              <Select
+                label="Tahun"
+                value={`${data.year}`}
+                onChange={(e) => setData("year", e)}
+              >
+                {years.map((year, index) => (
+                  <Option key={index} value={`${year}`}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                label="Bulan"
+                value={`${data.month}`}
+                onChange={(e) => setData("month", e)}
+              >
+                {months.map((month, index) => (
+                  <Option key={index} value={`${index + 1}`}>
+                    {month}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Biaya Sewa"
+                value={data.biaya_sewa || ""}
+                type="number"
+                disabled={processing}
+                onChange={(e) => setData("biaya_sewa", e.target.value)}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Tambah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -253,7 +376,7 @@ export default function Detail({ auth, sessions, kdo_mobil }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.titik_posisi} - {data.expired_date}
+              {data.id}
             </span>{" "}
             ?
           </Typography>

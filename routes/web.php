@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/kdo/import', [GapKdoController::class, 'import'])->name('kdo.import');
             Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
             Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
+            Route::post('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdo.mobil.store');
+            Route::delete('/kdo/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdo.mobil.destroy');
             Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
             /* [END] GA Procurement KDO */
             Route::get('/maintenance', function () {
@@ -96,6 +98,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/disnaker/import', [GapDisnakerController::class, 'import'])->name('disnaker.import');
             Route::post('/disnaker', [GapDisnakerController::class, 'store'])->name('disnaker.store');
             Route::post('/disnaker/{id}', [GapDisnakerController::class, 'upload'])->name('disnaker.upload');
+            Route::put('/disnaker/{id}', [GapDisnakerController::class, 'update'])->name('disnaker.update');
             Route::get('/disnaker/detail/{id}', [GapDisnakerController::class, 'detail'])->name('disnaker.detail');
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
             Route::delete('/disnaker/{id}', [GapDisnakerController::class, 'destroy'])->name('disnaker.delete');

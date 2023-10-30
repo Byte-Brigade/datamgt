@@ -39,11 +39,7 @@ export default function Detail({
                 <td className="font-bold">Biaya Sewa / Pembelian</td>
                 <td>
                   {branch.total_biaya_sewa
-                    ? branch.total_biaya_sewa.toLocaleString("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                        maximumSignificantDigits: 2,
-                      })
+                    ? branch.total_biaya_sewa.toLocaleString("id-ID")
                     : "-"}
                 </td>
               </tr>
