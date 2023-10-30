@@ -1,8 +1,13 @@
-import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import {
+  ChartBarSquareIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CircleStackIcon,
+  DocumentTextIcon,
+  FolderIcon,
   PresentationChartBarIcon,
   UserGroupIcon,
-} from "@heroicons/react/24/solid";
+} from "@heroicons/react/24/outline";
 import { Link, usePage } from "@inertiajs/react";
 import {
   Accordion,
@@ -151,7 +156,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             selected={route().current("dashboard")}
           >
             <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-              <PresentationChartBarIcon className="w-5 h-5" />
+              <ChartBarSquareIcon className="w-5 h-5" />
             </ListItemPrefix>
             {!sidebarOpen && (
               <Typography color="blue-gray" className={`mr-auto font-normal`}>
@@ -264,7 +269,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
               >
                 <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                  <PresentationChartBarIcon className="w-5 h-5" />
+                  <DocumentTextIcon className="w-5 h-5" />
                 </ListItemPrefix>
                 {!sidebarOpen && (
                   <Typography
@@ -340,7 +345,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
                   >
                     <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                      <PresentationChartBarIcon className="w-5 h-5" />
+                      <CircleStackIcon className="w-5 h-5" />
                     </ListItemPrefix>
                     {!sidebarOpen && (
                       <Typography
@@ -382,7 +387,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                         className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
                       >
                         <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                          <PresentationChartBarIcon className="w-5 h-5" />
+                          <FolderIcon className="w-5 h-5" />
                         </ListItemPrefix>
                         {!sidebarOpen && (
                           <Typography
@@ -507,7 +512,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                         className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
                       >
                         <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                          <PresentationChartBarIcon className="w-5 h-5" />
+                          <FolderIcon className="w-5 h-5" />
                         </ListItemPrefix>
                         {!sidebarOpen && (
                           <Typography
@@ -584,7 +589,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                         className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
                       >
                         <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                          <PresentationChartBarIcon className="w-5 h-5" />
+                          <FolderIcon className="w-5 h-5" />
                         </ListItemPrefix>
                         {!sidebarOpen && (
                           <Typography
