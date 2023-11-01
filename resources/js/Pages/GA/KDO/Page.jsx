@@ -60,7 +60,10 @@ export default function Page({ auth, branches, sessions }) {
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
     { name: "Jumlah", field: "jumlah_kendaraan", className: "text-center" },
-
+    {
+      name: "Tipe Cabang",
+      field: "branches.branch_types.type_name",
+    },
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
@@ -68,9 +71,10 @@ export default function Page({ auth, branches, sessions }) {
     },
     {
       name: "Jatuh Tempo",
-      field: "jatuh_tempo",
+      field: "akhir_sewa",
       type: "date",
-      className: "text-center"
+      sortable:true,
+      className: "justify-center text-center"
     },
 
     {

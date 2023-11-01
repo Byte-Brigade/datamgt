@@ -12,18 +12,21 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
+use Illuminate\Support\Facades\Storage;
 
 class GapDisnakerController extends Controller
 {
 
-    protected array $sortFields = ['jenis_perizinan.name', 'tgl_pengesahan'];
+    protected array $sortFields = ['jenis_perizinan.name', 'tgl_pengesahan','tgl_masa_berlaku'];
 
     public function api(GapDisnaker $gap_disnaker, Request $request)
     {
-        $sortField = 'id';
+        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_disnaker->orderBy($sortField, $sortOrder);
+        $query = $gap_disnaker->orderBy($sortField, $sortOrder)
+        ->join('branches', 'gap_disnakers.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 
@@ -100,18 +103,23 @@ class GapDisnakerController extends Controller
 
     public function update(Request $request, $id)
     {
+
         try {
             $disnaker = GapDisnaker::find($id);
             $branch = Branch::find($request->branch_id);
             $jenis_perizinan = JenisPerizinan::find($request->jenis_perizinan_id);
+            $fileName = $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('infra/disnaker/'.$disnaker->id.'/', $fileName, ["disk" => 'public']);
+            Storage::disk('public')->delete('infra/disnaker/'.$disnaker->id.'/'.$disnaker->file);
             $disnaker->update([
                 'branch_id' => $branch->id,
                 'jenis_perizinan_id' => $jenis_perizinan->id,
                 'tgl_pengesahan' => $request->tgl_pengesahan,
                 'tgl_masa_berlaku' => $request->tgl_masa_berlaku,
                 'progress_resertifikasi' => $request->progress_resertifikasi,
+                'file' => $fileName,
             ]);
-            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Data Berhasil diupdate']);
         } catch (Throwable $e) {
             return redirect(route('infra.disnaker'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }

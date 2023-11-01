@@ -23,16 +23,17 @@ class GapKdoController extends Controller
         return Inertia::render('GA/KDO/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code'];
+    protected array $sortFields = ['branches.branch_code','akhir_sewa','awal_sewa'];
 
     public function api(GapKdo $gap_kdo, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'gap_kdos.id');
+        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_kdo->select('gap_kdos.*')->orderBy($sortField, $sortOrder)->orderBy('branches.branch_code', 'asc')
-            ->join('branches', 'gap_kdos.branch_id', 'branches.id');
+        $query = $gap_kdo->select('*')->orderBy('branches.branch_code', 'asc')
+            ->join('branches', 'gap_kdos.branch_id', 'branches.id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
 
         $perpage = $request->perpage ?? 15;
 
@@ -48,12 +49,13 @@ class GapKdoController extends Controller
             $item = [
                 'id' => $item->id,
                 'branches' => $item->branches,
+                'branch_types' => $item->branch_types,
                 'jumlah_kendaraan' => $item->gap_kdo_mobil->unique('nopol')->count(),
                 'sewa_perbulan' => number_format($item->gap_kdo_mobil->flatMap(function ($mobil) {
                     $mobil->biaya_sewa = collect($mobil->biaya_sewa);
                     return $mobil->biaya_sewa;
                 })->groupBy('periode')->sortKeysDesc()->first()->sum('value'), 0, ',', '.'),
-                'jatuh_tempo' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
+                'akhir_sewa' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
                 'sewa_kendaraan' => collect(range(1, 12))->map(function ($num) use ($item, $year) {
                     $value = $item->gap_kdo_mobil->flatMap(function ($mobil) {
                         $mobil->biaya_sewa = collect($mobil->biaya_sewa);
@@ -74,6 +76,15 @@ class GapKdoController extends Controller
             ];
 
             $collections->push($item);
+
+        }
+
+
+        if ($sortOrder == 'desc') {
+            $collections = $collections->sortByDesc($sortField);
+        } else {
+            $collections = $collections->sortBy($sortField);
+
         }
 
         return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));

@@ -20,8 +20,8 @@
                 <td>{{ $kdo_mobil->vendor }}</td>
                 <td>{{ $kdo_mobil->branches->branch_name }}</td>
                 <td>{{ $kdo_mobil->nopol }}</td>
-                <td>{{ $kdo_mobil->awal_sewa }}</td>
-                <td>{{ $kdo_mobil->akhir_sewa }}</td>
+                <td>{{ Carbon\Carbon::parse($kdo_mobil->awal_sewa)->format('d M Y') }}</td>
+                <td>{{ Carbon\Carbon::parse($kdo_mobil->akhir_sewa)->format('d M Y') }}</td>
                 @foreach ($months as $index => $month)
                     @php
                         $biaya_sewa = collect($kdo_mobil->biaya_sewa)->flatMap(function ($data) {

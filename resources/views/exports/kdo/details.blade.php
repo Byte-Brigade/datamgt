@@ -25,7 +25,7 @@
                     '.',
                 ) }}
                 </td>
-                <td>{{ $kdo->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa }}</td>
+                <td>{{ \Carbon\Carbon::parse($kdo->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa)->format('d M Y') }}</td>
             </tr>
         @endforeach
     </tbody>

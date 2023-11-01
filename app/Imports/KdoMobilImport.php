@@ -21,7 +21,7 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
         foreach ($rows as $row) {
             $branch = Branch::where('branch_name', 'like', '%' . str_contains($row['unit'], 'KF') ? trim(str_replace('KF','',$row['unit'])) : $row['unit'] . '%')->first();
             $row = $row->toArray();
-            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
+            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|july|august|sep|oct|nov|dec)$/i', array_keys($row))));
 
             $currentYear = date('Y');
             if (isset($branch)) {
@@ -39,7 +39,12 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
                         array_push($periode, ['periode' => $tanggal_periode, 'value' => $value]);
                     }
                 }
-                GapKdoMobil::create([
+
+                GapKdoMobil::updateOrCreate([
+                    'gap_kdo_id' => $kdo->id,
+                    'nopol' => $row['nopol'],
+                ],
+                [
                     'branch_id' => $branch->id,
                     'gap_kdo_id' => $kdo->id,
                     'vendor' => $row['vendor'],

@@ -65,13 +65,15 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
       name: "Tgl Pengesahan",
       field: "tgl_pengesahan",
       type: "date",
-      className: "text-center",
+      sortable: true,
+      className: "justify-center text-center",
     },
     {
       name: "Tgl Masa Berlaku s/d",
       field: "tgl_masa_berlaku",
       type: "date",
-      className: "text-center",
+      sortable: true,
+      className: "justify-center text-center",
     },
     {
       name: "Progress Resertifikasi",
@@ -160,8 +162,8 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("infra.disnaker.update", data.id), {
-      method: "put",
+    post(route("infra.disnaker.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -396,7 +398,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
               >
                 {jenis_perizinan.map((izin) => (
                   <Option key={izin.id} value={`${izin.id}`}>
-                    {izin.name.replace("Surat Izin Disnaker","")}
+                    {izin.name.replace("Surat Izin Disnaker", "")}
                   </Option>
                 ))}
               </Select>
@@ -423,6 +425,20 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
                   setData("progress_resertifikasi", e.target.value)
                 }
               />
+              <Input
+
+                label="Upload Lampiran"
+                type="file"
+                disabled={processing}
+                name="file"
+                accept=".pdf"
+                onChange={(e) =>{
+                  console.log(e.target.files[0])
+                 return  setData("file", e.target.files[0])
+                }
+                }
+              />
+
             </div>
           </DialogBody>
           <DialogFooter>
@@ -474,7 +490,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
               >
                 {jenis_perizinan.map((izin) => (
                   <Option key={izin.id} value={`${izin.id}`}>
-                    {izin.name.replace("Surat Izin Disnaker","")}
+                    {izin.name.replace("Surat Izin Disnaker", "")}
                   </Option>
                 ))}
               </Select>

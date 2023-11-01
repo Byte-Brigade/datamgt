@@ -29,8 +29,8 @@
                     <td></td>
                 @endif
                 <td>{{ $disnaker->jenis_perizinan->name }}</td>
-                <td>{{ $disnaker->tgl_pengesahan }}</td>
-                <td>{{ $disnaker->tgl_masa_berlaku }}</td>
+                <td>{{ \Carbon\Carbon::parse($disnaker->tgl_pengesahan)->format('d M Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($disnaker->tgl_masa_berlaku)->format('d M Y') }}</td>
                 <td>{{ $disnaker->progress_resertifikasi }}</td>
             </tr>
             @php

@@ -256,7 +256,7 @@ export default function DataTable({
           </IconButton>
         </div>
       </div>
-      <Datepicker value={value} onChange={handleValueChange} />
+      {/* <Datepicker value={value} onChange={handleValueChange} /> */}
       <div id="filters">
         <Collapse open={open}>
           <div className="flex justify-between w-full mx-auto my-2">

@@ -37,6 +37,23 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
         text: "Jumlah Karyawan BSS",
       },
     },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+          precision: 0,
+        },
+        grid: {
+          display:false,
+        }
+      },
+      x: {
+        grid: {
+          display:false,
+        }
+      }
+    }
   };
 
   const handleFilterBranch = (id) => {
@@ -81,14 +98,14 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
             >
 
               {data.branches.map((branch, index) => {
-                if(index + 1 === 1) {
+                if (index + 1 === 1) {
                   return (<Option key={0} value="0">
-                  All
-                </Option>)
+                    All
+                  </Option>)
                 }
                 return (<Option key={branch.id} value={`${branch.id}`}>
-                {branch.branch_code} - {branch.branch_name}
-              </Option>)
+                  {branch.branch_code} - {branch.branch_name}
+                </Option>)
               })}
             </Select>
           </div>
@@ -100,7 +117,7 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
                 <Typography>
                   {branchId
                     ? data.branches.filter((branch) => branch.id == branchId)
-                        .length
+                      .length
                     : data.branches.length}
                 </Typography>
               </div>
@@ -114,8 +131,8 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
                 <Typography>
                   {branchId
                     ? data.jumlahATM24Jam.filter(
-                        (branch) => branch.id == branchId
-                      ).length
+                      (branch) => branch.id == branchId
+                    ).length
                     : data.jumlahATM24Jam.length}
                 </Typography>
               </div>
@@ -127,8 +144,8 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
                 <Typography>
                   {branchId
                     ? data.jumlahKaryawan.filter(
-                        (karyawan) => karyawan.branch_id == branchId
-                      ).length
+                      (karyawan) => karyawan.branch_id == branchId
+                    ).length
                     : data.jumlahKaryawan.length}
                 </Typography>
               </div>
@@ -140,8 +157,8 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
                 <Typography>
                   {branchId
                     ? data.jumlahKaryawanBSO.filter(
-                        (karyawan) => karyawan.branch_id == branchId
-                      ).length
+                      (karyawan) => karyawan.branch_id == branchId
+                    ).length
                     : data.jumlahKaryawanBSO.length}
                 </Typography>
               </div>

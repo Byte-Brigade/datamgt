@@ -39,9 +39,9 @@ class InqueryController extends Controller
         });
         $lisensi = collect([
             [
-                'name' => 'SK Operation',
-                'remark' => isset($ops_skoperasional) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_skoperasional->expiry_date) ? $ops_skoperasional->expiry_date : '-'
+                'name' => 'Izin OJK',
+                'remark' => isset($branch->izin) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => '-'
             ],
             [
                 'name' => 'SK BI RTGS',

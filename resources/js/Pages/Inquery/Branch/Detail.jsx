@@ -32,11 +32,10 @@ export default function Detail({
                 <td>{ConvertDate(branch.open_date)}</td>
                 <td className="font-bold">Jatuh Tempo Sewa / Sertifikat</td>
                 <td>{ConvertDate(branch.expired_date)}</td>
-                {/* <td>NPWP</td>
-                <td>{branch.npwp}</td>
-                <td>Izin OJK</td>
-                <td>{branch.izin}</td> */}
+
               </tr>
+
+
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">Alamat</td>
                 <td className="w-[200px]">{branch.address}</td>
@@ -46,6 +45,11 @@ export default function Detail({
                     ? branch.total_biaya_sewa.toLocaleString("id-ID")
                     : "-"}
                 </td>
+              </tr>
+              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                <td className="font-bold">NPWP</td>
+                <td>{branch.npwp}</td>
+
               </tr>
             </tbody>
           </table>
