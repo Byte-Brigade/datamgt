@@ -10,7 +10,6 @@ export default function Detail({
   positions,
   licenses,
 }) {
-
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`Inquery Data | Branch | ${branch.branch_name}`} />
@@ -24,6 +23,7 @@ export default function Detail({
                 <th>{branch.branch_name}</th>
                 <th>Status Gedung</th>
                 <th>{branch.status}</th>
+
               </tr>
             </thead>
             <tbody>
@@ -32,6 +32,10 @@ export default function Detail({
                 <td>{ConvertDate(branch.open_date)}</td>
                 <td className="font-bold">Jatuh Tempo Sewa / Sertifikat</td>
                 <td>{ConvertDate(branch.expired_date)}</td>
+                {/* <td>NPWP</td>
+                <td>{branch.npwp}</td>
+                <td>Izin OJK</td>
+                <td>{branch.izin}</td> */}
               </tr>
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">Alamat</td>

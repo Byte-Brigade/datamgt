@@ -60,10 +60,6 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
       name: "Jenis Perizinan",
       field: "jenis_perizinan.name",
       className: "text-center",
-      type: "custom",
-      render: (data) => {
-        return data.jenis_perizinan.name.replace("Surat Izin Disnaker","")
-      }
     },
     {
       name: "Tgl Pengesahan",

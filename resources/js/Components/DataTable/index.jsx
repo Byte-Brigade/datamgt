@@ -26,8 +26,10 @@ export default function DataTable({
   className = "w-full",
   component = [],
   footCols = { name: "", span: 0 },
+  agg,
 }) {
   const [data, setData] = useState([]);
+  const [sumData, setSumData] = useState(0);
   const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState(columns[0].field);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -130,6 +132,11 @@ export default function DataTable({
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
+      // setSumData(data.data.reduce((total, item) => {
+      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
+
+      //   return total + value;
+      // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
     }
@@ -249,7 +256,7 @@ export default function DataTable({
           </IconButton>
         </div>
       </div>
-          <Datepicker value={value} onChange={handleValueChange} />
+      <Datepicker value={value} onChange={handleValueChange} />
       <div id="filters">
         <Collapse open={open}>
           <div className="flex justify-between w-full mx-auto my-2">
@@ -432,17 +439,7 @@ export default function DataTable({
               ))
             )}
           </tbody>
-          {footCols.length > 0 && (
-            <tfoot className="sticky bottom-0 border-t-2 border-slate-200">
-              <tr className="[&>th]:p-2 bg-slate-100">
-                {footCols.map((col, index) => (
-                  <th key={index} colSpan={col.span}>
-                    {col.name}
-                  </th>
-                ))}
-              </tr>
-            </tfoot>
-          )}
+
         </table>
       </div>
       {data.length > 0 && !loading && (

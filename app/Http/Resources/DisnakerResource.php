@@ -14,6 +14,8 @@ class DisnakerResource extends JsonResource
      */
     public function toArray($request)
     {
+        $this->jenis_perizinan->name = ucwords(str_replace("Surat Izin Disnaker", "", $this->jenis_perizinan->name));
+
         return [
             'id' => $this->id,
             'branch_id' => $this->branch_id,

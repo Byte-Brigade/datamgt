@@ -64,11 +64,13 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
+      className: "text-center"
     },
     {
       name: "Jatuh Tempo",
       field: "jatuh_tempo",
       type: "date",
+      className: "text-center"
     },
 
     {
@@ -198,7 +200,7 @@ export default function Page({ auth, branches, sessions }) {
             </PrimaryButton>
           </div>
           <DataTable
-            footCols={footerCols}
+            agg={{name: 'sewa_perbulan', value: 0}}
             columns={columns}
             fetchUrl={"/api/gap/kdo"}
             refreshUrl={isRefreshed}
