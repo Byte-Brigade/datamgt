@@ -178,6 +178,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -206,7 +207,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add Employee
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton

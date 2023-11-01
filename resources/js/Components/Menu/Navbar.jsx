@@ -100,7 +100,6 @@ function ProfileMenu({ auth }) {
 }
 export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
   const { auth } = usePage().props;
-  console.log(auth);
 
   return (
     <Navbar

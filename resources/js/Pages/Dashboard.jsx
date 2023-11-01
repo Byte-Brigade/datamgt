@@ -72,8 +72,8 @@ export default function Dashboard({ auth, errors, sessions, data, branches }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="mb-4  flex items-center justify-between ">
-            <h2 className="text-2xl w-80 text-left font-semibold">Dashboard</h2>
+          <div className="flex items-center justify-between mb-4 ">
+            <h2 className="text-2xl font-semibold text-left w-80">Dashboard</h2>
             <Select
               label="Branch"
               value={`${data.branch_id}`}

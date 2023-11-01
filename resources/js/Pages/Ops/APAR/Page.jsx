@@ -179,7 +179,7 @@ export default function Apar({ auth, branches, sessions }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add APAR
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton

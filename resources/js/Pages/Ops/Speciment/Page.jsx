@@ -57,12 +57,13 @@ export default function Speciment({ auth, sessions, branches }) {
       name: "Tanggal Spesimen",
       field: "tgl_speciment",
       type: "date",
+      sortable: true
     },
-
     {
       name: "Lampiran",
       field: "file",
       type: "custom",
+      className: "text-center",
       render: (data) =>
         data.no_surat !== "-" ? (
           data.file ? (
@@ -228,7 +229,7 @@ export default function Speciment({ auth, sessions, branches }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add Speciment
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton

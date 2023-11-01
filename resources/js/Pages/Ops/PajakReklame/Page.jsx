@@ -255,6 +255,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
   };
 
   const toggleModalCreate = () => {
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -281,7 +282,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add Pajak Reklame
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton
@@ -449,6 +450,26 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("note", e.target.value)}
               />
+              <Input
+                variant="standard"
+                label="Upload File Izin Reklame"
+                disabled={processing}
+                type="file"
+                name="file_izin_reklame"
+                id="file_izin_reklame"
+                accept=".xlsx"
+                onChange={(e) => setData("file_izin_reklame", e.target.files[0])}
+              />
+              <Input
+                variant="standard"
+                label="Upload File SKPD"
+                disabled={processing}
+                type="file"
+                name="file_skpd"
+                id="file_skpd"
+                accept=".xlsx"
+                onChange={(e) => setData("file_skpd", e.target.files[0])}
+              />
             </div>
           </DialogBody>
           <DialogFooter>
@@ -511,6 +532,26 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 value={data.note || ""}
                 disabled={processing}
                 onChange={(e) => setData("note", e.target.value)}
+              />
+              <Input
+                variant="standard"
+                label="Upload File Izin Reklame"
+                disabled={processing}
+                type="file"
+                name="file_izin_reklame"
+                id="file_izin_reklame"
+                accept=".xlsx"
+                onChange={(e) => setData("file_izin_reklame", e.target.files[0])}
+              />
+              <Input
+                variant="standard"
+                label="Upload File SKPD"
+                disabled={processing}
+                type="file"
+                name="file_skpd"
+                id="file_skpd"
+                accept=".xlsx"
+                onChange={(e) => setData("file_skpd", e.target.files[0])}
               />
             </div>
           </DialogBody>

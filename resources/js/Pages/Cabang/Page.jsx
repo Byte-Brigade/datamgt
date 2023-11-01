@@ -166,6 +166,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   };
 
   const toggleModalCreate = () => {
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
   const toggleModalEdit = () => {
@@ -191,7 +192,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add Branch
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton
@@ -404,6 +405,12 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 value={data.telp}
                 disabled={processing}
                 onChange={(e) => setData("telp", e.target.value)}
+              />
+              <Input
+                label="NPWP"
+                value={data.npwp}
+                disabled={processing}
+                onChange={(e) => setData("npwp", e.target.value)}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>

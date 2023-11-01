@@ -17,7 +17,7 @@ class OpsSpecimentController extends Controller
     public function __construct(public OpsSpeciment $ops_speciment)
     {
     }
-    protected array $sortFields = ['branches.branch_code'];
+    protected array $sortFields = ['branches.branch_code', 'tgl_speciment'];
 
     public function api(Request $request)
     {
@@ -26,6 +26,7 @@ class OpsSpecimentController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $this->ops_speciment->select('ops_speciments.*')->orderBy($sortField, $sortOrder)
+        ->orderBy('branches.branch_code', 'asc')
         ->join('branches', 'ops_speciments.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 
