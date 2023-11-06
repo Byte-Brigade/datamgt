@@ -36,6 +36,7 @@ class BranchResource extends JsonResource
             'nilai_pembelian' => $this->status == 'Milik' ? number_format($this->total_biaya_sewa, 0, ',', '.') : '-',
             'nilai_sewa' => $this->status != 'Milik' ? number_format($this->total_biaya_sewa, 0, ',', '.') : '-',
             'npwp' => $this->npwp,
+            'area' => $this->area,
             'address' => $this->address,
             'jumlah_karyawan' => $this->employees->count() > 0 ? $this->employees->count() . ' Orang' : 'Tidak Ada',
             // 'perizinan' => $this->gap_disnaker->map(function ($izin) {
@@ -49,7 +50,10 @@ class BranchResource extends JsonResource
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
             'branch_types' => $branch_types,
             'photo' => $this->photo,
-            'bm' => $this->employees->where('position_id', 1)->pluck('name')->first()
+            'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
+
+
+
         ];
     }
 }

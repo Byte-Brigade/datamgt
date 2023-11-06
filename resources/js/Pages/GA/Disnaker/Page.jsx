@@ -232,7 +232,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
               >
                 <div className="flex items-center gap-x-2">
                   <PlusIcon className="w-4 h-4" />
-                  Add Izin
+                  Add
                 </div>
               </PrimaryButton>
               <PrimaryButton
@@ -426,19 +426,16 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
                 }
               />
               <Input
-
                 label="Upload Lampiran"
                 type="file"
                 disabled={processing}
                 name="file"
                 accept=".pdf"
-                onChange={(e) =>{
-                  console.log(e.target.files[0])
-                 return  setData("file", e.target.files[0])
-                }
-                }
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  return setData("file", e.target.files[0]);
+                }}
               />
-
             </div>
           </DialogBody>
           <DialogFooter>

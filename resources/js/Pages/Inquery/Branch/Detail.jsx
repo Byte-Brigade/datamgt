@@ -49,7 +49,8 @@ export default function Detail({
               <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                 <td className="font-bold">NPWP</td>
                 <td>{branch.npwp}</td>
-
+                <td></td>
+                <td></td>
               </tr>
             </tbody>
           </table>
@@ -82,24 +83,26 @@ export default function Detail({
             </div>
             <div className="flex flex-col">
               <span className="mb-2">Lisensi</span>
-              <table className="w-full text-left">
-                <thead className="border-b-2 border-slate-200">
-                  <tr className="[&>th]:p-2 bg-slate-100">
-                    <th>Jenis</th>
-                    <th>Remark</th>
-                    <th>Jatuh Tempo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {licenses.map((license) => (
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                      <td>{license.name}</td>
-                      <td>{license.remark}</td>
-                      <td>{ConvertDate(license.jatuh_tempo)}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="border-b-2 border-slate-200">
+                    <tr className="[&>th]:p-2 bg-slate-100">
+                      <th className="w-[50%]">Jenis</th>
+                      <th>Remark</th>
+                      <th>Jatuh Tempo</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {licenses.map((license) => (
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                        <td>{license.name}</td>
+                        <td>{license.remark}</td>
+                        <td>{ConvertDate(license.jatuh_tempo)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

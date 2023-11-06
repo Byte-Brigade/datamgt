@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->foreign('gap_kdo_id')->references('id')->on('gap_kdos')->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['gap_kdo_id','nopol']);
         });
     }
 
