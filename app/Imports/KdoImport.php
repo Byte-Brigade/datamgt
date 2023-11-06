@@ -22,7 +22,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
 
             $branch = Branch::where('branch_name', 'like', '%' . str_contains($row['unit'], 'KF') ? trim(str_replace('KF','',$row['unit'])) : $row['unit'] . '%')->first();
             $row = $row->toArray();
-            $filteredData = array_intersect_key($row, array_flip(preg_rep('/^\d+$/', array_keys($row))));
+            $filteredData = array_intersect_key($row, array_flip(preg_replace('/^\d+$/','', array_keys($row))));
 
             $currentYear = date('Y');
             if (isset($branch)) {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ComponentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
@@ -39,6 +40,7 @@ Route::get('/ops/speciment', [OpsSpecimentController::class, 'api']);
 Route::get('/ops/apar', [OpsAparController::class, 'api']);
 Route::get('/ops/apar/detail/{id}', [OpsAparController::class, 'api_detail']);
 Route::get('uam', [UAMController::class, 'api']);
+Route::get('/dashboard/branch', [DashboardController::class, 'api']);
 
 Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);

@@ -30,6 +30,7 @@ class Branch extends Model
         'owner',
         'sewa_per_tahun',
         'total_biaya_sewa',
+        'area'
     ];
 
     public function branch_types()
