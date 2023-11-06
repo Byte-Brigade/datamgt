@@ -7,28 +7,31 @@
             <th>Nopol</th>
             <th>Awal Sewa</th>
             <th>Akhir Sewa</th>
-            @foreach ($months as $month)
-                <th>{{ $month . ' ' . $periode }}</th>
+            @foreach ($months as $index => $month)
+                <th>{{ Carbon\Carbon::createFromFormat('m Y', $index + 1 . ' ' . $periode)->format('M-y') }}</th>
             @endforeach
             <th>Total Sewa</th>
         </tr>
     </thead>
     <tbody>
+        @php
+            $number = 0;
+        @endphp
         @foreach ($kdo_mobils as $index => $kdo_mobil)
             <tr>
-                <td>{{ $index + 1 }}</td>
+                <td>{{ $number = $number + 1 }}</td>
                 <td>{{ $kdo_mobil->vendor }}</td>
                 <td>{{ $kdo_mobil->branches->branch_name }}</td>
                 <td>{{ $kdo_mobil->nopol }}</td>
-                <td>{{ Carbon\Carbon::parse($kdo_mobil->awal_sewa)->format('d M Y') }}</td>
-                <td>{{ Carbon\Carbon::parse($kdo_mobil->akhir_sewa)->format('d M Y') }}</td>
+                <td>{{ Carbon\Carbon::parse($kdo_mobil->awal_sewa)->format('d/m/Y') }}</td>
+                <td>{{ Carbon\Carbon::parse($kdo_mobil->akhir_sewa)->format('d/m/Y') }}</td>
                 @foreach ($months as $index => $month)
                     @php
                         $biaya_sewa = collect($kdo_mobil->biaya_sewa)->flatMap(function ($data) {
                             return [strtolower(Carbon\Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? number_format($data['value'], 0, ',', '.') : '-'];
                         });
                     @endphp
-                    <td>{{ isset($biaya_sewa[strtolower($month)]) ? $biaya_sewa[strtolower($month)] : '-' }}</td>
+                    <td>{{ isset($biaya_sewa[strtolower($month)]) ? $biaya_sewa[strtolower($month)] : '' }}</td>
                 @endforeach
 
 

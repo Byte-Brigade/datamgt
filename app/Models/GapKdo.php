@@ -11,6 +11,7 @@ class GapKdo extends Model
 
     protected $fillable = [
         'branch_id',
+        'unit',
         'jumlah_driver',
         'periode',
         'biaya_driver',

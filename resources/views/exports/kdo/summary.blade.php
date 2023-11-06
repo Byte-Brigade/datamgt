@@ -9,9 +9,12 @@
         </tr>
     </thead>
     <tbody>
+        @php
+            $number = 0;
+        @endphp
         @foreach ($kdos as $index => $kdo)
             <tr>
-                <td>{{ $index + 1 }}</td>
+                <td>{{ $number = $number + 1 }}</td>
                 <td>{{ $kdo->branches->branch_name }}</td>
 
                 <td>{{ $kdo->gap_kdo_mobil->unique('nopol')->count() }}</td>
@@ -25,7 +28,8 @@
                     '.',
                 ) }}
                 </td>
-                <td>{{ \Carbon\Carbon::parse($kdo->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa)->format('d M Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($kdo->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa)->format('d M Y') }}
+                </td>
             </tr>
         @endforeach
     </tbody>

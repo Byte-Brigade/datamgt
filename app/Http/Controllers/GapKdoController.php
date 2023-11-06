@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\KDO\KdoExport;
+use App\Exports\KDO\KdoMobilSheet;
 use App\Exports\KDO\KdosExport;
 use App\Helpers\PaginationHelper;
 use App\Http\Resources\KdoMobilResource;
+use App\Imports\KdoImport;
 use App\Imports\KdoMobilImport;
 use App\Models\Branch;
+use App\Models\BranchType;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use Carbon\Carbon;
@@ -23,7 +26,7 @@ class GapKdoController extends Controller
         return Inertia::render('GA/KDO/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code','akhir_sewa','awal_sewa'];
+    protected array $sortFields = ['branches.branch_code', 'akhir_sewa', 'awal_sewa'];
 
     public function api(GapKdo $gap_kdo, Request $request)
     {
@@ -31,9 +34,8 @@ class GapKdoController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_kdo->select('*')->orderBy('branches.branch_code', 'asc')
-            ->join('branches', 'gap_kdos.branch_id', 'branches.id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        $query = $gap_kdo->select('gap_kdos.*')->orderBy('branches.branch_code', 'asc')
+            ->join('branches', 'gap_kdos.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
 
@@ -46,15 +48,26 @@ class GapKdoController extends Controller
         $collections = collect([]);
         $year = date('Y');
         foreach ($query as $item) {
+            $branch = Branch::find($item->branch_id);
+
+            $biaya_sewa = $item->gap_kdo_mobil->flatMap(function ($mobil) {
+
+                $mobil->biaya_sewa = collect($mobil->biaya_sewa);
+                return $mobil->biaya_sewa;
+            })->filter(function($item) {
+                return $item['value'] > 0;
+            })->groupBy('periode')->sortKeysDesc()->first();
             $item = [
                 'id' => $item->id,
-                'branches' => $item->branches,
-                'branch_types' => $item->branch_types,
+                'branches' => $branch,
+                'branch_types' => BranchType::find($branch->branch_type_id),
                 'jumlah_kendaraan' => $item->gap_kdo_mobil->unique('nopol')->count(),
-                'sewa_perbulan' => number_format($item->gap_kdo_mobil->flatMap(function ($mobil) {
-                    $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                    return $mobil->biaya_sewa;
-                })->groupBy('periode')->sortKeysDesc()->first()->sum('value'), 0, ',', '.'),
+                'sewa_perbulan' => isset($biaya_sewa)  ? number_format(
+                    $biaya_sewa->sum('value'),
+                    0,
+                    ',',
+                    '.'
+                ) : 0,
                 'akhir_sewa' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
                 'sewa_kendaraan' => collect(range(1, 12))->map(function ($num) use ($item, $year) {
                     $value = $item->gap_kdo_mobil->flatMap(function ($mobil) {
@@ -76,7 +89,6 @@ class GapKdoController extends Controller
             ];
 
             $collections->push($item);
-
         }
 
 
@@ -84,7 +96,6 @@ class GapKdoController extends Controller
             $collections = $collections->sortByDesc($sortField);
         } else {
             $collections = $collections->sortBy($sortField);
-
         }
 
         return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));
@@ -141,14 +152,15 @@ class GapKdoController extends Controller
                 'biaya_sewa' => [['periode' => Carbon::create($request->year, $request->month, 1), 'value' => $request->biaya_sewa]],
             ]);
 
-        return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
             return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
 
-    public function kdo_mobil_destroy($branch_code, $id) {
+    public function kdo_mobil_destroy($branch_code, $id)
+    {
         try {
             $kdo_mobil = GapKdoMobil::find($id);
             $kdo_mobil->delete();
@@ -163,7 +175,7 @@ class GapKdoController extends Controller
     public function import(Request $request)
     {
         try {
-            (new KdoMobilImport)->import($request->file('file')->store('temp'));
+            (new KdoImport)->import($request->file('file')->store('temp'));
 
             return redirect(route('gap.kdo'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
@@ -171,10 +183,30 @@ class GapKdoController extends Controller
             return redirect(route('gap.kdo'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+    public function kdo_mobil_import(Request $request)
+    {
+
+        $branch = Branch::find($request->branch_id);
+        try {
+            (new KdoMobilImport($request->branch_id, $request->gap_kdo_id))->import($request->file('file')->store('temp'));
+
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (Throwable $e) {
+            dd($e);
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
 
     public function export()
     {
         $fileName = 'Data_KDO_' . date('d-m-y') . '.xlsx';
         return (new KdosExport)->download($fileName);
+    }
+
+    public function kdo_mobil_export(Request $request)
+    {
+
+        $fileName = 'Data_KDO_' . date('d-m-y') . '.xlsx';
+        return (new KdoMobilSheet($request->gap_kdo_id))->download($fileName);
     }
 }

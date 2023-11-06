@@ -16,7 +16,7 @@ class KdoSummarySheet implements FromView, ShouldAutoSize, WithTitle
     public function view(): View
     {
         return view('exports.kdo.summary', [
-            'kdos' => GapKdo::all()
+            'kdos' => GapKdo::all()->sortBy('branches.branch_code')
         ]);
     }
 

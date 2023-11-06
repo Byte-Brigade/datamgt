@@ -62,7 +62,7 @@ export default function Page({ auth, branches, sessions }) {
     { name: "Jumlah", field: "jumlah_kendaraan", className: "text-center" },
     {
       name: "Tipe Cabang",
-      field: "branches.branch_types.type_name",
+      field: "branch_types.type_name",
     },
     {
       name: "Sewa Perbulan",
