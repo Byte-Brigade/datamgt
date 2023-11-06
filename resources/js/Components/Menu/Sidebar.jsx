@@ -23,16 +23,21 @@ import { useState } from "react";
 
 export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const { auth } = usePage().props;
-  const [open, setOpen] = useState(3);
   const [openAcc1, setOpenAcc1] = useState(route().current("inquery.*"));
   const [openAcc2, setOpenAcc2] = useState(route().current("reporting.*"));
   const [openAcc3, setOpenAcc3] = useState(
     route().current("ops.*") ||
       route().current("gap.*") ||
-      route().current("infra.*")
+      route().current("infra.*") ||
+      route().current("branches") ||
+      route().current("employees")
   );
 
-  const [openAcc4, setOpenAcc4] = useState(route().current("ops.*"));
+  const [openAcc4, setOpenAcc4] = useState(
+    route().current("ops.*") ||
+      route().current("branches") ||
+      route().current("employees")
+  );
   const [openAcc5, setOpenAcc5] = useState(route().current("gap.*"));
   const [openAcc6, setOpenAcc6] = useState(route().current("infra.*"));
 
@@ -61,19 +66,15 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     }
   };
 
-  const handleOpen = (value) => {
-    setOpen(open === value ? 0 : value);
-  };
-
   const inqueryRouter = [
-    { name: "Branch", path: "inquery.branch" },
+    { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "maintenance" },
     { name: "Asset", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
   ];
 
   const reportRouter = [
-    { name: "Branch", path: "reporting.branches" },
+    { name: "Branch", path: "reporting.branches", state: "reporting.*" },
     { name: "Asset", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
   ];
@@ -223,7 +224,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   <Link href={route(router.path)}>
                     <ListItem
                       className={`${sidebarOpen && "justify-center"}`}
-                      selected={route().current(router.path)}
+                      selected={
+                        route().current(router.path) ||
+                        route().current(`${router.path}.*`)
+                      }
                     >
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
@@ -464,7 +468,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                           <Link href={route(router.path)}>
                             <ListItem
                               className={`${sidebarOpen && "justify-center"}`}
-                              selected={route().current(router.path)}
+                              selected={
+                                route().current(router.path) ||
+                                route().current(`${router.path}.*`)
+                              }
                             >
                               <ListItemPrefix
                                 className={`${sidebarOpen && "m-0"}`}
@@ -541,7 +548,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                           <Link href={route(router.path)}>
                             <ListItem
                               className={`${sidebarOpen && "justify-center"}`}
-                              selected={route().current(router.path)}
+                              selected={
+                                route().current(router.path) ||
+                                route().current(`${router.path}.*`)
+                              }
                             >
                               <ListItemPrefix
                                 className={`${sidebarOpen && "m-0"}`}
@@ -618,7 +628,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                           <Link href={route(router.path)}>
                             <ListItem
                               className={`${sidebarOpen && "justify-center"}`}
-                              selected={route().current(router.path)}
+                              selected={
+                                route().current(router.path) ||
+                                route().current(`${router.path}.*`)
+                              }
                             >
                               <ListItemPrefix
                                 className={`${sidebarOpen && "m-0"}`}

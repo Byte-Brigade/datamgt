@@ -20,29 +20,19 @@ createInertiaApp({
   setup({ el, App, props }) {
     const root = createRoot(el);
     const theme = {
-      drawer: {
+      list: {
         defaultProps: {
-          overlay: false,
-          placement: "left",
-          overlayProps: undefined,
+          ripple: true,
           className: "",
-          dismiss: undefined,
-          onClose: undefined,
-          transition: {
-            type: "tween",
-            duration: 0.3,
-          },
         },
         styles: {
           base: {
-            drawer: {
-              position: "fixed",
-              zIndex: "z-[9999]",
-              pointerEvents: "pointer-events-auto",
-              backgroundColor: "bg-white",
-              width: "w-64",
+            item: {
+              selected: {
+                bg: "bg-blue-gray-50/75",
+                color: "text-blue-gray-700",
+              },
             },
-
           },
         },
       },
