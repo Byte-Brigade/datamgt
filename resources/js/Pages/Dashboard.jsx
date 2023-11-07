@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 
 ChartJS.register(
   CategoryScale,
@@ -79,7 +80,6 @@ export default function Dashboard({
         },
       },
     },
-
   };
 
   const columns = [
@@ -136,52 +136,56 @@ export default function Dashboard({
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4 ">
+          <div className="flex flex-col">
             <h2 className="text-2xl font-semibold text-left w-80">Dashboard</h2>
-            <Select label="Area" value="" onChange={(e) => handleFilterArea(e)}>
-              {data.areas.map((area, index) => {
-                if (index - 1 === -1) {
-                  return (
-                    <>
+            <div className="flex my-4 gap-x-4">
+              <Select
+                label="Area"
+                value=""
+                onChange={(e) => handleFilterArea(e)}
+                className="bg-white"
+              >
+                {data.areas.map((area, index) => {
+                  if (index === 0) {
+                    return (
                       <Option key={0} value="">
                         All
                       </Option>
-                      <Option key={index} value={`${area}`}>
-                        {area}
-                      </Option>
-                    </>
-                  );
-                }
-                return (
-                  <Option key={index} value={`${area}`}>
-                    {area}
-                  </Option>
-                );
-              })}
-            </Select>
-            <Select
-              label="Branch"
-              value={`${data.branch_id}`}
-              onChange={(e) => handleFilterBranch(e)}
-            >
-              {data.branches.map((branch, index) => {
-                if (index + 1 === 1) {
+                    );
+                  }
                   return (
-                    <Option key={0} value="0">
-                      All
+                    <Option key={index} value={`${area}`}>
+                      {area}
                     </Option>
                   );
-                }
-                return (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                );
-              })}
-            </Select>
+                })}
+              </Select>
+              <Select
+                label="Branch"
+                value=""
+                onChange={(e) => handleFilterBranch(e)}
+                className="bg-white"
+              >
+                {data.branches.map((branch, index) => {
+                  if (index === 0) {
+                    return (
+                      <Option key={0} value="">
+                        All
+                      </Option>
+                    );
+                  }
+                  return (
+                    <Option key={index} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </div>
           </div>
           <div className="grid grid-cols-4 gap-x-4">
             <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
@@ -303,10 +307,15 @@ export default function Dashboard({
                   <td className="text-center">{label}</td>
                   <td className="text-center">
                     {
-                      data.employees.filter(
-                        (employee) =>
-                          employee.employee_positions.position_name === label
-                      ).filter(employee => area === "" || employee.branches.area === area).length
+                      data.employees
+                        .filter(
+                          (employee) =>
+                            employee.employee_positions.position_name === label
+                        )
+                        .filter(
+                          (employee) =>
+                            area === "" || employee.branches.area === area
+                        ).length
                     }
                   </td>
                 </tr>
@@ -326,7 +335,9 @@ export default function Dashboard({
                 <td className="text-center">
                   {
                     data.jumlahATM.filter(
-                      (branch) => branch.layanan_atm === "24 Jam" && (area === "" || branch.area === area)
+                      (branch) =>
+                        branch.layanan_atm === "24 Jam" &&
+                        (area === "" || branch.area === area)
                     ).length
                   }
                 </td>
@@ -336,7 +347,9 @@ export default function Dashboard({
                 <td className="text-center">
                   {
                     data.jumlahATM.filter(
-                      (branch) => branch.layanan_atm === "Jam Operasional"  && (area === "" || branch.area === area)
+                      (branch) =>
+                        branch.layanan_atm === "Jam Operasional" &&
+                        (area === "" || branch.area === area)
                     ).length
                   }
                 </td>

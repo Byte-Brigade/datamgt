@@ -66,6 +66,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
       name: "Lampiran",
       field: "file",
       type: "custom",
+      className: "text-center",
       render: (data) =>
         data.no_surat !== "-" ? (
           data.file ? (

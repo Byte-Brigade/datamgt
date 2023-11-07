@@ -98,6 +98,7 @@ export default function Speciment({ auth, sessions, branches }) {
     {
       name: "Action",
       field: "action",
+      className: "text-center",
       render: (data) => (
         <DropdownMenu
           placement="left-start"

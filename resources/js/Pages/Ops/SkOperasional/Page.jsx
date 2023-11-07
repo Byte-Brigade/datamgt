@@ -65,6 +65,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
       name: "Lampiran",
       field: "file",
       type: "custom",
+      className: "text-center",
       render: (data) =>
         data.file ? (
           <a

@@ -41,6 +41,8 @@ export function BreadcrumbsDefault() {
         return "Report";
       case "inquery":
         return "Inquery Data";
+      case "mobil":
+        return "Detail";
       default:
         break;
     }

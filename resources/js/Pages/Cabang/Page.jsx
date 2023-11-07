@@ -210,7 +210,11 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
             </PrimaryButton>
           </div>
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? ['can edit', 'can delete'].some(permission => auth.permissions.includes(permission))
+                : true
+            )}
             fetchUrl={"/api/branches"}
             refreshUrl={isRefreshed}
             className="w-[1500px]"
