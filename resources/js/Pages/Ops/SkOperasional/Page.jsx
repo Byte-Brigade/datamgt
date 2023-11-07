@@ -67,30 +67,34 @@ export default function SkOperasional({ auth, branches, sessions }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
-        data.file ? (
-          <a
-            className="text-blue-500 hover:underline"
-            href={`/storage/ops/skoperasional/${data.file}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file}
-          </a>
+        auth.permissions.includes("can add") ? (
+          data.file ? (
+            <a
+              className="text-blue-500 hover:underline"
+              href={`/storage/ops/skoperasional/${data.file}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
         ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
+          <span>Belum upload lampiran</span>
         ),
     },
     {
@@ -194,22 +198,36 @@ export default function SkOperasional({ auth, branches, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <PrimaryButton
-              className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              onClick={toggleModalImport}
-            >
-              <div className="flex items-center gap-x-2">
-                <DocumentPlusIcon className="w-4 h-4" />
-                Import Excel
-              </div>
-            </PrimaryButton>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {["can add", "can export"].some((permission) =>
+            auth.permissions.includes(permission)
+          ) && (
+            <div className="flex items-center justify-between mb-4">
+              {auth.permissions.includes("can add") && (
+                <PrimaryButton
+                  className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                  onClick={toggleModalImport}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <DocumentPlusIcon className="w-4 h-4" />
+                    Import Excel
+                  </div>
+                </PrimaryButton>
+              )}
+              {auth.permissions.includes("can export") && (
+                <PrimaryButton onClick={toggleModalExport}>
+                  Create Report
+                </PrimaryButton>
+              )}
+            </div>
+          )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             fetchUrl={"/api/ops/sk-operasional"}
             refreshUrl={isRefreshed}
           />

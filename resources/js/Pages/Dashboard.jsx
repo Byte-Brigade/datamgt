@@ -127,7 +127,7 @@ export default function Dashboard({
                   (area === "" || employee.branches.area === area)
               ).length
         ),
-        backgroundColor: "rgba(150, 255, 230  , 1)",
+        backgroundColor: "rgba(255, 56, 56  , 1)",
       },
     ],
   };

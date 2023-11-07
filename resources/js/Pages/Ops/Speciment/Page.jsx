@@ -57,7 +57,7 @@ export default function Speciment({ auth, sessions, branches }) {
       name: "Tanggal Spesimen",
       field: "tgl_speciment",
       type: "date",
-      sortable: true
+      sortable: true,
     },
     {
       name: "Lampiran",
@@ -65,34 +65,38 @@ export default function Speciment({ auth, sessions, branches }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
-        data.no_surat !== "-" ? (
-          data.file ? (
-            <a
-              className="text-blue-500 hover:underline"
-              href={`/storage/ops/speciment/${data.file}`}
-              target="__blank"
-            >
-              {" "}
-              {data.file}
-            </a>
+        auth.permissions.includes("can add") ? (
+          data.no_surat !== "-" ? (
+            data.file ? (
+              <a
+                className="text-blue-500 hover:underline"
+                href={`/storage/ops/speciment/${data.file}`}
+                target="__blank"
+              >
+                {" "}
+                {data.file}
+              </a>
+            ) : (
+              <Button
+                variant="outlined"
+                size="sm"
+                color="blue"
+                onClick={() => {
+                  toggleModalUpload();
+                  setData(data);
+                }}
+              >
+                <div className="flex items-center gap-x-2">
+                  <ArrowUpTrayIcon className="w-4 h-4" />
+                  Upload Lampiran
+                </div>
+              </Button>
+            )
           ) : (
-            <Button
-              variant="outlined"
-              size="sm"
-              color="blue"
-              onClick={() => {
-                toggleModalUpload();
-                setData(data);
-              }}
-            >
-              <div className="flex items-center gap-x-2">
-                <ArrowUpTrayIcon className="w-4 h-4" />
-                Upload Lampiran
-              </div>
-            </Button>
+            "-"
           )
         ) : (
-          "-"
+          <span>Belum upload lampiran</span>
         ),
     },
     {
@@ -222,33 +226,47 @@ export default function Speciment({ auth, sessions, branches }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
+          {["can add", "can export"].some((permission) =>
+            auth.permissions.includes(permission)
+          ) && (
+            <div className="flex items-center justify-between mb-4">
+              {auth.permissions.includes("can add") && (
+                <div>
+                  <PrimaryButton
+                    className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                    onClick={toggleModalCreate}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <PlusIcon className="w-4 h-4" />
+                      Add
+                    </div>
+                  </PrimaryButton>
+                  <PrimaryButton
+                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                    onClick={toggleModalImport}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <DocumentPlusIcon className="w-4 h-4" />
+                      Import Excel
+                    </div>
+                  </PrimaryButton>
                 </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
+              )}
+              {auth.permissions.includes("can export") && (
+                <PrimaryButton onClick={toggleModalExport}>
+                  Create Report
+                </PrimaryButton>
+              )}
             </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             fetchUrl={"/api/ops/speciment"}
             refreshUrl={isRefreshed}
           />

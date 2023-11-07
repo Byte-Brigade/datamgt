@@ -108,7 +108,13 @@ export default function Detail({ auth, sessions, ops_apar }) {
             {ops_apar.branches.branch_name}
           </h2>
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             fetchUrl={`/api/ops/apar/detail/${ops_apar.id}`}
             refreshUrl={isRefreshed}
           />
