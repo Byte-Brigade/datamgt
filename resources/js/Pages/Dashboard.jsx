@@ -38,6 +38,7 @@ export default function Dashboard({
   console.log(dataCabang);
   const [branchId, setBranchId] = useState(0);
   const [area, setArea] = useState("");
+  const [active, setActive] = useState("cabang");
   const options = {
     responsive: true,
     plugins: {
@@ -188,7 +189,10 @@ export default function Dashboard({
             </div>
           </div>
           <div className="grid grid-cols-4 gap-x-4">
-            <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
+            <div
+              onClick={() => setActive("cabang")}
+              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+            >
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Cabang</Typography>
@@ -205,7 +209,10 @@ export default function Dashboard({
                 </Typography>
               </div>
             </div>
-            <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
+            <div
+              onClick={() => setActive("atm")}
+              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+            >
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah ATM</Typography>
@@ -222,7 +229,10 @@ export default function Dashboard({
                 </Typography>
               </div>
             </div>
-            <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
+            <div
+              onClick={() => setActive("karyawan")}
+              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+            >
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Karyawan</Typography>
@@ -240,7 +250,10 @@ export default function Dashboard({
                 </Typography>
               </div>
             </div>
-            <div className="flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl">
+            <div
+              onClick={() => setActive("asset")}
+              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+            >
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Asset</Typography>
@@ -254,9 +267,17 @@ export default function Dashboard({
               </div>
             </div>
           </div>
-          <Bar options={options} data={test} plugins={[ChartDataLabels]} />
-          {/* <DataTable fetchUrl={"/api/dashboard/branch"} columns={columns} /> */}
-          <table className={`text-sm leading-3 bg-white`}>
+          <Bar
+            options={options}
+            data={test}
+            plugins={[ChartDataLabels]}
+          />
+          {/* Tabel Cabang */}
+          <table
+            className={`${
+              active === "cabang" ? "table" : "hidden"
+            } text-sm leading-3 bg-white`}
+          >
             <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
               <tr className="[&>th]:p-2 bg-slate-100">
                 <th className="text-center">Tipe Cabang</th>
@@ -292,9 +313,28 @@ export default function Dashboard({
                   {dataCabang.kantor_fungsional_non_operasional}
                 </td>
               </tr>
+              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                <td className="text-center">
+                  <strong>Total</strong>
+                </td>
+                <td className="text-center">
+                  <strong>
+                    {dataCabang.kantor_pusat +
+                      dataCabang.kantor_cabang +
+                      dataCabang.kantor_cabang_pembantu +
+                      dataCabang.kantor_fungsional_operasional +
+                      dataCabang.kantor_fungsional_non_operasional}
+                  </strong>
+                </td>
+              </tr>
             </tbody>
           </table>
-          <table className={`text-sm leading-3 bg-white`}>
+          {/* Karyawan */}
+          <table
+            className={`${
+              active === "karyawan" ? "table" : "hidden"
+            } text-sm leading-3 bg-white`}
+          >
             <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
               <tr className="[&>th]:p-2 bg-slate-100">
                 <th className="text-center">Jabatan</th>
@@ -320,9 +360,29 @@ export default function Dashboard({
                   </td>
                 </tr>
               ))}
+              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                <td className="text-center">
+                  <strong>Total</strong>
+                </td>
+                <td className="text-center">
+                  <strong>
+                    {
+                      data.employees.filter(
+                        (employee) =>
+                          area === "" || employee.branches.area === area
+                      ).length
+                    }
+                  </strong>
+                </td>
+              </tr>
             </tbody>
           </table>
-          <table className={`text-sm leading-3 bg-white`}>
+          {/* Jumlah ATM */}
+          <table
+            className={`${
+              active === "atm" ? "table" : "hidden"
+            } text-sm leading-3 bg-white`}
+          >
             <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
               <tr className="[&>th]:p-2 bg-slate-100">
                 <th className="text-center">Fungsi</th>
@@ -354,9 +414,28 @@ export default function Dashboard({
                   }
                 </td>
               </tr>
+              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                <td className="text-center">
+                  <strong>Total</strong>
+                </td>
+                <td className="text-center">
+                  <strong>
+                    {
+                      data.jumlahATM.filter(
+                        (branch) => area === "" || branch.area === area
+                      ).length
+                    }
+                  </strong>
+                </td>
+              </tr>
             </tbody>
           </table>
-          <table className={`text-sm leading-3 bg-white`}>
+          {/* Jumlah Asset */}
+          <table
+            className={`${
+              active === "asset" ? "table" : "hidden"
+            } text-sm leading-3 bg-white`}
+          >
             <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
               <tr className="[&>th]:p-2 bg-slate-100">
                 <th className="text-center" rowSpan={2} colSpan={2}>
@@ -376,7 +455,7 @@ export default function Dashboard({
                 <th className="text-center">Item</th>
                 <th className="text-center">Nilai Perolehan</th>
                 <th className="text-center">Penyusutan</th>
-                <th className="text-center">Network Value</th>
+                <th className="text-center">Net Book Value</th>
                 <th className="text-center">Item</th>
                 <th className="text-center">Nilai Perolehan</th>
               </tr>
