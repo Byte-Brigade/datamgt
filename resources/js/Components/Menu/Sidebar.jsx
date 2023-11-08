@@ -90,7 +90,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const gaProcurementRouter = [
     {
       name: "Asset",
-      path: "gap.maintenance",
+      path: "gap.assets",
     },
     {
       name: "KDO Mobil",
