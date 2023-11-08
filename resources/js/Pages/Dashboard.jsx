@@ -118,7 +118,7 @@ export default function Dashboard({
       },
     ],
   };
-  labels = Object.keys(data.jumlah_cabang);
+  labels = Object.keys(data.jumlah_cabang_alt);
   const branchChart = {
     labels,
     datasets: [
@@ -126,7 +126,7 @@ export default function Dashboard({
         label: "Jumlah Cabang",
         data: labels.map(
           (label) =>
-            data.jumlah_cabang[label].filter(
+            data.jumlah_cabang_alt[label].filter(
               (branch) =>
                 (branchId === 0 || branch.id === branchId) &&
                 (area === "none" || branch.area === area)

@@ -68,6 +68,7 @@ class DashboardController extends Controller
             'employees' => $employees,
             'assets' => $dataAsset,
             'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),
+            'jumlah_cabang_alt' => $branches->groupBy('branch_types.type_name'),
         ];
 
 
