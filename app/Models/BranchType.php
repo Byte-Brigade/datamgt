@@ -12,7 +12,6 @@ class BranchType extends Model
 
     protected $fillable = [
         'type_name',
-        'alt_name'
     ];
 
     public function branches()
