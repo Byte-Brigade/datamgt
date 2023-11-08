@@ -35,12 +35,13 @@ export default function Dashboard({
   branches,
   dataCabang,
 }) {
-  console.log(dataCabang);
   const [branchId, setBranchId] = useState(0);
-  const [area, setArea] = useState("");
+  const [area, setArea] = useState("none");
   const [active, setActive] = useState("cabang");
+  const [totalBranch, setTotalBranch] = useState(0);
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       datalabels: {
         anchor: "end",
@@ -52,25 +53,10 @@ export default function Dashboard({
       legend: {
         position: "top",
       },
-      title: {
-        display: true,
-        text: "Jumlah Karyawan BSS",
-      },
-      datalabels: {
-        anchor: "end",
-        align: "end",
-        formatter: (value, context) => {
-          return value; // Menampilkan nilai data di dalam bar chart
-        },
-      },
     },
     scales: {
       y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1,
-          precision: 0,
-        },
+        display: false,
         grid: {
           display: false,
         },
@@ -105,7 +91,7 @@ export default function Dashboard({
     setArea(value);
   };
 
-  const labels = data.employee_positions.map(
+  let labels = data.employee_positions.map(
     (position) => position.position_name
   );
 
@@ -113,20 +99,56 @@ export default function Dashboard({
     labels,
     datasets: [
       {
-        label: "Karyawan",
+        label: "Jumlah Karyawan",
         data: labels.map((label) =>
           branchId
             ? data.employees.filter(
                 (employee) =>
                   employee.employee_positions.position_name === label &&
                   employee.branch_id === branchId &&
-                  (area === "" || employee.branches.area === area)
+                  (area === "none" || employee.branches.area === area)
               ).length
             : data.employees.filter(
                 (employee) =>
                   employee.employee_positions.position_name === label &&
-                  (area === "" || employee.branches.area === area)
+                  (area === "none" || employee.branches.area === area)
               ).length
+        ),
+        backgroundColor: "rgba(255, 56, 56  , 1)",
+      },
+    ],
+  };
+  labels = Object.keys(data.jumlah_cabang);
+  const branchChart = {
+    labels,
+    datasets: [
+      {
+        label: "Jumlah Cabang",
+        data: labels.map(
+          (label) =>
+            data.jumlah_cabang[label].filter(
+              (branch) =>
+                (branchId === 0 || branch.id === branchId) &&
+                (area === "none" || branch.area === area)
+            ).length
+        ),
+        backgroundColor: "rgba(255, 56, 56  , 1)",
+      },
+    ],
+  };
+  labels = Object.keys(data.jumlah_atm);
+  const atmChart = {
+    labels,
+    datasets: [
+      {
+        label: "Jumlah ATM",
+        data: labels.map(
+          (label) =>
+            data.jumlah_atm[label].filter(
+              (branch) =>
+                (branchId === 0 || branch.id === branchId) &&
+                (area === "none" || branch.area === area)
+            ).length
         ),
         backgroundColor: "rgba(255, 56, 56  , 1)",
       },
@@ -153,7 +175,7 @@ export default function Dashboard({
                 {data.areas.map((area, index) => {
                   if (index === 0) {
                     return (
-                      <Option key={0} value="">
+                      <Option key={0} value="none">
                         All
                       </Option>
                     );
@@ -171,20 +193,19 @@ export default function Dashboard({
                 onChange={(e) => handleFilterBranch(e)}
                 className="bg-white"
               >
-                {data.branches.map((branch, index) => {
-                  if (index === 0) {
+                <Option key={0} value="0">
+                  All
+                </Option>
+
+                {data.branches
+                  .filter((branch) => area === "none" || branch.area === area)
+                  .map((branch, index) => {
                     return (
-                      <Option key={0} value="">
-                        All
+                      <Option key={index} value={`${branch.id}`}>
+                        {branch.branch_code} - {branch.branch_name}
                       </Option>
                     );
-                  }
-                  return (
-                    <Option key={index} value={`${branch.id}`}>
-                      {branch.branch_code} - {branch.branch_name}
-                    </Option>
-                  );
-                })}
+                  })}
               </Select>
             </div>
           </div>
@@ -200,11 +221,11 @@ export default function Dashboard({
                   {branchId
                     ? data.branches.filter(
                         (branch) =>
-                          (branch.id == branchId && area === "") ||
+                          (branch.id == branchId && area === "none") ||
                           branch.area === area
                       ).length
                     : data.branches.filter(
-                        (branch) => area === "" || branch.area === area
+                        (branch) => area === "none" || branch.area === area
                       ).length}
                 </Typography>
               </div>
@@ -217,15 +238,16 @@ export default function Dashboard({
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah ATM</Typography>
                 <Typography>
-                  {branchId
-                    ? data.jumlahATM.filter(
+                  {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
+                    return (
+                      acc +
+                      data.jumlah_atm[atm].filter(
                         (branch) =>
-                          (branch.id == branchId && area === "") ||
-                          branch.area === area
+                          (branchId === 0 || branch.id === branchId) &&
+                          (area === "none" || branch.area === area)
                       ).length
-                    : data.jumlahATM.filter(
-                        (branch) => area === "" || branch.area === area
-                      ).length}
+                    );
+                  }, 0)}
                 </Typography>
               </div>
             </div>
@@ -241,11 +263,11 @@ export default function Dashboard({
                     ? data.jumlahKaryawan.filter(
                         (employee) =>
                           employee.branch_id == branchId &&
-                          (area === "" || employee.branches.area === area)
+                          (area === "none" || employee.branches.area === area)
                       ).length
                     : data.jumlahKaryawan.filter(
                         (employee) =>
-                          area === "" || employee.branches.area === area
+                          area === "none" || employee.branches.area === area
                       ).length}
                 </Typography>
               </div>
@@ -267,169 +289,182 @@ export default function Dashboard({
               </div>
             </div>
           </div>
-          <Bar
-            options={options}
-            data={test}
-            plugins={[ChartDataLabels]}
-          />
-          {/* Tabel Cabang */}
-          <table
+
+          <div
             className={`${
-              active === "cabang" ? "table" : "hidden"
-            } text-sm leading-3 bg-white`}
+              active === "cabang"
+                ? "pt-4 w-full h-[200px] grid grid-cols-2 gap-4"
+                : "hidden"
+            }`}
           >
-            <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-              <tr className="[&>th]:p-2 bg-slate-100">
-                <th className="text-center">Tipe Cabang</th>
-                <th className="text-center">Jumlah</th>
-              </tr>
-            </thead>
-            <tbody className="overflow-y-auto">
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">Kantor Pusat</td>
-                <td className="text-center">{dataCabang.kantor_pusat}</td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">Kantor Cabang</td>
-                <td className="text-center">{dataCabang.kantor_cabang}</td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">Kantor Cabang Pembantu</td>
-                <td className="text-center">
-                  {dataCabang.kantor_cabang_pembantu}
-                </td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">Kantor Fungsional Operasional</td>
-                <td className="text-center">
-                  {dataCabang.kantor_fungsional_operasional}
-                </td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">
-                  Kantor Fungsional Non Operasional
-                </td>
-                <td className="text-center">
-                  {dataCabang.kantor_fungsional_non_operasional}
-                </td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">
-                  <strong>Total</strong>
-                </td>
-                <td className="text-center">
-                  <strong>
-                    {dataCabang.kantor_pusat +
-                      dataCabang.kantor_cabang +
-                      dataCabang.kantor_cabang_pembantu +
-                      dataCabang.kantor_fungsional_operasional +
-                      dataCabang.kantor_fungsional_non_operasional}
-                  </strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          {/* Karyawan */}
-          <table
+            <div className="cols-span-1">
+              <Bar
+                options={options}
+                data={branchChart}
+                plugins={[ChartDataLabels]}
+              />
+            </div>
+            <div className="cols-span-1">
+              {/* Tabel Cabang */}
+              <table className={`text-sm leading-3 bg-white w-full`}>
+                <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+                  <tr className="[&>th]:p-2 bg-slate-100">
+                    <th className="text-center">Tipe Cabang</th>
+                    <th className="text-center">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody className="overflow-y-auto">
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <td>Kantor Pusat</td>
+                    <td>1</td>
+                  </tr>
+                  {Object.keys(data.jumlah_cabang).map((cabang) => {
+                    return (
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                        <td>{cabang}</td>
+                        <td>{data.jumlah_cabang[cabang].length}</td>
+                      </tr>
+                    );
+                  })}
+
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <td>
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>
+                        {Object.keys(data.jumlah_cabang).reduce((acc, item) => {
+                          return acc + data.jumlah_cabang[item].length;
+                        }, 1)}
+                      </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* Tabel Karyawan */}
+          <div
             className={`${
-              active === "karyawan" ? "table" : "hidden"
-            } text-sm leading-3 bg-white`}
+              active === "karyawan"
+                ? "pt-4 w-full h-[200px] grid grid-cols-2 gap-4"
+                : "hidden"
+            }`}
           >
-            <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-              <tr className="[&>th]:p-2 bg-slate-100">
-                <th className="text-center">Jabatan</th>
-                <th className="text-center">Jumlah</th>
-              </tr>
-            </thead>
-            <tbody className="overflow-y-auto">
-              {labels.map((label) => (
-                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                  <td className="text-center">{label}</td>
-                  <td className="text-center">
-                    {
-                      data.employees
-                        .filter(
-                          (employee) =>
-                            employee.employee_positions.position_name === label
-                        )
-                        .filter(
-                          (employee) =>
-                            area === "" || employee.branches.area === area
-                        ).length
-                    }
-                  </td>
-                </tr>
-              ))}
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">
-                  <strong>Total</strong>
-                </td>
-                <td className="text-center">
-                  <strong>
-                    {
-                      data.employees.filter(
-                        (employee) =>
-                          area === "" || employee.branches.area === area
-                      ).length
-                    }
-                  </strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          {/* Jumlah ATM */}
-          <table
+            <div className="cols-span-1">
+              <Bar options={options} data={test} plugins={[ChartDataLabels]} />
+            </div>
+
+            <div className="cols-span-1">
+              <table className={`text-sm leading-3 bg-white w-full`}>
+                <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+                  <tr className="[&>th]:p-2 bg-slate-100">
+                    <th className="text-center">Jabatan</th>
+                    <th className="text-center">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody className="overflow-y-auto">
+                  {data.employee_positions.map((position) => (
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                      <td className="text-center">{position.position_name}</td>
+                      <td className="text-center">
+                        {
+                          data.employees
+                            .filter(
+                              (employee) =>
+                                employee.employee_positions.position_name ===
+                                position.position_name
+                            )
+                            .filter(
+                              (employee) =>
+                                area === "none" ||
+                                employee.branches.area === area
+                            ).length
+                        }
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <td className="text-center">
+                      <strong>Total</strong>
+                    </td>
+                    <td className="text-center">
+                      <strong>
+                        {
+                          data.employees.filter(
+                            (employee) =>
+                              area === "none" || employee.branches.area === area
+                          ).length
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* Tabel ATM */}
+          <div
             className={`${
-              active === "atm" ? "table" : "hidden"
-            } text-sm leading-3 bg-white`}
+              active === "atm"
+                ? "pt-4 w-full h-[200px] grid grid-cols-2 gap-4"
+                : "hidden"
+            }`}
           >
-            <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-              <tr className="[&>th]:p-2 bg-slate-100">
-                <th className="text-center">Fungsi</th>
-                <th className="text-center">Jumlah</th>
-              </tr>
-            </thead>
-            <tbody className="overflow-y-auto">
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">24 Jam</td>
-                <td className="text-center">
-                  {
-                    data.jumlahATM.filter(
-                      (branch) =>
-                        branch.layanan_atm === "24 Jam" &&
-                        (area === "" || branch.area === area)
-                    ).length
-                  }
-                </td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">Jam Operasional Cabang</td>
-                <td className="text-center">
-                  {
-                    data.jumlahATM.filter(
-                      (branch) =>
-                        branch.layanan_atm === "Jam Operasional" &&
-                        (area === "" || branch.area === area)
-                    ).length
-                  }
-                </td>
-              </tr>
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td className="text-center">
-                  <strong>Total</strong>
-                </td>
-                <td className="text-center">
-                  <strong>
-                    {
-                      data.jumlahATM.filter(
-                        (branch) => area === "" || branch.area === area
-                      ).length
-                    }
-                  </strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <div className="cols-span-1">
+              <Bar
+                options={options}
+                data={atmChart}
+                plugins={[ChartDataLabels]}
+              />
+            </div>
+            <div className="cols-span-1">
+              <table className={`text-sm leading-3 bg-white w-full`}>
+                <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+                  <tr className="[&>th]:p-2 bg-slate-100">
+                    <th className="text-center">Fungsi</th>
+                    <th className="text-center">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody className="overflow-y-auto">
+                  {Object.keys(data.jumlah_atm).map((atm) => (
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                      <td className="text-center">{atm}</td>
+                      <td className="text-center">
+                        {
+                          data.jumlah_atm[atm].filter(
+                            (branch) =>
+                              (branchId === 0 || branch.id === branchId) &&
+                              (area === "none" || branch.area === area)
+                          ).length
+                        }
+                      </td>
+                    </tr>
+                  ))}
+
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <td className="text-center">
+                      <strong>Total</strong>
+                    </td>
+                    <td className="text-center">
+                      <strong>
+                        {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
+                          return (
+                            acc +
+                            data.jumlah_atm[atm].filter(
+                              (branch) =>
+                                (branchId === 0 || branch.id === branchId) &&
+                                (area === "none" || branch.area === area)
+                            ).length
+                          );
+                        }, 0)}
+                      </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           {/* Jumlah Asset */}
           <table
             className={`${
