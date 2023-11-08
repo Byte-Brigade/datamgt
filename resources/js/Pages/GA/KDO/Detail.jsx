@@ -411,7 +411,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Ubah Data
+          Tambah Data
           <IconButton
             size="sm"
             variant="text"
@@ -426,24 +426,66 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                label="Titik Posisi"
-                value={data.titik_posisi || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("titik_posisi", e.target.value)}
+                onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Nopol"
+                value={data.nopol || ""}
+                disabled={processing}
+                onChange={(e) => setData("nopol", e.target.value)}
+              />
+              <Input
+                label="Awal Sewa"
+                value={data.awal_sewa || ""}
                 type="date"
                 disabled={processing}
-                onChange={(e) => setData("expired_date", e.target.value)}
+                onChange={(e) => setData("awal_sewa", e.target.value)}
+              />
+              <Input
+                label="Akhir Sewa"
+                value={data.akhir_sewa || ""}
+                type="date"
+                disabled={processing}
+                onChange={(e) => setData("akhir_sewa", e.target.value)}
+              />
+              <Select
+                label="Tahun"
+                value={`${data.year}`}
+                onChange={(e) => setData("year", e)}
+              >
+                {years.map((year, index) => (
+                  <Option key={index} value={`${year}`}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                label="Bulan"
+                value={`${data.month}`}
+                onChange={(e) => setData("month", e)}
+              >
+                {months.map((month, index) => (
+                  <Option key={index} value={`${index + 1}`}>
+                    {month}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Biaya Sewa"
+                value={data.biaya_sewa || ""}
+                type="number"
+                disabled={processing}
+                onChange={(e) => setData("biaya_sewa", e.target.value)}
               />
             </div>
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
-                Ubah
+                Tambah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
                 Tutup

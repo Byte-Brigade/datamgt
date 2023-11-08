@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $branches = Branch::get();
+        $branches = Branch::with('branch_types')->get();
         $areas = Branch::distinct()->pluck('area');
         $jumlahATM = Branch::whereNot('layanan_atm', 'Tidak Ada')->get();
         $jumlahATM24Jam = Branch::where('layanan_atm', '24 Jam')->get();
@@ -60,35 +60,20 @@ class DashboardController extends Controller
             'branches' => $branches,
             'areas' => $areas,
             // 'jumlahATM' => collect(['fulltime' => count($jumlahATM24Jam), 'operational' => count($jumlahATMJamOperasional)])->toArray(),
-            'jumlahATM' => $jumlahATM,
+            'jumlah_atm' => $jumlahATM->groupBy('layanan_atm'),
             'jumlahATM24Jam' => $jumlahATM24Jam,
             'jumlahKaryawan' => $jumlahKaryawan,
             'jumlahKaryawanBSO' => $jumlahKaryawanBSO,
             'employee_positions' => $employee_positions,
             'employees' => $employees,
-            'assets' => $dataAsset
+            'assets' => $dataAsset,
+            'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),
         ];
 
 
-        $dataCabang = [
-            'kantor_pusat' => 1,
-            'kantor_cabang' => count(Branch::whereHas('branch_types', function ($q) {
-                return $q->where('type_name', 'KC');
-            })->get()),
-            'kantor_cabang_pembantu' => count(Branch::whereHas('branch_types', function ($q) {
-                return $q->where('type_name', 'KCP');
-            })->get()),
-            'kantor_fungsional_operasional' => count(Branch::whereHas('branch_types', function ($q) {
-                return $q->where('type_name', 'KF');
-            })->get()),
-            'kantor_fungsional_non_operasional' => count(Branch::whereHas('branch_types', function ($q) {
-                return $q->whereIn('type_name', ['KF', 'KFNO']);
-            })->get()),
-        ];
 
         return Inertia::render('Dashboard', [
             'data' => $data,
-            'dataCabang' => $dataCabang
         ]);
     }
 

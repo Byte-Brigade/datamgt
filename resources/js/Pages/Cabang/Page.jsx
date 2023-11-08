@@ -61,6 +61,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
     },
     { name: "Nama Cabang", field: "branch_name", sortable: false },
     { name: "NPWP", field: "npwp" },
+    { name: "Area", field: "area", className: "text-center"},
     { name: "Alamat", field: "address", className: "w-[300px]" },
     { name: "No. Telpon", field: "telp" },
     { name: "Fasilitas ATM", field: "fasilitas_atm" },
