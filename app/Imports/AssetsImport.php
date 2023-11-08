@@ -33,7 +33,6 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithUpserts
     {
         foreach ($rows as $index => $row) {
 
-
             $branch = Branch::where('branch_name', 'like', '%' . $row['asset_location'] . '%')->first();
 
             GapAsset::create([

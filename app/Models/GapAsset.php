@@ -22,4 +22,8 @@ class GapAsset extends Model
         'depre_exp',
         'net_book_value',
     ];
+
+    public function branches() {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
 }

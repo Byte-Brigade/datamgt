@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Imports\AssetsImport;
 use App\Models\Branch;
+use App\Models\GapAsset;
 use Illuminate\Http\Request;
+use App\Http\Resources\AssetsResource;
 use Inertia\Inertia;
 use Throwable;
 
@@ -19,6 +21,27 @@ class GapAssetController extends Controller
     {
         $branchesProps = Branch::get();
         return Inertia::render('GA/Asset/Page', ['branches' => $branchesProps]);
+    }
+
+    protected array $sortFields = ['jenis_perizinan.name', 'tgl_pengesahan','tgl_masa_berlaku'];
+
+    public function api(GapAsset $gap_asset, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
+        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_asset->orderBy('category', 'asc')
+        ->join('branches', 'gap_assets.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+        $data = $query->paginate($perpage);
+        return AssetsResource::collection($data);
     }
 
     public function import(Request $request)

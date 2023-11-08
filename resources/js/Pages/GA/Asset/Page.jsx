@@ -56,16 +56,46 @@ export default function Page({ auth, branches, sessions }) {
     { name: "Cabang", field: "branches.branch_name" },
 
     {
-      name: "Jenis Perizinan",
-      field: "jenis_perizinan.name",
+      name: "Category",
+      field: "category",
       className: "text-center",
     },
     {
-      name: "Tgl Pengesahan",
-      field: "tgl_pengesahan",
+      name: "Asset Number",
+      field: "asset_number",
+      className: "text-center",
+    },
+    {
+      name: "Date In Place Servince",
+      field: "date_in_place_service",
       type: "date",
       sortable: true,
       className: "justify-center text-center",
+    },
+    {
+      name: "Asset Description",
+      field: "asset_description",
+      className: "text-center",
+    },
+    {
+      name: "Asset Location",
+      field: "asset_location",
+      className: "text-center",
+    },
+    {
+      name: "Net Book Value",
+      field: "net_book_value",
+      className: "text-center",
+    },
+    {
+      name: "Major Category",
+      field: "major_category",
+      className: "text-center",
+    },
+    {
+      name: "Minor Category",
+      field: "Minor_category",
+      className: "text-center",
     },
     {
       name: "Tgl Masa Berlaku s/d",
@@ -74,42 +104,42 @@ export default function Page({ auth, branches, sessions }) {
       sortable: true,
       className: "justify-center text-center",
     },
-    {
-      name: "Progress Resertifikasi",
-      field: "progress_resertifikasi",
-      className: "text-center",
-    },
-    {
-      name: "Lampiran",
-      field: "file",
-      type: "custom",
-      render: (data) =>
-        data.file ? (
-          <a
-            className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/gap/assets/${data.id}/${data.file}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file}
-          </a>
-        ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
-        ),
-    },
+    // {
+    //   name: "Progress Resertifikasi",
+    //   field: "progress_resertifikasi",
+    //   className: "text-center",
+    // },
+    // {
+    //   name: "Lampiran",
+    //   field: "file",
+    //   type: "custom",
+    //   render: (data) =>
+    //     data.file ? (
+    //       <a
+    //         className="text-blue-500 hover:underline text-ellipsis"
+    //         href={`/storage/gap/assets/${data.id}/${data.file}`}
+    //         target="__blank"
+    //       >
+    //         {" "}
+    //         {data.file}
+    //       </a>
+    //     ) : (
+    //       <Button
+    //         variant="outlined"
+    //         size="sm"
+    //         color="blue"
+    //         onClick={() => {
+    //           toggleModalUpload();
+    //           setData(data);
+    //         }}
+    //       >
+    //         <div className="flex items-center gap-x-2">
+    //           <ArrowUpTrayIcon className="w-4 h-4" />
+    //           Upload Lampiran
+    //         </div>
+    //       </Button>
+    //     ),
+    // },
 
     {
       name: "Action",
