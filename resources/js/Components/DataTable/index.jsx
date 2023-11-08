@@ -128,7 +128,6 @@ export default function DataTable({
 
     if (fetchUrl) {
       const { data } = await axios.get(fetchUrl, { params });
-      console.log(data);
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
@@ -202,8 +201,6 @@ export default function DataTable({
   const handleTableSettings = () => {
     setFixedTable((cur) => !cur);
   };
-
-  console.log(footCols);
 
   return (
     <>
@@ -330,7 +327,7 @@ export default function DataTable({
               <span className="ml-3">Settings</span>
               <div className="flex flex-wrap">
                 <Checkbox
-                  label="Fixed Table Height"
+                  label="Freeze Header"
                   checked={fixedTable}
                   onChange={handleTableSettings}
                 />
@@ -410,9 +407,11 @@ export default function DataTable({
                   className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
                 >
                   <td className="text-center">
-                    {Object.keys(pagination).length === 0
-                      ? index + 1
-                      : pagination.from + index}
+                    {Object.keys(pagination).length === 0 ? (
+                      <p className="py-3">{index + 1}</p>
+                    ) : (
+                      <p className="py-3">{pagination.from + index}</p>
+                    )}
                   </td>
                   {columns.map((column, id) =>
                     column.field ? (
@@ -439,7 +438,6 @@ export default function DataTable({
               ))
             )}
           </tbody>
-
         </table>
       </div>
       {data.length > 0 && !loading && (

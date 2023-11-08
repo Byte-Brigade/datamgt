@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -67,6 +68,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
+        hasRoles("branch_ops|superadmin", auth) &&
         auth.permissions.includes("can add") ? (
           data.file ? (
             <a
@@ -223,7 +225,8 @@ export default function SkOperasional({ auth, branches, sessions }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? ["can edit", "can delete"].some((permission) =>
+                ? hasRoles("branch_ops|superadmin", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )
                 : true

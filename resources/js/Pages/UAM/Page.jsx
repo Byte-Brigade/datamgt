@@ -28,6 +28,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
     name: null,
     nik: null,
     position: null,
+    entity: null,
     permissions: ["can view"],
     password: null,
     password_confirmation: null,
@@ -68,7 +69,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "View",
       field: "permissions",
       type: "custom",
-      key: 'view',
+      key: "view",
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can view")
@@ -78,7 +79,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Edit",
       field: "permissions",
       type: "custom",
-      key: 'edit',
+      key: "edit",
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can edit")
@@ -88,7 +89,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Delete",
       field: "permissions",
       type: "custom",
-      key: 'delete',
+      key: "delete",
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can delete")
@@ -98,7 +99,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
       name: "Add",
       field: "permissions",
       type: "custom",
-      key: 'add',
+      key: "add",
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can add")
@@ -202,7 +203,7 @@ export default function UAM({ positions, sessions, permissions, auth }) {
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
-  console.log(data)
+  console.log(data);
 
   return (
     <AuthenticatedLayout auth={auth}>
@@ -274,6 +275,15 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                     {position.alt_name}
                   </Option>
                 ))}
+              </Select>
+              <Select
+                label="Entitas"
+                value={`${data.entity || ""}`}
+                disabled={processing}
+                onChange={(e) => setData("entity", e)}
+              >
+                <Option value="bss">BSS</Option>
+                <Option value="ksp">KSP</Option>
               </Select>
               <Input
                 v-model="password"
@@ -369,7 +379,10 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
-                  <Option key={position.alt_name} value={`${position.alt_name}`}>
+                  <Option
+                    key={position.alt_name}
+                    value={`${position.alt_name}`}
+                  >
                     {position.alt_name}
                   </Option>
                 ))}

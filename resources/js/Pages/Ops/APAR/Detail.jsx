@@ -4,6 +4,7 @@ import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -110,8 +111,10 @@ export default function Detail({ auth, sessions, ops_apar }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
+                ? ["can edit", "can delete"].some(
+                    (permission) =>
+                      hasRoles("branch_ops|superadmin", auth) &&
+                      auth.permissions.includes(permission)
                   )
                 : true
             )}

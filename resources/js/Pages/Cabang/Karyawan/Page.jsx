@@ -5,6 +5,7 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -199,43 +200,45 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {["can add", "can export"].some((permission) =>
-            auth.permissions.includes(permission)
-          ) && (
-            <div className="flex items-center justify-between mb-4">
-              {auth.permissions.includes("can add") && (
-                <div>
-                  <PrimaryButton
-                    className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                    onClick={toggleModalCreate}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <PlusIcon className="w-4 h-4" />
-                      Add
-                    </div>
+          {hasRoles("branch_ops|superadmin", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
                   </PrimaryButton>
-                  <PrimaryButton
-                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                    onClick={toggleModalImport}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <DocumentPlusIcon className="w-4 h-4" />
-                      Import Excel
-                    </div>
-                  </PrimaryButton>
-                </div>
-              )}
-              {auth.permissions.includes("can export") && (
-                <PrimaryButton onClick={toggleModalExport}>
-                  Create Report
-                </PrimaryButton>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? ["can edit", "can delete"].some((permission) =>
+                ? hasRoles("branch_ops|superadmin", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )
                 : true
