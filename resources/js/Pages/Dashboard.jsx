@@ -280,11 +280,11 @@ export default function Dashboard({
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Asset</Typography>
                 <Typography>
-                  {branchId
-                    ? data.jumlahKaryawanBSO.filter(
-                        (karyawan) => karyawan.branch_id == branchId
-                      ).length
-                    : data.jumlahKaryawanBSO.length}
+                  {data.assets.filter(
+                        (asset) =>
+                          (branchId === 0 || asset.branch_id == branchId) &&
+                          (area === "none" || asset.branches.area == area)
+                      ).length}
                 </Typography>
               </div>
             </div>
@@ -475,7 +475,7 @@ export default function Dashboard({
                   <th className="text-center" colSpan={4}>
                     Kategori A (Depresiasi)
                   </th>
-                  <th className="text-center" colSpan={2}>
+                  <th className="text-center" colSpan={4}>
                     Kategori B (Non-Depresiasi)
                   </th>
                   {/* Lokasi: Kantor Pusat, Cabang */}
@@ -492,23 +492,46 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
-                {Object.keys(data.assets).map((kategori, index) => (
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                {Object.keys(data.summary_assets).map((lokasi, index) => (
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                     <td className="text-center" key={index} colSpan={2}>
-                      {kategori}
+                      {lokasi}
                     </td>
-                    {data.assets[kategori].map((item, index) => (
-                      <>
-                        <td className="text-center">{item.item}</td>
-                        <td className="text-center">{item.nilai_perolehan}</td>
-                        {item.penyusutan && (
-                          <td className="text-center">{item.penyusutan}</td>
-                        )}
-                        {item.network_value && (
-                          <td className="text-center">{item.network_value}</td>
-                        )}
-                      </>
-                    ))}
+                    {Object.entries(data.summary_assets[lokasi]).map(
+                      ([key, item]) => {
+                        if (key === "Depre") {
+                          return (
+                            <>
+                              <td className="text-center">
+                                {item.jumlah_item}
+                              </td>
+                              <td className="text-center">
+                                {item.nilai_perolehan}
+                              </td>
+
+                              <td className="text-center">{item.penyusutan}</td>
+
+                              {item.net_book_value > 0 && (
+                                <td className="text-center">
+                                  {item.net_book_value}
+                                </td>
+                              )}
+                            </>
+                          );
+                        } else {
+                          return (
+                            <>
+                              <td className="text-center">
+                                {item.jumlah_item}
+                              </td>
+                              <td className="text-center">
+                                {item.nilai_perolehan}
+                              </td>
+                            </>
+                          );
+                        }
+                      }
+                    )}
                   </tr>
                 ))}
               </tbody>
