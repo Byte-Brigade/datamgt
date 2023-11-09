@@ -27,6 +27,7 @@ export default function DataTable({
   component = [],
   footCols = { name: "", span: 0 },
   agg,
+  bordered = false
 }) {
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
@@ -346,8 +347,8 @@ export default function DataTable({
       >
         <table className={`${className} text-sm leading-3 bg-white`}>
           <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-            <tr className="[&>th]:p-2 bg-slate-100">
-              <th className="text-center">No</th>
+            <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
+              <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
                 <th key={column.name}>
                   {column.sortable === true ? (
@@ -407,7 +408,7 @@ export default function DataTable({
               data.map((data, index) => (
                 <tr
                   key={index}
-                  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
+                  className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}
                 >
                   <td className="text-center">
                     {Object.keys(pagination).length === 0

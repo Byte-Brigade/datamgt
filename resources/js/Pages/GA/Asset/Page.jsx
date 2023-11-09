@@ -66,7 +66,7 @@ export default function Page({ auth, branches, sessions }) {
       className: "text-center",
     },
     {
-      name: "Date In Place Servince",
+      name: "Date In Place Service",
       field: "date_in_place_service",
       type: "date",
       sortable: true,
@@ -282,6 +282,7 @@ export default function Page({ auth, branches, sessions }) {
             columns={columns}
             fetchUrl={"/api/gap/assets"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
         </div>
       </div>
@@ -419,8 +420,6 @@ export default function Page({ auth, branches, sessions }) {
                   </Option>
                 ))}
               </Select>
-
-
               <Input
                 label="Tanggal Pengesahan"
                 value={data.tgl_pengesahan || ""}
