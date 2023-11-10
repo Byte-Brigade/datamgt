@@ -77,9 +77,15 @@ class UAMController extends Controller
                 $email = $names[0] . '.' . $names[0];
             }
 
+            if ($request->entity == "bss") {
+                $email = $email . '@banksampoerna.com';
+            } else {
+                $email = $email . '@sahabat-ukm.co.id';
+            }
+
             $user = User::create([
                 'name' => $request->name,
-                'email' => $email . '@banksampoerna.com',
+                'email' => $email,
                 'nik' => $request->nik,
                 'password' => Hash::make($request->password),
             ]);
@@ -112,9 +118,9 @@ class UAMController extends Controller
             ]);
             $user->syncRoles($role);
             $user->syncPermissions($request->permissions);
-        return redirect(route('uam'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-    } catch (Exception $e) {
-        return redirect(route('uam'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('uam'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+        } catch (Exception $e) {
+            return redirect(route('uam'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 

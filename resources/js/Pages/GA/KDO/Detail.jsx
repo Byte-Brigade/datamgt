@@ -5,7 +5,10 @@ import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentArrowDownIcon,
+  DocumentPlusIcon,
+} from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -76,11 +79,12 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     });
   };
 
-  const handleSubmitExport = (e) => {
+  const handleExport = (e) => {
     const { gap_kdo_id } = data;
     e.preventDefault();
     window.open(
-      route("gap.kdo.mobil.export", kdo_mobil.branches.branch_code) + `?gap_kdo_id=${gap_kdo_id}`,
+      route("gap.kdo.mobil.export", kdo_mobil.branches.branch_code) +
+        `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
@@ -232,15 +236,15 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title={`GA Procurement | KDO Mobil`} />
+      <Head title="GA Procurement | KDO Mobil" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
-                className="bg-green-500 mr-2 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalCreate}
               >
                 <div className="flex items-center gap-x-2">
@@ -258,7 +262,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
                 </div>
               </PrimaryButton>
             </div>
-            <h2 className="mb-4 text-xl font-semibold text-center">
+            <h2 className="text-xl font-semibold text-center">
               {kdo_mobil.branches.branch_name}
             </h2>
           </div>
@@ -370,12 +374,17 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
             <XMarkIcon className="w-6 h-6" />
           </IconButton>
         </DialogHeader>
-        <form onSubmit={handleSubmitExport} encType="multipart/form-data">
-          <PrimaryButton type="submit">Download Template</PrimaryButton>
-        </form>
         <form onSubmit={handleSubmitImport} encType="multipart/form-data">
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+              <Button
+                className="flex items-center gap-x-2 max-w-fit"
+                size="sm"
+                onClick={handleExport}
+              >
+                <DocumentArrowDownIcon className="w-5 h-5" />
+                Download Template
+              </Button>
               <Input
                 label="Import Excel (.xlsx)"
                 disabled={processing}
@@ -402,7 +411,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Ubah Data
+          Tambah Data
           <IconButton
             size="sm"
             variant="text"
@@ -417,24 +426,66 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                label="Titik Posisi"
-                value={data.titik_posisi || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("titik_posisi", e.target.value)}
+                onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Nopol"
+                value={data.nopol || ""}
+                disabled={processing}
+                onChange={(e) => setData("nopol", e.target.value)}
+              />
+              <Input
+                label="Awal Sewa"
+                value={data.awal_sewa || ""}
                 type="date"
                 disabled={processing}
-                onChange={(e) => setData("expired_date", e.target.value)}
+                onChange={(e) => setData("awal_sewa", e.target.value)}
+              />
+              <Input
+                label="Akhir Sewa"
+                value={data.akhir_sewa || ""}
+                type="date"
+                disabled={processing}
+                onChange={(e) => setData("akhir_sewa", e.target.value)}
+              />
+              <Select
+                label="Tahun"
+                value={`${data.year}`}
+                onChange={(e) => setData("year", e)}
+              >
+                {years.map((year, index) => (
+                  <Option key={index} value={`${year}`}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                label="Bulan"
+                value={`${data.month}`}
+                onChange={(e) => setData("month", e)}
+              >
+                {months.map((month, index) => (
+                  <Option key={index} value={`${index + 1}`}>
+                    {month}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Biaya Sewa"
+                value={data.biaya_sewa || ""}
+                type="number"
+                disabled={processing}
+                onChange={(e) => setData("biaya_sewa", e.target.value)}
               />
             </div>
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
-                Ubah
+                Tambah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
                 Tutup

@@ -10,11 +10,12 @@ class BranchTypeSeeder extends Seeder
     public function run()
     {
         $types = [
-            ['type_name' => 'KC'],
-            ['type_name' => 'KCP'],
-            ['type_name' => 'KF'],
-            ['type_name' => 'KFNO'],
-            ['type_name' => 'SFI'],
+            ['type_name' => 'KC', 'alt_name' => 'Kantor Cabang'] ,
+            ['type_name' => 'KCP' , 'alt_name' => 'Kantor Cabang Pembantu'],
+            ['type_name' => 'KF' , 'alt_name' => ''],
+            ['type_name' => 'KFO' , 'alt_name' => 'Kantor Fungsional Operasional'],
+            ['type_name' => 'KFNO' , 'alt_name' => 'Kantor Fungsional Non Operasional'],
+            ['type_name' => 'SFI' , 'alt_name' => ''],
         ];
 
         foreach ($types as $type) {

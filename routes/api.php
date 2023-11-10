@@ -4,6 +4,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\OpsAparController;
@@ -45,6 +46,8 @@ Route::get('/dashboard/branch', [DashboardController::class, 'api']);
 Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
     Route::get('kdo', [GapKdoController::class, 'api']);
+    Route::get('assets', [GapAssetController::class, 'api']);
+
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 

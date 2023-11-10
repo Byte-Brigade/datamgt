@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\InqueryController;
@@ -93,6 +94,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/maintenance', function () {
                 abort(404);
             })->name('maintenance');
+
+            Route::get('/assets', [GapAssetController::class, 'index'])->name('assets');
+            Route::post('/assets/import', [GapAssetController::class, 'import'])->name('assets.import');
+            Route::post('/assets', [GapAssetController::class, 'store'])->name('assets.store');
+            Route::post('/assets/{id}/upload', [GapAssetController::class, 'upload'])->name('assets.upload');
+            Route::post('/assets/{id}', [GapAssetController::class, 'update'])->name('assets.update');
+            Route::get('/assets/detail/{id}', [GapAssetController::class, 'detail'])->name('assets.detail');
+            Route::get('/assets/export', [GapAssetController::class, 'export'])->name('assets.export');
+            Route::delete('/assets/{id}', [GapAssetController::class, 'destroy'])->name('assets.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */

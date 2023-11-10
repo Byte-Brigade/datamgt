@@ -27,6 +27,7 @@ export default function DataTable({
   component = [],
   footCols = { name: "", span: 0 },
   agg,
+  bordered = false
 }) {
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
@@ -128,7 +129,6 @@ export default function DataTable({
 
     if (fetchUrl) {
       const { data } = await axios.get(fetchUrl, { params });
-      console.log(data);
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
@@ -202,8 +202,6 @@ export default function DataTable({
   const handleTableSettings = () => {
     setFixedTable((cur) => !cur);
   };
-
-  console.log(footCols);
 
   return (
     <>
@@ -330,7 +328,7 @@ export default function DataTable({
               <span className="ml-3">Settings</span>
               <div className="flex flex-wrap">
                 <Checkbox
-                  label="Fixed Table Height"
+                  label="Freeze Header"
                   checked={fixedTable}
                   onChange={handleTableSettings}
                 />
@@ -346,8 +344,8 @@ export default function DataTable({
       >
         <table className={`${className} text-sm leading-3 bg-white`}>
           <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-            <tr className="[&>th]:p-2 bg-slate-100">
-              <th className="text-center">No</th>
+            <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
+              <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
                 <th key={column.name}>
                   {column.sortable === true ? (
@@ -407,12 +405,14 @@ export default function DataTable({
               data.map((data, index) => (
                 <tr
                   key={index}
-                  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200"
+                  className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}
                 >
                   <td className="text-center">
-                    {Object.keys(pagination).length === 0
-                      ? index + 1
-                      : pagination.from + index}
+                    {Object.keys(pagination).length === 0 ? (
+                      <p className="py-3">{index + 1}</p>
+                    ) : (
+                      <p className="py-3">{pagination.from + index}</p>
+                    )}
                   </td>
                   {columns.map((column, id) =>
                     column.field ? (
@@ -439,7 +439,6 @@ export default function DataTable({
               ))
             )}
           </tbody>
-
         </table>
       </div>
       {data.length > 0 && !loading && (

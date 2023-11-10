@@ -1,7 +1,14 @@
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { IconButton } from "@material-tailwind/react";
 import React from "react";
 
 export default function Alert({ sessions }) {
-  const status = sessions.status === 'success' ? 'Berhasil' : (sessions.status === 'failed') ? 'Gagal' : sessions.status;
+  const status =
+    sessions.status === "success"
+      ? "Berhasil"
+      : sessions.status === "failed"
+      ? "Gagal"
+      : sessions.status;
   return (
     <div
       className={`border-l-4 ${
@@ -11,8 +18,15 @@ export default function Alert({ sessions }) {
       } p-4 mb-4`}
       role="alert"
     >
-      <p className="font-bold">{status}</p>
-      <p>{sessions.message}</p>
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <p className="font-bold">{status}</p>
+          <p>{sessions.message}</p>
+        </div>
+        <IconButton variant="text">
+          <XMarkIcon className="w-5 h-5" />
+        </IconButton>
+      </div>
     </div>
   );
 }

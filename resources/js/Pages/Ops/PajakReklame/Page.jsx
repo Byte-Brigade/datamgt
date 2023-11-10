@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -81,64 +82,76 @@ export default function PajakReklame({ auth, branches, sessions }) {
       name: "Izin Reklame",
       field: "file_izin_reklame",
       type: "custom",
+      className: "text-center",
       render: (data) =>
-        data.file_izin_reklame ? (
-          <a
-            className="text-blue-500 hover:underline"
-            href={`/storage/ops/pajak-reklame/${data.file_izin_reklame}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file_izin_reklame}
-          </a>
+        hasRoles("branch_ops|superadmin", auth) &&
+        auth.permissions.includes("can add") ? (
+          data.file_izin_reklame ? (
+            <a
+              className="text-blue-500 hover:underline"
+              href={`/storage/ops/pajak-reklame/${data.file_izin_reklame}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file_izin_reklame}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setFileType("file_izin_reklame");
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
         ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setFileType("file_izin_reklame");
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
+          <span>Belum upload lampiran</span>
         ),
     },
     {
       name: "SKPD",
       field: "file_skpd",
       type: "custom",
+      className: "text-center",
       render: (data) =>
-        data.file_skpd ? (
-          <a
-            className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file_skpd}
-          </a>
+        hasRoles("branch_ops|superadmin", auth) &&
+        auth.permissions.includes("can add") ? (
+          data.file_skpd ? (
+            <a
+              className="text-blue-500 hover:underline text-ellipsis"
+              href={`/storage/ops/pajak-reklame/${data.file_skpd}`}
+              target="__blank"
+            >
+              {" "}
+              {data.file_skpd}
+            </a>
+          ) : (
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={() => {
+                toggleModalUpload();
+                setFileType("file_skpd");
+                setData(data);
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <ArrowUpTrayIcon className="w-4 h-4" />
+                Upload Lampiran
+              </div>
+            </Button>
+          )
         ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setFileType("file_skpd");
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
+          <span>Belum upload lampiran</span>
         ),
     },
     {
@@ -274,33 +287,49 @@ export default function PajakReklame({ auth, branches, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("branch_ops|superadmin", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("branch_ops|superadmin", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             className="w-[1500px]"
             fetchUrl={"/api/ops/pajak-reklame"}
             refreshUrl={isRefreshed}
@@ -458,7 +487,9 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 name="file_izin_reklame"
                 id="file_izin_reklame"
                 accept=".xlsx"
-                onChange={(e) => setData("file_izin_reklame", e.target.files[0])}
+                onChange={(e) =>
+                  setData("file_izin_reklame", e.target.files[0])
+                }
               />
               <Input
                 variant="standard"
@@ -541,7 +572,9 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 name="file_izin_reklame"
                 id="file_izin_reklame"
                 accept=".xlsx"
-                onChange={(e) => setData("file_izin_reklame", e.target.files[0])}
+                onChange={(e) =>
+                  setData("file_izin_reklame", e.target.files[0])
+                }
               />
               <Input
                 variant="standard"
