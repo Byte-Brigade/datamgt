@@ -24,7 +24,6 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
             $row = $row->toArray();
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
 
-            $currentYear = date('Y');
             if (isset($branch)) {
                 $kdo = GapKdo::where('branch_id', $branch->id)->first();
                 if (!isset($kdo)) {
