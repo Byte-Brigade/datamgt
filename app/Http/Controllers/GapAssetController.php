@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Assets\AssetsExport;
 use App\Imports\AssetsImport;
 use App\Models\Branch;
 use App\Models\GapAsset;
@@ -23,7 +24,7 @@ class GapAssetController extends Controller
         return Inertia::render('GA/Asset/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['jenis_perizinan.name', 'tgl_pengesahan','tgl_masa_berlaku'];
+    protected array $sortFields = ['branches.branch_code',  'date_in_place_service', 'asset_number', 'category', 'date_in_place_service', 'net_book_value', 'depre_exp'];
 
     public function api(GapAsset $gap_asset, Request $request)
     {
@@ -31,14 +32,20 @@ class GapAssetController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_asset->orderBy('category', 'asc')
-        ->join('branches', 'gap_assets.branch_id', 'branches.id');
+        $query = $gap_asset->select('gap_assets.*')->orderBy($sortField, $sortOrder)
+            ->join('branches', 'gap_assets.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('asset_number', 'like', $searchQuery)
+                    ->orWhere('category', 'like', $searchQuery)
+                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    });
+            });
         }
         $data = $query->paginate($perpage);
         return AssetsResource::collection($data);
@@ -54,6 +61,12 @@ class GapAssetController extends Controller
             dd($e);
             return redirect(route('gap.assets'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'Data_Asset_BSS_' . date('d-m-y') . '.xlsx';
+        return (new AssetsExport)->download($fileName);
     }
 
     /**
@@ -74,7 +87,26 @@ class GapAssetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $branch = Branch::find($request->branch_id);
+
+            GapAsset::create([
+                'branch_id' => $branch->id,
+                'category' => $request->category,
+                'asset_number' => $request->asset_number,
+                'asset_description' => $request->asset_description,
+                'asset_cost' => $request->asset_cost,
+                'date_in_place_service' => $request->date_in_place_service,
+                'asset_location' => $request->asset_location,
+                'major_category' => $request->major_category,
+                'minor_category' => $request->minor_category,
+                'depre_exp' => $request->depre_exp,
+                'net_book_value' => $request->net_book_value,
+            ]);
+            return redirect(route('gap.assets'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.assets'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -108,7 +140,27 @@ class GapAssetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $gap_asset = GapAsset::find($id);
+
+            $branch = Branch::find($request->branch_id);
+            $gap_asset->update([
+                'branch_id' => $branch->id,
+                'category' => $request->category,
+                'asset_number' => $request->asset_number,
+                'asset_description' => $request->asset_description,
+                'asset_cost' => $request->asset_cost,
+                'date_in_place_service' => $request->date_in_place_service,
+                'asset_location' => $request->asset_location,
+                'major_category' => $request->major_category,
+                'minor_category' => $request->minor_category,
+                'depre_exp' => $request->depre_exp,
+                'net_book_value' => $request->net_book_value,
+            ]);
+            return redirect(route('gap.assets'))->with(['status' => 'success', 'message' => 'Data Berhasil diupdate']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.assets'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -119,6 +171,12 @@ class GapAssetController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $gap_asset = GapAsset::find($id);
+            $gap_asset->delete();
+            return redirect(route('gap.assets', $id))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.assets'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 }
