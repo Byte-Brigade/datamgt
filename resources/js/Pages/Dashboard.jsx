@@ -212,7 +212,7 @@ export default function Dashboard({
           <div className="grid grid-cols-4 gap-x-4">
             <div
               onClick={() => setActive("cabang")}
-              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
             >
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
@@ -232,7 +232,7 @@ export default function Dashboard({
             </div>
             <div
               onClick={() => setActive("atm")}
-              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
             >
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
@@ -253,7 +253,7 @@ export default function Dashboard({
             </div>
             <div
               onClick={() => setActive("karyawan")}
-              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
             >
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
@@ -274,17 +274,17 @@ export default function Dashboard({
             </div>
             <div
               onClick={() => setActive("asset")}
-              className="cursor-pointer flex items-center px-4 py-2 bg-white border gap-x-4 border-slate-400 rounded-xl"
+              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
             >
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Asset</Typography>
                 <Typography>
-                  {branchId
-                    ? data.jumlahKaryawanBSO.filter(
-                        (karyawan) => karyawan.branch_id == branchId
-                      ).length
-                    : data.jumlahKaryawanBSO.length}
+                  {data.assets.filter(
+                        (asset) =>
+                          (branchId === 0 || asset.branch_id == branchId) &&
+                          (area === "none" || asset.branches.area == area)
+                      ).length}
                 </Typography>
               </div>
             </div>
@@ -308,20 +308,19 @@ export default function Dashboard({
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td>Kantor Pusat</td>
                       <td>1</td>
                     </tr>
                     {Object.keys(data.jumlah_cabang).map((cabang) => {
                       return (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                           <td>{cabang}</td>
                           <td>{data.jumlah_cabang[cabang].length}</td>
                         </tr>
                       );
                     })}
-
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td>
                         <strong>Total</strong>
                       </td>
@@ -363,7 +362,7 @@ export default function Dashboard({
                   </thead>
                   <tbody className="overflow-y-auto">
                     {data.employee_positions.map((position) => (
-                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                         <td className="text-center">
                           {position.position_name}
                         </td>
@@ -384,7 +383,7 @@ export default function Dashboard({
                         </td>
                       </tr>
                     ))}
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td className="text-center">
                         <strong>Total</strong>
                       </td>
@@ -426,7 +425,7 @@ export default function Dashboard({
                   </thead>
                   <tbody className="overflow-y-auto">
                     {Object.keys(data.jumlah_atm).map((atm) => (
-                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                         <td className="text-center">{atm}</td>
                         <td className="text-center">
                           {
@@ -440,7 +439,7 @@ export default function Dashboard({
                       </tr>
                     ))}
 
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td className="text-center">
                         <strong>Total</strong>
                       </td>
@@ -467,23 +466,23 @@ export default function Dashboard({
 
           {/* Jumlah Asset */}
           {active === "asset" && (
-            <table className={`text-sm leading-3 bg-white`}>
+            <table className={`text-sm leading-3 bg-white mt-2`}>
               <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-center" rowSpan={2} colSpan={2}>
+                <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
+                  <th className="text-center border-r border-slate-200" rowSpan={2} colSpan={2}>
                     Lokasi
                   </th>
                   <th className="text-center" colSpan={4}>
                     Kategori A (Depresiasi)
                   </th>
-                  <th className="text-center" colSpan={2}>
+                  <th className="text-center" colSpan={4}>
                     Kategori B (Non-Depresiasi)
                   </th>
                   {/* Lokasi: Kantor Pusat, Cabang */}
                   {/* Kategori A (Asset Depresiasi) */}
                   {/* Kategori A (Asset Non-Depresiasi) */}
                 </tr>
-                <tr className="[&>th]:p-2 bg-slate-100">
+                <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200">
                   <th className="text-center">Item</th>
                   <th className="text-center">Nilai Perolehan</th>
                   <th className="text-center">Penyusutan</th>
@@ -493,23 +492,46 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
-                {Object.keys(data.assets).map((kategori, index) => (
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                {Object.keys(data.summary_assets).map((lokasi, index) => (
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                     <td className="text-center" key={index} colSpan={2}>
-                      {kategori}
+                      {lokasi}
                     </td>
-                    {data.assets[kategori].map((item, index) => (
-                      <>
-                        <td className="text-center">{item.item}</td>
-                        <td className="text-center">{item.nilai_perolehan}</td>
-                        {item.penyusutan && (
-                          <td className="text-center">{item.penyusutan}</td>
-                        )}
-                        {item.network_value && (
-                          <td className="text-center">{item.network_value}</td>
-                        )}
-                      </>
-                    ))}
+                    {Object.entries(data.summary_assets[lokasi]).map(
+                      ([key, item]) => {
+                        if (key === "Depre") {
+                          return (
+                            <>
+                              <td className="text-center">
+                                {item.jumlah_item}
+                              </td>
+                              <td className="text-center">
+                                {item.nilai_perolehan}
+                              </td>
+
+                              <td className="text-center">{item.penyusutan}</td>
+
+                              {item.net_book_value > 0 && (
+                                <td className="text-center">
+                                  {item.net_book_value}
+                                </td>
+                              )}
+                            </>
+                          );
+                        } else {
+                          return (
+                            <>
+                              <td className="text-center">
+                                {item.jumlah_item}
+                              </td>
+                              <td className="text-center">
+                                {item.nilai_perolehan}
+                              </td>
+                            </>
+                          );
+                        }
+                      }
+                    )}
                   </tr>
                 ))}
               </tbody>
