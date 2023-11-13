@@ -509,7 +509,7 @@ export default function Dashboard({
               <tbody className="overflow-y-auto">
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b  divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
-                  {Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
                     ([key, item]) =>
                       key === "Depre" ? (
                         <>
@@ -522,7 +522,7 @@ export default function Dashboard({
 
                           {item.net_book_value > 0 && (
                             <td className="text-center">
-                              {item.net_book_value}
+                              {item.net_book_value.toLocaleString('id-ID')}
                             </td>
                           )}
                         </>
@@ -542,7 +542,7 @@ export default function Dashboard({
                   className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
                 >
                   <td colSpan={2}>Kantor Cabang</td>
-                  {Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
                     ([key, item]) =>
                       key === "Depre" ? (
                         <>
@@ -568,7 +568,7 @@ export default function Dashboard({
                               )
                               .reduce((total, item) => {
                                 return total + item.net_book_value;
-                              }, 0)}
+                              }, 0).toLocaleString('id-ID')}
                           </td>
                         </>
                       ) : (
@@ -615,7 +615,7 @@ export default function Dashboard({
 
                                   {item.net_book_value > 0 && (
                                     <td className="text-center">
-                                      {item.net_book_value}
+                                      {item.net_book_value.toLocaleString('id-ID')}
                                     </td>
                                   )}
                                 </>
