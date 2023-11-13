@@ -71,7 +71,7 @@ class EmployeeController extends Controller
     public function import(Request $request)
     {
         try {
-            (new EmployeesImport)->import($request->file('file')->store('temp'));
+            (new EmployeesImport)->import($request->file('file'));
 
             return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {

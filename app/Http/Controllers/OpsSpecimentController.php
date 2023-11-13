@@ -66,7 +66,7 @@ class OpsSpecimentController extends Controller
     public function import(Request $request)
     {
         try {
-            (new SpecimentImport)->import($request->file('file')->store('temp'));
+            (new SpecimentImport)->import($request->file('file'));
 
             return redirect(route('ops.speciment'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {

@@ -122,7 +122,7 @@ class OpsSkOperasionalController extends Controller
     public function import(Request $request)
     {
         try {
-            (new SkOperasionalsImport)->import($request->file('file')->store('temp'));
+            (new SkOperasionalsImport)->import($request->file('file'));
 
             return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {

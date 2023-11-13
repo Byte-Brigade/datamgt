@@ -50,7 +50,7 @@ class OpsPajakReklameController extends Controller
     public function import(Request $request)
     {
         try {
-            (new PajakReklameImport)->import($request->file('file')->store('temp'));
+            (new PajakReklameImport)->import($request->file('file'));
 
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
