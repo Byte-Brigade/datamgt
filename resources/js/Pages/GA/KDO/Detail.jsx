@@ -39,6 +39,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     year: null,
     month: null,
     biaya_sewas: null,
+    biaya_sewa: null
   };
 
   const {
@@ -126,12 +127,14 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     return date.toISOString().slice(0, 10);
   }
 
-  const handlePeriode = (month, year) => {
+  const handlePeriode =  (month, year) => {
+
     return Array.isArray(data.biaya_sewas) ? data.biaya_sewas.find(item => item.periode === getPeriode(month, year)).value : 0;
   }
 
   const handleMonth = (e) => {
     setData('month', e);
+    console.log(handlePeriode(data.month, data.year))
     setPeriodeVal(handlePeriode(data.month, data.year))
   }
 
@@ -241,10 +244,12 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       render: (data) => (
         <DropdownMenu
           placement="left-start"
-          onEditClick={() => {
+          onEditClick={async () => {
+            let biaya_sewas = await data.biaya_sewas
+            console.log(biaya_sewas)
             toggleModalEdit();
             setData(data);
-            setPeriodeVal(data.biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value)
+            setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
 
           }}
           onDeleteClick={() => {
