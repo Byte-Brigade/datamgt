@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('gap_assets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id')->nullable();
+            $table->unsignedBigInteger('branch_id');
             $table->string('category');
-            $table->integer('asset_number');
+            $table->integer('asset_number')->unique();
             $table->text('asset_description')->nullable();
             $table->date('date_in_place_service')->nullable();
             $table->unsignedBigInteger('asset_cost')->nullable();

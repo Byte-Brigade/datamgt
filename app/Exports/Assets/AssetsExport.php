@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Exports\KDO;
+namespace App\Exports\Assets;
 
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class KdosExport implements WithMultipleSheets
+class AssetsExport implements WithMultipleSheets
 {
     use Exportable;
     public function sheets(): array
     {
         return [
-            new KdoSummarySheet(),
-            new KdoMobilSheet(),
+            new DepreSheet(),
+            new NonDepreSheet(),
         ];
     }
+
 
 }

@@ -3,7 +3,13 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
 import { Head } from "@inertiajs/react";
-import { Option, Select, Typography } from "@material-tailwind/react";
+import {
+  Accordion,
+  AccordionBody,
+  Option,
+  Select,
+  Typography,
+} from "@material-tailwind/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,6 +45,7 @@ export default function Dashboard({
   const [area, setArea] = useState("none");
   const [active, setActive] = useState("cabang");
   const [totalBranch, setTotalBranch] = useState(0);
+  const [open, setOpen] = useState(false);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -90,6 +97,8 @@ export default function Dashboard({
     console.log(value);
     setArea(value);
   };
+
+  const handleOpen = (value) => setOpen(!open);
 
   let labels = data.employee_positions.map(
     (position) => position.position_name
@@ -280,11 +289,13 @@ export default function Dashboard({
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Asset</Typography>
                 <Typography>
-                  {data.assets.filter(
-                        (asset) =>
-                          (branchId === 0 || asset.branch_id == branchId) &&
-                          (area === "none" || asset.branches.area == area)
-                      ).length}
+                  {
+                    data.assets.filter(
+                      (asset) =>
+                        (branchId === 0 || asset.branch_id == branchId) &&
+                        (area === "none" || asset.branches.area == area)
+                    ).length
+                  }
                 </Typography>
               </div>
             </div>
@@ -469,7 +480,11 @@ export default function Dashboard({
             <table className={`text-sm leading-3 bg-white mt-2`}>
               <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
-                  <th className="text-center border-r border-slate-200" rowSpan={2} colSpan={2}>
+                  <th
+                    className="text-center border-r border-slate-200"
+                    rowSpan={2}
+                    colSpan={2}
+                  >
                     Lokasi
                   </th>
                   <th className="text-center" colSpan={4}>
@@ -492,48 +507,132 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
-                {Object.keys(data.summary_assets).map((lokasi, index) => (
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-                    <td className="text-center" key={index} colSpan={2}>
-                      {lokasi}
-                    </td>
-                    {Object.entries(data.summary_assets[lokasi]).map(
-                      ([key, item]) => {
-                        if (key === "Depre") {
-                          return (
-                            <>
-                              <td className="text-center">
-                                {item.jumlah_item}
-                              </td>
-                              <td className="text-center">
-                                {item.nilai_perolehan}
-                              </td>
+                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b  divide-x divide-slate-200 border-slate-200">
+                  <td colSpan={2}>Kantor Pusat</td>
+                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                    ([key, item]) =>
+                      key === "Depre" ? (
+                        <>
+                          <td className="text-center">{item.jumlah_item}</td>
+                          <td className="text-center">
+                            {item.nilai_perolehan}
+                          </td>
 
-                              <td className="text-center">{item.penyusutan}</td>
+                          <td className="text-center">{item.penyusutan}</td>
 
-                              {item.net_book_value > 0 && (
-                                <td className="text-center">
-                                  {item.net_book_value}
-                                </td>
-                              )}
-                            </>
-                          );
-                        } else {
-                          return (
-                            <>
-                              <td className="text-center">
-                                {item.jumlah_item}
-                              </td>
-                              <td className="text-center">
-                                {item.nilai_perolehan}
-                              </td>
-                            </>
-                          );
-                        }
-                      }
-                    )}
-                  </tr>
-                ))}
+                          {item.net_book_value > 0 && (
+                            <td className="text-center">
+                              {item.net_book_value.toLocaleString('id-ID')}
+                            </td>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <td className="text-center">{item.jumlah_item}</td>
+                          <td className="text-center">
+                            {item.nilai_perolehan}
+                          </td>
+                        </>
+                      )
+                  )}
+                </tr>
+
+                <tr
+                  onClick={handleOpen}
+                  className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
+                >
+                  <td colSpan={2}>Kantor Cabang</td>
+                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                    ([key, item]) =>
+                      key === "Depre" ? (
+                        <>
+                          <td className="text-center">
+                            {
+                              data.assets.filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              ).length
+                            }
+                          </td>
+                          <td className="text-center"></td>
+
+                          <td className="text-center"></td>
+
+                          <td className="text-center">
+                            {data.assets
+                              .filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              )
+                              .reduce((total, item) => {
+                                return total + item.net_book_value;
+                              }, 0).toLocaleString('id-ID')}
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="text-center">
+                            {
+                              data.assets.filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Non-Depre"
+                              ).length
+                            }
+                          </td>
+                          <td className="text-center">
+                            {item.nilai_perolehan}
+                          </td>
+                        </>
+                      )
+                  )}
+                </tr>
+
+                {open &&
+                  Object.keys(data.summary_assets).map(
+                    (lokasi, index) =>
+                      lokasi !== "Kantor Pusat" && (
+                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
+                          <td key={index} colSpan={2}>
+                            > {lokasi}
+                          </td>
+                          {Object.entries(data.summary_assets[lokasi]).map(
+                            ([key, item]) =>
+                              key === "Depre" ? (
+                                <>
+                                  <td className="text-center">
+                                    {item.jumlah_item}
+                                  </td>
+                                  <td className="text-center">
+                                    {item.nilai_perolehan}
+                                  </td>
+
+                                  <td className="text-center">
+                                    {item.penyusutan}
+                                  </td>
+
+                                  {item.net_book_value > 0 && (
+                                    <td className="text-center">
+                                      {item.net_book_value.toLocaleString('id-ID')}
+                                    </td>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <td className="text-center">
+                                    {item.jumlah_item}
+                                  </td>
+                                  <td className="text-center">
+                                    {item.nilai_perolehan}
+                                  </td>
+                                </>
+                              )
+                          )}
+                        </tr>
+                      )
+                  )}
               </tbody>
             </table>
           )}

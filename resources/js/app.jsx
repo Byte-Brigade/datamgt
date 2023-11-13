@@ -20,6 +20,17 @@ createInertiaApp({
   setup({ el, App, props }) {
     const root = createRoot(el);
     const theme = {
+      accordion: {
+        defaultProps: {
+          icon: undefined,
+          className: "",
+          animate: {
+            unmount: {},
+            mount: {},
+          },
+          disabled: false,
+        },
+      },
       list: {
         defaultProps: {
           ripple: true,

@@ -26,8 +26,17 @@ import { useState } from "react";
 export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
-    tgl_pengesahan: null,
-    tgl_masa_berlaku: null,
+    category: null,
+    asset_number: null,
+    asset_description: null,
+    date_in_place_service: null,
+    asset_cost: null,
+    asset_location: null,
+    major_category: null,
+    minor_category: null,
+    depre_exp: null,
+    net_book_value: null,
+
     branches: {
       branch_code: null,
       branch_name: null,
@@ -53,17 +62,19 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
 
     {
       name: "Category",
       field: "category",
       className: "text-center",
+      sortable: true,
     },
     {
       name: "Asset Number",
       field: "asset_number",
       className: "text-center",
+      sortable: true,
     },
     {
       name: "Date In Place Service",
@@ -86,6 +97,7 @@ export default function Page({ auth, branches, sessions }) {
       name: "Net Book Value",
       field: "net_book_value",
       className: "text-center",
+      sortable: true,
     },
     {
       name: "Major Category",
@@ -94,53 +106,15 @@ export default function Page({ auth, branches, sessions }) {
     },
     {
       name: "Minor Category",
-      field: "Minor_category",
+      field: "minor_category",
       className: "text-center",
     },
     {
-      name: "Tgl Masa Berlaku s/d",
-      field: "tgl_masa_berlaku",
-      type: "date",
+      name: "Depre Exp",
+      field: "depre_exp",
+      className: "text-center",
       sortable: true,
-      className: "justify-center text-center",
     },
-    // {
-    //   name: "Progress Resertifikasi",
-    //   field: "progress_resertifikasi",
-    //   className: "text-center",
-    // },
-    // {
-    //   name: "Lampiran",
-    //   field: "file",
-    //   type: "custom",
-    //   render: (data) =>
-    //     data.file ? (
-    //       <a
-    //         className="text-blue-500 hover:underline text-ellipsis"
-    //         href={`/storage/gap/assets/${data.id}/${data.file}`}
-    //         target="__blank"
-    //       >
-    //         {" "}
-    //         {data.file}
-    //       </a>
-    //     ) : (
-    //       <Button
-    //         variant="outlined"
-    //         size="sm"
-    //         color="blue"
-    //         onClick={() => {
-    //           toggleModalUpload();
-    //           setData(data);
-    //         }}
-    //       >
-    //         <div className="flex items-center gap-x-2">
-    //           <ArrowUpTrayIcon className="w-4 h-4" />
-    //           Upload Lampiran
-    //         </div>
-    //       </Button>
-    //     ),
-    // },
-
     {
       name: "Action",
       field: "action",
@@ -151,6 +125,7 @@ export default function Page({ auth, branches, sessions }) {
           onEditClick={() => {
             toggleModalEdit();
             setData(data);
+            console.log(data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -191,8 +166,8 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    post(route("gap.assets.update", data.id), {
-      method: "post",
+    put(route("gap.assets.update", data.id), {
+      method: "put",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -420,38 +395,76 @@ export default function Page({ auth, branches, sessions }) {
                   </Option>
                 ))}
               </Select>
-              <Input
-                label="Tanggal Pengesahan"
-                value={data.tgl_pengesahan || ""}
+              <Select
+                label="Branch"
+                value={`${data.category}`}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+                onChange={(e) => setData("category", e)}
+              >
+                <Option value="Depre">Depre</Option>
+                <Option value="Non-Depre">Non-Depre</Option>
+              </Select>
+              <Input
+                label="Asset Number"
+                type="number"
+                value={data.asset_number || ""}
+                disabled={processing}
+                onChange={(e) => setData("asset_number", e.target.value)}
               />
               <Input
-                label="Tanggal Masa Berlaku"
-                value={data.tgl_masa_berlaku || ""}
+                label="Asset Description"
+                value={data.asset_description || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+                onChange={(e) => setData("asset_description", e.target.value)}
               />
               <Input
-                label="Progress Resertifikasi"
-                value={data.progress_resertifikasi || ""}
+                label="Asset Cost"
+                type="number"
+                value={data.asset_cost || ""}
                 disabled={processing}
+                onChange={(e) => setData("asset_cost", e.target.value)}
+              />
+              <Input
+                label="Asset Location"
+                value={data.asset_location || ""}
+                disabled={processing}
+                onChange={(e) => setData("asset_location", e.target.value)}
+              />
+              <Input
+                label="Date In Place Service"
+                value={data.date_in_place_service || ""}
+                disabled={processing}
+                type="date"
                 onChange={(e) =>
-                  setData("progress_resertifikasi", e.target.value)
+                  setData("date_in_place_service", e.target.value)
                 }
               />
               <Input
-                label="Upload Lampiran"
-                type="file"
+                label="Major Category"
+                value={data.major_category || ""}
                 disabled={processing}
-                name="file"
-                accept=".pdf"
-                onChange={(e) => {
-                  console.log(e.target.files[0]);
-                  return setData("file", e.target.files[0]);
-                }}
+                onChange={(e) => setData("major_category", e.target.value)}
+              />
+              <Input
+                label="Minor Category"
+                value={data.minor_category || ""}
+                disabled={processing}
+                onChange={(e) => setData("minor_category", e.target.value)}
+              />
+              <Input
+                label="Depre Exp"
+                type="number"
+                step="0.01"
+                value={data.depre_exp || ""}
+                disabled={processing}
+                onChange={(e) => setData("depre_exp", e.target.value)}
+              />
+              <Input
+                label="Net Book Value"
+                type="number"
+                value={data.net_book_value || ""}
+                disabled={processing}
+                onChange={(e) => setData("net_book_value", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -482,7 +495,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll " divider>
+          <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -490,35 +503,88 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
+                {branches.map((branch) =>
+                  branch.branch_name.includes("Sampoerna") ? (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name} (HO)
+                    </Option>
+                  ) : (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  )
+                )}
               </Select>
-
-
-              <Input
-                label="Tanggal Pengesahan"
-                value={data.tgl_pengesahan || ""}
+              <Select
+                label="Category"
+                value={`${data.category}`}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+                onChange={(e) => setData("category", e)}
+              >
+                <Option value="Depre">Depre</Option>
+                <Option value="Non-Depre">Non-Depre</Option>
+              </Select>
+              <Input
+                label="Asset Number"
+                type="number"
+                value={data.asset_number || ""}
+                disabled={processing}
+                onChange={(e) => setData("asset_number", e.target.value)}
               />
               <Input
-                label="Tanggal Masa Berlaku"
-                value={data.tgl_masa_berlaku || ""}
+                label="Asset Description"
+                value={data.asset_description || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+                onChange={(e) => setData("asset_description", e.target.value)}
               />
               <Input
-                label="Progress Resertifikasi"
-                value={data.progress_resertifikasi || ""}
+                label="Asset Cost"
+                type="number"
+                value={data.asset_cost || ""}
                 disabled={processing}
+                onChange={(e) => setData("asset_cost", e.target.value)}
+              />
+              <Input
+                label="Asset Location"
+                value={data.asset_location || ""}
+                disabled={processing}
+                onChange={(e) => setData("asset_location", e.target.value)}
+              />
+              <Input
+                label="Date In Place Service"
+                value={data.date_in_place_service || ""}
+                disabled={processing}
+                type="date"
                 onChange={(e) =>
-                  setData("progress_resertifikasi", e.target.value)
+                  setData("date_in_place_service", e.target.value)
                 }
+              />
+              <Input
+                label="Major Category"
+                value={data.major_category || ""}
+                disabled={processing}
+                onChange={(e) => setData("major_category", e.target.value)}
+              />
+              <Input
+                label="Minor Category"
+                value={data.minor_category || ""}
+                disabled={processing}
+                onChange={(e) => setData("minor_category", e.target.value)}
+              />
+              <Input
+                label="Depre Exp"
+                type="number"
+                step="0.01"
+                value={data.depre_exp || ""}
+                disabled={processing}
+                onChange={(e) => setData("depre_exp", e.target.value)}
+              />
+              <Input
+                label="Net Book Value"
+                type="number"
+                value={data.net_book_value || ""}
+                disabled={processing}
+                onChange={(e) => setData("net_book_value", e.target.value)}
               />
             </div>
           </DialogBody>
