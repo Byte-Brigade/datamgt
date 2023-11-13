@@ -84,6 +84,7 @@ class BranchController extends Controller
     {
         try {
             (new BranchesImport)->import($request->file('file')->store('temp'));
+            \Excel::import(new BranchesImport, $request->file('file')->store('temp'));
 
 
             return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
