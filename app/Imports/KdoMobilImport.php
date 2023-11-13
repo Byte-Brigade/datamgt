@@ -41,7 +41,7 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
 
                     if (preg_match('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)_\d{2}$/i', $key)) {
                         $carbonDate = Carbon::createFromFormat('M_y', strtoupper($key));
-                        $tanggal_periode = $carbonDate->format('Y-m-d');
+                        $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
                         array_push($periode, ['periode' => $tanggal_periode, 'value' => (int) $value]);
                     } elseif (is_numeric($key)) {
                         $tanggal_periode = Date::excelToDateTimeObject($key)->format('Y-m-d');

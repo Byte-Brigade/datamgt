@@ -51,11 +51,7 @@ class GapKdoController extends Controller
             $branch = Branch::find($item->branch_id);
 
             $biaya_sewa = $item->gap_kdo_mobil->flatMap(function ($mobil) {
-
-                $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                return $mobil->biaya_sewa;
-            })->filter(function($item) {
-                return $item['value'] > 0;
+                return $mobil->biaya_sewas;
             })->groupBy('periode')->sortKeysDesc()->first();
             $item = [
                 'id' => $item->id,

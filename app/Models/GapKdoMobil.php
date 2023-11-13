@@ -26,6 +26,11 @@ class GapKdoMobil extends Model
         return $this->belongsTo(GapKdo::class, 'gap_kdo_id','id');
     }
 
+    public function biaya_sewas()
+    {
+        return $this->hasMany(KdoMobilBiayaSewa::class, 'gap_kdo_mobil_id');
+    }
+
     public function branches()
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
