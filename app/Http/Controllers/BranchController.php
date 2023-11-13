@@ -83,7 +83,8 @@ class BranchController extends Controller
     public function import(Request $request)
     {
         try {
-            (new BranchesImport)->import($request->file('file')->store('temp'));
+            // (new BranchesImport)->import($request->file('file')->store('temp'));
+
             \Excel::import(new BranchesImport, $request->file('file')->store('temp'));
 
 
