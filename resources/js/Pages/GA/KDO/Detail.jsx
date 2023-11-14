@@ -128,14 +128,24 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
   }
 
   const handlePeriode =  (month, year) => {
-
-    return Array.isArray(data.biaya_sewas) ? data.biaya_sewas.find(item => item.periode === getPeriode(month, year)).value : 0;
+    if(!Array.isArray(data.biaya_sewas)){
+      return 0
+    }
+    let biaya_sewas = data.biaya_sewas.find(item => item.periode === getPeriode(month, year));
+    return biaya_sewas ? biaya_sewas.value : 0;
   }
 
   const handleMonth = (e) => {
     setData('month', e);
-    console.log(handlePeriode(data.month, data.year))
-    setPeriodeVal(handlePeriode(data.month, data.year))
+    console.log(e)
+    console.log(handlePeriode(e, data.year))
+    setPeriodeVal(handlePeriode(e, data.year))
+  }
+  const handleYear = (e) => {
+    setData('year', e);
+    console.log(e)
+    console.log(handlePeriode(data.month, e))
+    setPeriodeVal(handlePeriode(data.month, e))
   }
 
   console.log(getPeriode(data.month, data.year))
@@ -483,7 +493,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               <Select
                 label="Tahun"
                 value={`${data.year}`}
-                onChange={(e) => setData("year", e)}
+                onChange={(e) => handleYear(e)}
               >
                 {years.map((year, index) => (
                   <Option key={index} value={`${year}`}>
