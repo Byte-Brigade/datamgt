@@ -16,6 +16,7 @@ class GapAsset extends Model
         'asset_description',
         'date_in_place_service',
         'asset_cost',
+        'accum_depre',
         'asset_location',
         'minor_category',
         'major_category',

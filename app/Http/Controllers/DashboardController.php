@@ -80,8 +80,8 @@ class DashboardController extends Controller
                     return [
                         'name' => $index,
                         'jumlah_item' => $assets->count(),
-                        'nilai_perolehan' => '',
-                        'penyusutan' => '',
+                        'nilai_perolehan' => $assets->sum('asset_cost'),
+                        'penyusutan' => $assets->sum('accum_depre'),
                         'net_book_value' => $assets->sum('net_book_value'),
                     ];
                 })];

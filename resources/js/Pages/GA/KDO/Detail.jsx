@@ -127,28 +127,41 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     return date.toISOString().slice(0, 10);
   }
 
-  const handlePeriode =  (month, year) => {
-    if(!Array.isArray(data.biaya_sewas)){
-      return 0
-    }
-    let biaya_sewas = data.biaya_sewas.find(item => item.periode === getPeriode(month, year));
-    return biaya_sewas ? biaya_sewas.value : 0;
-  }
+  const handlePeriode = (month, year) => {
+    let biaya_sewas = data.biaya_sewas
 
-  const handleMonth = (e) => {
-    setData('month', e);
-    console.log(e)
-    console.log(handlePeriode(e, data.year))
-    setPeriodeVal(handlePeriode(e, data.year))
+    if (!Array.isArray(biaya_sewas)) {
+      setData('biaya_sewa', 0)
+      return;
+
+    }
+    let biaya_sewa = biaya_sewas.find(item => item.periode === getPeriode(month, year));
+    setData({...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0})
+    console.log(data.month)
+    console.log(data.year)
+  }
+  const handleMonth = (e) => {;
+    handlePeriode(e, data.year)
   }
   const handleYear = (e) => {
     setData('year', e);
-    console.log(e)
-    console.log(handlePeriode(data.month, e))
-    setPeriodeVal(handlePeriode(data.month, e))
+    handlePeriode(data.month, e)
+  }
+  const handleBiayaSewa = (val) => {
+    if (typeof data.biaya_sewa === 'object' && data.biaya_sewa !== null) {
+
+      let biaya_sewa = { ...data.biaya_sewa, value: val }
+      console.log("handle")
+      console.log(biaya_sewa)
+      setData('biaya_sewa', biaya_sewa)
+      return;
+    }
+    setData('biaya_sewa', Number(val))
+
+    console.log(data.biaya_sewa)
   }
 
-  console.log(getPeriode(data.month, data.year))
+
 
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
@@ -254,13 +267,17 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       render: (data) => (
         <DropdownMenu
           placement="left-start"
-          onEditClick={async () => {
-            let biaya_sewas = await data.biaya_sewas
-            console.log(biaya_sewas)
+          onEditClick={() => {
             toggleModalEdit();
-            setData(data);
-            setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
+            const dateObject = data.biaya_sewa ? new Date(data.biaya_sewa.periode) : new Date();
 
+            const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
+            const month = dateObject.getMonth() + 1
+
+            setData({...data, month: month.toString(), year: year})
+            console.log(month);
+            console.log();
+            // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -270,7 +287,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       ),
     },
   ];
-
+  console.log(data.month)
 
 
   return (
@@ -492,8 +509,8 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               />
               <Select
                 label="Tahun"
-                value={`${data.year}`}
-                onChange={(e) => handleYear(e)}
+                value={data.year ? `${data.year}` : ""}
+                onChange={handleYear}
               >
                 {years.map((year, index) => (
                   <Option key={index} value={`${year}`}>
@@ -503,8 +520,8 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </Select>
               <Select
                 label="Bulan"
-                value={`${data.month}`}
-                onChange={(e) => handleMonth(e)}
+                value={data.month || ""}
+                onChange={handleMonth}
               >
                 {months.map((month, index) => (
                   <Option key={index} value={`${index + 1}`}>
@@ -514,10 +531,10 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </Select>
               <Input
                 label="Biaya Sewa"
-                value={periodeVal || 0}
+                value={data.biaya_sewa ? data.biaya_sewa.value : ''}
                 type="number"
                 disabled={processing}
-                onChange={(e) => setData("biaya_sewa", e.target.value)}
+                onChange={(e) => handleBiayaSewa(e.target.value)}
               />
             </div>
           </DialogBody>

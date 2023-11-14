@@ -27,15 +27,13 @@ class KdoMobilResource extends JsonResource
             'periode' => $this->biaya_sewas->flatMap(function ($data) {
                 return [strtolower(Carbon::parse($data->periode)->format('F')) => $data->value != 0 ? number_format($data->value, 0, ',', '.') : '-'];
             }),
-            'latest_periode' => $latest_periode,
+            'biaya_sewa' => $latest_periode,
             'biaya_sewas' => $this->biaya_sewas->map(function ($data) {
                 $data[strtolower(Carbon::parse($data->periode)->format('F'))] = $data->value != 0 ? number_format($data->value, 0, ',', '.') : '-';
                 return $data;
             })->filter(function ($data) {
                 return $data->value > 0;
-            }),
-            'year' => isset($latest_periode) ? Carbon::parse($latest_periode->periode)->year : Carbon::now()->year,
-            'month' => isset($latest_periode) ? Carbon::parse($latest_periode->periode)->month : Carbon::now()->month,
+            })->toArray(),
             'branches' => $this->branches,
             'total_sewa' => number_format(collect($this->biaya_sewas)->sum('value'), 0, ',', '.')
         ];

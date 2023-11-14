@@ -11,7 +11,7 @@
             <th>Layanan ATM</th>
             <th>NPWP</th>
             <th>NITKU</th>
-            <th>Status Cabang</th>
+            <th>Status Kepemilikan</th>
             <th>Masa Sewa</th>
             <th>Jatuh Tempo Sewa</th>
             <th>Open Date Cabang</th>
