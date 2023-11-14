@@ -13,6 +13,7 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
+use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -51,11 +52,7 @@ class GapKdoController extends Controller
             $branch = Branch::find($item->branch_id);
 
             $biaya_sewa = $item->gap_kdo_mobil->flatMap(function ($mobil) {
-
-                $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                return $mobil->biaya_sewa;
-            })->filter(function($item) {
-                return $item['value'] > 0;
+                return $mobil->biaya_sewas;
             })->groupBy('periode')->sortKeysDesc()->first();
             $item = [
                 'id' => $item->id,
@@ -151,6 +148,37 @@ class GapKdoController extends Controller
                 'akhir_sewa' => $request->akhir_sewa,
                 'biaya_sewa' => [['periode' => Carbon::create($request->year, $request->month, 1), 'value' => $request->biaya_sewa]],
             ]);
+
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+        } catch (Throwable $e) {
+            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+    public function kdo_mobil_update(Request $request, $id)
+    {
+        $branch = Branch::find($request->branch_id);
+        try {
+            $gap_kdo_mobil = GapKdoMobil::find($id);
+            $gap_kdo_mobil->update([
+                'branch_id' => $request->branch_id,
+                'gap_kdo_id' => $request->gap_kdo_id,
+                'vendor' => $request->vendor,
+                'nopol' => $request->nopol,
+                'awal_sewa' => $request->awal_sewa,
+                'akhir_sewa' => $request->akhir_sewa,
+            ]);
+            $periode = Carbon::createFromDate($request->year, $request->month, 1)->startOfDay();
+            if (is_int($request->biaya_sewa)) {
+
+                KdoMobilBiayaSewa::create([
+                    'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
+                    'periode' => $periode->format('Y-m-d'),
+                    'value' => $request->biaya_sewa
+                ]);
+            } else {
+                $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
+                $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
+            }
 
             return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {

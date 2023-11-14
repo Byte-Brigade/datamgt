@@ -139,8 +139,9 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-    }
 
+    console.log(data.data);
+    }
     if (dataArr) {
       console.log(dataArr);
       setData(dataArr);

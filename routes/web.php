@@ -72,7 +72,6 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Employees */
         Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
         Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
         Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
         Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
@@ -87,6 +86,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
             Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
             Route::post('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdo.mobil.store');
+            Route::put('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdo.mobil.update');
             Route::delete('/kdo/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdo.mobil.destroy');
             Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
             Route::get('/kdo/mobil/{branch_code}/export', [GapKdoController::class, 'kdo_mobil_export'])->name('kdo.mobil.export');

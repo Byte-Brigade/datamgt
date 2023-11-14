@@ -112,16 +112,16 @@ export default function Dashboard({
         data: labels.map((label) =>
           branchId
             ? data.employees.filter(
-                (employee) =>
-                  employee.employee_positions.position_name === label &&
-                  employee.branch_id === branchId &&
-                  (area === "none" || employee.branches.area === area)
-              ).length
+              (employee) =>
+                employee.employee_positions.position_name === label &&
+                employee.branch_id === branchId &&
+                (area === "none" || employee.branches.area === area)
+            ).length
             : data.employees.filter(
-                (employee) =>
-                  employee.employee_positions.position_name === label &&
-                  (area === "none" || employee.branches.area === area)
-              ).length
+              (employee) =>
+                employee.employee_positions.position_name === label &&
+                (area === "none" || employee.branches.area === area)
+            ).length
         ),
         backgroundColor: "rgba(255, 56, 56  , 1)",
       },
@@ -229,13 +229,13 @@ export default function Dashboard({
                 <Typography>
                   {branchId
                     ? data.branches.filter(
-                        (branch) =>
-                          (branch.id == branchId && area === "none") ||
-                          branch.area === area
-                      ).length
+                      (branch) =>
+                        (branch.id == branchId && area === "none") ||
+                        branch.area === area
+                    ).length
                     : data.branches.filter(
-                        (branch) => area === "none" || branch.area === area
-                      ).length}
+                      (branch) => area === "none" || branch.area === area
+                    ).length}
                 </Typography>
               </div>
             </div>
@@ -270,14 +270,14 @@ export default function Dashboard({
                 <Typography>
                   {branchId
                     ? data.jumlahKaryawan.filter(
-                        (employee) =>
-                          employee.branch_id == branchId &&
-                          (area === "none" || employee.branches.area === area)
-                      ).length
+                      (employee) =>
+                        employee.branch_id == branchId &&
+                        (area === "none" || employee.branches.area === area)
+                    ).length
                     : data.jumlahKaryawan.filter(
-                        (employee) =>
-                          area === "none" || employee.branches.area === area
-                      ).length}
+                      (employee) =>
+                        area === "none" || employee.branches.area === area
+                    ).length}
                 </Typography>
               </div>
             </div>
@@ -478,7 +478,7 @@ export default function Dashboard({
           {/* Jumlah Asset */}
           {active === "asset" && (
             <table className={`text-sm leading-3 bg-white mt-2`}>
-              <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+              <thead className="sticky top-16 border-b-2 table-fixed border-slate-200">
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th
                     className="text-center border-r border-slate-200"
@@ -497,7 +497,7 @@ export default function Dashboard({
                   {/* Kategori A (Asset Depresiasi) */}
                   {/* Kategori A (Asset Non-Depresiasi) */}
                 </tr>
-                <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200">
+                <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th className="text-center">Item</th>
                   <th className="text-center">Nilai Perolehan</th>
                   <th className="text-center">Penyusutan</th>
@@ -507,21 +507,21 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
-                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b  divide-x divide-slate-200 border-slate-200">
+                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
                   {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
                     ([key, item]) =>
                       key === "Depre" ? (
                         <>
                           <td className="text-center">{item.jumlah_item}</td>
-                          <td className="text-center">
-                            {item.nilai_perolehan}
+                          <td className="text-right">
+                            {item.nilai_perolehan.toLocaleString('id-ID')}
                           </td>
 
-                          <td className="text-center">{item.penyusutan}</td>
+                          <td className="text-right">{item.penyusutan.toLocaleString('id-ID')}</td>
 
                           {item.net_book_value > 0 && (
-                            <td className="text-center">
+                            <td className="text-right">
                               {item.net_book_value.toLocaleString('id-ID')}
                             </td>
                           )}
@@ -555,7 +555,15 @@ export default function Dashboard({
                               ).length
                             }
                           </td>
-                          <td className="text-center"></td>
+                          <td className="text-right">{
+                            data.assets.filter(
+                              (item) =>
+                                item.branch_name !== "Kantor Pusat" &&
+                                item.category === "Depre"
+                            ).reduce((total, item) => {
+                              return total + item.asset_cost
+                            }, 0).toLocaleString('id-ID')
+                          }</td>
 
                           <td className="text-center"></td>
 
@@ -583,7 +591,7 @@ export default function Dashboard({
                             }
                           </td>
                           <td className="text-center">
-                            {item.nilai_perolehan}
+                            {item.nilai_perolehan.toLocaleString('id-ID')}
                           </td>
                         </>
                       )
@@ -596,7 +604,7 @@ export default function Dashboard({
                       lokasi !== "Kantor Pusat" && (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                           <td key={index} colSpan={2}>
-                            > {lokasi}
+                            {`> ${lokasi}`}
                           </td>
                           {Object.entries(data.summary_assets[lokasi]).map(
                             ([key, item]) =>
@@ -605,16 +613,16 @@ export default function Dashboard({
                                   <td className="text-center">
                                     {item.jumlah_item}
                                   </td>
-                                  <td className="text-center">
-                                    {item.nilai_perolehan}
+                                  <td className="text-right">
+                                    {item.nilai_perolehan.toLocaleString('id-ID')}
                                   </td>
 
-                                  <td className="text-center">
-                                    {item.penyusutan}
+                                  <td className="text-right">
+                                    {item.penyusutan.toLocaleString('id-ID')}
                                   </td>
 
                                   {item.net_book_value > 0 && (
-                                    <td className="text-center">
+                                    <td className="text-right">
                                       {item.net_book_value.toLocaleString('id-ID')}
                                     </td>
                                   )}

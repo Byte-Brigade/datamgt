@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('asset_description')->nullable();
             $table->date('date_in_place_service')->nullable();
             $table->unsignedBigInteger('asset_cost')->nullable();
+            $table->unsignedBigInteger('accum_depre')->nullable();
             $table->string('asset_location')->nullable();
             $table->string('major_category');
             $table->string('minor_category')->nullable();

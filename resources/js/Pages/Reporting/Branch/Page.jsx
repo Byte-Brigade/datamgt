@@ -58,7 +58,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
       sortable: false,
       filterable: true,
     },
-    { name: "Status Cabang", field: "status" },
+    { name: "Status Kepemilikan", field: "status" },
     { name: "Masa Sewa", field: "masa_sewa" },
     { name: "Jatuh Tempo Sewa", field: "expired_date", type: "date" },
     { name: "Open Date Cabang", field: "open_date", type: "date" },
