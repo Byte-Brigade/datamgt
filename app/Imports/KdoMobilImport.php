@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Branch;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
+use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -29,29 +30,14 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
     {
         foreach ($rows as $row) {
             $row = $row->toArray();
-            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|july|august|sep|oct|nov|dec)$/i', array_keys($row))));
+            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
+
 
             $currentYear = date('Y');
 
             $periode = [];
-            foreach ($row as $key => $value) {
-                if (!is_null($value)) {
-                    $value = preg_replace('/[^0-9]/', '', $value);
-                    $tanggal_periode = '';
 
-                    if (preg_match('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)_\d{2}$/i', $key)) {
-                        $carbonDate = Carbon::createFromFormat('M_y', strtoupper($key));
-                        $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
-                        array_push($periode, ['periode' => $tanggal_periode, 'value' => (int) $value]);
-                    } elseif (is_numeric($key)) {
-                        $tanggal_periode = Date::excelToDateTimeObject($key)->format('Y-m-d');
-                        array_push($periode, ['periode' => $tanggal_periode, 'value' => (int) $value]);
-                    }
-                }
-            }
-
-
-            GapKdoMobil::updateOrCreate(
+            $gap_kdo_mobil = GapKdoMobil::updateOrCreate(
                 [
                     'gap_kdo_id' => $this->gap_kdo_id,
                     'nopol' => $row['nopol'],
@@ -66,6 +52,26 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
                     'biaya_sewa' => $periode
                 ]
             );
+            foreach ($filteredData as $key => $value) {
+                if (!is_null($value)) {
+                    $value = preg_replace('/[^0-9]/', '', $value);
+                    $tanggal_periode = strtoupper($key) . '_' . Carbon::now()->year;
+                    $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
+                    $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
+                    KdoMobilBiayaSewa::updateOrCreate(
+                        [
+                            'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
+                            'periode' => $tanggal_periode,
+                        ],
+
+                        [
+                            'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
+                            'periode' => $tanggal_periode,
+                            'value' => (int) $value
+                        ]
+                    );
+                }
+            }
         }
     }
 

@@ -8,7 +8,7 @@
             <th>Awal Sewa</th>
             <th>Akhir Sewa</th>
             @foreach ($months as $index => $month)
-                <th>{{ Carbon\Carbon::createFromFormat('m Y', $index + 1 . ' ' . $periode)->format('M-y') }}</th>
+                <th>{{ $month }}</th>
             @endforeach
             <th>Total Sewa</th>
         </tr>
@@ -27,8 +27,8 @@
                 <td>{{ Carbon\Carbon::parse($kdo_mobil->akhir_sewa)->format('d/m/Y') }}</td>
                 @foreach ($months as $index => $month)
                     @php
-                        $biaya_sewa = collect($kdo_mobil->biaya_sewa)->flatMap(function ($data) {
-                            return [strtolower(Carbon\Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? number_format($data['value'], 0, ',', '.') : '-'];
+                        $biaya_sewa = $kdo_mobil->biaya_sewas->flatMap(function ($data) {
+                            return [strtolower(Carbon\Carbon::parse($data['periode'])->format('M')) => $data['value'] != 0 ? number_format($data['value'], 0, ',', '.') : '-'];
                         });
                     @endphp
                     <td>{{ isset($biaya_sewa[strtolower($month)]) ? $biaya_sewa[strtolower($month)] : '' }}</td>

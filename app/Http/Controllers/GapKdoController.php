@@ -177,7 +177,12 @@ class GapKdoController extends Controller
                 ]);
             } else {
                 $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
-                $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
+                if($request->biaya_sewa['value'] >0) {
+
+                    $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
+                } else {
+                    $biaya_sewa->delete();
+                }
             }
 
             return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
@@ -234,7 +239,7 @@ class GapKdoController extends Controller
     public function kdo_mobil_export(Request $request)
     {
 
-        $fileName = 'Data_KDO_' . date('d-m-y') . '.xlsx';
+        $fileName = 'Template_Import_KDO_Mobil' . date('d-m-y') . '.xlsx';
         return (new KdoMobilSheet($request->gap_kdo_id))->download($fileName);
     }
 }

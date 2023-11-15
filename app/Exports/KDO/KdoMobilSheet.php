@@ -24,8 +24,8 @@ class KdoMobilSheet implements FromView, ShouldAutoSize, WithTitle, WithColumnFo
     use Exportable;
 
     private $months = [
-        "January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+        "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
     public function view(): View
     {
