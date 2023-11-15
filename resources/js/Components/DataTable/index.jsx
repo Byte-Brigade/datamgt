@@ -27,6 +27,7 @@ export default function DataTable({
   component = [],
   footCols = { name: "", span: 0 },
   agg,
+  parameters = {},
   bordered = false
 }) {
   const [data, setData] = useState([]);
@@ -119,6 +120,7 @@ export default function DataTable({
   const fetchData = async (currPage = 0) => {
     setLoading(true);
     const params = {
+      ...parameters,
       page: currPage > 0 ? currPage : currentPage,
       perpage: perPage,
       sort_field: sortColumn,

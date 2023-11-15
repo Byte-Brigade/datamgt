@@ -50,6 +50,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
+        Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+        Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+
     });
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {

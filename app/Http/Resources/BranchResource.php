@@ -51,7 +51,7 @@ class BranchResource extends JsonResource
             'branch_types' => $branch_types,
             'photo' => $this->photo,
             'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
-
+            'assets' => $this->gap_assets
 
 
         ];
