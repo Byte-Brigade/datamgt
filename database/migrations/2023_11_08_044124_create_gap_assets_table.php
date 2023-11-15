@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('asset_location')->nullable();
             $table->string('major_category');
             $table->string('minor_category')->nullable();
-            $table->decimal('depre_exp', 11, 2)->nullable();
+            $table->unsignedBigInteger('depre_exp')->nullable();
             $table->unsignedBigInteger('net_book_value')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InqueryAssetsResource;
 use App\Models\Branch;
 use App\Models\EmployeePosition;
 use App\Models\GapDisnaker;
@@ -14,6 +15,8 @@ use Inertia\Inertia;
 
 class InqueryController extends Controller
 {
+    protected array $sortFields = ['branch_types.type_name', 'branch_code', 'branch_name', 'address'];
+
     public function branch()
     {
         return Inertia::render('Inquery/Branch/Page');
@@ -30,7 +33,7 @@ class InqueryController extends Controller
         $ops_pajak_reklame = OpsPajakReklame::where('branch_id', $branch->id)->first();
         $ops_apar = OpsApar::where('branch_id', $branch->id)->first();
 
-        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->get()->map(function($disnaker) {
+        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->get()->map(function ($disnaker) {
             return [
                 'name' => $disnaker->jenis_perizinan->name,
                 'remark' =>  'Ada',
@@ -69,6 +72,18 @@ class InqueryController extends Controller
             'branch' => $branch,
             'positions' => $positions,
             'licenses' => $lisensi
+        ]);
+    }
+    public function assets()
+    {
+        return Inertia::render('Inquery/Asset/Page');
+    }
+
+    public function asset_detail($id)
+    {
+        $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
+        return Inertia::render('Inquery/Asset/Detail', [
+            'branch' => $branch,
         ]);
     }
 }
