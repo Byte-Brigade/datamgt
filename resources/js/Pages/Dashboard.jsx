@@ -542,10 +542,7 @@ export default function Dashboard({
                   className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
                 >
                   <td colSpan={2}>Kantor Cabang</td>
-                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
-                    ([key, item]) =>
-                      key === "Depre" ? (
-                        <>
+
                           <td className="text-center">
                             {
                               data.assets.filter(
@@ -565,7 +562,15 @@ export default function Dashboard({
                             }, 0).toLocaleString('id-ID')
                           }</td>
 
-                          <td className="text-center"></td>
+                          <td className="text-center">{data.assets
+                              .filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              )
+                              .reduce((total, item) => {
+                                return total + item.accum_depre;
+                              }, 0).toLocaleString('id-ID')}</td>
 
                           <td className="text-center">
                             {data.assets
@@ -578,9 +583,8 @@ export default function Dashboard({
                                 return total + item.net_book_value;
                               }, 0).toLocaleString('id-ID')}
                           </td>
-                        </>
-                      ) : (
-                        <>
+
+
                           <td className="text-center">
                             {
                               data.assets.filter(
@@ -591,11 +595,10 @@ export default function Dashboard({
                             }
                           </td>
                           <td className="text-center">
-                            {item.nilai_perolehan.toLocaleString('id-ID')}
+
                           </td>
-                        </>
-                      )
-                  )}
+
+
                 </tr>
 
                 {open &&
