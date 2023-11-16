@@ -560,6 +560,7 @@ export default function Dashboard({
                   className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
                 >
                   <td colSpan={2}>Kantor Cabang</td>
+<<<<<<< HEAD
                   {data.summary_assets["Kantor Pusat"] &&
                     Object.entries(data.summary_assets["Kantor Pusat"]).map(
                       ([key, item]) =>
@@ -619,6 +620,65 @@ export default function Dashboard({
                           </>
                         )
                     )}
+=======
+
+                          <td className="text-center">
+                            {
+                              data.assets.filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              ).length
+                            }
+                          </td>
+                          <td className="text-right">{
+                            data.assets.filter(
+                              (item) =>
+                                item.branch_name !== "Kantor Pusat" &&
+                                item.category === "Depre"
+                            ).reduce((total, item) => {
+                              return total + item.asset_cost
+                            }, 0).toLocaleString('id-ID')
+                          }</td>
+
+                          <td className="text-center">{data.assets
+                              .filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              )
+                              .reduce((total, item) => {
+                                return total + item.accum_depre;
+                              }, 0).toLocaleString('id-ID')}</td>
+
+                          <td className="text-center">
+                            {data.assets
+                              .filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Depre"
+                              )
+                              .reduce((total, item) => {
+                                return total + item.net_book_value;
+                              }, 0).toLocaleString('id-ID')}
+                          </td>
+
+
+                          <td className="text-center">
+                            {
+                              data.assets.filter(
+                                (item) =>
+                                  item.branch_name !== "Kantor Pusat" &&
+                                  item.category === "Non-Depre"
+                              ).length
+                            }
+                          </td>
+                          <td className="text-center">
+
+                          </td>
+
+
+>>>>>>> 347eea25ffebd780c4aab3190540a9b9de4318fb
                 </tr>
 
                 {open &&
