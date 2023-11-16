@@ -21,7 +21,7 @@ class GapAssetController extends Controller
     public function index()
     {
         $branchesProps = Branch::get();
-        return Inertia::render('GA/Asset/Page', ['branches' => $branchesProps]);
+        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branchesProps]);
     }
 
     protected array $sortFields = ['branches.branch_code',  'date_in_place_service', 'asset_cost', 'accum_depre', 'depre_exp', 'asset_number', 'category', 'date_in_place_service', 'net_book_value', 'depre_exp'];

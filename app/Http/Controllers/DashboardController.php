@@ -73,7 +73,8 @@ class DashboardController extends Controller
             'employees' => $employees,
             // 'assets' => $dataAsset,
             'summary_assets' => $gap_asset->sortBy('branches.branch_code')->map(function ($asset) {
-                $asset->branch_name = str_contains($asset->branches->branch_name, 'Sampoerna') ? 'Kantor Pusat' : $asset->branches->branch_name;
+                $asset->branch_name = str_contains($asset->branches->branch_name, 'Sampoerna') ? 'Sampoerna Strategic' : $asset->branches->branch_name;
+                $asset->branch_code = $asset->branches->branch_code;
                 return $asset;
             })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
                 return [$branch_name => $assets->groupBy('category')->map(function ($assets, $index) {

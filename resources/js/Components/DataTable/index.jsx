@@ -28,7 +28,8 @@ export default function DataTable({
   footCols = { name: "", span: 0 },
   agg,
   parameters = {},
-  bordered = false
+  bordered = false,
+  headings
 }) {
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
@@ -142,7 +143,7 @@ export default function DataTable({
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
 
-    console.log(data.data);
+      console.log(data.data);
     }
     if (dataArr) {
       console.log(dataArr);
@@ -293,21 +294,21 @@ export default function DataTable({
                     return component.map(({ data, field }, i) =>
                       column.field == field
                         ? data.map((item, index) => (
-                            <Checkbox
-                              onChange={(e) =>
-                                handleCheckboxData(e.target.value, field)
-                              }
-                              checked={
-                                filterData[field]
-                                  ? filterData[field].includes(item)
-                                  : false
-                              }
-                              label={item}
-                              key={index}
-                              className={column.className}
-                              value={item}
-                            />
-                          ))
+                          <Checkbox
+                            onChange={(e) =>
+                              handleCheckboxData(e.target.value, field)
+                            }
+                            checked={
+                              filterData[field]
+                                ? filterData[field].includes(item)
+                                : false
+                            }
+                            label={item}
+                            key={index}
+                            className={column.className}
+                            value={item}
+                          />
+                        ))
                         : ""
                     );
                   }
@@ -341,16 +342,27 @@ export default function DataTable({
         </Collapse>
       </div>
       <div
-        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
-          fixedTable ? "max-h-96" : "h-full"
-        }`}
+        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${fixedTable ? "max-h-96" : "h-full"
+          }`}
       >
         <table className={`${className} text-sm leading-3 bg-white`}>
           <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+            {headings && (
+              <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
+
+                {headings.map((column, i) => (
+                  <th key={i} rowSpan={column.rowSpan} colSpan={column.colSpan}>
+
+                    <div>{column.name}</div>
+
+                  </th>
+                ))}
+              </tr>
+            )}
             <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
-                <th key={column.name}>
+                <th key={i}>
                   {column.sortable === true ? (
                     <div
                       className="cursor-pointer hover:underline"
@@ -360,20 +372,18 @@ export default function DataTable({
                         {column.name}
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
+                            className={`${sortOrder === SORT_ASC &&
                               column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
+                              ? "text-slate-900"
+                              : "text-gray-400"
+                              } w-3 h-3`}
                           />
                           <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
+                            className={`${sortOrder === SORT_DESC &&
                               column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
-                            } w-3 h-3`}
+                              ? "text-slate-900"
+                              : "text-gray-400"
+                              } w-3 h-3`}
                           />
                         </span>
                       </div>
@@ -420,20 +430,20 @@ export default function DataTable({
                   {columns.map((column, id) =>
                     column.field ? (
                       column.field === "action" || column.field === "detail" ? (
-                        <td key={column.field} className={column.className}>
+                        <td key={column.field} colSpan={column.colSpan} className={column.className}>
                           {column.render(data)}
                         </td>
                       ) : (
-                        <td key={column.field} className={column.className}>
+                        <td key={column.field} colSpan={column.colSpan} className={column.className}>
                           {column.type === "date"
                             ? convertDate(getNestedValue(data, column.field))
                             : column.type === "custom"
-                            ? column.render(data)
-                            : getNestedValue(data, column.field) || "-"}
+                              ? column.render(data)
+                              : getNestedValue(data, column.field) || "-"}
                         </td>
                       )
                     ) : (
-                      <td key={id} className={column.className}>
+                      <td key={id} className={column.className} colSpan={column.colSpan} >
                         {column.value || "-"}
                       </td>
                     )

@@ -43,6 +43,10 @@ export function BreadcrumbsDefault() {
         return "Inquery Data";
       case "mobil":
         return "Detail";
+      case "scoring_projects":
+        return "Scoring Projects";
+      case "scoring_assessments":
+        return "Scoring Assessments";
       default:
         break;
     }
