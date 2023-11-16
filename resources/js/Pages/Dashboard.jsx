@@ -1,28 +1,25 @@
-import DataTable from "@/Components/DataTable";
+import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
-import { UserGroupIcon } from "@heroicons/react/24/solid";
+import {
+  ArchiveBoxIcon,
+  BuildingOffice2Icon,
+  CreditCardIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
+import { Option, Select, Typography } from "@material-tailwind/react";
 import {
-  Accordion,
-  AccordionBody,
-  Option,
-  Select,
-  Typography,
-} from "@material-tailwind/react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useState } from "react";
 import { Bar } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 
 ChartJS.register(
   CategoryScale,
@@ -112,16 +109,16 @@ export default function Dashboard({
         data: labels.map((label) =>
           branchId
             ? data.employees.filter(
-              (employee) =>
-                employee.employee_positions.position_name === label &&
-                employee.branch_id === branchId &&
-                (area === "none" || employee.branches.area === area)
-            ).length
+                (employee) =>
+                  employee.employee_positions.position_name === label &&
+                  employee.branch_id === branchId &&
+                  (area === "none" || employee.branches.area === area)
+              ).length
             : data.employees.filter(
-              (employee) =>
-                employee.employee_positions.position_name === label &&
-                (area === "none" || employee.branches.area === area)
-            ).length
+                (employee) =>
+                  employee.employee_positions.position_name === label &&
+                  (area === "none" || employee.branches.area === area)
+              ).length
         ),
         backgroundColor: "rgba(255, 56, 56  , 1)",
       },
@@ -164,7 +161,6 @@ export default function Dashboard({
     ],
   };
 
-  console.log(data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
@@ -202,13 +198,16 @@ export default function Dashboard({
                 onChange={(e) => handleFilterBranch(e)}
                 className="bg-white"
               >
-                <Option key={0} value="0">
-                  All
-                </Option>
-
                 {data.branches
                   .filter((branch) => area === "none" || branch.area === area)
                   .map((branch, index) => {
+                    if (index === 0) {
+                      return (
+                        <Option key={0} value="0">
+                          All
+                        </Option>
+                      );
+                    }
                     return (
                       <Option key={index} value={`${branch.id}`}>
                         {branch.branch_code} - {branch.branch_name}
@@ -221,7 +220,11 @@ export default function Dashboard({
           <div className="grid grid-cols-4 gap-x-4">
             <div
               onClick={() => setActive("cabang")}
-              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
+              className={`flex items-center px-4 py-2 border cursor-pointer gap-x-4 border-slate-400 rounded-xl ${
+                active === "cabang"
+                  ? "hover:bg-slate-200 bg-slate-100"
+                  : "bg-white hover:bg-slate-200"
+              } transition-all duration-300 focus:ring-2`}
             >
               <BuildingOffice2Icon className="w-10 h-10" />
               <div className="flex flex-col">
@@ -229,21 +232,25 @@ export default function Dashboard({
                 <Typography>
                   {branchId
                     ? data.branches.filter(
-                      (branch) =>
-                        (branch.id == branchId && area === "none") ||
-                        branch.area === area
-                    ).length
+                        (branch) =>
+                          (branch.id == branchId && area === "none") ||
+                          branch.area === area
+                      ).length
                     : data.branches.filter(
-                      (branch) => area === "none" || branch.area === area
-                    ).length}
+                        (branch) => area === "none" || branch.area === area
+                      ).length}
                 </Typography>
               </div>
             </div>
             <div
               onClick={() => setActive("atm")}
-              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
+              className={`flex items-center px-4 py-2 border cursor-pointer gap-x-4 border-slate-400 rounded-xl ${
+                active === "atm"
+                  ? "hover:bg-slate-200 bg-slate-100"
+                  : "bg-white hover:bg-slate-200"
+              } transition-all duration-300`}
             >
-              <BuildingOffice2Icon className="w-10 h-10" />
+              <CreditCardIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah ATM</Typography>
                 <Typography>
@@ -262,7 +269,11 @@ export default function Dashboard({
             </div>
             <div
               onClick={() => setActive("karyawan")}
-              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
+              className={`flex items-center px-4 py-2 border cursor-pointer gap-x-4 border-slate-400 rounded-xl ${
+                active === "karyawan"
+                  ? "hover:bg-slate-200 bg-slate-100"
+                  : "bg-white hover:bg-slate-200"
+              } transition-all duration-300`}
             >
               <UserGroupIcon className="w-10 h-10" />
               <div className="flex flex-col">
@@ -270,22 +281,26 @@ export default function Dashboard({
                 <Typography>
                   {branchId
                     ? data.jumlahKaryawan.filter(
-                      (employee) =>
-                        employee.branch_id == branchId &&
-                        (area === "none" || employee.branches.area === area)
-                    ).length
+                        (employee) =>
+                          employee.branch_id == branchId &&
+                          (area === "none" || employee.branches.area === area)
+                      ).length
                     : data.jumlahKaryawan.filter(
-                      (employee) =>
-                        area === "none" || employee.branches.area === area
-                    ).length}
+                        (employee) =>
+                          area === "none" || employee.branches.area === area
+                      ).length}
                 </Typography>
               </div>
             </div>
             <div
               onClick={() => setActive("asset")}
-              className="flex items-center px-4 py-2 bg-white border cursor-pointer gap-x-4 border-slate-400 rounded-xl"
+              className={`flex items-center px-4 py-2 border cursor-pointer gap-x-4 border-slate-400 rounded-xl ${
+                active === "asset"
+                  ? "hover:bg-slate-200 bg-slate-100"
+                  : "bg-white hover:bg-slate-200"
+              } transition-all duration-300`}
             >
-              <UserGroupIcon className="w-10 h-10" />
+              <ArchiveBoxIcon className="w-10 h-10" />
               <div className="flex flex-col">
                 <Typography variant="h5">Jumlah Asset</Typography>
                 <Typography>
@@ -478,7 +493,7 @@ export default function Dashboard({
           {/* Jumlah Asset */}
           {active === "asset" && (
             <table className={`text-sm leading-3 bg-white mt-2`}>
-              <thead className="sticky top-16 border-b-2 table-fixed border-slate-200">
+              <thead className="sticky border-b-2 table-fixed top-16 border-slate-200">
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th
                     className="text-center border-r border-slate-200"
@@ -509,32 +524,35 @@ export default function Dashboard({
               <tbody className="overflow-y-auto">
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
-                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
-                    ([key, item]) =>
-                      key === "Depre" ? (
-                        <>
-                          <td className="text-center">{item.jumlah_item}</td>
-                          <td className="text-right">
-                            {item.nilai_perolehan.toLocaleString('id-ID')}
-                          </td>
-
-                          <td className="text-right">{item.penyusutan.toLocaleString('id-ID')}</td>
-
-                          {item.net_book_value > 0 && (
+                  {data.summary_assets["Kantor Pusat"] &&
+                    Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                      ([key, item]) =>
+                        key === "Depre" ? (
+                          <>
+                            <td className="text-center">{item.jumlah_item}</td>
                             <td className="text-right">
-                              {item.net_book_value.toLocaleString('id-ID')}
+                              {item.nilai_perolehan.toLocaleString("id-ID")}
                             </td>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <td className="text-center">{item.jumlah_item}</td>
-                          <td className="text-center">
-                            {item.nilai_perolehan}
-                          </td>
-                        </>
-                      )
-                  )}
+
+                            <td className="text-right">
+                              {item.penyusutan.toLocaleString("id-ID")}
+                            </td>
+
+                            {item.net_book_value > 0 && (
+                              <td className="text-right">
+                                {item.net_book_value.toLocaleString("id-ID")}
+                              </td>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <td className="text-center">{item.jumlah_item}</td>
+                            <td className="text-center">
+                              {item.nilai_perolehan}
+                            </td>
+                          </>
+                        )
+                    )}
                 </tr>
 
                 <tr
@@ -542,60 +560,65 @@ export default function Dashboard({
                   className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
                 >
                   <td colSpan={2}>Kantor Cabang</td>
-                  {data.summary_assets["Kantor Pusat"] && Object.entries(data.summary_assets["Kantor Pusat"]).map(
-                    ([key, item]) =>
-                      key === "Depre" ? (
-                        <>
-                          <td className="text-center">
-                            {
-                              data.assets.filter(
-                                (item) =>
-                                  item.branch_name !== "Kantor Pusat" &&
-                                  item.category === "Depre"
-                              ).length
-                            }
-                          </td>
-                          <td className="text-right">{
-                            data.assets.filter(
-                              (item) =>
-                                item.branch_name !== "Kantor Pusat" &&
-                                item.category === "Depre"
-                            ).reduce((total, item) => {
-                              return total + item.asset_cost
-                            }, 0).toLocaleString('id-ID')
-                          }</td>
+                  {data.summary_assets["Kantor Pusat"] &&
+                    Object.entries(data.summary_assets["Kantor Pusat"]).map(
+                      ([key, item]) =>
+                        key === "Depre" ? (
+                          <>
+                            <td className="text-center">
+                              {
+                                data.assets.filter(
+                                  (item) =>
+                                    item.branch_name !== "Kantor Pusat" &&
+                                    item.category === "Depre"
+                                ).length
+                              }
+                            </td>
+                            <td className="text-right">
+                              {data.assets
+                                .filter(
+                                  (item) =>
+                                    item.branch_name !== "Kantor Pusat" &&
+                                    item.category === "Depre"
+                                )
+                                .reduce((total, item) => {
+                                  return total + item.asset_cost;
+                                }, 0)
+                                .toLocaleString("id-ID")}
+                            </td>
 
-                          <td className="text-center"></td>
+                            <td className="text-center"></td>
 
-                          <td className="text-center">
-                            {data.assets
-                              .filter(
-                                (item) =>
-                                  item.branch_name !== "Kantor Pusat" &&
-                                  item.category === "Depre"
-                              )
-                              .reduce((total, item) => {
-                                return total + item.net_book_value;
-                              }, 0).toLocaleString('id-ID')}
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          <td className="text-center">
-                            {
-                              data.assets.filter(
-                                (item) =>
-                                  item.branch_name !== "Kantor Pusat" &&
-                                  item.category === "Non-Depre"
-                              ).length
-                            }
-                          </td>
-                          <td className="text-center">
-                            {item.nilai_perolehan.toLocaleString('id-ID')}
-                          </td>
-                        </>
-                      )
-                  )}
+                            <td className="text-center">
+                              {data.assets
+                                .filter(
+                                  (item) =>
+                                    item.branch_name !== "Kantor Pusat" &&
+                                    item.category === "Depre"
+                                )
+                                .reduce((total, item) => {
+                                  return total + item.net_book_value;
+                                }, 0)
+                                .toLocaleString("id-ID")}
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="text-center">
+                              {
+                                data.assets.filter(
+                                  (item) =>
+                                    item.branch_name !== "Kantor Pusat" &&
+                                    item.category === "Non-Depre"
+                                ).length
+                              }
+                            </td>
+                            <td className="text-center">
+                              {item.nilai_perolehan.toLocaleString("id-ID")}
+                            </td>
+                          </>
+                        )
+                    )}
                 </tr>
 
                 {open &&
@@ -614,16 +637,20 @@ export default function Dashboard({
                                     {item.jumlah_item}
                                   </td>
                                   <td className="text-right">
-                                    {item.nilai_perolehan.toLocaleString('id-ID')}
+                                    {item.nilai_perolehan.toLocaleString(
+                                      "id-ID"
+                                    )}
                                   </td>
 
                                   <td className="text-right">
-                                    {item.penyusutan.toLocaleString('id-ID')}
+                                    {item.penyusutan.toLocaleString("id-ID")}
                                   </td>
 
                                   {item.net_book_value > 0 && (
                                     <td className="text-right">
-                                      {item.net_book_value.toLocaleString('id-ID')}
+                                      {item.net_book_value.toLocaleString(
+                                        "id-ID"
+                                      )}
                                     </td>
                                   )}
                                 </>

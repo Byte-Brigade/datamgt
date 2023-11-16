@@ -381,7 +381,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider>
+          <DialogBody className="overflow-y-auto max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -495,7 +495,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+          <DialogBody className="overflow-y-auto max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
