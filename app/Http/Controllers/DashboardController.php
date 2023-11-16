@@ -8,6 +8,8 @@ use App\Models\BranchType;
 use App\Models\Employee;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
+use App\Models\GapScoringAssessment;
+use App\Models\GapScoringProject;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -58,6 +60,8 @@ class DashboardController extends Controller
         ];
 
         $gap_asset = GapAsset::with('branches')->get();
+        $gap_scoring_projects = GapScoringProject::with('branches')->get();
+        $gap_scoring_assessments = GapScoringAssessment::with('branches')->get();
 
 
 
@@ -88,6 +92,8 @@ class DashboardController extends Controller
                 })];
             }),
             'assets' => $gap_asset,
+            'gap_scoring_projects' => $gap_scoring_projects,
+            'gap_scoring_assessments' => $gap_scoring_assessments,
             'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),
             'jumlah_cabang_alt' => $branches->groupBy('branch_types.type_name'),
         ];

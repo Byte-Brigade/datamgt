@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gap_scoring_projects', function (Blueprint $table) {
+        Schema::create('gap_scorings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->string('entity');
@@ -22,17 +22,17 @@ return new class extends Migration
             $table->string('status_pekerjaan');
             $table->string('dokumen_perintah_kerja');
             $table->string('vendor');
-            $table->unsignedBigInteger('nilai_project');
-            $table->date('tgl_selesai_pekerjaan');
-            $table->date('tgl_bast');
-            $table->date('tgl_request_scoring');
+            $table->unsignedBigInteger('nilai_project')->nullable();
+            $table->date('tgl_selesai_pekerjaan')->nullable();
+            $table->date('tgl_bast')->nullable();
+            $table->date('tgl_request_scoring')->nullable();
             $table->date('tgl_scoring')->nullable();
-            $table->integer('sla');
-            $table->integer('actual');
-            $table->boolean('meet_the_sla');
+            $table->integer('sla')->nullable();
+            $table->integer('actual')->nullable();
+            $table->boolean('meet_the_sla')->nullable();
             $table->string('scoring_vendor')->nullable();
             $table->string('schedule_scoring');
-            $table->string('type')->nullable();
+            $table->string('type');
             $table->text('keterangan')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
@@ -46,6 +46,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gap_scoring_projects');
+        Schema::dropIfExists('gap_scorings');
     }
 };
