@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Imports\GapScoringAssessmentsImport;
 use App\Models\Branch;
+use App\Models\GapScoring;
 use App\Models\GapScoringAssessment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,14 +26,14 @@ class GapScoringAssessmentController extends Controller
 
     protected array $sortFields = ['branches.branch_code','entity'];
 
-    public function api(GapScoringAssessment $gap_scoring_assessment, Request $request)
+    public function api(GapScoring $gap_scoring_assessment, Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_scoring_assessment->select('gap_scoring_assessments.*')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'gap_scoring_assessments.branch_id', 'branches.id');
+        $query = $gap_scoring_assessment->select('gap_scorings.*')->where('type','Assessment')->orderBy($sortField, $sortOrder)
+            ->join('branches', 'gap_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 

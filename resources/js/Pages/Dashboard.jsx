@@ -96,7 +96,20 @@ export default function Dashboard({
   };
 
   const handleOpen = (value) => setOpen(!open);
+  const groupBy = (array, key) => array.reduce((result, item) => {
+    // Extract the value for the current key
+    const keyValue = item[key];
 
+    // If the key doesn't exist in the result object, create it with an empty array
+    if (!result[keyValue]) {
+      result[keyValue] = [];
+    }
+
+    // Push the current item to the array associated with the key
+    result[keyValue].push(item);
+
+    return result;
+  }, {})
   let labels = data.employee_positions.map(
     (position) => position.position_name
   );
@@ -316,17 +329,13 @@ export default function Dashboard({
             >
               <ArchiveBoxIcon className="w-10 h-10" />
               <div className="flex flex-col">
-                <Typography variant="h5">Jumlah Scoring Procurement</Typography>
+                <Typography variant="h5">Jumlah Scoring Proc</Typography>
                 <Typography>
                   {
-                    data.gap_scoring_projects.filter(
+                    data.gap_scorings.filter(
                       (project) =>
                         (branchId === 0 || project.branch_id == branchId) &&
                         (area === "none" || project.branches.area == area)
-                    ).length + data.gap_scoring_assessments.filter(
-                      (assessment) =>
-                        (branchId === 0 || assessment.branch_id == branchId) &&
-                        (area === "none" || assessment.branches.area == area)
                     ).length
                   }
                 </Typography>
@@ -727,6 +736,33 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
+                {Object.entries(groupBy(data.gap_scorings, 'schedule_scoring')).map(([key, scoring]) => (
+                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
+                  <td colSpan={2} className="text-center">{key}</td>
+                  <td className="text-center" colSpan={2}>{scoring.length}</td>
+
+                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
+                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
+
+                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
+                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
+                  <td className="text-center">{scoring.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
+                  <td className="text-center">{scoring.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                </tr>
+                ))
+                }
+                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
+
+                    <td colSpan={2}className="font-bold text-center">Total</td>
+                    <td colSpan={2}className="font-bold text-center">{data.gap_scorings.length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
+                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                </tr>
+
                 {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
                   {data.summary_assets["Kantor Pusat"] &&

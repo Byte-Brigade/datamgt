@@ -24,15 +24,15 @@ class GapScoringProjectsImport implements ToModel, WithHeadingRow, WithUpserts, 
     public function model(array $row)
     {
         $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
-        if ($branch) {
+        if ($branch && $row['type'] == 'Project') {
 
 
 
             // Menambahkan jumlah hari dari tanggal Excel
             $tgl_bast = Date::excelToDateTimeObject($row['tgl_bast'])->format('Y-m-d');
             $tgl_scoring = Date::excelToDateTimeObject($row['tgl_scoring'])->format('Y-m-d');
-            $actual = Carbon::createFromFormat('Y-m-d', $tgl_bast)->diffInDays($tgl_scoring);
-            return new GapScoringProject([
+            $actual = Carbon::createFromFormat('Y-m-d', $tgl_bast)->diffInDays($tgl_scoring) + 1;
+            return new GapScoring([
                 'branch_id' => $branch->id,
                 'entity' => $row['entity'],
                 'description' => $row['description'],
@@ -48,7 +48,7 @@ class GapScoringProjectsImport implements ToModel, WithHeadingRow, WithUpserts, 
                 'tgl_scoring' => $tgl_scoring,
                 'sla' => $row['sla'],
                 'actual' => $actual,
-                'meet_the_sla' => $actual <= 14 ? true : false,
+                'meet_the_sla' => $actual < 15 ? true : ($actual > 14 ? false : true),
                 'scoring_vendor' => $row['scoring_vendor'],
                 'schedule_scoring' => $row['schedule_scoring'],
                 'type' => $row['type'],

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\Scoring\ProjectsExport;
 use App\Http\Resources\ScoringProjectsResource;
 use App\Imports\GapScoringProjectsImport;
+use App\Imports\GapScoringsImport;
 use App\Models\Branch;
+use App\Models\GapScoring;
 use App\Models\GapScoringProject;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,14 +28,14 @@ class GapScoringProjectController extends Controller
 
     protected array $sortFields = ['branches.branch_code','entity'];
 
-    public function api(GapScoringProject $gap_scoring_project, Request $request)
+    public function api(GapScoring $gap_scoring_project, Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_scoring_project->select('gap_scoring_projects.*')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'gap_scoring_projects.branch_id', 'branches.id');
+        $query = $gap_scoring_project->select('gap_scorings.*')->where('type','Project')->orderBy($sortField, $sortOrder)
+            ->join('branches', 'gap_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 
@@ -69,7 +71,7 @@ class GapScoringProjectController extends Controller
 
     public function export()
     {
-        $fileName = 'Data_GAP_Scoring_Projects' . date('d-m-y') . '.xlsx';
+        $fileName = 'Data_GAP_Scorings' . date('d-m-y') . '.xlsx';
         return (new ProjectsExport)->download($fileName);
     }
     /**

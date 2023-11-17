@@ -25,15 +25,16 @@ class GapScoringAssessmentsImport implements ToModel, WithHeadingRow, WithUpsert
     public function model(array $row)
     {
         $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
-        if ($branch) {
+        if ($branch && $row['type'] == 'Assessment') {
 
 
             $tgl_scoring = is_int($row['tgl_scoring']) ? Date::excelToDateTimeObject($row['tgl_scoring'])->format('Y-m-d') : null;
-            return new GapScoringAssessment([
+            return new GapScoring([
                 'branch_id' => $branch->id,
                 'entity' => $row['entity'],
                 'description' => $row['deskripsi'],
                 'pic' => $row['pic'],
+                'status_pekerjaan' => !is_null($row['scoring_vendor']) ? 'Done' : 'On Progress',
                 'schedule_scoring' => $row['schedule_scoring'],
                 'dokumen_perintah_kerja' => $row['dokumen_perintah_kerja'],
                 'vendor' => $row['nama_vendor'],

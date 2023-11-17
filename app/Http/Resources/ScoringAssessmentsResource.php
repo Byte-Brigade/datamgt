@@ -18,6 +18,7 @@ class ScoringAssessmentsResource extends JsonResource
             'id' => $this->id,
             'branch_id' => $this->branch_id,
             'pic' => $this->pic,
+            'status_pekerjaan' => $this->status_pekerjaan,
             'entity' => $this->entity,
             'description' => $this->description,
             'dokumen_perintah_kerja' => $this->dokumen_perintah_kerja,

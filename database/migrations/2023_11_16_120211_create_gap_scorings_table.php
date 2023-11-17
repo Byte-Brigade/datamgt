@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->string('entity');
-            $table->text('description');
+            $table->string('description');
             $table->string('pic');
-            $table->string('status_pekerjaan');
+            $table->enum('status_pekerjaan', ['Done', 'On Progress']);
             $table->string('dokumen_perintah_kerja');
             $table->string('vendor');
             $table->unsignedBigInteger('nilai_project')->nullable();
@@ -31,11 +31,12 @@ return new class extends Migration
             $table->integer('actual')->nullable();
             $table->boolean('meet_the_sla')->nullable();
             $table->string('scoring_vendor')->nullable();
-            $table->string('schedule_scoring');
+            $table->char('schedule_scoring', 20)->nullable();
             $table->string('type');
             $table->text('keterangan')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['description','vendor']);
         });
     }
 

@@ -70,6 +70,10 @@ export default function Page({ auth, branches, sessions }) {
       field: "description",
     },
     {
+      name: "Status Pekerjaan",
+      field: "status_pekerjaan",
+    },
+    {
       name: "PIC",
       field: "pic",
     },
