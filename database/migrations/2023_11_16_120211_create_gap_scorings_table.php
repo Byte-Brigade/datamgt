@@ -36,7 +36,7 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
-            $table->unique(['description','vendor']);
+            $table->unique(['description','vendor','type']);
         });
     }
 

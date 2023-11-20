@@ -31,7 +31,7 @@ class ScoringProjectsResource extends JsonResource
             'sla' => $this->sla,
             'actual' => $this->actual,
             'meet_the_sla' => $this->meet_the_sla == 1 ? 'YES' : 'NO'   ,
-            'scoring_schedule' => $this->scoring_schedule,
+            'schedule_scoring' => $this->schedule_scoring,
             'scoring_vendor' => $this->scoring_vendor,
             'type' => $this->type,
             'keterangan' => $this->keterangan,

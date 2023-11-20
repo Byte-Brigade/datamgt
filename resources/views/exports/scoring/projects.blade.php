@@ -37,7 +37,7 @@
                 <td>{{ $scoring_project->status_pekerjaan }}</td>
                 <td>{{ $scoring_project->dokumen_perintah_kerja }}</td>
                 <td>{{ $scoring_project->nama_vendor }}</td>
-                <td>{{ number_format($scoring_project->nilai_project, 0, ',', '.') }}</td>
+                <td>{{ $scoring_project->nilai_project}}</td>
                 <td>{{ Carbon\Carbon::parse($scoring_project->tgl_selesai_pekerjaan)->format('d/m/Y') }}</td>
                 <td>{{ Carbon\Carbon::parse($scoring_project->tgl_bast)->format('d/m/Y') }}</td>
                 <td>{{ Carbon\Carbon::parse($scoring_project->tgl_request_scoring)->format('d/m/Y') }}</td>

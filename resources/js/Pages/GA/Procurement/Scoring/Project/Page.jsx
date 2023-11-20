@@ -26,22 +26,26 @@ import { useState } from "react";
 export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
-    category: null,
-    asset_number: null,
-    asset_description: null,
-    date_in_place_service: null,
-    asset_cost: null,
-    asset_location: null,
-    major_category: null,
-    minor_category: null,
-    depre_exp: null,
-    net_book_value: null,
+    description: null,
+    pic: null,
+    status_pekerjaan: null,
+    dokumen_perintah_kerja: null,
+    vendor: null,
+    nilai_project: null,
+    tgl_selesai_pekerjaan: null,
+    tgl_bast: null,
+    tgl_request_scoring: null,
+    tgl_scoring: null,
+    sla: null,
+    actual: null,
+    scoring_vendor: null,
+    schedule_scoring: null,
+    keterangan: null,
 
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    expired_date: null,
   };
   const {
     data,
@@ -131,6 +135,10 @@ export default function Page({ auth, branches, sessions }) {
       field: "scoring_vendor",
     },
     {
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
+    },
+    {
       name: "Action",
       field: "action",
       className: "text-center",
@@ -213,6 +221,33 @@ export default function Page({ auth, branches, sessions }) {
     });
   };
 
+  const calculateDifference = (startDate, endDate) => {
+    let days = 0;
+    const tgl_bast = new Date(startDate)
+    const tgl_scoring = new Date(endDate)
+    if (isNaN(tgl_bast) || isNaN(tgl_bast)) {
+      console.log("tgl tidak valid")
+      return;
+    }
+    const difference = Math.abs(tgl_scoring - tgl_bast); // Menggunakan nilai mutlak
+    days = difference / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+    console.log(days)
+    setData({ ...data, tgl_bast: startDate, tgl_scoring: endDate, actual: days })
+  };
+
+
+  const handleTglBast = (e) => {
+    setData('tgl_bast', e.target.value)
+    calculateDifference(e.target.value, data.tgl_scoring)
+    console.log(e.target.value)
+  }
+  const handleTglScoring = (e) => {
+    setData('tgl_scoring', e.target.value)
+    calculateDifference(data.tgl_bast, e.target.value)
+    console.log(e.target.value)
+
+  }
+
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
   };
@@ -229,6 +264,7 @@ export default function Page({ auth, branches, sessions }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -397,7 +433,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -405,82 +441,139 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
+                {branches.map((branch) =>
+                  branch.branch_name.includes("Pusat") ? (
+                    <Option value={`${branch.id}`}>
+                      {branch.branch_name}
+                    </Option>
+                  ) : (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  )
+                )}
               </Select>
+
+
+              <Input
+                label="Deskripsi"
+                value={data.description || ""}
+                disabled={processing}
+                onChange={(e) => setData("description", e.target.value)}
+              />
+              <Input
+                label="PIC"
+                value={data.pic || ""}
+                disabled={processing}
+                onChange={(e) => setData("pic", e.target.value)}
+              />
               <Select
-                label="Branch"
-                value={`${data.category}`}
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
                 disabled={processing}
-                onChange={(e) => setData("category", e)}
+                onChange={(e) => setData("status_pekerjaan", e)}
               >
-                <Option value="Depre">Depre</Option>
-                <Option value="Non-Depre">Non-Depre</Option>
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
               </Select>
               <Input
-                label="Asset Number"
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
+                disabled={processing}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+              />
+              <Input
+                label="Vendor"
+                value={data.vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("vendor", e.target.value)}
+              />
+              <Input
+                label="Nilai Project"
                 type="number"
-                value={data.asset_number || ""}
+                value={data.nilai_project || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_number", e.target.value)}
+                onChange={(e) => setData("nilai_project", e.target.value)}
               />
               <Input
-                label="Asset Description"
-                value={data.asset_description || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_description", e.target.value)}
-              />
-              <Input
-                label="Asset Cost"
-                type="number"
-                value={data.asset_cost || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_cost", e.target.value)}
-              />
-              <Input
-                label="Asset Location"
-                value={data.asset_location || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_location", e.target.value)}
-              />
-              <Input
-                label="Date In Place Service"
-                value={data.date_in_place_service || ""}
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
                 disabled={processing}
                 type="date"
                 onChange={(e) =>
-                  setData("date_in_place_service", e.target.value)
+                  setData("tgl_selesai_pekerjaan", e.target.value)
                 }
               />
               <Input
-                label="Major Category"
-                value={data.major_category || ""}
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
+                type="date"
+                onChange={handleTglBast}
               />
               <Input
-                label="Minor Category"
-                value={data.minor_category || ""}
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
                 disabled={processing}
-                onChange={(e) => setData("minor_category", e.target.value)}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
               />
               <Input
-                label="Depre Exp"
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
                 type="number"
-                step="0.01"
-                value={data.depre_exp || ""}
+                value={data.sla || ""}
                 disabled={processing}
-                onChange={(e) => setData("depre_exp", e.target.value)}
+                onChange={(e) => setData('sla', e.target.value)}
               />
               <Input
-                label="Net Book Value"
-                type="number"
-                value={data.net_book_value || ""}
+                label="Actual"
+                value={data.actual || ""}
                 disabled={processing}
-                onChange={(e) => setData("net_book_value", e.target.value)}
+                onChange={(e) => setData("actual", e.target.value)}
+              />
+              <Input
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
+              />
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
+                disabled={processing}
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
+              <Input
+                label="Keterangan"
+                value={data.keterangan || ""}
+                disabled={processing}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -511,7 +604,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -520,9 +613,9 @@ export default function Page({ auth, branches, sessions }) {
                 onChange={(e) => setData("branch_id", e)}
               >
                 {branches.map((branch) =>
-                  branch.branch_name.includes("Sampoerna") ? (
+                  branch.branch_name.includes("Pusat") ? (
                     <Option key={branch.id} value={`${branch.id}`}>
-                      {branch.branch_code} - {branch.branch_name} (HO)
+                      {branch.branch_name}
                     </Option>
                   ) : (
                     <Option key={branch.id} value={`${branch.id}`}>
@@ -531,76 +624,128 @@ export default function Page({ auth, branches, sessions }) {
                   )
                 )}
               </Select>
-              <Select
-                label="Category"
-                value={`${data.category}`}
+
+
+              <Input
+                label="Deskripsi"
+                value={data.description || ""}
                 disabled={processing}
-                onChange={(e) => setData("category", e)}
+                onChange={(e) => setData("description", e.target.value)}
+              />
+              <Input
+                label="PIC"
+                value={data.pic || ""}
+                disabled={processing}
+                onChange={(e) => setData("pic", e.target.value)}
+              />
+              <Select
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
+                disabled={processing}
+                onChange={(e) => setData("status_pekerjaan", e)}
               >
-                <Option value="Depre">Depre</Option>
-                <Option value="Non-Depre">Non-Depre</Option>
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
               </Select>
               <Input
-                label="Asset Number"
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
+                disabled={processing}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+              />
+              <Input
+                label="Vendor"
+                value={data.vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("vendor", e.target.value)}
+              />
+              <Input
+                label="Nilai Project"
                 type="number"
-                value={data.asset_number || ""}
+                value={data.nilai_project || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_number", e.target.value)}
+                onChange={(e) => setData("nilai_project", e.target.value)}
               />
               <Input
-                label="Asset Description"
-                value={data.asset_description || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_description", e.target.value)}
-              />
-              <Input
-                label="Asset Cost"
-                type="number"
-                value={data.asset_cost || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_cost", e.target.value)}
-              />
-              <Input
-                label="Asset Location"
-                value={data.asset_location || ""}
-                disabled={processing}
-                onChange={(e) => setData("asset_location", e.target.value)}
-              />
-              <Input
-                label="Date In Place Service"
-                value={data.date_in_place_service || ""}
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
                 disabled={processing}
                 type="date"
                 onChange={(e) =>
-                  setData("date_in_place_service", e.target.value)
+                  setData("tgl_selesai_pekerjaan", e.target.value)
                 }
               />
               <Input
-                label="Major Category"
-                value={data.major_category || ""}
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
+                type="date"
+                onChange={handleTglBast}
               />
               <Input
-                label="Minor Category"
-                value={data.minor_category || ""}
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
                 disabled={processing}
-                onChange={(e) => setData("minor_category", e.target.value)}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
               />
               <Input
-                label="Depre Exp"
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
                 type="number"
-                step="0.01"
-                value={data.depre_exp || ""}
+                value={data.sla || ""}
                 disabled={processing}
-                onChange={(e) => setData("depre_exp", e.target.value)}
+                onChange={(e) => setData('sla', e.target.value)}
               />
               <Input
-                label="Net Book Value"
+                label="Actual"
+                value={data.actual || ""}
                 type="number"
-                value={data.net_book_value || ""}
                 disabled={processing}
-                onChange={(e) => setData("net_book_value", e.target.value)}
+                onChange={(e) => setData("actual", e.target.value)}
+              />
+              <Input
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
+              />
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
+                disabled={processing}
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
+              <Input
+                label="Keterangan"
+                value={data.keterangan || ""}
+                disabled={processing}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>

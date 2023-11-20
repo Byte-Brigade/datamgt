@@ -26,22 +26,19 @@ import { useState } from "react";
 export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
-    category: null,
-    asset_number: null,
-    asset_description: null,
-    date_in_place_service: null,
-    asset_cost: null,
-    asset_location: null,
-    major_category: null,
-    minor_category: null,
-    depre_exp: null,
-    net_book_value: null,
+    description: null,
+    pic: null,
+    dokumen_perintah_kerja: null,
+    vendor: null,
+    tgl_scoring: null,
+    scoring_vendor: null,
+    schedule_scoring: null,
+    keterangan: null,
 
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    expired_date: null,
   };
   const {
     data,
@@ -68,10 +65,6 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Description",
       field: "description",
-    },
-    {
-      name: "Status Pekerjaan",
-      field: "status_pekerjaan",
     },
     {
       name: "PIC",
@@ -101,6 +94,10 @@ export default function Page({ auth, branches, sessions }) {
       field: "schedule_scoring",
     },
     {
+      name: "Keterangan",
+      field: "keterangan",
+    },
+    {
       name: "Action",
       field: "action",
       className: "text-center",
@@ -110,7 +107,6 @@ export default function Page({ auth, branches, sessions }) {
           onEditClick={() => {
             toggleModalEdit();
             setData(data);
-            console.log(data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -199,6 +195,7 @@ export default function Page({ auth, branches, sessions }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
+    setData(initialData)
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -367,7 +364,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -375,82 +372,81 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
+                {branches.map((branch) =>
+                  branch.branch_name.includes("Pusat") ? (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_name}
+                    </Option>
+                  ) : (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  )
+                )}
               </Select>
-              <Select
-                label="Branch"
-                value={`${data.category}`}
-                disabled={processing}
-                onChange={(e) => setData("category", e)}
-              >
-                <Option value="Depre">Depre</Option>
-                <Option value="Non-Depre">Non-Depre</Option>
-              </Select>
+
+
               <Input
-                label="Asset Number"
-                type="number"
-                value={data.asset_number || ""}
+                label="Deskripsi"
+                value={data.description || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_number", e.target.value)}
+                onChange={(e) => setData("description", e.target.value)}
               />
               <Input
-                label="Asset Description"
-                value={data.asset_description || ""}
+                label="PIC"
+                value={data.pic || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_description", e.target.value)}
+                onChange={(e) => setData("pic", e.target.value)}
               />
               <Input
-                label="Asset Cost"
-                type="number"
-                value={data.asset_cost || ""}
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_cost", e.target.value)}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
               />
               <Input
-                label="Asset Location"
-                value={data.asset_location || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_location", e.target.value)}
+                onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
-                label="Date In Place Service"
-                value={data.date_in_place_service || ""}
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) =>
-                  setData("date_in_place_service", e.target.value)
-                }
+                onChange={(e) => setData('tgl_scoring', e.target.value)}
               />
               <Input
-                label="Major Category"
-                value={data.major_category || ""}
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
               />
-              <Input
-                label="Minor Category"
-                value={data.minor_category || ""}
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
                 disabled={processing}
-                onChange={(e) => setData("minor_category", e.target.value)}
-              />
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
               <Input
-                label="Depre Exp"
-                type="number"
-                step="0.01"
-                value={data.depre_exp || ""}
+                label="Keterangan"
+                value={data.keterangan || ""}
                 disabled={processing}
-                onChange={(e) => setData("depre_exp", e.target.value)}
-              />
-              <Input
-                label="Net Book Value"
-                type="number"
-                value={data.net_book_value || ""}
-                disabled={processing}
-                onChange={(e) => setData("net_book_value", e.target.value)}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -481,7 +477,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -490,9 +486,9 @@ export default function Page({ auth, branches, sessions }) {
                 onChange={(e) => setData("branch_id", e)}
               >
                 {branches.map((branch) =>
-                  branch.branch_name.includes("Sampoerna") ? (
+                  branch.branch_name.includes("Pusat") ? (
                     <Option key={branch.id} value={`${branch.id}`}>
-                      {branch.branch_code} - {branch.branch_name} (HO)
+                      {branch.branch_name}
                     </Option>
                   ) : (
                     <Option key={branch.id} value={`${branch.id}`}>
@@ -501,76 +497,69 @@ export default function Page({ auth, branches, sessions }) {
                   )
                 )}
               </Select>
-              <Select
-                label="Category"
-                value={`${data.category}`}
-                disabled={processing}
-                onChange={(e) => setData("category", e)}
-              >
-                <Option value="Depre">Depre</Option>
-                <Option value="Non-Depre">Non-Depre</Option>
-              </Select>
+
+
               <Input
-                label="Asset Number"
-                type="number"
-                value={data.asset_number || ""}
+                label="Deskripsi"
+                value={data.description || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_number", e.target.value)}
+                onChange={(e) => setData("description", e.target.value)}
               />
               <Input
-                label="Asset Description"
-                value={data.asset_description || ""}
+                label="PIC"
+                value={data.pic || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_description", e.target.value)}
+                onChange={(e) => setData("pic", e.target.value)}
               />
               <Input
-                label="Asset Cost"
-                type="number"
-                value={data.asset_cost || ""}
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_cost", e.target.value)}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
               />
               <Input
-                label="Asset Location"
-                value={data.asset_location || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("asset_location", e.target.value)}
+                onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
-                label="Date In Place Service"
-                value={data.date_in_place_service || ""}
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) =>
-                  setData("date_in_place_service", e.target.value)
-                }
+                onChange={(e) => setData('tgl_scoring', e.target.value)}
               />
               <Input
-                label="Major Category"
-                value={data.major_category || ""}
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
               />
-              <Input
-                label="Minor Category"
-                value={data.minor_category || ""}
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
                 disabled={processing}
-                onChange={(e) => setData("minor_category", e.target.value)}
-              />
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
               <Input
-                label="Depre Exp"
-                type="number"
-                step="0.01"
-                value={data.depre_exp || ""}
+                label="Keterangan"
+                value={data.keterangan || ""}
                 disabled={processing}
-                onChange={(e) => setData("depre_exp", e.target.value)}
-              />
-              <Input
-                label="Net Book Value"
-                type="number"
-                value={data.net_book_value || ""}
-                disabled={processing}
-                onChange={(e) => setData("net_book_value", e.target.value)}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>

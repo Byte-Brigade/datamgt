@@ -10,12 +10,13 @@ use App\Models\Branch;
 use App\Models\GapScoring;
 use App\Models\GapScoringProject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Throwable;
 
 class GapScoringProjectController extends Controller
 {
-        /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -26,7 +27,7 @@ class GapScoringProjectController extends Controller
         return Inertia::render('GA/Procurement/Scoring/Project/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code','entity'];
+    protected array $sortFields = ['branches.branch_code', 'entity'];
 
     public function api(GapScoring $gap_scoring_project, Request $request)
     {
@@ -34,12 +35,12 @@ class GapScoringProjectController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_scoring_project->select('gap_scorings.*')->where('type','Project')->orderBy($sortField, $sortOrder)
+        $query = $gap_scoring_project->select('gap_scorings.*')->where('type', 'Project')->orderBy($sortField, $sortOrder)
             ->join('branches', 'gap_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 
-        if(!is_null($request->branch_code)) {
+        if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
         }
 
@@ -71,7 +72,7 @@ class GapScoringProjectController extends Controller
 
     public function export()
     {
-        $fileName = 'Data_GAP_Scorings' . date('d-m-y') . '.xlsx';
+        $fileName = 'Data_GAP_Scoring_Projects' . date('d-m-y') . '.xlsx';
         return (new ProjectsExport)->download($fileName);
     }
     /**
@@ -92,7 +93,40 @@ class GapScoringProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+
+        try {
+            DB::beginTransaction();
+            GapScoring::create(
+                [
+                    'branch_id' => $request->branch_id,
+                    'entity' => "BSS",
+                    'description' => $request->description,
+                    'pic' => $request->pic,
+                    'status_pekerjaan' => $request->status_pekerjaan,
+                    'dokumen_perintah_kerja' => $request->dokumen_perintah_kerja,
+                    'vendor' => $request->vendor,
+                    'nilai_project' => $request->nilai_project,
+                    'tgl_selesai_pekerjaan' => $request->tgl_selesai_pekerjaan,
+                    'tgl_bast' => $request->tgl_bast,
+                    'tgl_request_scoring' => $request->tgl_request_scoring,
+                    'tgl_scoring' => $request->tgl_scoring,
+                    'sla' => $request->sla,
+                    'actual' => $request->actual,
+                    'meet_the_sla' => $request->actual < $request->sla + 1 ? true : ($request->actual > $request->sla ? false : true),
+                    'scoring_vendor' => $request->scoring_vendor,
+                    'schedule_scoring' => $request->schedule_scoring,
+                    'type' => 'Project',
+                    'keterangan' => $request->keterangan,
+                ]
+            );
+            DB::commit();
+            return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan']);
+        } catch (Throwable $e) {
+
+            DB::rollBack();
+            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -126,7 +160,42 @@ class GapScoringProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all());
+
+        try {
+            DB::beginTransaction();
+            $branch = Branch::find($request->branch_id);
+            $gap_scoring = GapScoring::find($id);
+            $gap_scoring->update(
+                [
+                    'branch_id' => $branch->id,
+                    'entity' => "BSS",
+                    'description' => $request->description,
+                    'pic' => $request->pic,
+                    'status_pekerjaan' => $request->status_pekerjaan,
+                    'dokumen_perintah_kerja' => $request->dokumen_perintah_kerja,
+                    'vendor' => $request->vendor,
+                    'nilai_project' => $request->nilai_project,
+                    'tgl_selesai_pekerjaan' => $request->tgl_selesai_pekerjaan,
+                    'tgl_bast' => $request->tgl_bast,
+                    'tgl_request_scoring' => $request->tgl_request_scoring,
+                    'tgl_scoring' => $request->tgl_scoring,
+                    'sla' => $request->sla,
+                    'actual' => $request->actual,
+                    'meet_the_sla' => $request->actual < $request->sla + 1 ? true : ($request->actual > $request->sla ? false : true),
+                    'scoring_vendor' => $request->scoring_vendor,
+                    'schedule_scoring' => $request->schedule_scoring,
+                    'type' => 'Project',
+                    'keterangan' => $request->keterangan,
+                ]
+            );
+            DB::commit();
+            return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
+        } catch (Throwable $e) {
+
+            DB::rollBack();
+            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -137,6 +206,15 @@ class GapScoringProjectController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $gap_scoring = GapScoring::find($id);
+            $gap_scoring->delete();
+            DB::commit();
+         return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 }
