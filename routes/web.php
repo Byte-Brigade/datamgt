@@ -10,6 +10,8 @@ use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
+use App\Http\Controllers\InfraScoringAssessmentController;
+use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -133,6 +135,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
             Route::delete('/disnaker/{id}', [GapDisnakerController::class, 'destroy'])->name('disnaker.delete');
             /* [END] GA Procurement Disnaker */
+
+
+            Route::get('/scoring-projects', [InfraScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::post('/scoring-projects/import', [InfraScoringProjectController::class, 'import'])->name('scoring_projects.import');
+            Route::post('/scoring-projects', [InfraScoringProjectController::class, 'store'])->name('scoring_projects.store');
+            Route::put('/scoring-projects/{id}', [InfraScoringProjectController::class, 'update'])->name('scoring_projects.update');
+            Route::get('/scoring-projects/export', [InfraScoringProjectController::class, 'export'])->name('scoring_projects.export');
+            Route::delete('/scoring-projects/{id}', [InfraScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
+
+            Route::get('/scoring-assessments', [InfraScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::post('/scoring-assessments/import', [InfraScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
+            Route::post('/scoring-assessments', [InfraScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
+            Route::put('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
+            Route::get('/scoring-assessments/export', [InfraScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
+            Route::delete('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
 
             Route::get('/maintenance', function () {
                 abort(404);

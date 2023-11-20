@@ -10,6 +10,8 @@ use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
+use App\Http\Controllers\InfraScoringAssessmentController;
+use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -64,4 +66,7 @@ Route::prefix('infra')->name('infra.')->group(function () {
 
     Route::get('disnaker', [GapDisnakerController::class, 'api']);
     Route::get('disnaker/{id}/report', [ReportController::class, 'api_detail']);
+    Route::get('scoring_projects', [InfraScoringProjectController::class, 'api']);
+    Route::get('scoring_assessments', [InfraScoringAssessmentController::class, 'api']);
+
 });
