@@ -22,7 +22,6 @@ class DashboardController extends Controller
         $jumlahKaryawanBSO = Employee::where('position_id', 3)->get();
         $employee_positions = EmployeePosition::get();
         $employees = Employee::with(['employee_positions', 'branches'])->get();
-
         $gap_asset = GapAsset::with('branches')->get();
         $gap_scorings = GapScoring::with('branches')->get();
 

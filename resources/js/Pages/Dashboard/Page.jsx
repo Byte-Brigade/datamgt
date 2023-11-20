@@ -52,14 +52,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 onChange={(e) => handleFilterArea(e)}
                 className="bg-white"
               >
+
+                <Option value="none">
+                  All
+                </Option>
+
                 {data.areas.map((area, index) => {
-                  if (index === 0) {
-                    return (
-                      <Option key={0} value="none">
-                        All
-                      </Option>
-                    );
-                  }
+
+
+
                   return (
                     <Option key={index} value={`${area}`}>
                       {area}
@@ -73,16 +74,13 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 onChange={(e) => handleFilterBranch(e)}
                 className="bg-white"
               >
+                <Option value="0">
+                  All
+                </Option>
                 {data.branches
                   .filter((branch) => area === "none" || branch.area === area)
                   .map((branch, index) => {
-                    if (index === 0) {
-                      return (
-                        <Option key={0} value="0">
-                          All
-                        </Option>
-                      );
-                    }
+
                     return (
                       <Option key={index} value={`${branch.id}`}>
                         {branch.branch_code} - {branch.branch_name}
@@ -560,30 +558,30 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </thead>
               <tbody className="overflow-y-auto">
                 {Object.entries(groupBy(data.gap_scorings, 'schedule_scoring')).map(([key, scoring]) => (
-                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-                  <td colSpan={2} className="text-center">{key}</td>
-                  <td className="text-center" colSpan={2}>{scoring.length}</td>
+                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
+                    <td colSpan={2} className="text-center">{key}</td>
+                    <td className="text-center" colSpan={2}>{scoring.length}</td>
 
-                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
-                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
+                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
+                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
 
-                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
-                  <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
-                  <td className="text-center">{scoring.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
-                  <td className="text-center">{scoring.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
-                </tr>
+                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
+                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
+                    <td className="text-center">{scoring.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
+                    <td className="text-center">{scoring.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                  </tr>
                 ))
                 }
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
 
-                    <td colSpan={2}className="font-bold text-center">Total</td>
-                    <td colSpan={2}className="font-bold text-center">{data.gap_scorings.length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
-                    <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                  <td colSpan={2} className="font-bold text-center">Total</td>
+                  <td colSpan={2} className="font-bold text-center">{data.gap_scorings.length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
+                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
                 </tr>
 
                 {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
