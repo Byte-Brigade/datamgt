@@ -21,6 +21,20 @@ export default function Dashboard({ auth, errors, sessions, data }) {
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
   const handleOpen = () => setOpen(!open);
+  const groupBy = (array, key) => array.reduce((result, item) => {
+    // Extract the value for the current key
+    const keyValue = item[key];
+
+    // If the key doesn't exist in the result object, create it with an empty array
+    if (!result[keyValue]) {
+      result[keyValue] = [];
+    }
+
+    // Push the current item to the array associated with the key
+    result[keyValue].push(item);
+
+    return result;
+  }, {})
 
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
@@ -78,7 +92,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-x-4">
+          <div className="grid grid-cols-4 gap-4">
             <CardMenu
               label="Jumlah Cabang"
               data={data}
@@ -123,6 +137,18 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               areaState={area}
               color="purple"
             />
+            <CardMenu
+              label="Jumlah Scoring Proc"
+              data={data}
+              type="gap_scorings"
+              Icon={ArchiveBoxIcon}
+              active={active}
+              onClick={() => setActive("gap_scorings")}
+              branchState={branchId}
+              areaState={area}
+              color="purple"
+            />
+
           </div>
           {active === "branch" && (
             <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
@@ -426,16 +452,13 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       ).length
                     }
                   </td>
-                  <td className="text-center">
-
-                  </td>
 
                   <td className="text-center">
                     {data.assets
                       .filter(
                         (item) =>
                           item.branch_name !== "Kantor Pusat" &&
-                          item.category === "Depre"
+                          item.category === "Non-Depre"
                       )
                       .reduce((total, item) => {
                         return total + item.net_book_value;
@@ -443,16 +466,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       .toLocaleString("id-ID")}
                   </td>
 
-                  <td className="text-center">
-                    {
-                      data.assets.filter(
-                        (item) =>
-                          item.branch_name !== "Kantor Pusat" &&
-                          item.category === "Non-Depre"
-                      ).length
-                    }
-                  </td>
-                  <td className="text-center"></td>
+
                 </tr>
 
                 {open &&
