@@ -5,6 +5,21 @@ import { Head, Link, usePage } from "@inertiajs/react";
 
 export default function Page({ sessions, auth }) {
   const { url } = usePage();
+  const headings = [
+    {
+      name: 'Lokasi',
+      colSpan: 3,
+    },
+    {
+      name: 'Kategori A (Depresiasi)',
+      colSpan: 4,
+    },
+    {
+      name: 'Kategori B (Non-Depresiasi)',
+      colSpan: 4,
+    },
+
+  ]
   const columns = [
     {
       name: "Nama",
@@ -23,8 +38,8 @@ export default function Page({ sessions, auth }) {
       className: "w-28 text-center",
     },
     {
-      name: 'Jumlah Depre',
-      field: 'jumlah_depre',
+      name: 'Item',
+      field: 'item_depre',
       className: "text-center",
       type: "custom",
       render: (data) => {
@@ -32,23 +47,66 @@ export default function Page({ sessions, auth }) {
       }
     },
     {
-      name: 'Jumlah Non-Depre',
-      field: 'jumlah_non_depre',
-      className: 'text-center',
+      name: 'Nilai Perolehan',
+      field: 'nilai_perolehan_depre',
+      className: "text-right",
+      type: "custom",
+      render: (data) => {
+        return data.assets.filter(asset => asset.category === 'Depre').reduce(
+          (acc, item) => {
+            return acc + item.asset_cost
+          },0
+        ).toLocaleString('id-ID')
+      }
+    },
+    {
+      name: 'Penyusutan',
+      field: 'penyusutan',
+      className: "text-right",
+      type: "custom",
+      render: (data) => {
+        return data.assets.filter(asset => asset.category === 'Depre').reduce(
+          (acc, item) => {
+            return acc + item.accum_depre
+          },0
+        ).toLocaleString('id-ID')
+      }
+    },
+    {
+      name: 'Net Book Value',
+      field: 'net_book_value',
+      className: "text-right",
+      type: "custom",
+      render: (data) => {
+        return data.assets.filter(asset => asset.category === 'Depre').reduce(
+          (acc, item) => {
+            return acc + item.net_book_value
+          },0
+        ).toLocaleString('id-ID')
+      }
+    },
+    {
+      name: 'Item',
+      field: 'item_non_depre',
+      className: "text-center",
       type: "custom",
       render: (data) => {
         return data.assets.filter(asset => asset.category === 'Non-Depre').length
       }
     },
     {
-      name: 'Total',
-      field: 'total_assets',
-      className: 'text-center',
+      name: 'Nilai Perolehan',
+      field: 'nilai_perolehan_non_depre',
+      className: "text-center",
       type: "custom",
       render: (data) => {
-        return data.assets.length
+        return data.assets.filter(asset => asset.category === 'Non-Depre').reduce(
+          (acc, item) => {
+            return acc + item.asset_cost
+          },0
+        ).toLocaleString('id-ID')
       }
-    }
+    },
   ];
 
   return (
@@ -60,6 +118,8 @@ export default function Page({ sessions, auth }) {
           <DataTable
             fetchUrl={"/api/branches"}
             columns={columns}
+            headings={headings}
+            bordered={true}
           />
         </div>
       </div>

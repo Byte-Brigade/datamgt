@@ -7,6 +7,9 @@ use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
+use App\Models\GapScoring;
+use App\Models\GapScoringAssessment;
+use App\Models\GapScoringProject;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -23,6 +26,7 @@ class DashboardController extends Controller
         $employees = Employee::with(['employee_positions', 'branches'])->get();
 
         $gap_asset = GapAsset::with('branches')->get();
+        $gap_scorings = GapScoring::with('branches')->get();
 
         $data = [
             'branches' => $branches,
@@ -34,7 +38,8 @@ class DashboardController extends Controller
             'employee_positions' => $employee_positions,
             'employees' => $employees,
             'summary_assets' => $gap_asset->sortBy('branches.branch_code')->map(function ($asset) {
-                $asset->branch_name = str_contains($asset->branches->branch_name, 'Sampoerna') ? 'Kantor Pusat' : $asset->branches->branch_name;
+                $asset->branch_name = str_contains($asset->branches->branch_name, 'Sampoerna') ? 'Sampoerna Strategic' : $asset->branches->branch_name;
+                $asset->branch_code = $asset->branches->branch_code;
                 return $asset;
             })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
                 return [$branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
@@ -48,6 +53,7 @@ class DashboardController extends Controller
                 })];
             }),
             'assets' => $gap_asset,
+            'gap_scorings' => $gap_scorings,
             'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),
             'jumlah_cabang_alt' => $branches->groupBy('branch_types.type_name'),
         ];

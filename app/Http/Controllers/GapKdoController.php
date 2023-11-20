@@ -24,7 +24,7 @@ class GapKdoController extends Controller
     public function index()
     {
         $branchesProps = Branch::get();
-        return Inertia::render('GA/KDO/Page', ['branches' => $branchesProps]);
+        return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branchesProps]);
     }
 
     protected array $sortFields = ['branches.branch_code', 'akhir_sewa', 'awal_sewa'];
@@ -128,7 +128,7 @@ class GapKdoController extends Controller
             "January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"
         ];
-        return Inertia::render('GA/KDO/Detail', [
+        return Inertia::render('GA/Procurement/KDO/Detail', [
             'kdo_mobil' => $kdo_mobil,
             'years' => $futureYears,
             'months' => $months

@@ -106,7 +106,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Hasil Scoring Vendor",
-      path: "gap.maintenance",
+      path: "gap.scoring_projects",
+    },
+    {
+      name: "Hasil Self Assessment",
+      path: "gap.scoring_assessments",
     },
     {
       name: "Biaya Perjalanan Dinas",

@@ -16,6 +16,7 @@ class BranchTypeSeeder extends Seeder
             ['type_name' => 'KFO' , 'alt_name' => 'Kantor Fungsional Operasional'],
             ['type_name' => 'KFNO' , 'alt_name' => 'Kantor Fungsional Non Operasional'],
             ['type_name' => 'SFI' , 'alt_name' => ''],
+            ['type_name' => 'KP', 'alt_name' => 'Kantor Pusat'],
         ];
 
         foreach ($types as $type) {
