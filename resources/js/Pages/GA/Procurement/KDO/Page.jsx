@@ -87,24 +87,6 @@ export default function Page({ auth, branches, sessions }) {
         </Link>
       ),
     },
-    // {
-    //   name: "Action",
-    //   field: "action",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <DropdownMenu
-    //       placement="left-start"
-    //       onEditClick={() => {
-    //         toggleModalEdit();
-    //         setData(data);
-    //       }}
-    //       onDeleteClick={() => {
-    //         toggleModalDelete();
-    //         setData(data);
-    //       }}
-    //     />
-    //   ),
-    // },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -229,6 +211,7 @@ export default function Page({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"

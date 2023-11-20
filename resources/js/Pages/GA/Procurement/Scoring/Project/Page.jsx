@@ -331,6 +331,7 @@ export default function Page({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"

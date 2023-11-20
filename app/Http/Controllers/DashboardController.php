@@ -8,8 +8,6 @@ use App\Models\Employee;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapScoring;
-use App\Models\GapScoringAssessment;
-use App\Models\GapScoringProject;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -17,7 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         $branches = Branch::with('branch_types')->get();
-        $areas = Branch::distinct()->pluck('area');
+        $areas = Branch::distinct()->whereNotNull('area')->pluck('area');
         $jumlahATM = Branch::whereNot('layanan_atm', 'Tidak Ada')->get();
         $jumlahATM24Jam = Branch::where('layanan_atm', '24 Jam')->get();
         $jumlahKaryawan = Employee::with('branches')->get();
@@ -42,7 +40,8 @@ class DashboardController extends Controller
                 $asset->branch_code = $asset->branches->branch_code;
                 return $asset;
             })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
-                return [$branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
+            return [
+                $branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
                     return [
                         'name' => $index,
                         'jumlah_item' => $assets->count(),
@@ -50,8 +49,9 @@ class DashboardController extends Controller
                         'penyusutan' => $assets->sum('accum_depre'),
                         'net_book_value' => $assets->sum('net_book_value'),
                     ];
-                })];
-            }),
+                })
+            ];
+        }),
             'assets' => $gap_asset,
             'gap_scorings' => $gap_scorings,
             'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),

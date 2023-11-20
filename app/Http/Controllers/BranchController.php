@@ -26,7 +26,7 @@ class BranchController extends Controller
         $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branch_name';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $this->branch->select('branches.*')->orderBy($sortField, $sortOrder)
+        $query = $this->branch->select('branches.*')->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortField, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 10;
 
