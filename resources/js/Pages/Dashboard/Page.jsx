@@ -136,7 +136,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               color="purple"
             />
             <CardMenu
-              label="Jumlah Scoring Proc"
+              label="Jumlah Vendor"
               data={data}
               type="gap_scorings"
               Icon={ArchiveBoxIcon}
@@ -531,28 +531,31 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   </th>
                   <th className="text-center" rowSpan={3}
                     colSpan={2}>
-                    Jumlah Scoring/Vendor
+                    Jumlah Vendor
                   </th>
-                  <th className="text-center" colSpan={4}>
+                  <th className="text-center" colSpan={7}>
                     Type Scoring
                   </th>
-                  <th className="text-center" colSpan={2}>
-                    SLA Project
-                  </th>
+
                   {/* Lokasi: Kantor Pusat, Cabang */}
                   {/* Kategori A (Asset Depresiasi) */}
                   {/* Kategori A (Asset Non-Depresiasi) */}
                 </tr>
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
-                  <th className="text-center" colSpan={2}>Assessment</th>
-                  <th className="text-center" colSpan={2}>Project</th>
-                  <th className="text-center" rowSpan={2}>YES</th>
-                  <th className="text-center" rowSpan={2}>NO</th>
+                  <th className="text-center" colSpan={2}>Assessment (PKS)</th>
+                  <th className="text-center" colSpan={2}>Project (Non PKS)</th>
+                  <th className="text-center" colSpan={3}>
+                    SLA
+                  </th>
+
                 </tr>
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th className="text-center">Done</th>
                   <th className="text-center">On Progress</th>
                   <th className="text-center">Done</th>
+                  <th className="text-center">On Progress</th>
+                  <th className="text-center">YES</th>
+                  <th className="text-center">NO</th>
                   <th className="text-center">On Progress</th>
                 </tr>
               </thead>
