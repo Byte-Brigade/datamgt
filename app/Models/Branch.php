@@ -67,13 +67,13 @@ class Branch extends Model
         return $this->hasMany(GapAsset::class, 'branch_id');
     }
 
-    public function gap_scoring_projects()
+    public function gap_scorings()
     {
-        return $this->hasMany(GapScoringProject::class, 'branch_id');
+        return $this->hasMany(GapScoring::class, 'branch_id');
     }
-    public function gap_scoring_assessments()
+    public function infra_scorings()
     {
-        return $this->hasMany(GapScoringAssessment::class, 'branch_id');
+        return $this->hasMany(InfraScoring::class, 'branch_id');
     }
 }
 

@@ -137,11 +137,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Hasil Self Asssessment",
-      path: "infra.maintenance",
+      path: "infra.scoring_assessments",
     },
     {
       name: "Hasil Scoring Vendor",
-      path: "infra.maintenance",
+      path: "infra.scoring_projects",
     },
   ];
 
