@@ -74,7 +74,7 @@ class BranchController extends Controller
     public function index(Request $request)
     {
 
-        return Inertia::render('Cabang/Page', [
+        return Inertia::render('Ops/Cabang/Page', [
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
@@ -98,7 +98,7 @@ class BranchController extends Controller
             }
             dd($failures);
 
-            return redirect(route('branches'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
+            return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
@@ -122,9 +122,9 @@ class BranchController extends Controller
                 'npwp' => $request->npwp
             ]);
 
-            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
     public function upload(Request $request, $id)
@@ -139,11 +139,11 @@ class BranchController extends Controller
             $branch->photo = $fileName;
             $branch->save();
 
-            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
 
-            return redirect(route('branches'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
+            return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }
 
@@ -161,9 +161,9 @@ class BranchController extends Controller
                 'layanan_atm' => $layanan_atm,
             ]);
 
-            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -172,6 +172,6 @@ class BranchController extends Controller
         $branch = Branch::find($id);
         $branch->delete();
 
-        return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

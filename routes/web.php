@@ -66,25 +66,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {
-        /* [START] Branches */
-        Route::get('/branches', [BranchController::class, 'index'])->name('branches');
-        Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
-        Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
-        Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
-
-        Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
-        Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
-        Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
-        /* [END] Branches */
-
-        /* [START] Employees */
-        Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-        Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
-        Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
-        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
-        /* [END] Employees */
 
         Route::prefix('gap')->name('gap.')->group(function () {
             /* [START] GA Procurement KDO */
@@ -158,6 +139,26 @@ Route::middleware('auth')->group(function () {
 
 
         Route::prefix('ops')->name('ops.')->group(function () {
+
+            /* [START] Branches */
+            Route::get('/branches', [BranchController::class, 'index'])->name('branches');
+            Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
+            Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+            Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
+
+            Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
+            Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
+            Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
+            /* [END] Branches */
+
+            /* [START] Employees */
+            Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
+            Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+            Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+            Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
+            Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
+            Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+            /* [END] Employees */
 
             /* [START] Ops SKBIRTGS */
             Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
