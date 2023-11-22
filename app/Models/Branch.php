@@ -75,5 +75,9 @@ class Branch extends Model
     {
         return $this->hasMany(InfraScoring::class, 'branch_id');
     }
+    public function sewa_gedung()
+    {
+        return $this->hasOne(InfraSewaGedung::class, 'branch_id');
+    }
 }
 

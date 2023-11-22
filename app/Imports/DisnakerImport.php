@@ -26,8 +26,6 @@ use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 class DisnakerImport implements ToCollection, WithHeadingRow, WithUpserts
 {
     use Importable;
-    use Importable;
-
     public function collection(Collection $rows)
     {
 

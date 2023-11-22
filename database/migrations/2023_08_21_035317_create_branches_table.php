@@ -32,6 +32,7 @@ return new class extends Migration {
             $table->bigInteger('total_biaya_sewa')->nullable();
             $table->timestamps();
             $table->foreign('branch_type_id')->references('id')->on('branch_types')->onDelete('cascade');
+
         });
     }
 
