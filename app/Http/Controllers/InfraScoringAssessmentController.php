@@ -58,7 +58,7 @@ class InfraScoringAssessmentController extends Controller
     public function import(Request $request)
     {
         try {
-            (new InfraScoringAssessmentsImport)->import($request->file('file')->store('temp'));
+            (new InfraScoringAssessmentsImport)->import($request->file('file'));
 
             return redirect(route('infra.scoring_assessments'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

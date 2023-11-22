@@ -57,7 +57,7 @@ class GapScoringController extends Controller
     public function import(Request $request)
     {
         try {
-            (new GapScoringsImport)->import($request->file('file')->store('temp'));
+            (new GapScoringsImport)->import($request->file('file'));
 
             return redirect(route('gap.scorings'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
