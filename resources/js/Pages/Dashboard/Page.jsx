@@ -53,15 +53,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 className="bg-white"
               >
 
-                <Option value="none">
-                  All
-                </Option>
-
                 {data.areas.map((area, index) => {
 
 
 
-                  return (
+                  return area === 'All' ? (
+                    <Option key={index} value="none">
+                      {area}
+                    </Option>
+                  ) : (
                     <Option key={index} value={`${area}`}>
                       {area}
                     </Option>
@@ -74,15 +74,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 onChange={(e) => handleFilterBranch(e)}
                 className="bg-white"
               >
-                <Option value="0">
-                  All
-                </Option>
-                {data.branches
+
+                {data.list_branches
                   .filter((branch) => area === "none" || branch.area === area)
                   .map((branch, index) => {
 
-                    return (
-                      <Option key={index} value={`${branch.id}`}>
+                    return branch.branch_code === 'none' ? (<Option key={index} value="0">
+                      {branch.branch_name}
+                    </Option>) : (
+                      <Option key={index} value={`${branch.id} `}>
                         {branch.branch_code} - {branch.branch_name}
                       </Option>
                     );
@@ -169,10 +169,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                      <td>Kantor Pusat</td>
-                      <td>1</td>
-                    </tr>
+
                     {Object.keys(data.jumlah_cabang).map((cabang) => {
                       return (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
@@ -191,7 +188,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                             (acc, item) => {
                               return acc + data.jumlah_cabang[item].length;
                             },
-                            1
+                            0
                           )}
                         </strong>
                       </td>
@@ -473,7 +470,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       lokasi !== "Kantor Pusat" && (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                           <td key={index} colSpan={2}>
-                            {`> ${lokasi}`}
+                            {`> ${lokasi} `}
                           </td>
                           {Object.entries(data.summary_assets[lokasi]).map(
                             ([key, item]) =>
@@ -690,7 +687,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       lokasi !== "Kantor Pusat" && (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                           <td key={index} colSpan={2}>
-                            {`> ${lokasi}`}
+                            {`> ${ lokasi } `}
                           </td>
                           {Object.entries(data.summary_assets[lokasi]).map(
                             ([key, item]) =>
@@ -736,6 +733,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           )}
         </div>
       </div>
-    </AuthenticatedLayout>
+    </AuthenticatedLayout >
   );
 }
