@@ -47,7 +47,7 @@ class ReportController extends Controller
             $query->where('branch_code', $branch_code);
         })->with('branches')->first();
 
-        return Inertia::render('GA/Disnaker/Detail', [
+        return Inertia::render('GA/Infa/Disnaker/Detail', [
             'disnaker' => $disnaker
         ]);
     }

@@ -39,9 +39,6 @@ class BranchResource extends JsonResource
             'area' => $this->area,
             'address' => $this->address,
             'jumlah_karyawan' => $this->employees->count() > 0 ? $this->employees->count() . ' Orang' : 'Tidak Ada',
-            // 'perizinan' => $this->gap_disnaker->map(function ($izin) {
-            //     return $izin->jenis_perizinan->name;
-            // })->toArray(),
             'perizinan' => $this->gap_disnaker->count() > 0
                 ? 'Ada' : 'Tidak Ada',
             'kdo_mobil' => $this->gap_kdo_mobil->count(),
@@ -51,7 +48,7 @@ class BranchResource extends JsonResource
             'branch_types' => $branch_types,
             'photo' => $this->photo,
             'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
-
+            'assets' => $this->gap_assets
 
 
         ];

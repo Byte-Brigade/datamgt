@@ -7,6 +7,11 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
+use App\Http\Controllers\GapScoringAssessmentController;
+use App\Http\Controllers\GapScoringController;
+use App\Http\Controllers\GapScoringProjectController;
+use App\Http\Controllers\InfraScoringAssessmentController;
+use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -50,6 +55,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
+        Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+        Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
     });
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
@@ -72,11 +79,11 @@ Route::middleware('auth')->group(function () {
 
         /* [START] Employees */
         Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
         Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
         Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
         Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
         Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
+        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
         /* [END] Employees */
 
         Route::prefix('gap')->name('gap.')->group(function () {
@@ -87,6 +94,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
             Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
             Route::post('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdo.mobil.store');
+            Route::put('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdo.mobil.update');
             Route::delete('/kdo/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdo.mobil.destroy');
             Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
             Route::get('/kdo/mobil/{branch_code}/export', [GapKdoController::class, 'kdo_mobil_export'])->name('kdo.mobil.export');
@@ -101,6 +109,20 @@ Route::middleware('auth')->group(function () {
             Route::put('/assets/{id}', [GapAssetController::class, 'update'])->name('assets.update');
             Route::get('/assets/export', [GapAssetController::class, 'export'])->name('assets.export');
             Route::delete('/assets/{id}', [GapAssetController::class, 'destroy'])->name('assets.delete');
+
+            Route::get('/scoring-projects', [GapScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::post('/scoring-projects/import', [GapScoringProjectController::class, 'import'])->name('scoring_projects.import');
+            Route::post('/scoring-projects', [GapScoringProjectController::class, 'store'])->name('scoring_projects.store');
+            Route::put('/scoring-projects/{id}', [GapScoringProjectController::class, 'update'])->name('scoring_projects.update');
+            Route::get('/scoring-projects/export', [GapScoringProjectController::class, 'export'])->name('scoring_projects.export');
+            Route::delete('/scoring-projects/{id}', [GapScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
+
+            Route::get('/scoring-assessments', [GapScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::post('/scoring-assessments/import', [GapScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
+            Route::post('/scoring-assessments', [GapScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
+            Route::put('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
+            Route::get('/scoring-assessments/export', [GapScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
+            Route::delete('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */
@@ -113,6 +135,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/disnaker/export', [GapDisnakerController::class, 'export'])->name('disnaker.export');
             Route::delete('/disnaker/{id}', [GapDisnakerController::class, 'destroy'])->name('disnaker.delete');
             /* [END] GA Procurement Disnaker */
+
+
+            Route::get('/scoring-projects', [InfraScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::post('/scoring-projects/import', [InfraScoringProjectController::class, 'import'])->name('scoring_projects.import');
+            Route::post('/scoring-projects', [InfraScoringProjectController::class, 'store'])->name('scoring_projects.store');
+            Route::put('/scoring-projects/{id}', [InfraScoringProjectController::class, 'update'])->name('scoring_projects.update');
+            Route::get('/scoring-projects/export', [InfraScoringProjectController::class, 'export'])->name('scoring_projects.export');
+            Route::delete('/scoring-projects/{id}', [InfraScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
+
+            Route::get('/scoring-assessments', [InfraScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::post('/scoring-assessments/import', [InfraScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
+            Route::post('/scoring-assessments', [InfraScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
+            Route::put('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
+            Route::get('/scoring-assessments/export', [InfraScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
+            Route::delete('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
 
             Route::get('/maintenance', function () {
                 abort(404);

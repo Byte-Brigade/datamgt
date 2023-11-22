@@ -22,7 +22,7 @@ class AssetsImport implements ToModel, WithHeadingRow, WithUpserts, WithBatchIns
     {
         $cabang = str_contains($row['cabang'], 'Sampoerna') ? 'Sampoerna' : $row['cabang'];
         $branch = Branch::where('branch_name', 'like', '%' . $cabang . '%')->first();
-        if (!is_null($row['asset_location'])) {
+        if ($branch) {
 
             return new GapAsset([
                 'branch_id' => $branch->id,
@@ -31,6 +31,7 @@ class AssetsImport implements ToModel, WithHeadingRow, WithUpserts, WithBatchIns
                 'asset_description' => $row['asset_description'],
                 'date_in_place_service' => is_int($row['date_in_place_service']) ? Date::excelToDateTimeObject($row['date_in_place_service']) : null,
                 'asset_cost' => $row['asset_cost'],
+                'accum_depre' => $row['accum_depre'],
                 'asset_location' => $row['asset_location'],
                 'major_category' => $row['major_category'],
                 'minor_category' => $row['minor_category'],

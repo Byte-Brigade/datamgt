@@ -30,14 +30,16 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
   const currentDate = new Date();
   const initialData = {
     id: null,
-    branch_id: kdo_mobil.branches.id,
-    gap_kdo_id: kdo_mobil.id,
+    branch_id: 0,
+    gap_kdo_id: 0,
     vendor: null,
     nopol: null,
     awal_sewa: null,
     akhir_sewa: null,
-    year: currentDate.getFullYear(),
-    month: currentDate.getMonth() + 1,
+    year: null,
+    month: null,
+    biaya_sewas: null,
+    biaya_sewa: null
   };
 
   const {
@@ -49,12 +51,12 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     processing,
     errors,
   } = useForm(initialData);
-
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
+  const [periodeVal, setPeriodeVal] = useState(0);
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
@@ -84,7 +86,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     e.preventDefault();
     window.open(
       route("gap.kdo.mobil.export", kdo_mobil.branches.branch_code) +
-        `?gap_kdo_id=${gap_kdo_id}`,
+      `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
@@ -116,6 +118,50 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       }
     );
   };
+
+  const getPeriode = (month, year) => {
+    // Create a date with the given month and year (subtract 1 from the month as months are 0-indexed in JavaScript)
+    let date = new Date(Date.UTC(year, month - 1, 1));
+
+    // Format the date to get the ISO string for the 1st day of the month
+    return date.toISOString().slice(0, 10);
+  }
+
+  const handlePeriode = (month, year) => {
+    let biaya_sewas = data.biaya_sewas
+
+    if (!Array.isArray(biaya_sewas)) {
+      setData('biaya_sewa', 0)
+      return;
+
+    }
+    let biaya_sewa = biaya_sewas.find(item => item.periode === getPeriode(month, year));
+    setData({...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0})
+    console.log(data.month)
+    console.log(data.year)
+  }
+  const handleMonth = (e) => {;
+    handlePeriode(e, data.year)
+  }
+  const handleYear = (e) => {
+    setData('year', e);
+    handlePeriode(data.month, e)
+  }
+  const handleBiayaSewa = (val) => {
+    if (typeof data.biaya_sewa === 'object' && data.biaya_sewa !== null) {
+
+      let biaya_sewa = { ...data.biaya_sewa, value: val }
+      console.log("handle")
+      console.log(biaya_sewa)
+      setData('biaya_sewa', biaya_sewa)
+      return;
+    }
+    setData('biaya_sewa', Number(val))
+
+    console.log(data.biaya_sewa)
+  }
+
+
 
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
@@ -151,62 +197,62 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     },
     {
       name: "January 2023",
-      field: "biaya_sewa.january",
+      field: "periode.january",
       className: "text-center ",
     },
     {
       name: "February 2023",
-      field: "biaya_sewa.february",
+      field: "periode.february",
       className: "text-center ",
     },
     {
       name: "March 2023",
-      field: "biaya_sewa.march",
+      field: "periode.march",
       className: "text-center ",
     },
     {
       name: "April 2023",
-      field: "biaya_sewa.april",
+      field: "periode.april",
       className: "text-center ",
     },
     {
       name: "May 2023",
-      field: "biaya_sewa.may",
+      field: "periode.may",
       className: "text-center ",
     },
     {
       name: "June 2023",
-      field: "biaya_sewa.june",
+      field: "periode.june",
       className: "text-center ",
     },
     {
       name: "July 2023",
-      field: "biaya_sewa.july",
+      field: "periode.july",
       className: "text-center ",
     },
     {
       name: "August 2023",
-      field: "biaya_sewa.august",
+      field: "periode.august",
       className: "text-center ",
     },
     {
       name: "September 2023",
-      field: "biaya_sewa.september",
+      field: "periode.september",
       className: "text-center ",
     },
     {
       name: "October 2023",
-      field: "biaya_sewa.october",
+      field: "periode.october",
       className: "text-center ",
     },
     {
       name: "November 2023",
-      field: "biaya_sewa.november",
+      field: "periode.november",
       className: "text-center ",
     },
     {
       name: "December 2023",
-      field: "biaya_sewa.december",
+      field: "periode.december",
       className: "text-center ",
     },
     {
@@ -223,7 +269,15 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           placement="left-start"
           onEditClick={() => {
             toggleModalEdit();
-            setData(data);
+            const dateObject = data.biaya_sewa ? new Date(data.biaya_sewa.periode) : new Date();
+
+            const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
+            const month = dateObject.getMonth() + 1
+
+            setData({...data, month: month.toString(), year: year})
+            console.log(month);
+            console.log();
+            // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -233,6 +287,8 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       ),
     },
   ];
+  console.log(data.month)
+
 
   return (
     <AuthenticatedLayout auth={auth}>
@@ -317,7 +373,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
                 disabled={processing}
                 onChange={(e) => setData("akhir_sewa", e.target.value)}
               />
-              <Select
+              {/* <Select
                 label="Tahun"
                 value={`${data.year}`}
                 onChange={(e) => setData("year", e)}
@@ -327,11 +383,11 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
                     {year}
                   </Option>
                 ))}
-              </Select>
+              </Select> */}
               <Select
                 label="Bulan"
-                value={`${data.month}`}
-                onChange={(e) => setData("month", e)}
+                value={`${data.month || ""}`}
+                onChange={(e) => handlePeriode(e)}
               >
                 {months.map((month, index) => (
                   <Option key={index} value={`${index + 1}`}>
@@ -411,7 +467,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Tambah Data
+          Ubah Data
           <IconButton
             size="sm"
             variant="text"
@@ -453,8 +509,8 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               />
               <Select
                 label="Tahun"
-                value={`${data.year}`}
-                onChange={(e) => setData("year", e)}
+                value={data.year ? `${data.year}` : ""}
+                onChange={handleYear}
               >
                 {years.map((year, index) => (
                   <Option key={index} value={`${year}`}>
@@ -464,8 +520,8 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </Select>
               <Select
                 label="Bulan"
-                value={`${data.month}`}
-                onChange={(e) => setData("month", e)}
+                value={data.month || ""}
+                onChange={handleMonth}
               >
                 {months.map((month, index) => (
                   <Option key={index} value={`${index + 1}`}>
@@ -475,17 +531,17 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </Select>
               <Input
                 label="Biaya Sewa"
-                value={data.biaya_sewa || ""}
+                value={data.biaya_sewa ? data.biaya_sewa.value : ''}
                 type="number"
                 disabled={processing}
-                onChange={(e) => setData("biaya_sewa", e.target.value)}
+                onChange={(e) => handleBiayaSewa(e.target.value)}
               />
             </div>
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
-                Tambah
+                Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
                 Tutup

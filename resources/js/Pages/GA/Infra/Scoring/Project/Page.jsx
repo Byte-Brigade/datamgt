@@ -23,17 +23,29 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions, jenis_perizinan }) {
+export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
-    jenis_perizinan_id: 0,
-    tgl_pengesahan: null,
-    tgl_masa_berlaku: null,
+    description: null,
+    pic: null,
+    status_pekerjaan: null,
+    dokumen_perintah_kerja: null,
+    vendor: null,
+    nilai_project: null,
+    tgl_selesai_pekerjaan: null,
+    tgl_bast: null,
+    tgl_request_scoring: null,
+    tgl_scoring: null,
+    sla: null,
+    actual: null,
+    scoring_vendor: null,
+    schedule_scoring: null,
+    keterangan: null,
+
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    expired_date: null,
   };
   const {
     data,
@@ -54,64 +66,78 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
 
     {
-      name: "Jenis Perizinan",
-      field: "jenis_perizinan.name",
-      className: "text-center",
+      name: "Description",
+      field: "description",
     },
     {
-      name: "Tgl Pengesahan",
-      field: "tgl_pengesahan",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center",
-    },
-    {
-      name: "Tgl Masa Berlaku s/d",
-      field: "tgl_masa_berlaku",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center",
-    },
-    {
-      name: "Progress Resertifikasi",
-      field: "progress_resertifikasi",
-      className: "text-center",
-    },
-    {
-      name: "Lampiran",
-      field: "file",
-      type: "custom",
-      render: (data) =>
-        data.file ? (
-          <a
-            className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/infra/disnaker/${data.id}/${data.file}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file}
-          </a>
-        ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
-        ),
+      name: "PIC",
+      field: "pic",
     },
 
+    {
+      name: "Status Pekerjaan",
+      field: "status_pekerjaan",
+    },
+    {
+      name: "Dokumen Perintah Kerja",
+      field: "dokumen_perintah_kerja",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Nilai Project",
+      field: "nilai_project",
+      type: 'custom',
+      render: (data) => {
+        return data.nilai_project ? data.nilai_project.toLocaleString("id-ID") : 0
+      }
+    },
+    {
+      name: "Tanggal Selesai Pekerjaan",
+      field: "tgl_selesai_pekerjaan",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal BAST",
+      field: "tgl_bast",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal Scoring",
+      field: "tgl_scoring",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "SLA",
+      field: "sla",
+    },
+    {
+      name: "Actual",
+      field: "actual",
+    },
+    {
+      name: "Meet The SLA",
+      field: "meet_the_sla",
+    },
+    {
+      name: "Scoring Vendor",
+      field: "scoring_vendor",
+    },
+    {
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
+    },
     {
       name: "Action",
       field: "action",
@@ -122,6 +148,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           onEditClick={() => {
             toggleModalEdit();
             setData(data);
+            console.log(data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -134,7 +161,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("infra.disnaker.import"), {
+    post(route("infra.scoring_projects.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -146,12 +173,12 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("infra.disnaker.export") + `?branch=${branch}`, "_self");
+    window.open(route("infra.scoring_projects.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("infra.disnaker.upload", data.id), {
+    post(route("infra.scoring_projects.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -162,8 +189,8 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    post(route("infra.disnaker.update", data.id), {
-      method: "post",
+    put(route("infra.scoring_projects.update", data.id), {
+      method: "put",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -173,7 +200,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("infra.disnaker.store", data.id), {
+    post(route("infra.scoring_projects.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -185,7 +212,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("infra.disnaker.delete", data.id), {
+    destroy(route("infra.scoring_projects.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -193,6 +220,33 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
       },
     });
   };
+
+  const calculateDifference = (startDate, endDate) => {
+    let days = 0;
+    const tgl_bast = new Date(startDate)
+    const tgl_scoring = new Date(endDate)
+    if (isNaN(tgl_bast) || isNaN(tgl_bast)) {
+      console.log("tgl tidak valid")
+      return;
+    }
+    const difference = Math.abs(tgl_scoring - tgl_bast); // Menggunakan nilai mutlak
+    days = difference / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+    console.log(days)
+    setData({ ...data, tgl_bast: startDate, tgl_scoring: endDate, actual: days })
+  };
+
+
+  const handleTglBast = (e) => {
+    setData('tgl_bast', e.target.value)
+    calculateDifference(e.target.value, data.tgl_scoring)
+    console.log(e.target.value)
+  }
+  const handleTglScoring = (e) => {
+    setData('tgl_scoring', e.target.value)
+    calculateDifference(data.tgl_bast, e.target.value)
+    console.log(e.target.value)
+
+  }
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -210,6 +264,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -219,7 +274,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA | Izin Disnaker" />
+      <Head title="GA Procurement | Assets" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -251,8 +306,10 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/infra/disnaker"}
+            className="w-[1500px]"
+            fetchUrl={"/api/infra/scoring_projects"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
         </div>
       </div>
@@ -376,7 +433,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -384,57 +441,139 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label="Jenis Perizinan"
-                value={`${data.jenis_perizinan_id}`}
-                disabled={processing}
-                onChange={(e) => setData("jenis_perizinan_id", e)}
-              >
-                {jenis_perizinan.map((izin) => (
-                  <Option key={izin.id} value={`${izin.id}`}>
-                    {izin.name.replace("Surat Izin Disnaker", "")}
-                  </Option>
-                ))}
+                {branches.map((branch) =>
+                  branch.branch_name.includes("Pusat") ? (
+                    <Option value={`${branch.id}`}>
+                      {branch.branch_name}
+                    </Option>
+                  ) : (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  )
+                )}
               </Select>
 
+
               <Input
-                label="Tanggal Pengesahan"
-                value={data.tgl_pengesahan || ""}
+                label="Deskripsi"
+                value={data.description || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+                onChange={(e) => setData("description", e.target.value)}
               />
               <Input
-                label="Tanggal Masa Berlaku"
-                value={data.tgl_masa_berlaku || ""}
+                label="PIC"
+                value={data.pic || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+                onChange={(e) => setData("pic", e.target.value)}
+              />
+              <Select
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
+                disabled={processing}
+                onChange={(e) => setData("status_pekerjaan", e)}
+              >
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
+              </Select>
+              <Input
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
+                disabled={processing}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
               />
               <Input
-                label="Progress Resertifikasi"
-                value={data.progress_resertifikasi || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
+                onChange={(e) => setData("vendor", e.target.value)}
+              />
+              <Input
+                label="Nilai Project"
+                type="number"
+                value={data.nilai_project || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_project", e.target.value)}
+              />
+              <Input
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
+                disabled={processing}
+                type="date"
                 onChange={(e) =>
-                  setData("progress_resertifikasi", e.target.value)
+                  setData("tgl_selesai_pekerjaan", e.target.value)
                 }
               />
               <Input
-                label="Upload Lampiran"
-                type="file"
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
                 disabled={processing}
-                name="file"
-                accept=".pdf"
-                onChange={(e) => {
-                  console.log(e.target.files[0]);
-                  return setData("file", e.target.files[0]);
-                }}
+                type="date"
+                onChange={handleTglBast}
+              />
+              <Input
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
+              />
+              <Input
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
+                type="number"
+                value={data.sla || ""}
+                disabled={processing}
+                onChange={(e) => setData('sla', e.target.value)}
+              />
+              <Input
+                label="Actual"
+                value={data.actual || ""}
+                disabled={processing}
+                onChange={(e) => setData("actual", e.target.value)}
+              />
+              <Input
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
+              />
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
+                disabled={processing}
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
+              <Input
+                label="Keterangan"
+                value={data.keterangan || ""}
+                disabled={processing}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -465,7 +604,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll " divider>
+          <DialogBody divider className="overflow-y-auto max-h-96" >
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -473,46 +612,140 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label="Jenis Perizinan"
-                value={`${data.jenis_perizinan_id}`}
-                disabled={processing}
-                onChange={(e) => setData("jenis_perizinan_id", e)}
-              >
-                {jenis_perizinan.map((izin) => (
-                  <Option key={izin.id} value={`${izin.id}`}>
-                    {izin.name.replace("Surat Izin Disnaker", "")}
-                  </Option>
-                ))}
+                {branches.map((branch) =>
+                  branch.branch_name.includes("Pusat") ? (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_name}
+                    </Option>
+                  ) : (
+                    <Option key={branch.id} value={`${branch.id}`}>
+                      {branch.branch_code} - {branch.branch_name}
+                    </Option>
+                  )
+                )}
               </Select>
 
+
               <Input
-                label="Tanggal Pengesahan"
-                value={data.tgl_pengesahan || ""}
+                label="Deskripsi"
+                value={data.description || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+                onChange={(e) => setData("description", e.target.value)}
               />
               <Input
-                label="Tanggal Masa Berlaku"
-                value={data.tgl_masa_berlaku || ""}
+                label="PIC"
+                value={data.pic || ""}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+                onChange={(e) => setData("pic", e.target.value)}
+              />
+              <Select
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
+                disabled={processing}
+                onChange={(e) => setData("status_pekerjaan", e)}
+              >
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
+              </Select>
+              <Input
+                label="Dokumen Perintah Kerja"
+                value={data.dokumen_perintah_kerja || ""}
+                disabled={processing}
+                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
               />
               <Input
-                label="Progress Resertifikasi"
-                value={data.progress_resertifikasi || ""}
+                label="Vendor"
+                value={data.vendor || ""}
                 disabled={processing}
+                onChange={(e) => setData("vendor", e.target.value)}
+              />
+              <Input
+                label="Nilai Project"
+                type="number"
+                value={data.nilai_project || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_project", e.target.value)}
+              />
+              <Input
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
+                disabled={processing}
+                type="date"
                 onChange={(e) =>
-                  setData("progress_resertifikasi", e.target.value)
+                  setData("tgl_selesai_pekerjaan", e.target.value)
                 }
+              />
+              <Input
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglBast}
+              />
+              <Input
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
+              />
+              <Input
+                label="Tanggal Scoring"
+                value={data.tgl_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
+                type="number"
+                value={data.sla || ""}
+                disabled={processing}
+                onChange={(e) => setData('sla', e.target.value)}
+              />
+              <Input
+                label="Actual"
+                value={data.actual || ""}
+                type="number"
+                disabled={processing}
+                onChange={(e) => setData("actual", e.target.value)}
+              />
+              <Input
+                label="Scoring Vendor"
+                value={data.scoring_vendor || ""}
+                disabled={processing}
+                onChange={(e) => setData("scoring_vendor", e.target.value)}
+              />
+              <Select
+                label="Schedule Scoring"
+                value={`${data.schedule_scoring}`}
+                disabled={processing}
+                onChange={(e) => setData("schedule_scoring", e)}
+              >
+                <Option value="Q1">
+                  Q1
+                </Option>
+                <Option value="Q2">
+                  Q2
+                </Option>
+                <Option value="Q3">
+                  Q3
+                </Option>
+                <Option value="Q4">
+                  Q4
+                </Option>
+              </Select>
+              <Input
+                label="Keterangan"
+                value={data.keterangan || ""}
+                disabled={processing}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>

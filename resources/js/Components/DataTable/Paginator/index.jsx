@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const OFFSET = 3;
+const OFFSET = 2;
 
 export default function Paginator({ pagination, pageChanged, totalItems }) {
   const [pageNumbers, setPageNumbers] = useState([]);
@@ -12,7 +12,7 @@ export default function Paginator({ pagination, pageChanged, totalItems }) {
       if (!to) return [];
       let fromPage = current_page - OFFSET;
       if (fromPage < 1) fromPage = 1;
-      let toPage = current_page + OFFSET * 2;
+      let toPage = current_page + OFFSET;
       if (toPage >= last_page) toPage = last_page;
       for (let page = fromPage; page <= toPage; page++) {
         pages.push(page);

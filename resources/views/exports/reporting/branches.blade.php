@@ -5,7 +5,7 @@
             <th>Kode Cabang</th>
             <th>Nama Cabang</th>
             <th>Tipe Cabang</th>
-            <th>Status Cabang</th>
+            <th>Status Kepemilikan</th>
             <th>Masa Sewa</th>
             <th>Jatuh Tempo Sewa</th>
             <th>Open Date Cabang</th>

@@ -15,6 +15,7 @@ class KdoMobilResource extends JsonResource
      */
     public function toArray($request)
     {
+        $latest_periode = $this->biaya_sewas()->where('value', '>', 0)->orderBy('periode', 'desc')->get()->first();
         return [
             'id' => $this->id,
             'gap_kdo_id' => $this->gap_kdo_id,
@@ -23,11 +24,18 @@ class KdoMobilResource extends JsonResource
             'nopol' => $this->nopol,
             'awal_sewa' => $this->awal_sewa,
             'akhir_sewa' => $this->akhir_sewa,
-            'biaya_sewa' => collect($this->biaya_sewa)->flatMap(function ($data) {
-                return [strtolower(Carbon::parse($data['periode'])->format('F')) => $data['value'] != 0 ? number_format($data['value'], 0, ',', '.') : '-'];
+            'periode' => $this->biaya_sewas->flatMap(function ($data) {
+                return [strtolower(Carbon::parse($data->periode)->format('F')) => $data->value != 0 ? number_format($data->value, 0, ',', '.') : '-'];
             }),
+            'biaya_sewa' => $latest_periode,
+            'biaya_sewas' => $this->biaya_sewas->map(function ($data) {
+                $data[strtolower(Carbon::parse($data->periode)->format('F'))] = $data->value != 0 ? number_format($data->value, 0, ',', '.') : '-';
+                return $data;
+            })->filter(function ($data) {
+                return $data->value > 0;
+            })->toArray(),
             'branches' => $this->branches,
-            'total_sewa' => number_format(collect($this->biaya_sewa)->sum('value'), 0, ',', '.')
+            'total_sewa' => number_format(collect($this->biaya_sewas)->sum('value'), 0, ',', '.')
         ];
     }
 }

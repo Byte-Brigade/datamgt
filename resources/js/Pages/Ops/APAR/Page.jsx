@@ -231,6 +231,7 @@ console.log(auth)
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"
@@ -336,7 +337,7 @@ console.log(auth)
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll " divider>
+          <DialogBody className="overflow-y-auto max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"

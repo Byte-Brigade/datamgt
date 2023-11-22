@@ -21,10 +21,10 @@ class GapAssetController extends Controller
     public function index()
     {
         $branchesProps = Branch::get();
-        return Inertia::render('GA/Asset/Page', ['branches' => $branchesProps]);
+        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code',  'date_in_place_service', 'asset_number', 'category', 'date_in_place_service', 'net_book_value', 'depre_exp'];
+    protected array $sortFields = ['branches.branch_code',  'date_in_place_service', 'asset_cost', 'accum_depre', 'depre_exp', 'asset_number', 'category', 'date_in_place_service', 'net_book_value', 'depre_exp'];
 
     public function api(GapAsset $gap_asset, Request $request)
     {
@@ -36,6 +36,10 @@ class GapAssetController extends Controller
             ->join('branches', 'gap_assets.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
+
+        if(!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
