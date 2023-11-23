@@ -7,6 +7,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
+use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
@@ -124,6 +125,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
             Route::get('/scoring-assessments/export', [GapScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
             Route::delete('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
+
+            Route::get('/perdins', [GapPerdinController::class, 'index'])->name('perdins');
+            Route::get('/perdins/{divisi_pembebanan}', [GapPerdinController::class, 'detail'])->name('perdins.detail');
+            Route::post('/perdins/import', [GapPerdinController::class, 'import'])->name('perdins.import');
+            Route::post('/perdins', [GapPerdinController::class, 'store'])->name('perdins.store');
+            Route::put('/perdins/{id}', [GapPerdinController::class, 'update'])->name('perdins.update');
+            Route::get('/perdins/export', [GapPerdinController::class, 'export'])->name('perdins.export');
+            Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */

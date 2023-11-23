@@ -114,7 +114,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Biaya Perjalanan Dinas",
-      path: "gap.maintenance",
+      path: "gap.perdins",
     },
     {
       name: "Hasil STO",
