@@ -25,8 +25,8 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
-  console.log(kdo_mobil);
+export default function Detail({ auth, sessions, divisi_pembebanan, years, months }) {
+
   const currentDate = new Date();
   const initialData = {
     id: null,
@@ -85,7 +85,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     const { gap_kdo_id } = data;
     e.preventDefault();
     window.open(
-      route("gap.kdo.mobil.export", kdo_mobil.branches.branch_code) +
+      route("gap.kdo.mobil.export") +
       `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
@@ -106,7 +106,6 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     e.preventDefault();
     destroy(
       route("gap.kdo.mobil.destroy", {
-        branch_code: kdo_mobil.branches.branch_code,
         id: data.id,
       }),
       {
@@ -136,11 +135,12 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
 
     }
     let biaya_sewa = biaya_sewas.find(item => item.periode === getPeriode(month, year));
-    setData({...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0})
+    setData({ ...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0 })
     console.log(data.month)
     console.log(data.year)
   }
-  const handleMonth = (e) => {;
+  const handleMonth = (e) => {
+    ;
     handlePeriode(e, data.year)
   }
   const handleYear = (e) => {
@@ -178,87 +178,19 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
   };
 
   const columns = [
-    { name: "Vendor", field: "vendor", sortable: true },
-    { name: "Cabang", field: "branches.branch_name", sortable: true },
-    { name: "Nopol", field: "nopol", className: "" },
+    { name: "Divisi Pembebanan", field: "divisi_pembebanan", className: "" },
+    { name: "Category", field: "category", sortable: true },
+    { name: "Tipe", field: "tipe", sortable: true },
     {
-      name: "Awal Sewa",
-      type: "date",
-      field: "awal_sewa",
+      name: "Periode",
+      field: "periode",
       sortable: true,
-      className: "",
     },
     {
-      name: "Akhir Sewa",
-      type: "date",
-      field: "akhir_sewa",
+      name: "Nilai", field: "value",
+      type: 'custom',
       sortable: true,
-      className: "",
-    },
-    {
-      name: "January 2023",
-      field: "periode.january",
-      className: "text-center ",
-    },
-    {
-      name: "February 2023",
-      field: "periode.february",
-      className: "text-center ",
-    },
-    {
-      name: "March 2023",
-      field: "periode.march",
-      className: "text-center ",
-    },
-    {
-      name: "April 2023",
-      field: "periode.april",
-      className: "text-center ",
-    },
-    {
-      name: "May 2023",
-      field: "periode.may",
-      className: "text-center ",
-    },
-    {
-      name: "June 2023",
-      field: "periode.june",
-      className: "text-center ",
-    },
-    {
-      name: "July 2023",
-      field: "periode.july",
-      className: "text-center ",
-    },
-    {
-      name: "August 2023",
-      field: "periode.august",
-      className: "text-center ",
-    },
-    {
-      name: "September 2023",
-      field: "periode.september",
-      className: "text-center ",
-    },
-    {
-      name: "October 2023",
-      field: "periode.october",
-      className: "text-center ",
-    },
-    {
-      name: "November 2023",
-      field: "periode.november",
-      className: "text-center ",
-    },
-    {
-      name: "December 2023",
-      field: "periode.december",
-      className: "text-center ",
-    },
-    {
-      name: "Total Sewa",
-      field: "total_sewa",
-      className: "text-center ",
+      render: (data) => data.value.toLocaleString('id-ID'),
     },
     {
       name: "Action",
@@ -274,7 +206,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
             const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
             const month = dateObject.getMonth() + 1
 
-            setData({...data, month: month.toString(), year: year})
+            setData({ ...data, month: month.toString(), year: year })
             console.log(month);
             console.log();
             // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
@@ -319,14 +251,13 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </PrimaryButton>
             </div>
             <h2 className="text-xl font-semibold text-center">
-              {kdo_mobil.branches.branch_name}
+
             </h2>
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
+            fetchUrl={`/api/gap/perdins/${divisi_pembebanan}`}
             refreshUrl={isRefreshed}
-            className="w-[2200px]"
           />
         </div>
       </div>
@@ -384,17 +315,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
                   </Option>
                 ))}
               </Select> */}
-              <Select
-                label="Bulan"
-                value={`${data.month || ""}`}
-                onChange={(e) => handlePeriode(e)}
-              >
-                {months.map((month, index) => (
-                  <Option key={index} value={`${index + 1}`}>
-                    {month}
-                  </Option>
-                ))}
-              </Select>
+
               <Input
                 label="Biaya Sewa"
                 value={data.biaya_sewa || ""}
@@ -507,28 +428,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
                 disabled={processing}
                 onChange={(e) => setData("akhir_sewa", e.target.value)}
               />
-              <Select
-                label="Tahun"
-                value={data.year ? `${data.year}` : ""}
-                onChange={handleYear}
-              >
-                {years.map((year, index) => (
-                  <Option key={index} value={`${year}`}>
-                    {year}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label="Bulan"
-                value={data.month || ""}
-                onChange={handleMonth}
-              >
-                {months.map((month, index) => (
-                  <Option key={index} value={`${index + 1}`}>
-                    {month}
-                  </Option>
-                ))}
-              </Select>
+
               <Input
                 label="Biaya Sewa"
                 value={data.biaya_sewa ? data.biaya_sewa.value : ''}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PerdinResource extends JsonResource
@@ -19,7 +20,7 @@ class PerdinResource extends JsonResource
             'divisi_pembebanan' => $this->divisi_pembebanan,
             'category' => $this->category,
             'tipe' => $this->tipe,
-            'periode' => $this->periode,
+            'periode' => Carbon::parse($this->periode)->format('M Y'),
             'value' => $this->value,
 
         ];

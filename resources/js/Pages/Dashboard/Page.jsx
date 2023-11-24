@@ -90,7 +90,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-flow-col gap-4 auto-cols-min">
             <CardMenu
               label="Jumlah Cabang"
               data={data}

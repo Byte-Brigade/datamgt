@@ -57,6 +57,7 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdo', [GapKdoController::class, 'api']);
     Route::get('assets', [GapAssetController::class, 'api']);
     Route::get('perdins', [GapPerdinController::class, 'api']);
+    Route::get('perdins/{divisi_pembebanan}', [GapPerdinController::class, 'api_Detail']);
     Route::get('scoring_projects', [GapScoringProjectController::class, 'api']);
     Route::get('scoring_assessments', [GapScoringAssessmentController::class, 'api']);
 

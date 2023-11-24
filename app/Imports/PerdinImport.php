@@ -27,10 +27,6 @@ class PerdinImport implements ToCollection, WithHeadingRow
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
 
-
-
-
-
             $periode = [];
             foreach ($filteredData as $key => $value) {
                 if (!is_null($value)) {

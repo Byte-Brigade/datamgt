@@ -88,10 +88,19 @@ export default function Page({ auth,  sessions }) {
       render: (data) => data.total.toLocaleString('id-ID')
     },
 
+    {
+      name: "Detail",
+      field: "detail",
+      className: "text-center",
+      render: (data) => (
+        <Link href={route("gap.perdins.detail", data.divisi_pembebanan)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
+    },
+
 
   ];
-
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
