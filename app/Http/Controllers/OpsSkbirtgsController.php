@@ -27,23 +27,17 @@ class OpsSkbirtgsController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $filters = $request->filters;
-
-
         $query = $this->ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
 
-
         $perpage = $request->perpage ?? 10;
-
-
         if (isset($filters)) {
             // $filters = array_map(function ($filter) {
             //     return $filter == 'penerima_kuasa' ? "CONCAT('[',employee_positions.position_name,']',' ',employees.name) as penerima_kuasa" : $filter;
             // }, $filters);
-
-
             $query->selectRaw(implode(', ', $filters));
         }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('no_surat', 'like', $searchQuery)
@@ -51,14 +45,9 @@ class OpsSkbirtgsController extends Controller
         }
 
         $query = $query->get();
-
         $collections = collect([]);
-
         // Nilai default untuk item ketika tidak ada penerima kuasa
-
-
         foreach ($query as $item) {
-
             // Nilai default untuk item ketika tidak ada penerima kuasa
             $defaultValues = [
                 'id' => $item->id,
@@ -67,7 +56,7 @@ class OpsSkbirtgsController extends Controller
                 'status' => $item->status,
                 'file' => $item->file,
                 'penerima_kuasa' => str_contains($item->status, 'Kanwil') ? $item->status : 'Centralized - SKN',
-                'branches' => $item->branches
+                'branch_name' => $item->branches->branch_name,
             ];
             $penerima_kuasa = $item->penerima_kuasa()->get();
 
@@ -75,10 +64,8 @@ class OpsSkbirtgsController extends Controller
             if ($penerima_kuasa->count() > 0) {
                 // Buat array sementara untuk menampung item yang telah diubah posisinya
                 $tempCollections = [];
-
                 // Jika BM ada, letakkan di posisi pertama
                 $bmAdded = false;
-
                 foreach ($penerima_kuasa as $penerima) {
                     $tempItem = array_merge($defaultValues, [
                         'id' => $item->id,
@@ -87,9 +74,8 @@ class OpsSkbirtgsController extends Controller
                         'status' => $item->status,
                         'file' => $item->file,
                         'penerima_kuasa' => '[' . $penerima->getPosition() . ']' . ' ' . $penerima->name,
-                        'branches' => $item->branches
+                        'branch_name' => $item->branches->branch_name,
                     ]);
-
                     // Jika 'BM' belum ditambahkan dan saat ini adalah 'BM',
                     // tambahkan 'BM' ke koleksi di posisi pertama
                     if (!$bmAdded && $penerima->getPosition() === 'BM') {
@@ -100,7 +86,6 @@ class OpsSkbirtgsController extends Controller
                         $tempCollections[] = $tempItem;
                     }
                 }
-
                 // Menukar posisi item pada $tempCollections (mulai dari item ke-9)
                 $count = count($tempCollections);
                 for ($i = 8; $i < $count; $i += 2) {
@@ -110,7 +95,6 @@ class OpsSkbirtgsController extends Controller
                         $tempCollections[$i + 1] = $temp;
                     }
                 }
-
                 // Menambahkan item yang telah ditukar ke $collections
                 $collections = $collections->merge(collect($tempCollections));
             } else {
@@ -160,17 +144,14 @@ class OpsSkbirtgsController extends Controller
     {
         try {
             $ops_skbirtgs = OpsSkbirtgs::find($id);
-
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('ops/skbirtgs/', $fileName, ["disk" => 'public']);
-
             $ops_skbirtgs->file = $fileName;
             $ops_skbirtgs->save();
 
             return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
-
             return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }

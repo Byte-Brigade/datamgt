@@ -7,7 +7,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -53,7 +53,7 @@ export default function Speciment({ auth, sessions, branches }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch Name", field: "branches.branch_name", sortable: true },
+    { name: "Nama Cabang", field: "branch_name", sortable: true },
     {
       name: "Tanggal Spesimen",
       field: "tgl_speciment",
@@ -257,8 +257,11 @@ export default function Speciment({ auth, sessions, branches }) {
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
+                  <div className="flex items-center gap-x-2">
+                    <DocumentArrowDownIcon className="w-4 h-4" />
                     Create Report
-                  </PrimaryButton>
+                  </div>
+                </PrimaryButton>
                 )}
               </div>
             )}

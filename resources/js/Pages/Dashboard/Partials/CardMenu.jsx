@@ -77,7 +77,7 @@ export default function CardMenu({
       ? data.assets.filter(
           (asset) =>
             (branchState === 0 || asset.branch_id == branchState) &&
-            (areaState === "none" || asset.branches.area == areaState)
+            (areaState === "none" || asset.area == areaState)
         ).length
       : type === "gap_scorings"
       ? data.gap_scorings.filter(
@@ -90,7 +90,7 @@ export default function CardMenu({
   return (
     <Card
       onClick={onClick}
-      className={`flex-row border cursor-pointer gap-x-4 border-slate-400 ${
+      className={`flex-row cursor-pointer gap-x-4 ${
         active === type
           ? "hover:bg-slate-200 bg-slate-100 ring-2 ring-offset-2 " + ringColor
           : "bg-white hover:bg-slate-200"

@@ -26,6 +26,8 @@ class DashboardController extends Controller
         $gap_scorings = GapScoring::with('branches')->get();
         // dd($branches->groupBy('branch_types.type_name'));
 
+
+
         $data = [
             'branches' => $branches,
             'list_branches' => Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']),
@@ -54,7 +56,15 @@ class DashboardController extends Controller
                 })
             ];
         }),
-            'assets' => $gap_asset,
+            'assets' => GapAsset::with('branches')->get()->map(function($asset) {
+                return ['branch_id'=> $asset->branch_id,
+                'branch_name' => $asset->branches->branch_name,
+                'area' => $asset->branches->area,
+                'nilai_perolehan' => $asset->asset_cost,
+                'penyusutan' => $asset->accum_depre,
+                'net_book_value' => $asset->net_book_value,
+                'category' =>$asset->category];
+            }),
             'gap_scorings' => $gap_scorings,
             'jumlah_cabang' => $branches->sortBy('branch_code')->groupBy('branch_types.alt_name'),
             'jumlah_cabang_alt' => $branches->groupBy('branch_types.type_name'),
