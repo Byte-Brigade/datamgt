@@ -6,7 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -109,7 +109,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("employees.import"), {
+    post(route("ops.employees.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -120,7 +120,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("employees.update", data.id), {
+    put(route("ops.employees.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -131,7 +131,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("employees.store", data.id), {
+    post(route("ops.employees.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -143,7 +143,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("employees.delete", data.id), {
+    destroy(route("ops.employees.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -164,7 +164,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
         ? `?position=${position}`
         : "";
 
-    window.open(route("employees.export") + query, "__blank");
+    window.open(route("ops.employees.export") + query, "__blank");
   };
 
   const toggleModalImport = () => {
@@ -229,8 +229,11 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
+                  <div className="flex items-center gap-x-2">
+                    <DocumentArrowDownIcon className="w-4 h-4" />
                     Create Report
-                  </PrimaryButton>
+                  </div>
+                </PrimaryButton>
                 )}
               </div>
             )}

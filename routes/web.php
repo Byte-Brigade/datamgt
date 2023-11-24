@@ -7,11 +7,13 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
+use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
+use App\Http\Controllers\InfraSewaGedungController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -66,25 +68,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {
-        /* [START] Branches */
-        Route::get('/branches', [BranchController::class, 'index'])->name('branches');
-        Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
-        Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
-        Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
-
-        Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
-        Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
-        Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
-        /* [END] Branches */
-
-        /* [START] Employees */
-        Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-        Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
-        Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
-        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
-        /* [END] Employees */
 
         Route::prefix('gap')->name('gap.')->group(function () {
             /* [START] GA Procurement KDO */
@@ -123,6 +106,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
             Route::get('/scoring-assessments/export', [GapScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
             Route::delete('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
+
+            Route::get('/perdins', [GapPerdinController::class, 'index'])->name('perdins');
+            Route::get('/perdins/{divisi_pembebanan}', [GapPerdinController::class, 'detail'])->name('perdins.detail');
+            Route::post('/perdins/import', [GapPerdinController::class, 'import'])->name('perdins.import');
+            Route::post('/perdins', [GapPerdinController::class, 'store'])->name('perdins.store');
+            Route::put('/perdins/{id}', [GapPerdinController::class, 'update'])->name('perdins.update');
+            Route::get('/perdins/export', [GapPerdinController::class, 'export'])->name('perdins.export');
+            Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */
@@ -151,6 +142,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/scoring-assessments/export', [InfraScoringAssessmentController::class, 'export'])->name('scoring_assessments.export');
             Route::delete('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
 
+            Route::get('/sewa-gedungs', [InfraSewaGedungController::class, 'index'])->name('sewa_gedungs');
+            Route::post('/sewa-gedungs/import', [InfraSewaGedungController::class, 'import'])->name('sewa_gedungs.import');
+            Route::post('/sewa-gedungs', [InfraSewaGedungController::class, 'store'])->name('sewa_gedungs.store');
+            Route::put('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'update'])->name('sewa_gedungs.update');
+            Route::get('/sewa-gedungs/export', [InfraSewaGedungController::class, 'export'])->name('sewa_gedungs.export');
+            Route::delete('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'destroy'])->name('sewa_gedungs.delete');
+
             Route::get('/maintenance', function () {
                 abort(404);
             })->name('maintenance');
@@ -158,6 +156,26 @@ Route::middleware('auth')->group(function () {
 
 
         Route::prefix('ops')->name('ops.')->group(function () {
+
+            /* [START] Branches */
+            Route::get('/branches', [BranchController::class, 'index'])->name('branches');
+            Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
+            Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+            Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
+
+            Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
+            Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
+            Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
+            /* [END] Branches */
+
+            /* [START] Employees */
+            Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
+            Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+            Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+            Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
+            Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
+            Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+            /* [END] Employees */
 
             /* [START] Ops SKBIRTGS */
             Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');

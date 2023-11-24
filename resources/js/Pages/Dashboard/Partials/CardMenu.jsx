@@ -1,4 +1,4 @@
-import { Typography } from "@material-tailwind/react";
+import { Card, CardBody, CardHeader, Typography } from "@material-tailwind/react";
 
 export default function CardMenu({
   Icon,
@@ -77,7 +77,7 @@ export default function CardMenu({
       ? data.assets.filter(
           (asset) =>
             (branchState === 0 || asset.branch_id == branchState) &&
-            (areaState === "none" || asset.branches.area == areaState)
+            (areaState === "none" || asset.area == areaState)
         ).length
       : type === "gap_scorings"
       ? data.gap_scorings.filter(
@@ -88,21 +88,21 @@ export default function CardMenu({
       : [];
 
   return (
-    <div
+    <Card
       onClick={onClick}
-      className={`flex items-center px-4 py-2 border cursor-pointer gap-x-4 border-slate-400 rounded-lg ${
+      className={`flex-row cursor-pointer gap-x-4 ${
         active === type
           ? "hover:bg-slate-200 bg-slate-100 ring-2 ring-offset-2 " + ringColor
           : "bg-white hover:bg-slate-200"
-      } transition-all duration-300`}
+      } transition-all duration-300 w-full max-w-[24-rem]`}
     >
-      <div className={`p-2 rounded-full ${outlineColor}`}>
-        <Icon className={`w-8 h-8 ${iconColor}`} />
-      </div>
-      <div className="flex flex-col">
-        <Typography variant="h5">{label}</Typography>
-        <Typography>{setData}</Typography>
-      </div>
-    </div>
+      <CardHeader shadow={false} floated={false} className={`m-0 w-2/5 shrink-0 rounded-r-none ${outlineColor}`}>
+        <Icon className={`h-full w-full object-cover ${iconColor}`} />
+      </CardHeader>
+      <CardBody className="p-4">
+        <Typography variant="h5" color="black" className="mb-2">{label}</Typography>
+        <Typography color="black">{setData}</Typography>
+      </CardBody>
+    </Card>
   );
 }

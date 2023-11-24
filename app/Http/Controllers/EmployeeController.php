@@ -62,7 +62,7 @@ class EmployeeController extends Controller
         $branchesProps = Branch::all();
         $positionsProps = EmployeePosition::all();
 
-        return Inertia::render('Cabang/Karyawan/Page', [
+        return Inertia::render('Ops/Karyawan/Page', [
             'branches' => $branchesProps,
             'positions' => $positionsProps
         ]);
@@ -73,7 +73,7 @@ class EmployeeController extends Controller
         try {
             (new EmployeesImport)->import($request->file('file'));
 
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.employees'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             $list_error = collect([]);
@@ -92,7 +92,7 @@ class EmployeeController extends Controller
 
                 $list_error->push($error);
             }
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
+            return redirect(route('ops.employees'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
         }
     }
 
@@ -114,9 +114,9 @@ class EmployeeController extends Controller
                 'birth_date' => $request->birth_date,
                 'hiring_date' => $request->hiring_date,
             ]);
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil ditambahkan']);
+            return redirect(route('ops.employees'))->with(['status' => 'success', 'message' => 'Data berhasil ditambahkan']);
         } catch (\Exception $e) {
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
     public function update(Request $request, $id)
@@ -133,9 +133,9 @@ class EmployeeController extends Controller
                 'hiring_date' => $request->hiring_date,
             ]);
 
-            return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
+            return redirect(route('ops.employees'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
-            return redirect(route('employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('ops.employees'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -144,6 +144,6 @@ class EmployeeController extends Controller
         $employee = Employee::find($id);
         $employee->delete();
 
-        return redirect(route('employees'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+        return redirect(route('ops.employees'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
 }

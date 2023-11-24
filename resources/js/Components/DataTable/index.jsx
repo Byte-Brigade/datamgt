@@ -67,7 +67,7 @@ export default function DataTable({
       setSearch(query);
       setCurrentPage(1);
       setSortOrder(SORT_ASC);
-      setSortColumn(columns[0].name);
+      setSortColumn(columns[0].field);
     }, 500)
   ).current;
 

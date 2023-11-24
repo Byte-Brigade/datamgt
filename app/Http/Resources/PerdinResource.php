@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SpecimentResource extends JsonResource
+class PerdinResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -16,10 +17,12 @@ class SpecimentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'branch_id' => $this->branch_id,
-            'tgl_speciment' => $this->tgl_speciment,
-            'file' => $this->file,
-            'branch_name' => $this->branches->branch_name
+            'divisi_pembebanan' => $this->divisi_pembebanan,
+            'category' => $this->category,
+            'tipe' => $this->tipe,
+            'periode' => Carbon::parse($this->periode)->format('M Y'),
+            'value' => $this->value,
+
         ];
     }
 }

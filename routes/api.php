@@ -7,11 +7,13 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
+use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
+use App\Http\Controllers\InfraSewaGedungController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -54,6 +56,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
     Route::get('kdo', [GapKdoController::class, 'api']);
     Route::get('assets', [GapAssetController::class, 'api']);
+    Route::get('perdins', [GapPerdinController::class, 'api']);
+    Route::get('perdins/{divisi_pembebanan}', [GapPerdinController::class, 'api_Detail']);
     Route::get('scoring_projects', [GapScoringProjectController::class, 'api']);
     Route::get('scoring_assessments', [GapScoringAssessmentController::class, 'api']);
 
@@ -64,6 +68,7 @@ Route::prefix('inquery')->name('inquery.')->group(function() {
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 
+    Route::get('sewa-gedungs', [InfraSewaGedungController::class, 'api']);
     Route::get('disnaker', [GapDisnakerController::class, 'api']);
     Route::get('disnaker/{id}/report', [ReportController::class, 'api_detail']);
     Route::get('scoring_projects', [InfraScoringProjectController::class, 'api']);

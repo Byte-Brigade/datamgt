@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         $branches = Branch::with('branch_types')->get();
-        $areas = Branch::distinct()->whereNotNull('area')->pluck('area');
+        $areas = Branch::distinct()->whereNotNull('area')->pluck('area')->prepend('All');
         $jumlahATM = Branch::whereNot('layanan_atm', 'Tidak Ada')->get();
         $jumlahATM24Jam = Branch::where('layanan_atm', '24 Jam')->get();
         $jumlahKaryawan = Employee::with('branches')->get();
@@ -24,9 +24,13 @@ class DashboardController extends Controller
         $employees = Employee::with(['employee_positions', 'branches'])->get();
         $gap_asset = GapAsset::with('branches')->get();
         $gap_scorings = GapScoring::with('branches')->get();
+        // dd($branches->groupBy('branch_types.type_name'));
+
+
 
         $data = [
             'branches' => $branches,
+            'list_branches' => Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']),
             'areas' => $areas,
             'jumlah_atm' => $jumlahATM->groupBy('layanan_atm'),
             'jumlahATM24Jam' => $jumlahATM24Jam,
@@ -39,6 +43,7 @@ class DashboardController extends Controller
                 $asset->branch_code = $asset->branches->branch_code;
                 return $asset;
             })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
+
             return [
                 $branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
                     return [
@@ -51,9 +56,17 @@ class DashboardController extends Controller
                 })
             ];
         }),
-            'assets' => $gap_asset,
+            'assets' => GapAsset::with('branches')->get()->map(function($asset) {
+                return ['branch_id'=> $asset->branch_id,
+                'branch_name' => $asset->branches->branch_name,
+                'area' => $asset->branches->area,
+                'nilai_perolehan' => $asset->asset_cost,
+                'penyusutan' => $asset->accum_depre,
+                'net_book_value' => $asset->net_book_value,
+                'category' =>$asset->category];
+            }),
             'gap_scorings' => $gap_scorings,
-            'jumlah_cabang' => $branches->groupBy('branch_types.alt_name'),
+            'jumlah_cabang' => $branches->sortBy('branch_code')->groupBy('branch_types.alt_name'),
             'jumlah_cabang_alt' => $branches->groupBy('branch_types.type_name'),
         ];
 

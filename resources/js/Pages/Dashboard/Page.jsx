@@ -21,21 +21,80 @@ export default function Dashboard({ auth, errors, sessions, data }) {
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
   const handleOpen = () => setOpen(!open);
-  const groupBy = (array, key) => array.reduce((result, item) => {
-    // Extract the value for the current key
-    const keyValue = item[key];
+  const groupBy = (array, key) =>
+    array.reduce((result, item) => {
+      // Extract the value for the current key
+      const keyValue = item[key];
 
-    // If the key doesn't exist in the result object, create it with an empty array
-    if (!result[keyValue]) {
-      result[keyValue] = [];
-    }
+      // If the key doesn't exist in the result object, create it with an empty array
+      if (!result[keyValue]) {
+        result[keyValue] = [];
+      }
 
-    // Push the current item to the array associated with the key
-    result[keyValue].push(item);
+      // Push the current item to the array associated with the key
+      result[keyValue].push(item);
 
-    return result;
-  }, {})
+      return result;
+    }, {});
 
+  const cardMenus = [
+    {
+      label: "Jumlah Cabang",
+      data,
+      type: "branch",
+      Icon: BuildingOffice2Icon,
+      active,
+      onClick: () => setActive("branch"),
+      branchState: branchId,
+      areaState: area,
+      color: "blue",
+    },
+    {
+      label: "Jumlah ATM",
+      data,
+      type: "atm",
+      Icon: CreditCardIcon,
+      active,
+      onClick: () => setActive("atm"),
+      branchState: branchId,
+      areaState: area,
+      color: "green",
+    },
+    {
+      label: "Jumlah Karyawan",
+      data,
+      type: "employee",
+      Icon: UserGroupIcon,
+      active,
+      onClick: () => setActive("employee"),
+      branchState: branchId,
+      areaState: area,
+      color: "orange",
+    },
+    {
+      label: "Jumlah Asset",
+      data,
+      type: "asset",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => setActive("asset"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "Jumlah Vendor",
+      data,
+      type: "gap_scorings",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => setActive("gap_scorings"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+  ];
+  console.log(data)
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
@@ -52,16 +111,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 onChange={(e) => handleFilterArea(e)}
                 className="bg-white"
               >
-
-                <Option value="none">
-                  All
-                </Option>
-
                 {data.areas.map((area, index) => {
-
-
-
-                  return (
+                  return area === "All" ? (
+                    <Option key={index} value="none">
+                      {area}
+                    </Option>
+                  ) : (
                     <Option key={index} value={`${area}`}>
                       {area}
                     </Option>
@@ -74,15 +129,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 onChange={(e) => handleFilterBranch(e)}
                 className="bg-white"
               >
-                <Option value="0">
-                  All
-                </Option>
-                {data.branches
+                {data.list_branches
                   .filter((branch) => area === "none" || branch.area === area)
                   .map((branch, index) => {
-
-                    return (
-                      <Option key={index} value={`${branch.id}`}>
+                    return branch.branch_code === "none" ? (
+                      <Option key={index} value="0">
+                        {branch.branch_name}
+                      </Option>
+                    ) : (
+                      <Option key={index} value={`${branch.id} `}>
                         {branch.branch_code} - {branch.branch_name}
                       </Option>
                     );
@@ -90,63 +145,21 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
-            <CardMenu
-              label="Jumlah Cabang"
-              data={data}
-              type="branch"
-              Icon={BuildingOffice2Icon}
-              active={active}
-              onClick={() => setActive("branch")}
-              branchState={branchId}
-              areaState={area}
-              color="blue"
-            />
-            <CardMenu
-              label="Jumlah ATM"
-              data={data}
-              type="atm"
-              Icon={CreditCardIcon}
-              active={active}
-              onClick={() => setActive("atm")}
-              branchState={branchId}
-              areaState={area}
-              color="green"
-            />
-            <CardMenu
-              label="Jumlah Karyawan"
-              data={data}
-              type="employee"
-              Icon={UserGroupIcon}
-              active={active}
-              onClick={() => setActive("employee")}
-              branchState={branchId}
-              areaState={area}
-              color="orange"
-            />
-            <CardMenu
-              label="Jumlah Asset"
-              data={data}
-              type="asset"
-              Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("asset")}
-              branchState={branchId}
-              areaState={area}
-              color="purple"
-            />
-            <CardMenu
-              label="Jumlah Vendor"
-              data={data}
-              type="gap_scorings"
-              Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("gap_scorings")}
-              branchState={branchId}
-              areaState={area}
-              color="purple"
-            />
-
+          <div className="grid grid-cols-4 gap-4 mb-2">
+            {cardMenus.map((menu, index) => (
+              <CardMenu
+                key={index}
+                label={menu.label}
+                data={menu.data}
+                type={menu.type}
+                Icon={menu.Icon}
+                active={active}
+                onClick={menu.onClick}
+                branchState={menu.branchState}
+                areaState={menu.areaState}
+                color={menu.color}
+              />
+            ))}
           </div>
           {active === "branch" && (
             <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
@@ -169,13 +182,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                      <td>Kantor Pusat</td>
-                      <td>1</td>
-                    </tr>
-                    {Object.keys(data.jumlah_cabang).map((cabang) => {
+                    {Object.keys(data.jumlah_cabang).map((cabang, index) => {
                       return (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                        <tr
+                          key={index}
+                          className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200"
+                        >
                           <td>{cabang}</td>
                           <td>{data.jumlah_cabang[cabang].length}</td>
                         </tr>
@@ -191,7 +203,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                             (acc, item) => {
                               return acc + data.jumlah_cabang[item].length;
                             },
-                            1
+                            0
                           )}
                         </strong>
                       </td>
@@ -408,25 +420,31 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       ).length
                     }
                   </td>
-                  <td className="text-right">{
-                    data.assets.filter(
-                      (item) =>
-                        item.branch_name !== "Kantor Pusat" &&
-                        item.category === "Depre"
-                    ).reduce((total, item) => {
-                      return total + item.asset_cost
-                    }, 0).toLocaleString('id-ID')
-                  }</td>
+                  <td className="text-right">
+                    {data.assets
+                      .filter(
+                        (item) =>
+                          item.branch_name !== "Kantor Pusat" &&
+                          item.category === "Depre"
+                      )
+                      .reduce((total, item) => {
+                        return total + item.nilai_perolehan;
+                      }, 0)
+                      .toLocaleString("id-ID")}
+                  </td>
 
-                  <td className="text-center">{data.assets
-                    .filter(
-                      (item) =>
-                        item.branch_name !== "Kantor Pusat" &&
-                        item.category === "Depre"
-                    )
-                    .reduce((total, item) => {
-                      return total + item.accum_depre;
-                    }, 0).toLocaleString('id-ID')}</td>
+                  <td className="text-center">
+                    {data.assets
+                      .filter(
+                        (item) =>
+                          item.branch_name !== "Kantor Pusat" &&
+                          item.category === "Depre"
+                      )
+                      .reduce((total, item) => {
+                        return total + item.penyusutan;
+                      }, 0)
+                      .toLocaleString("id-ID")}
+                  </td>
 
                   <td className="text-center">
                     {data.assets
@@ -437,9 +455,9 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       )
                       .reduce((total, item) => {
                         return total + item.net_book_value;
-                      }, 0).toLocaleString('id-ID')}
+                      }, 0)
+                      .toLocaleString("id-ID")}
                   </td>
-
 
                   <td className="text-center">
                     {
@@ -463,8 +481,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       }, 0)
                       .toLocaleString("id-ID")}
                   </td>
-
-
                 </tr>
 
                 {open &&
@@ -473,7 +489,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       lokasi !== "Kantor Pusat" && (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                           <td key={index} colSpan={2}>
-                            {`> ${lokasi}`}
+                            {`> ${lokasi} `}
                           </td>
                           {Object.entries(data.summary_assets[lokasi]).map(
                             ([key, item]) =>
@@ -529,8 +545,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   >
                     Scoring Schedule
                   </th>
-                  <th className="text-center" rowSpan={3}
-                    colSpan={2}>
+                  <th className="text-center" rowSpan={3} colSpan={2}>
                     Jumlah Vendor
                   </th>
                   <th className="text-center" colSpan={7}>
@@ -542,12 +557,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   {/* Kategori A (Asset Non-Depresiasi) */}
                 </tr>
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
-                  <th className="text-center" colSpan={2}>Assessment (PKS)</th>
-                  <th className="text-center" colSpan={2}>Project (Non PKS)</th>
+                  <th className="text-center" colSpan={2}>
+                    Assessment (PKS)
+                  </th>
+                  <th className="text-center" colSpan={2}>
+                    Project (Non PKS)
+                  </th>
                   <th className="text-center" colSpan={3}>
                     SLA
                   </th>
-
                 </tr>
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th className="text-center">Done</th>
@@ -560,31 +578,131 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 </tr>
               </thead>
               <tbody className="overflow-y-auto">
-                {Object.entries(groupBy(data.gap_scorings, 'schedule_scoring')).map(([key, scoring]) => (
+                {Object.entries(
+                  groupBy(data.gap_scorings, "schedule_scoring")
+                ).map(([key, scoring]) => (
                   <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-                    <td colSpan={2} className="text-center">{key}</td>
-                    <td className="text-center" colSpan={2}>{scoring.length}</td>
+                    <td colSpan={2} className="text-center">
+                      {key}
+                    </td>
+                    <td className="text-center" colSpan={2}>
+                      {scoring.length}
+                    </td>
 
-                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
-                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.status_pekerjaan === "Done" &&
+                            item.type === "Assessment"
+                        ).length
+                      }
+                    </td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.status_pekerjaan === "On Progress" &&
+                            item.type === "Assessment"
+                        ).length
+                      }
+                    </td>
 
-                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
-                    <td className="text-center">{scoring.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
-                    <td className="text-center">{scoring.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
-                    <td className="text-center">{scoring.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.status_pekerjaan === "Done" &&
+                            item.type === "Project"
+                        ).length
+                      }
+                    </td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.status_pekerjaan === "On Progress" &&
+                            item.type === "Project"
+                        ).length
+                      }
+                    </td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.meet_the_sla === 1 && item.type === "Project"
+                        ).length
+                      }
+                    </td>
+                    <td className="text-center">
+                      {
+                        scoring.filter(
+                          (item) =>
+                            item.meet_the_sla === 0 && item.type === "Project"
+                        ).length
+                      }
+                    </td>
                   </tr>
-                ))
-                }
+                ))}
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-
-                  <td colSpan={2} className="font-bold text-center">Total</td>
-                  <td colSpan={2} className="font-bold text-center">{data.gap_scorings.length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Assessment').length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Assessment').length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'Done' && item.type === 'Project').length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.status_pekerjaan === 'On Progress' && item.type === 'Project').length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 1 && item.type === 'Project').length}</td>
-                  <td className="font-bold text-center">{data.gap_scorings.filter(item => item.meet_the_sla === 0 && item.type === 'Project').length}</td>
+                  <td colSpan={2} className="font-bold text-center">
+                    Total
+                  </td>
+                  <td colSpan={2} className="font-bold text-center">
+                    {data.gap_scorings.length}
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.status_pekerjaan === "Done" &&
+                          item.type === "Assessment"
+                      ).length
+                    }
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.status_pekerjaan === "On Progress" &&
+                          item.type === "Assessment"
+                      ).length
+                    }
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.status_pekerjaan === "Done" &&
+                          item.type === "Project"
+                      ).length
+                    }
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.status_pekerjaan === "On Progress" &&
+                          item.type === "Project"
+                      ).length
+                    }
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.meet_the_sla === 1 && item.type === "Project"
+                      ).length
+                    }
+                  </td>
+                  <td className="font-bold text-center">
+                    {
+                      data.gap_scorings.filter(
+                        (item) =>
+                          item.meet_the_sla === 0 && item.type === "Project"
+                      ).length
+                    }
+                  </td>
                 </tr>
 
                 {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
@@ -690,7 +808,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       lokasi !== "Kantor Pusat" && (
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                           <td key={index} colSpan={2}>
-                            {`> ${lokasi}`}
+                            {`> ${ lokasi } `}
                           </td>
                           {Object.entries(data.summary_assets[lokasi]).map(
                             ([key, item]) =>

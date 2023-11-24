@@ -56,18 +56,15 @@ class OpsSkOperasionalController extends Controller
             'note' => $item->note,
             'file' => $item->file,
             'penerima_kuasa' => '-',
-            'branches' => $item->branches
+            'branch_name' => $item->branches->branch_name,
         ];
             $penerima_kuasa = $item->penerima_kuasa()->get();
-
             // Jika ada penerima kuasa
             if ($penerima_kuasa->count() > 0) {
                 // Buat array sementara untuk menampung item yang telah diubah posisinya
                 $tempCollections = [];
-
                 // Jika BM ada, letakkan di posisi pertama
                 $bmAdded = false;
-
                 foreach ($penerima_kuasa as $penerima) {
                     $tempItem = array_merge($defaultValues, [
                         'id' => $item->id,
@@ -76,9 +73,8 @@ class OpsSkOperasionalController extends Controller
                         'status' => $item->status,
                         'file' => $item->file,
                         'penerima_kuasa' => '[' . $penerima->getPosition() . ']' . ' ' . $penerima->name,
-                        'branches' => $item->branches
+                        'branch_name' => $item->branches->branch_name,
                     ]);
-
                     // Jika 'BM' belum ditambahkan dan saat ini adalah 'BM',
                     // tambahkan 'BM' ke koleksi di posisi pertama
                     if (!$bmAdded && $penerima->getPosition() === 'BM') {
@@ -112,9 +108,7 @@ class OpsSkOperasionalController extends Controller
 
     public function index()
     {
-
         $branchesProps = Branch::get();
-
 
         return Inertia::render('Ops/SkOperasional/Page', ['branches' => $branchesProps]);
     }

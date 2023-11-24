@@ -3,11 +3,10 @@ import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
-import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -19,20 +18,21 @@ import {
   IconButton,
   Input,
   Option,
+  Radio,
   Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Speciment({ auth, sessions, branches }) {
+export default function Cabang({ auth, sessions, branch_types, branches }) {
   const initialData = {
-    branch_id: 0,
-    branches: {
-      branch_code: null,
-      branch_name: null,
-    },
-    tgl_speciment: null,
     file: null,
+    branch_code: null,
+    branch_name: null,
+    address: null,
+    branch_type_id: null,
+    layanan_atm: null,
+    npwp: null,
   };
   const {
     data,
@@ -51,55 +51,26 @@ export default function Speciment({ auth, sessions, branches }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const columns = [
-    { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "Kode Cabang", field: "branch_code", sortable: false },
     {
-      name: "Tanggal Spesimen",
-      field: "tgl_speciment",
-      type: "date",
-      sortable: true,
+      name: "Tipe Cabang",
+      field: "branch_types.type_name",
+      sortable: false,
+      filterable: true,
     },
+    { name: "Nama Cabang", field: "branch_name", sortable: false },
+    { name: "NPWP", field: "npwp" },
+    { name: "Area", field: "area", className: "text-center" },
+    { name: "Alamat", field: "address", className: "w-[300px]" },
+    { name: "No. Telpon", field: "telp" },
+    { name: "Fasilitas ATM", field: "fasilitas_atm" },
     {
-      name: "Lampiran",
-      field: "file",
-      type: "custom",
-      className: "text-center",
-      render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
-        auth.permissions.includes("can add") ? (
-          data.no_surat !== "-" ? (
-            data.file ? (
-              <a
-                className="text-blue-500 hover:underline"
-                href={`/storage/ops/speciment/${data.file}`}
-                target="__blank"
-              >
-                {" "}
-                {data.file}
-              </a>
-            ) : (
-              <Button
-                variant="outlined"
-                size="sm"
-                color="blue"
-                onClick={() => {
-                  toggleModalUpload();
-                  setData(data);
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <ArrowUpTrayIcon className="w-4 h-4" />
-                  Upload Lampiran
-                </div>
-              </Button>
-            )
-          ) : (
-            "-"
-          )
-        ) : (
-          <span>Belum upload lampiran</span>
-        ),
+      name: "Layanan ATM",
+      field: "layanan_atm",
+      filterable: true,
+      component: "branches",
     },
     {
       name: "Action",
@@ -123,7 +94,7 @@ export default function Speciment({ auth, sessions, branches }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.import"), {
+    post(route("branches.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -132,14 +103,9 @@ export default function Speciment({ auth, sessions, branches }) {
     });
   };
 
-  const handleSubmitExport = (e) => {
-    e.preventDefault();
-    window.open(route("ops.speciment.export"), "_self");
-  };
-
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.upload", data.id), {
+    post(route("branches.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -148,9 +114,15 @@ export default function Speciment({ auth, sessions, branches }) {
     });
   };
 
+  const handleSubmitExport = (e) => {
+    e.preventDefault();
+    setIsModalExportOpen(!isModalExportOpen);
+    window.open(route("branches.export"), "_self");
+  };
+
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.speciment.update", data.id), {
+    put(route("branches.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -159,9 +131,10 @@ export default function Speciment({ auth, sessions, branches }) {
       },
     });
   };
+
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.store", data.id), {
+    post(route("branches.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -173,7 +146,7 @@ export default function Speciment({ auth, sessions, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.speciment.delete", data.id), {
+    destroy(route("branches.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -181,22 +154,6 @@ export default function Speciment({ auth, sessions, branches }) {
       },
     });
   };
-
-  // const exportData = (e) => {
-  //   e.preventDefault();
-  //   const { branch, position } = data;
-  //   const query =
-  //     branch !== 0 && position !== 0
-  //       ? `?branch=${branch}&position=${position}`
-  //       : branch !== 0
-  //       ? `?branch=${branch}`
-  //       : position !== 0
-  //       ? `?position=${position}`
-  //       : "";
-
-  //   window.open(route("speciment.export") + query, "_self");
-  //   setData({ branch: 0, position: 0 });
-  // };
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -210,11 +167,12 @@ export default function Speciment({ auth, sessions, branches }) {
     setIsModalUploadOpen(!isModalUploadOpen);
   };
 
+  const toggleModalCreate = () => {
+    setData(initialData);
+    setIsModalCreateOpen(!isModalCreateOpen);
+  };
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
-  };
-  const toggleModalCreate = () => {
-    setIsModalCreateOpen(!isModalCreateOpen);
   };
 
   const toggleModalDelete = () => {
@@ -223,8 +181,8 @@ export default function Speciment({ auth, sessions, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="Speciment" />
       <BreadcrumbsDefault />
+      <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
@@ -268,13 +226,35 @@ export default function Speciment({ auth, sessions, branches }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) && ["can edit", "can delete"].some((permission) =>
+                ? hasRoles("branch_ops|superadmin", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )
                 : true
             )}
-            fetchUrl={"/api/ops/speciment"}
+            fetchUrl={"/api/branches"}
             refreshUrl={isRefreshed}
+            className="w-[1500px]"
+            component={[
+              {
+                data: Array.from(
+                  new Set(branches.map((branch) => branch.layanan_atm))
+                ),
+                field: "layanan_atm",
+              },
+              {
+                data: Array.from(
+                  new Set(
+                    branch_types
+                      .filter((type) =>
+                        ["KC", "KCP", "KF"].includes(type.type_name)
+                      )
+                      .map((type) => type.type_name)
+                  )
+                ),
+                field: "branch_types.type_name",
+              },
+            ]}
           />
         </div>
       </div>
@@ -338,13 +318,13 @@ export default function Speciment({ auth, sessions, branches }) {
             <div className="flex flex-col gap-y-4">
               <Input
                 variant="standard"
-                label="Upload Lampiran (.pdf)"
+                label="Upload Photo"
                 disabled={processing}
                 type="file"
                 name="upload"
                 id="upload"
-                accept=".pdf"
-                onChange={(e) => setData("file", e.target.files[0])}
+                accept=".jpg,.jpeg,.png"
+                onChange={(e) => setData("photo", e.target.files[0])}
               />
             </div>
           </DialogBody>
@@ -361,18 +341,39 @@ export default function Speciment({ auth, sessions, branches }) {
         </form>
       </Dialog>
       {/* Modal Export */}
-      <Modal
-        isProcessing={processing}
-        name="Create Report"
-        isOpen={isModalExportOpen}
-        onToggle={toggleModalExport}
-        onSubmit={handleSubmitExport}
-      >
-        <div className="flex flex-col gap-y-4">
-          <Typography>Buat Report Data Cabang?</Typography>
-        </div>
-      </Modal>
-
+      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Create Report
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalExport}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <div className="flex flex-col gap-y-4">
+            <Typography>Buat Report Data Cabang?</Typography>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-row-reverse gap-x-4">
+            <Button
+              onClick={handleSubmitExport}
+              disabled={processing}
+              type="submit"
+            >
+              Buat
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalExport}>
+              Tutup
+            </SecondaryButton>
+          </div>
+        </DialogFooter>
+      </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -390,13 +391,76 @@ export default function Speciment({ auth, sessions, branches }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
-              <Input
-                label="Tanggal Spesimen"
-                value={data.tgl_speciment || ""}
+              <Select
+                label="Tipe Cabang"
+                value={`${data.branch_type_id || ""}`}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_speciment", e.target.value)}
+                onChange={(e) => setData("branch_type_id", e)}
+              >
+                {branch_types.map((type) => (
+                  <Option key={type.id} value={`${type.id}`}>
+                    {type.type_name}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Kode Cabang"
+                value={data.branch_code}
+                disabled={processing}
+                onChange={(e) => setData("branch_code", e.target.value)}
               />
+              <Input
+                label="Nama Cabang"
+                value={data.branch_name}
+                disabled={processing}
+                onChange={(e) => setData("branch_name", e.target.value)}
+              />
+              <Input
+                label="Alamat"
+                value={data.address}
+                disabled={processing}
+                onChange={(e) => setData("address", e.target.value)}
+              />
+              <Input
+                label="Telp"
+                value={data.telp}
+                disabled={processing}
+                onChange={(e) => setData("telp", e.target.value)}
+              />
+              <Input
+                label="NPWP"
+                value={data.npwp}
+                disabled={processing}
+                onChange={(e) => setData("npwp", e.target.value)}
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-light">Fasilitas ATM</span>
+                <div className="flex gap-x-4">
+                  <Radio
+                    name="layanan_atm"
+                    label="24 Jam"
+                    checked={data.layanan_atm === "24 Jam"}
+                    value="24 Jam"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Jam Operasional"
+                    checked={data.layanan_atm === "Jam Operasional"}
+                    value="Jam Operasional"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Tidak Ada"
+                    checked={
+                      data.layanan_atm === null || data.layanan_atm === ""
+                    }
+                    value=""
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
           </DialogBody>
           <DialogFooter>
@@ -429,24 +493,75 @@ export default function Speciment({ auth, sessions, branches }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Select
-                label="Branch"
-                value={`${data.branch_id}`}
+                label="Tipe Cabang"
+                value={`${data.branch_type_id || ""}`}
                 disabled={processing}
-                onChange={(e) => setData("branch_id", e)}
+                onChange={(e) => setData("branch_type_id", e)}
               >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
+                {branch_types.map((type) => (
+                  <Option key={type.id} value={`${type.id}`}>
+                    {type.type_name}
                   </Option>
                 ))}
               </Select>
               <Input
-                label="Tanggal Spesimen"
-                value={data.tgl_speciment || ""}
+                label="Kode Cabang"
+                value={data.branch_code}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_speciment", e.target.value)}
+                onChange={(e) => setData("branch_code", e.target.value)}
               />
+              <Input
+                label="Nama Cabang"
+                value={data.branch_name}
+                disabled={processing}
+                onChange={(e) => setData("branch_name", e.target.value)}
+              />
+              <Input
+                label="Alamat"
+                value={data.address}
+                disabled={processing}
+                onChange={(e) => setData("address", e.target.value)}
+              />
+              <Input
+                label="Telp"
+                value={data.telp}
+                disabled={processing}
+                onChange={(e) => setData("telp", e.target.value)}
+              />
+              <Input
+                label="NPWP"
+                value={data.npwp}
+                disabled={processing}
+                onChange={(e) => setData("npwp", e.target.value)}
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-light">Fasilitas ATM</span>
+                <div className="flex gap-x-4">
+                  <Radio
+                    name="layanan_atm"
+                    label="24 Jam"
+                    checked={data.layanan_atm === "24 Jam"}
+                    value="24 Jam"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Jam Operasional"
+                    checked={data.layanan_atm === "Jam Operasional"}
+                    value="Jam Operasional"
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                  <Radio
+                    name="layanan_atm"
+                    label="Tidak Ada"
+                    checked={
+                      data.layanan_atm === null || data.layanan_atm === ""
+                    }
+                    value=""
+                    onChange={(e) => setData("layanan_atm", e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
           </DialogBody>
           <DialogFooter>
@@ -479,7 +594,7 @@ export default function Speciment({ auth, sessions, branches }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.branch_code} - {data.branch_name}
             </span>{" "}
             ?
           </Typography>

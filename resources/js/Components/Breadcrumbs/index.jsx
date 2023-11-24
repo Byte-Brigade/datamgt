@@ -23,6 +23,10 @@ export function BreadcrumbsDefault() {
 
   const TitleCrumb = (text) => {
     switch (text) {
+      case "branches":
+        return "Data Cabang";
+      case "employees":
+        return "Karyawan Cabang";
       case "gap":
         return "GA Procurement";
       case "infra":
@@ -32,7 +36,7 @@ export function BreadcrumbsDefault() {
       case "apar":
         return "APAR";
       case "sk-operasional":
-        return "SK Operasional";
+        return "SK Operasional Cabang";
       case "kdo":
         return "KDO Mobil";
       case "disnaker":
@@ -47,6 +51,8 @@ export function BreadcrumbsDefault() {
         return "Scoring Projects";
       case "scoring_assessments":
         return "Scoring Assessments";
+      case "sewa_gedungs":
+        return "Sewa Gedung";
       default:
         break;
     }

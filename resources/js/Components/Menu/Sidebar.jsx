@@ -80,6 +80,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const opsRouter = [
+    { name: "Data Cabang", path: "ops.branches" },
+    { name: "Karyawan Cabang", path: "ops.employees" },
     { name: "APAR", path: "ops.apar" },
     { name: "Pajak Reklame", path: "ops.pajak-reklame" },
     { name: "SK BI RTGS", path: "ops.skbirtgs" },
@@ -114,7 +116,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Biaya Perjalanan Dinas",
-      path: "gap.maintenance",
+      path: "gap.perdins",
     },
     {
       name: "Hasil STO",
@@ -129,7 +131,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Sewa Gedung",
-      path: "infra.maintenance",
+      path: "infra.sewa_gedungs",
     },
     {
       name: "Maintenance Cost Gedung",
@@ -418,54 +420,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                         !sidebarOpen ? "min-w-[200px]" : "min-w-0"
                       }`}
                     >
-                      <Tooltip
-                        content="Data Cabang"
-                        placement="right"
-                        className={`${!sidebarOpen && "hidden"}`}
-                      >
-                        <Link href={route("branches")}>
-                          <ListItem
-                            className={`${sidebarOpen && "justify-center"}`}
-                            selected={route().current("branches")}
-                          >
-                            <ListItemPrefix
-                              className={`${sidebarOpen && "m-0"}`}
-                            >
-                              <ChevronRightIcon
-                                strokeWidth={3}
-                                className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
-                              />
-                            </ListItemPrefix>
-                            {!sidebarOpen && (
-                              <Typography>Data Cabang</Typography>
-                            )}
-                          </ListItem>
-                        </Link>
-                      </Tooltip>
-                      <Tooltip
-                        content="Karyawan Cabang"
-                        placement="right"
-                        className={`${!sidebarOpen && "hidden"}`}
-                      >
-                        <Link href={route("employees")}>
-                          <ListItem
-                            className={`${sidebarOpen && "justify-center"}`}
-                            selected={route().current("employees")}
-                          >
-                            <ListItemPrefix
-                              className={`${sidebarOpen && "m-0"}`}
-                            >
-                              <ChevronRightIcon
-                                strokeWidth={3}
-                                className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
-                              />
-                            </ListItemPrefix>
-                            {!sidebarOpen && (
-                              <Typography>Karyawan Cabang</Typography>
-                            )}
-                          </ListItem>
-                        </Link>
-                      </Tooltip>
                       {opsRouter.map((router, index) => (
                         <Tooltip
                           key={index}
