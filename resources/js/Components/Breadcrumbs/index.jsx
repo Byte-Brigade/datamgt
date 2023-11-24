@@ -23,6 +23,10 @@ export function BreadcrumbsDefault() {
 
   const TitleCrumb = (text) => {
     switch (text) {
+      case "branches":
+        return "Data Cabang";
+      case "employees":
+        return "Karyawan Cabang";
       case "gap":
         return "GA Procurement";
       case "infra":

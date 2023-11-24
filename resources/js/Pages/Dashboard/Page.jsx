@@ -90,7 +90,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 mb-2">
             <CardMenu
               label="Jumlah Cabang"
               data={data}
@@ -169,10 +169,9 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-
-                    {Object.keys(data.jumlah_cabang).map((cabang) => {
+                    {Object.keys(data.jumlah_cabang).map((cabang, index) => {
                       return (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                        <tr key={index} className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                           <td>{cabang}</td>
                           <td>{data.jumlah_cabang[cabang].length}</td>
                         </tr>
