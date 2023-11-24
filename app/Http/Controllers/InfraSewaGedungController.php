@@ -44,7 +44,7 @@ class InfraSewaGedungController extends Controller
     public function import(Request $request)
     {
         try {
-            (new SewaGedungImport)->import($request->file('file')->store('temp'));
+            (new SewaGedungImport)->import($request->file('file'));
 
             return redirect(route('infra.sewa_gedungs'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

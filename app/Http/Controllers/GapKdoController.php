@@ -208,7 +208,7 @@ class GapKdoController extends Controller
     public function import(Request $request)
     {
         try {
-            (new KdoImport)->import($request->file('file')->store('temp'));
+            (new KdoImport)->import($request->file('file'));
 
             return redirect(route('gap.kdo'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
@@ -221,7 +221,7 @@ class GapKdoController extends Controller
 
         $branch = Branch::find($request->branch_id);
         try {
-            (new KdoMobilImport($request->branch_id, $request->gap_kdo_id))->import($request->file('file')->store('temp'));
+            (new KdoMobilImport($request->branch_id, $request->gap_kdo_id))->import($request->file('file'));
 
             return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

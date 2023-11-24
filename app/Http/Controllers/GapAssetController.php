@@ -58,7 +58,7 @@ class GapAssetController extends Controller
     public function import(Request $request)
     {
         try {
-            (new AssetsImport)->import($request->file('file')->store('temp'));
+            (new AssetsImport)->import($request->file('file'));
 
             return redirect(route('gap.assets'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

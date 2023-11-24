@@ -65,7 +65,7 @@ class GapDisnakerController extends Controller
     public function import(Request $request)
     {
         try {
-            (new DisnakerImport)->import($request->file('file')->store('temp'));
+            (new DisnakerImport)->import($request->file('file'));
 
             return redirect(route('infra.disnaker'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

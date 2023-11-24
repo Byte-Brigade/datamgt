@@ -7,6 +7,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
+use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
@@ -55,6 +56,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdo/mobil/{id}', [GapKdoController::class, 'api_kdo_mobil']);
     Route::get('kdo', [GapKdoController::class, 'api']);
     Route::get('assets', [GapAssetController::class, 'api']);
+    Route::get('perdins', [GapPerdinController::class, 'api']);
+    Route::get('perdins/{divisi_pembebanan}', [GapPerdinController::class, 'api_Detail']);
     Route::get('scoring_projects', [GapScoringProjectController::class, 'api']);
     Route::get('scoring_assessments', [GapScoringAssessmentController::class, 'api']);
 

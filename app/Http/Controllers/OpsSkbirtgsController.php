@@ -116,7 +116,7 @@ class OpsSkbirtgsController extends Controller
     public function import(Request $request)
     {
         try {
-            (new SkBirtgsImport)->import($request->file('file')->store('temp'));
+            (new SkBirtgsImport)->import($request->file('file'));
 
             return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
