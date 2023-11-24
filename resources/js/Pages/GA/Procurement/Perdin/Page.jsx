@@ -57,7 +57,6 @@ export default function Page({ auth,  sessions }) {
     {
       name: "Divisi Pembebanan",
       field: "divisi_pembebanan",
-      className: "text-center"
     },
     {
       name: "Airline",
@@ -101,6 +100,8 @@ export default function Page({ auth,  sessions }) {
 
 
   ];
+
+  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
@@ -319,10 +320,22 @@ export default function Page({ auth,  sessions }) {
 
 
               <Input
-                label="Jumlah Kendaraan"
-                value={data.jumlah_kendaraan || ""}
+                label="Divisi Pembebanan"
+                value={data.divisi_pembebanan || ""}
                 disabled={processing}
-                onChange={(e) => setData("jumlah_kendaraan", e.target.value)}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Category"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Tipe"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
               />
               <Input
                 label="Jumlah Driver"

@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\DataMaintenanceApiController;
+use App\Http\Controllers\API\InqueryApiController;
+use App\Http\Controllers\API\OpsApiController;
+use App\Http\Controllers\API\ReportApiController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\DashboardController;
@@ -41,7 +46,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/branches', [BranchController::class, 'api']);
+Route::prefix('report')->name('report.')->group(function() {
+    Route::get('branches', [ReportApiController::class, 'branches'])->name('branches');
+
+});
+Route::prefix('ops')->name('ops.')->group(function() {
+    Route::get('/branches', [OpsApiController::class, 'branches']);
+    Route::get('/employees', [OpsApiController::class, 'employees']);
+});
+
 Route::get('/employees', [EmployeeController::class, 'api']);
 Route::get('/ops/skbirtgs', [OpsSkbirtgsController::class, 'api']);
 Route::get('/ops/sk-operasional', [OpsSkOperasionalController::class, 'api']);
@@ -65,6 +78,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
 
 Route::prefix('inquery')->name('inquery.')->group(function() {
     Route::get('assets', [InqueryController::class, 'assets_api']);
+    Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
+
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 
