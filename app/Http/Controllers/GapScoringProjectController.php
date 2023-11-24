@@ -61,7 +61,7 @@ class GapScoringProjectController extends Controller
     public function import(Request $request)
     {
         try {
-            (new GapScoringProjectsImport)->import($request->file('file')->store('temp'));
+            (new GapScoringProjectsImport)->import($request->file('file'));
 
             return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

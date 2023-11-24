@@ -68,7 +68,7 @@ class InfraScoringProjectController extends Controller
     public function import(Request $request)
     {
         try {
-            (new InfraScoringProjectsImport)->import($request->file('file')->store('temp'));
+            (new InfraScoringProjectsImport)->import($request->file('file'));
 
             return redirect(route('infra.scoring_projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

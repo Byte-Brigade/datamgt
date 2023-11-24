@@ -78,7 +78,7 @@ class OpsAparController extends Controller
     public function import(Request $request)
     {
         try {
-            (new AparImport)->import($request->file('file')->store('temp'));
+            (new AparImport)->import($request->file('file'));
 
             return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {

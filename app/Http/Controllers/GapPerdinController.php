@@ -109,7 +109,7 @@ class GapPerdinController extends Controller
     {
         try {
             DB::beginTransaction();
-            (new PerdinImport)->import($request->file('file')->store('temp'));
+            (new PerdinImport)->import($request->file('file'));
             DB::commit();
             return redirect(route('gap.perdins'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
