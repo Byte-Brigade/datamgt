@@ -131,7 +131,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Sewa Gedung",
-      path: "infra.maintenance",
+      path: "infra.sewa_gedungs",
     },
     {
       name: "Maintenance Cost Gedung",

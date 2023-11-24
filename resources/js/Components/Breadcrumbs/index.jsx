@@ -51,6 +51,8 @@ export function BreadcrumbsDefault() {
         return "Scoring Projects";
       case "scoring_assessments":
         return "Scoring Assessments";
+      case "sewa_gedungs":
+        return "Sewa Gedung";
       default:
         break;
     }

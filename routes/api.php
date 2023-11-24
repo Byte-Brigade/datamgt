@@ -12,6 +12,7 @@ use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
+use App\Http\Controllers\InfraSewaGedungController;
 use App\Http\Controllers\InqueryController;
 use App\Http\Controllers\OpsAparController;
 use App\Http\Controllers\OpsPajakReklameController;
@@ -64,6 +65,7 @@ Route::prefix('inquery')->name('inquery.')->group(function() {
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 
+    Route::get('sewa-gedungs', [InfraSewaGedungController::class, 'api']);
     Route::get('disnaker', [GapDisnakerController::class, 'api']);
     Route::get('disnaker/{id}/report', [ReportController::class, 'api_detail']);
     Route::get('scoring_projects', [InfraScoringProjectController::class, 'api']);
