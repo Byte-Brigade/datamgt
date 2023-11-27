@@ -18,8 +18,6 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class OpsSkbirtgsController extends Controller
 {
 
-
-
     public function index()
     {
         $branchesProps = Branch::get();
@@ -57,17 +55,14 @@ class OpsSkbirtgsController extends Controller
     {
         try {
             $ops_skbirtgs = OpsSkbirtgs::find($id);
-
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('ops/skbirtgs/', $fileName, ["disk" => 'public']);
-
             $ops_skbirtgs->file = $fileName;
             $ops_skbirtgs->save();
 
             return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
         } catch (Exception $e) {
             dd($e);
-
             return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'File gagal diupload!']);
         }
     }

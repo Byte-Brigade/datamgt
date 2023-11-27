@@ -16,12 +16,9 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class OpsSkOperasionalController extends Controller
 {
 
-
     public function index()
     {
-
         $branchesProps = Branch::get();
-
 
         return Inertia::render('Ops/SkOperasional/Page', ['branches' => $branchesProps]);
     }

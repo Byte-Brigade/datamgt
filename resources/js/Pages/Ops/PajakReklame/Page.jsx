@@ -7,7 +7,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon, ArrowUpTrayIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 
@@ -60,8 +60,8 @@ export default function PajakReklame({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [fileType, setFileType] = useState("file");
   const columns = [
-    { name: "Branch ID", field: "branches.branch_code", sortable: true },
-    { name: "Branch Name", field: "branches.branch_name", sortable: true },
+    { name: "Kode Cabang", field: "branches.branch_code", sortable: true },
+    { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
       name: "Periode Awal",
       field: "periode_awal",
@@ -316,8 +316,11 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
+                  <div className="flex items-center gap-x-2">
+                    <DocumentArrowDownIcon className="w-4 h-4" />
                     Create Report
-                  </PrimaryButton>
+                  </div>
+                </PrimaryButton>
                 )}
               </div>
             )}
@@ -518,7 +521,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       {/* Modal Create */}
       <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Create Data
+          Tambah Data
           <IconButton
             size="sm"
             variant="text"

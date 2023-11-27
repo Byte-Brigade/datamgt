@@ -7,7 +7,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -50,7 +50,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch Name", field: "branches.branch_name", sortable: true },
+    { name: "Nama Cabang", field: "branch_name", sortable: true },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa",
@@ -217,8 +217,11 @@ export default function SkOperasional({ auth, branches, sessions }) {
               )}
               {auth.permissions.includes("can export") && (
                 <PrimaryButton onClick={toggleModalExport}>
+                <div className="flex items-center gap-x-2">
+                  <DocumentArrowDownIcon className="w-4 h-4" />
                   Create Report
-                </PrimaryButton>
+                </div>
+              </PrimaryButton>
               )}
             </div>
           )}

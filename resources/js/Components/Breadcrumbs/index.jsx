@@ -36,7 +36,7 @@ export function BreadcrumbsDefault() {
       case "apar":
         return "APAR";
       case "sk-operasional":
-        return "SK Operasional";
+        return "SK Operasional Cabang";
       case "kdo":
         return "KDO Mobil";
       case "disnaker":

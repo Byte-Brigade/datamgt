@@ -6,7 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -229,8 +229,11 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
+                  <div className="flex items-center gap-x-2">
+                    <DocumentArrowDownIcon className="w-4 h-4" />
                     Create Report
-                  </PrimaryButton>
+                  </div>
+                </PrimaryButton>
                 )}
               </div>
             )}
