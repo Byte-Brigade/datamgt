@@ -324,7 +324,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
+            fetchUrl={`/api/gap/kdo_mobil/${kdo_mobil.id}`}
             refreshUrl={isRefreshed}
             className="w-[2200px]"
           />

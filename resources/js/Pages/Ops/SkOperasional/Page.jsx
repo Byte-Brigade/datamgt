@@ -231,7 +231,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/ops/sk-operasional"}
+            fetchUrl={"/api/ops/sk-operasionals"}
             refreshUrl={isRefreshed}
           />
         </div>

@@ -25,13 +25,25 @@ import { useState } from "react";
 
 export default function Detail({ auth, branch, sessions }) {
 
-  const columns = [
+
+  const headings = [
     {
-      name: "Category",
-      field: "category",
-      className: "text-center",
-      sortable: true,
+      name: 'Scoring Schedule',
+      rowsSpan: 3,
+      colsSpan: 2,
     },
+    {
+      name: 'Jumlah Vendor',
+      rowsSpan: 3,
+      colsSpan: 2,
+    },
+    {
+      name: 'Type Scoring',
+      colsSpan: 7,
+    }
+  ]
+  const columns = [
+
     {
       name: "Asset Number",
       field: "asset_number",
@@ -39,16 +51,19 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
     },
     {
+      name: "Asset Description",
+      field: "asset_description",
+    },
+    {
       name: "Date In Place Service",
       field: "date_in_place_service",
       type: "date",
       sortable: true,
-      className: "justify-center text-center",
     },
     {
       name: "Assst Cost",
       field: "asset_cost",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
       sortable: true,
       render: (data) => {
@@ -56,20 +71,35 @@ export default function Detail({ auth, branch, sessions }) {
       }
     },
     {
-      name: "Asset Description",
-      field: "asset_description",
-      className: "text-center",
+      name: "Depre Exp",
+      field: "depre_exp",
+      className: "text-right",
+      sortable: true,
+      type: 'custom',
+      render: (data) => {
+        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : 0
+      }
+    },
+    {
+      name: "Accum Depre",
+      field: "accum_depre",
+      className: "text-right",
+      type: 'custom',
+      sortable: true,
+      render: (data) => {
+        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : 0
+      }
+    },
+    {
+      name: "Net Book Value",
+      field: "net_book_value",
+      className: "text-right",
+      sortable: true,
     },
     {
       name: "Asset Location",
       field: "asset_location",
       className: "text-center",
-    },
-    {
-      name: "Net Book Value",
-      field: "net_book_value",
-      className: "text-center",
-      sortable: true,
     },
     {
       name: "Major Category",
@@ -81,25 +111,13 @@ export default function Detail({ auth, branch, sessions }) {
       field: "minor_category",
       className: "text-center",
     },
+
+
     {
-      name: "Accum Depre",
-      field: "accum_depre",
-      className: "text-center",
-      type: 'custom',
-      sortable: true,
-      render: (data) => {
-        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : 0
-      }
-    },
-    {
-      name: "Depre Exp",
-      field: "depre_exp",
+      name: "Category",
+      field: "category",
       className: "text-center",
       sortable: true,
-      type: 'custom',
-      render: (data) => {
-        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : 0
-      }
     },
   ];
 

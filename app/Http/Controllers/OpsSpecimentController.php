@@ -14,29 +14,6 @@ use Maatwebsite\Excel\Validators\ValidationException;
 class OpsSpecimentController extends Controller
 {
 
-    public function __construct(public OpsSpeciment $ops_speciment)
-    {
-    }
-    protected array $sortFields = ['branches.branch_code', 'tgl_speciment'];
-
-    public function api(Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_speciments.id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $this->ops_speciment->select('ops_speciments.*')->orderBy($sortField, $sortOrder)
-        ->orderBy('branches.branch_code', 'asc')
-        ->join('branches', 'ops_speciments.branch_id', 'branches.id');
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('tgl_speciment', 'like', $searchQuery);
-        }
-        $employees = $query->paginate($perpage);
-        return SpecimentResource::collection($employees);
-    }
 
     public function index(Request $request)
     {

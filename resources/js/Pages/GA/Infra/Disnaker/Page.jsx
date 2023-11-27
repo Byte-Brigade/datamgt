@@ -251,7 +251,7 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/infra/disnaker"}
+            fetchUrl={"/api/infra/disnakers"}
             refreshUrl={isRefreshed}
           />
         </div>

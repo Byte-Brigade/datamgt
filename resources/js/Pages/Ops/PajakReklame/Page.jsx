@@ -331,7 +331,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 : true
             )}
             className="w-[1500px]"
-            fetchUrl={"/api/ops/pajak-reklame"}
+            fetchUrl={"/api/ops/pajak-reklames"}
             refreshUrl={isRefreshed}
           />
         </div>

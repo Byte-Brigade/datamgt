@@ -135,7 +135,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               areaState={area}
               color="purple"
             />
-            <CardMenu
+            {/* <CardMenu
               label="Jumlah Vendor"
               data={data}
               type="gap_scorings"
@@ -145,7 +145,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               branchState={branchId}
               areaState={area}
               color="purple"
-            />
+            /> */}
 
           </div>
           {active === "branch" && (

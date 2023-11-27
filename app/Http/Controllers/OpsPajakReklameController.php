@@ -14,32 +14,6 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class OpsPajakReklameController extends Controller
 {
-    protected array $sortFields = ['ops_pajak_reklames.id', 'branches.branch_code', 'branches.branch_name', 'periode_awal', 'periode_akhir'];
-
-    public function __construct(public OpsPajakReklame $ops_pajak_reklame)
-    {
-    }
-
-    public function api(Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'ops_pajak_reklames.id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'ops_pajak_reklames.id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $this->ops_pajak_reklame->select('ops_pajak_reklames.*')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'ops_pajak_reklames.branch_id', 'branches.id');
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('periode_awal', 'like', $searchQuery)
-                ->orWhere('periode_akhir', 'like', $searchQuery)
-                ->orWhere('branch_code', 'like', $searchQuery)
-                ->orWhere('branch_name', 'like', $searchQuery);
-        }
-        $employees = $query->paginate($perpage);
-        return PajakReklameResource::collection($employees);
-    }
 
     public function index(Request $request)
     {

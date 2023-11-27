@@ -24,36 +24,6 @@ class InfraScoringAssessmentController extends Controller
         return Inertia::render('GA/Infra/Scoring/Assessment/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code', 'entity'];
-
-    public function api(InfraScoring $infra_scoring_assessment, Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $infra_scoring_assessment->select('infra_scorings.*')->where('type', 'Assessment')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'infra_scorings.branch_id', 'branches.id');
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($request->branch_code)) {
-            $query = $query->where('branch_code', $request->branch_code);
-        }
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('pic', 'like', $searchQuery)
-                    ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
-            });
-        }
-        $data = $query->paginate($perpage);
-        return ScoringAssessmentsResource::collection($data);
-    }
 
     public function import(Request $request)
     {
