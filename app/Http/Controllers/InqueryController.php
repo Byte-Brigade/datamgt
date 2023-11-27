@@ -6,6 +6,7 @@ use App\Http\Resources\InqueryAssetsResource;
 use App\Models\Branch;
 use App\Models\EmployeePosition;
 use App\Models\GapDisnaker;
+use App\Models\GapScoring;
 use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
 use App\Models\OpsSkbirtgs;
@@ -77,6 +78,10 @@ class InqueryController extends Controller
     public function assets()
     {
         return Inertia::render('Inquery/Asset/Page');
+    }
+    public function scorings()
+        $gap_scorings = GapScoring::with('branches')->get();
+        return Inertia::render('Inquery/Vendor/Page', ['data' => ['gap_scorings' => $gap_scorings]]);
     }
 
     public function asset_detail($id)
