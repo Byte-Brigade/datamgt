@@ -80,6 +80,7 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Asset/Page');
     }
     public function scorings()
+    {
         $gap_scorings = GapScoring::with('branches')->get();
         return Inertia::render('Inquery/Vendor/Page', ['data' => ['gap_scorings' => $gap_scorings]]);
     }
