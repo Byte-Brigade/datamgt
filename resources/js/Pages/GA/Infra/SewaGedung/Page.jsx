@@ -55,16 +55,16 @@ export default function Page({ auth, branches, sessions}) {
 
   const columns = [
     { name: "Cabang", sortable:true, field: "branches.branch_name" },
+    { name: "Tipe Cabang", field: "branch_types.type_name" },
 
     {
       name: "Status Kepemilikan",
       field: "status_kepemilikan",
-      className: "text-center",
+      sortable:true,
     },
     {
       name: "Pemilik",
       field: "owner",
-      className: "text-center",
     },
     {
       name: "Masa Sewa",
@@ -74,6 +74,7 @@ export default function Page({ auth, branches, sessions}) {
     {
       name: "Open Date",
       field: "open_date",
+
       type: "date",
       sortable: true,
       className: "justify-center text-center",
@@ -88,7 +89,7 @@ export default function Page({ auth, branches, sessions}) {
     {
       name: "Biaya Per Tahun",
       field: "biaya_per_tahun",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
       render: (data) => {
         return data.biaya_per_tahun ? data.biaya_per_tahun.toLocaleString('id-ID') : ''
@@ -97,7 +98,7 @@ export default function Page({ auth, branches, sessions}) {
     {
       name: "Total Biaya",
       field: "total_biaya",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
       render: (data) => {
         return data.total_biaya ? data.total_biaya.toLocaleString('id-ID') : ''
@@ -243,6 +244,7 @@ export default function Page({ auth, branches, sessions}) {
           </div>
           <DataTable
             columns={columns}
+            className="w-[1200px]"
             fetchUrl={"/api/infra/sewa-gedungs"}
             refreshUrl={isRefreshed}
           />

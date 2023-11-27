@@ -256,7 +256,7 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/perdins/${divisi_pembebanan}`}
+            fetchUrl={`/api/gap/perdin/${divisi_pembebanan}`}
             refreshUrl={isRefreshed}
           />
         </div>

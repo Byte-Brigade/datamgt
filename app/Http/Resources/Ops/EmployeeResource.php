@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Ops;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +24,7 @@ class EmployeeResource extends JsonResource
             'gender' => $this->gender,
             'birth_date' => $this->birth_date,
             'hiring_date' => $this->hiring_date,
-            'branches' => $this->branches,
+            'branches' => $this->branches->only(['id','branch_code','branch_name']),
             'employee_positions' => $this->employee_positions
         ];
     }

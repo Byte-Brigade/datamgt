@@ -273,7 +273,7 @@ export default function Speciment({ auth, sessions, branches }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/ops/speciment"}
+            fetchUrl={"/api/ops/speciments"}
             refreshUrl={isRefreshed}
           />
         </div>

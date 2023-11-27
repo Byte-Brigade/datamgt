@@ -208,7 +208,7 @@ console.log(auth)
             )}
           <DataTable
             columns={columns}
-            fetchUrl={"/api/ops/apar"}
+            fetchUrl={"/api/ops/apars"}
             refreshUrl={isRefreshed}
           />
         </div>

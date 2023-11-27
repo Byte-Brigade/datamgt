@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GapAlihDayaController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
@@ -114,6 +115,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/perdins/{id}', [GapPerdinController::class, 'update'])->name('perdins.update');
             Route::get('/perdins/export', [GapPerdinController::class, 'export'])->name('perdins.export');
             Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
+
+            Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
+            Route::get('/alihdayas/{vendor}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.detail');
+            Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
+            Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
+            Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
+            Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
+            Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */

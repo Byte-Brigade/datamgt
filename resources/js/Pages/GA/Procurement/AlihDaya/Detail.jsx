@@ -6,10 +6,9 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -18,19 +17,23 @@ import {
   DialogHeader,
   IconButton,
   Input,
+  Option,
+  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function SkOperasional({ auth, branches, sessions }) {
+export default function Detail({ auth,  sessions, vendor }) {
   const initialData = {
-    file: null,
-    branch: 0,
-    branches: {
-      branch_code: null,
-      branch_name: null,
-    },
-    expiry_date: null,
+    jumlah_kendaraan: null,
+    jumlah_driver: null,
+    sewa_kendaraan: null,
+    biaya_driver: null,
+    ot: null,
+    rfid: null,
+    non_rfid: null,
+    grab: null,
+    periode: null,
   };
   const {
     data,
@@ -44,84 +47,59 @@ export default function SkOperasional({ auth, branches, sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Nama Cabang", field: "branch_name", sortable: true },
+
     {
-      name: "Penerima Kuasa",
-      field: "penerima_kuasa",
+      name: "Jenis Pekerjaan",
+      field: "jenis_pekerjaan",
     },
-    { name: "Nomor Surat", field: "no_surat" },
     {
-      name: "Expiry Date",
-      field: "expiry_date",
-      type: "date",
+      name: "Nama Pegawai",
+      field: "nama_pegawai",
+    },
+    {
+      name: "User",
+      field: "user",
+    },
+    {
+      name: "Lokasi",
+      field: "lokasi",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Cost",
+      field: "cost",
       className: "text-center",
+      type: 'custom',
+      render: (data) => data.cost.toLocaleString('id-ID')
     },
-    {
-      name: "Lampiran",
-      field: "file",
-      type: "custom",
-      className: "text-center",
-      render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
-        auth.permissions.includes("can add") ? (
-          data.file ? (
-            <a
-              className="text-blue-500 hover:underline"
-              href={`/storage/ops/skoperasional/${data.file}`}
-              target="__blank"
-            >
-              {" "}
-              {data.file}
-            </a>
-          ) : (
-            <Button
-              variant="outlined"
-              size="sm"
-              color="blue"
-              onClick={() => {
-                toggleModalUpload();
-                setData(data);
-              }}
-            >
-              <div className="flex items-center gap-x-2">
-                <ArrowUpTrayIcon className="w-4 h-4" />
-                Upload Lampiran
-              </div>
-            </Button>
-          )
-        ) : (
-          <span>Belum upload lampiran</span>
-        ),
-    },
-    {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
-    },
+    // {
+    //   name: "Detail",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.alihdayas.detail", data.divisi_pembebanan)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
+
+
   ];
+
+  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.sk-operasional.import"), {
+    post(route("gap.alihdayas.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -133,26 +111,13 @@ export default function SkOperasional({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(
-      route("ops.sk-operasional.export") + `?branch=${branch}`,
-      "_self"
-    );
-  };
-
-  const handleSubmitUpload = (e) => {
-    e.preventDefault();
-    post(route("ops.sk-operasional.upload", data.id), {
-      replace: true,
-      onFinish: () => {
-        setIsRefreshed(!isRefreshed);
-        setIsModalUploadOpen(!isModalUploadOpen);
-      },
-    });
+    window.open(route("gap.alihdayas.export") + `?branch=${branch}`, "_self");
+    setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.sk-operasional.update", data.id), {
+    put(route("gap.alihdayas.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -161,10 +126,21 @@ export default function SkOperasional({ auth, branches, sessions }) {
       },
     });
   };
+  const handleSubmitCreate = (e) => {
+    e.preventDefault();
+    post(route("gap.alihdayas.store"), {
+      method: "post",
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalCreateOpen(!isModalCreateOpen);
+      },
+    });
+  };
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.sk-operasional.delete", data.id), {
+    destroy(route("gap.alihdayas.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -181,12 +157,11 @@ export default function SkOperasional({ auth, branches, sessions }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-  const toggleModalUpload = () => {
-    setIsModalUploadOpen(!isModalUploadOpen);
-  };
-
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
+  };
+  const toggleModalCreate = () => {
+    setIsModalCreateOpen(!isModalCreateOpen);
   };
 
   const toggleModalDelete = () => {
@@ -195,46 +170,30 @@ export default function SkOperasional({ auth, branches, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="OPS | SK Operasional Cabang" />
+      <Head title="GA Procurement | KDO" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {["can add", "can export"].some((permission) =>
-            auth.permissions.includes(permission)
-          ) && (
-            <div className="flex items-center justify-between mb-4">
-              {auth.permissions.includes("can add") && (
-                <PrimaryButton
-                  className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                  onClick={toggleModalImport}
-                >
-                  <div className="flex items-center gap-x-2">
-                    <DocumentPlusIcon className="w-4 h-4" />
-                    Import Excel
-                  </div>
-                </PrimaryButton>
-              )}
-              {auth.permissions.includes("can export") && (
-                <PrimaryButton onClick={toggleModalExport}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
                 <div className="flex items-center gap-x-2">
-                  <DocumentArrowDownIcon className="w-4 h-4" />
-                  Create Report
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
                 </div>
               </PrimaryButton>
-              )}
             </div>
-          )}
+            <PrimaryButton onClick={toggleModalExport}>
+              Create Report
+            </PrimaryButton>
+          </div>
           <DataTable
-            columns={columns.filter((column) =>
-              column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
-                : true
-            )}
-            fetchUrl={"/api/ops/sk-operasionals"}
+            columns={columns}
+            fetchUrl={`/api/gap/alihdaya/${vendor}`}
             refreshUrl={isRefreshed}
           />
         </div>
@@ -280,47 +239,6 @@ export default function SkOperasional({ auth, branches, sessions }) {
           </DialogFooter>
         </form>
       </Dialog>
-      {/* Modal Upload */}
-      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Upload Lampiran
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalUpload}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
-          <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-              <Input
-                variant="standard"
-                label="Upload Lampiran (.pdf)"
-                disabled={processing}
-                type="file"
-                name="upload"
-                id="upload"
-                accept=".pdf"
-                onChange={(e) => setData("file", e.target.files[0])}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <div className="flex flex-row-reverse gap-x-4">
-              <Button disabled={processing} type="submit">
-                Simpan
-              </Button>
-              <SecondaryButton type="button" onClick={toggleModalUpload}>
-                Tutup
-              </SecondaryButton>
-            </div>
-          </DialogFooter>
-        </form>
-      </Dialog>
       {/* Modal Export */}
       <Modal
         isProcessing={processing}
@@ -329,21 +247,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
         onToggle={toggleModalExport}
         onSubmit={handleSubmitExport}
       >
-        <div className="flex flex-col gap-y-4">
-          <select
-            label="Branch"
-            disabled={processing}
-            value={data.branch}
-            onChange={(e) => setData("branch", e.target.value)}
-          >
-            <option value="0">All</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={`${branch.id}`}>
-                {branch.branch_code} - {branch.branch_name}
-              </option>
-            ))}
-          </select>
-        </div>
+        Export data
       </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
@@ -363,28 +267,17 @@ export default function SkOperasional({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                label="Nomor Surat"
-                value={data.no_surat || ""}
-                disabled={processing}
-                onChange={(e) => setData("no_surat", e.target.value)}
-              />
-              <Input
-                label="Masa Berlaku"
-                value={data.expiry_date || ""}
+                label="Jangka Waktu (Expired Date)"
+                value={data.expired_date || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("expiry_date", e.target.value)}
+                onChange={(e) => setData("expired_date", e.target.value)}
               />
-
               <Input
-                variant="standard"
-                label="Upload Lampiran (.pdf)"
+                label="Keterangan"
+                value={data.keterangan || ""}
                 disabled={processing}
-                type="file"
-                name="upload"
-                id="upload"
-                accept=".pdf"
-                onChange={(e) => setData("file", e.target.files[0])}
+                onChange={(e) => setData("keterangan", e.target.value)}
               />
             </div>
           </DialogBody>
@@ -394,6 +287,106 @@ export default function SkOperasional({ auth, branches, sessions }) {
                 Ubah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalEdit}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Create */}
+      <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Tambah Data
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitCreate}>
+          <DialogBody className="overflow-y-scroll max-h-96" divider>
+            <div className="flex flex-col gap-y-4">
+
+
+              <Input
+                label="Divisi Pembebanan"
+                value={data.divisi_pembebanan || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Category"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Tipe"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Jumlah Driver"
+                value={data.jumlah_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("jumlah_driver", e.target.value)}
+              />
+              <Input
+                label="Sewa Kendaraan"
+                value={data.sewa_kendaraan || ""}
+                disabled={processing}
+                onChange={(e) => setData("sewa_kendaraan", e.target.value)}
+              />
+              <Input
+                label="Biaya Driver"
+                value={data.biaya_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("biaya_driver", e.target.value)}
+              />
+              <Input
+                label="OT"
+                value={data.ot || ""}
+                disabled={processing}
+                onChange={(e) => setData("ot", e.target.value)}
+              />
+              <Input
+                label="RFID"
+                value={data.rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("rfid", e.target.value)}
+              />
+              <Input
+                label="NON RFID"
+                value={data.non_rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("non_rfid", e.target.value)}
+              />
+              <Input
+                label="GRAB"
+                value={data.grab || ""}
+                disabled={processing}
+                onChange={(e) => setData("grab", e.target.value)}
+              />
+              <Input
+                label="Periode"
+                value={data.expired_date || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("periode", e.target.value)}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Tambah
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>
@@ -418,7 +411,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+
             </span>{" "}
             ?
           </Typography>

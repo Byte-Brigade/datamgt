@@ -118,7 +118,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
                   )
                 : true
             )}
-            fetchUrl={`/api/ops/apar/detail/${ops_apar.id}`}
+            fetchUrl={`/api/ops/apar/details/${ops_apar.id}`}
             refreshUrl={isRefreshed}
           />
         </div>

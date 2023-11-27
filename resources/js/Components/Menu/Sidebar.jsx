@@ -70,6 +70,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "maintenance" },
     { name: "Asset", path: "inquery.assets" },
+    { name: "Vendor", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
   ];
 
@@ -104,7 +105,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Alih Daya",
-      path: "gap.maintenance",
+      path: "gap.alihdayas",
     },
     {
       name: "Hasil Scoring Vendor",
@@ -126,13 +127,14 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const infraRouter = [
     {
-      name: "Izin Disnaker",
-      path: "infra.disnaker",
-    },
-    {
-      name: "Sewa Gedung",
+      name: "Data Gedung",
       path: "infra.sewa_gedungs",
     },
+    {
+      name: "Branch Roll Out",
+      path: "infra.maintenance",
+    },
+
     {
       name: "Maintenance Cost Gedung",
       path: "infra.maintenance",
@@ -144,6 +146,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     {
       name: "Hasil Scoring Vendor",
       path: "infra.scoring_projects",
+    },
+    {
+      name: "Izin Disnaker",
+      path: "infra.disnaker",
     },
   ];
 

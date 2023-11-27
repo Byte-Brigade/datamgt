@@ -164,7 +164,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/branches"}
+            fetchUrl={"/api/report/branches"}
             refreshUrl={isRefreshed}
             className="w-[1800px]"
             component={[

@@ -77,7 +77,7 @@ export default function Page({ auth, branches, sessions }) {
       sortable: true,
     },
     {
-      name: "Date In Place Service",
+      name: "Date In Place",
       field: "date_in_place_service",
       type: "date",
       sortable: true,

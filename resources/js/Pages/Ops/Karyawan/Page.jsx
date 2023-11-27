@@ -246,7 +246,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/employees"}
+            fetchUrl={"/api/ops/employees"}
             refreshUrl={isRefreshed}
             component={[
               {

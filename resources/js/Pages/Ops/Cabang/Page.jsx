@@ -53,14 +53,14 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [open, setOpen] = useState(false);
   const columns = [
-    { name: "Kode Cabang", field: "branch_code", sortable: false },
+    { name: "Kode Cabang", field: "branch_code" },
     {
       name: "Tipe Cabang",
       field: "branch_types.type_name",
       sortable: false,
       filterable: true,
     },
-    { name: "Nama Cabang", field: "branch_name", sortable: false },
+    { name: "Nama Cabang", field: "branch_name"},
     { name: "NPWP", field: "npwp" },
     { name: "Area", field: "area", className: "text-center" },
     { name: "Alamat", field: "address", className: "w-[300px]" },
@@ -232,7 +232,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/branches"}
+            fetchUrl={"/api/ops/branches"}
             refreshUrl={isRefreshed}
             className="w-[1500px]"
             component={[

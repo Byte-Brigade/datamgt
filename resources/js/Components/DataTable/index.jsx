@@ -34,7 +34,7 @@ export default function DataTable({
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
   const [perPage, setPerPage] = useState(15);
-  const [sortColumn, setSortColumn] = useState(columns[0].field);
+  const [sortColumn, setSortColumn] = useState();
   const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({});

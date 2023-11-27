@@ -8,7 +8,7 @@ export default function Page({ sessions, auth }) {
   const headings = [
     {
       name: 'Lokasi',
-      colSpan: 3,
+      colSpan: 2,
     },
     {
       name: 'Kategori A (Depresiasi)',
@@ -32,11 +32,7 @@ export default function Page({ sessions, auth }) {
         </Link>
       ),
     },
-    {
-      name: "Tipe",
-      field: "branch_types.type_name",
-      className: "w-28 text-center",
-    },
+
     {
       name: 'Item',
       field: 'item_depre',
@@ -111,12 +107,12 @@ export default function Page({ sessions, auth }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="Inquery Data | Branch" />
+      <Head title="Inquery Data | Assets" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <DataTable
-            fetchUrl={"/api/branches"}
+            fetchUrl={"/api/inquery/assets"}
             columns={columns}
             headings={headings}
             bordered={true}
