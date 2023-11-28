@@ -288,13 +288,18 @@ class GapApiController extends Controller
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
-    public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $vendor)
+    public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $type)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_alih_daya->select('gap_alih_dayas.*')->where('vendor', $vendor)->orderBy($sortFieldInput, $sortOrder);
+        $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
 
+        if($type == 'jenis_pekerjaan') {
+            $query = $query->where('jenis_pekerjaan', $request->type_item);
+        } else if($type == 'vendor') {
+            $query = $query->where('vendor', $request->type_item);
+        }
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($request->branch_code)) {

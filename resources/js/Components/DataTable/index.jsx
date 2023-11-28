@@ -362,7 +362,7 @@ export default function DataTable({
             <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
-                <th key={i}>
+                <th key={i} >
                   {column.sortable === true ? (
                     <div
                       className="cursor-pointer hover:underline"

@@ -29,9 +29,9 @@ class GapAlihDayaController extends Controller
         }
     }
 
-    public function detail($vendor)
+    public function detail(Request $request, $type)
     {
-        return Inertia::render('GA/Procurement/AlihDaya/Detail', ['vendor' => $vendor]);
+        return Inertia::render('GA/Procurement/AlihDaya/Detail', ['type' => $type, 'type_item' => $request->type_item]);
     }
 
 }

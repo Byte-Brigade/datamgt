@@ -119,7 +119,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
 
             Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
-            Route::get('/alihdayas/{vendor}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.detail');
+            Route::get('/alihdayas/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
             Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
             Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
             Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');

@@ -53,11 +53,19 @@ export default function Page({ auth,  sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
 
-  const headings = [
+  const heading1 = [
 
     {
-      name: 'Vendor',
-      colSpan: 8,
+      name: 'Jumlah Tenaga Kerja',
+      colSpan: 9,
+    },
+  ]
+
+  const heading2 = [
+
+    {
+      name: 'Jumlah Biaya Tenaga Kerja',
+      colSpan: 9,
     },
   ]
   const columnItems = [
@@ -65,6 +73,12 @@ export default function Page({ auth,  sessions }) {
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
+      type: 'custom',
+      render: (data) => (
+        <Link href={`/gap/alihdayas/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}>
+          {data.jenis_pekerjaan}
+        </Link>
+      ),
     },
 
     {
@@ -136,6 +150,12 @@ export default function Page({ auth,  sessions }) {
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
+      type: 'custom',
+      render: (data) => (
+        <Link href={`/gap/alihdayas/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}>
+          {data.jenis_pekerjaan}
+        </Link>
+      ),
     },
 
     {
@@ -312,14 +332,14 @@ export default function Page({ auth,  sessions }) {
           </div>
           <DataTable
             columns={columnItems}
-            headings={headings}
+            headings={heading1}
             fetchUrl={"/api/gap/alihdayas"}
             refreshUrl={isRefreshed}
             bordered={true}
           />
           <DataTable
             columns={columnCosts}
-            headings={headings}
+            headings={heading2}
             fetchUrl={"/api/gap/alihdayas"}
             refreshUrl={isRefreshed}
             bordered={true}

@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth,  sessions, vendor }) {
+export default function Detail({ auth,  sessions, type, type_item }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -193,7 +193,7 @@ export default function Detail({ auth,  sessions, vendor }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/alihdaya/${vendor}`}
+            fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
             refreshUrl={isRefreshed}
           />
         </div>

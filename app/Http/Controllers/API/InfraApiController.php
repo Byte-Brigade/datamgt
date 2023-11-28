@@ -37,11 +37,16 @@ class InfraApiController extends Controller
     public function sewa_gedungs(InfraSewaGedung $infra_sewa_gedung, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
+        $sortOrder = $request->input('sort_order') ?? 'asc';
         $searchInput = $request->search;
-        $query = $infra_sewa_gedung->orderBy($sortFieldInput, $sortOrder)
+        $query = $infra_sewa_gedung
             ->join('branches', 'infra_sewa_gedungs.branch_id', 'branches.id');
 
+        if ($sortFieldInput == 'status_kepemilikan') {
+            $query = $query->orderByRaw("SUBSTRING(status, 1, 1) " . $sortOrder);
+        } else {
+            $query = $query->orderBy($sortFieldInput, $sortOrder);
+        }
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
@@ -49,7 +54,10 @@ class InfraApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
+
+
         $data = $query->paginate($perpage);
+
 
 
         return SewaGedungResource::collection($data);
