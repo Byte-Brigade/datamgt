@@ -71,42 +71,49 @@ export default function Page({ auth,  sessions }) {
       name: "Permata",
       field: "permata",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Permata').length
     },
     {
       name: "Sigap",
       field: "sigap",
       type: 'custom',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Sigap').length
+      className: 'text-center',
+      render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').length
     },
     {
       name: "Pusaka",
       field: "pusaka",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Pusaka').length
     },
     {
       name: "Assa",
       field: "assa",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Assa').length
     },
     {
       name: "Indorent",
       field: "indorent",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Indorent').length
     },
     {
       name: "Salawati",
       field: "salawati",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Salawati').length
     },
     {
       name: "Total",
       field: "total",
       type: 'custom',
+      className: 'text-center',
       render: (data) => data.vendor.length
     },
 
@@ -145,7 +152,7 @@ export default function Page({ auth,  sessions }) {
       field: "sigap",
       type: 'custom',
       className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Sigap').reduce((total, acc)  => {
+      render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').reduce((total, acc)  => {
         return total + acc.cost
       },0).toLocaleString('id-ID')
     },
@@ -308,12 +315,14 @@ export default function Page({ auth,  sessions }) {
             headings={headings}
             fetchUrl={"/api/gap/alihdayas"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
           <DataTable
             columns={columnCosts}
             headings={headings}
             fetchUrl={"/api/gap/alihdayas"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
         </div>
       </div>

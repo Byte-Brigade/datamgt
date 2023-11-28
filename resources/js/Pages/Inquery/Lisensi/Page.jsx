@@ -11,6 +11,11 @@ export default function Page({ sessions, auth }) {
       field: "branch_name",
       className: "cursor-pointer hover:text-blue-500",
     },
+    {
+      name: "Tipe Cabang",
+      field: "branch_types.type_name",
+      className: "cursor-pointer hover:text-blue-500",
+    },
 
     {
       name: 'Izin/Ojk',
