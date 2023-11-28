@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+        Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
+        Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
     });
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {

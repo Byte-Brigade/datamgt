@@ -48,6 +48,21 @@ class Branch extends Model
         return $this->hasOne(OpsPajakReklame::class, 'branch_id');
     }
 
+    public function ops_skbirtgs()
+    {
+        return $this->hasOne(OpsSkbirtgs::class, 'branch_id');
+    }
+
+    public function ops_apar()
+    {
+        return $this->hasOne(OpsApar::class, 'branch_id');
+    }
+
+    public function ops_skoperasional()
+    {
+        return $this->hasOne(OpsSkOperasional::class, 'branch_id');
+    }
+
     public function gap_disnaker()
     {
         return $this->hasMany(GapDisnaker::class, 'branch_id');

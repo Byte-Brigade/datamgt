@@ -189,6 +189,7 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
     {
       name: "Nilai", field: "value",
       type: 'custom',
+      className: 'text-right',
       sortable: true,
       render: (data) => data.value.toLocaleString('id-ID'),
     },

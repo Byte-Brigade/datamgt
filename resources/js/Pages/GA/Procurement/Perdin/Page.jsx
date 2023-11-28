@@ -202,6 +202,7 @@ export default function Page({ auth,  sessions }) {
             columns={columns}
             fetchUrl={"/api/gap/perdins"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
         </div>
       </div>

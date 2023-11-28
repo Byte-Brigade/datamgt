@@ -82,17 +82,17 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
-    {
-      label: "Jumlah Vendor",
-      data,
-      type: "gap_scorings",
-      Icon: ArchiveBoxIcon,
-      active,
-      onClick: () => setActive("gap_scorings"),
-      branchState: branchId,
-      areaState: area,
-      color: "purple",
-    },
+    // {
+    //   label: "Jumlah Vendor",
+    //   data,
+    //   type: "gap_scorings",
+    //   Icon: ArchiveBoxIcon,
+    //   active,
+    //   onClick: () => setActive("gap_scorings"),
+    //   branchState: branchId,
+    //   areaState: area,
+    //   color: "purple",
+    // },
   ];
   console.log(data)
   return (
