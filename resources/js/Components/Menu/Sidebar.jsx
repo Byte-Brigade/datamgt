@@ -71,7 +71,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Staff", path: "maintenance" },
     { name: "Asset", path: "inquery.assets" },
     { name: "Vendor", path: "inquery.scorings" },
-    { name: "Lisensi", path: "maintenance" },
+    { name: "Lisensi", path: "inquery.licenses" },
   ];
 
   const reportRouter = [

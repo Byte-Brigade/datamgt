@@ -1,35 +1,12 @@
 <?php
 
-use App\Http\Controllers\API\DataMaintenanceApiController;
 use App\Http\Controllers\API\GapApiController;
 use App\Http\Controllers\API\InfraApiController;
 use App\Http\Controllers\API\InqueryApiController;
 use App\Http\Controllers\API\OpsApiController;
 use App\Http\Controllers\API\ReportApiController;
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\BranchController;
-use App\Http\Controllers\ComponentController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\GapAssetController;
-use App\Http\Controllers\GapDisnakerController;
-use App\Http\Controllers\GapKdoController;
-use App\Http\Controllers\GapPerdinController;
-use App\Http\Controllers\GapScoringAssessmentController;
-use App\Http\Controllers\GapScoringController;
-use App\Http\Controllers\GapScoringProjectController;
-use App\Http\Controllers\InfraScoringAssessmentController;
-use App\Http\Controllers\InfraScoringProjectController;
-use App\Http\Controllers\InfraSewaGedungController;
-use App\Http\Controllers\InqueryController;
-use App\Http\Controllers\OpsAparController;
-use App\Http\Controllers\OpsPajakReklameController;
-use App\Http\Controllers\OpsSkbirtgsController;
-use App\Http\Controllers\OpsSkOperasionalController;
-use App\Http\Controllers\OpsSpecimentController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UAMController;
-use App\Models\GapScoringProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +60,7 @@ Route::prefix('gap')->name('gap.')->group(function () {
 Route::prefix('inquery')->name('inquery.')->group(function() {
     Route::get('assets', [InqueryApiController::class, 'assets']);
     Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
+    Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('branches');
 
 });
 Route::prefix('infra')->name('infra.')->group(function () {

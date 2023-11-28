@@ -84,6 +84,11 @@ class InqueryController extends Controller
         $gap_scorings = GapScoring::with('branches')->get();
         return Inertia::render('Inquery/Vendor/Page', ['data' => ['gap_scorings' => $gap_scorings]]);
     }
+    public function licenses()
+    {
+        $gap_scorings = GapScoring::with('branches')->get();
+        return Inertia::render('Inquery/Lisensi/Page');
+    }
 
     public function asset_detail($id)
     {
