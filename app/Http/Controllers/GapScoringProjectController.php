@@ -105,9 +105,10 @@ class GapScoringProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function detail($scoring_vendor)
     {
-        //
+        $branchesProps = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
     }
 
     /**

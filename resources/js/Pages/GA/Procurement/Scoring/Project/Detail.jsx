@@ -8,7 +8,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const initialData = {
     branch_id: 0,
     description: null,
@@ -66,54 +66,97 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
 
     {
-      name: "Scoring Vendor",
-      field: "scoring_vendor",
+      name: "Description",
+      field: "description",
     },
     {
-      name: "Jumlah Vendor",
-      field: "jumlah_vendor",
-    },
-    {
-      name: "Q1",
-      field: "q1",
-    },
-    {
-      name: "Q2",
-      field: "q2",
-    },
-    {
-      name: "Q3",
-      field: "q3",
-    },
-    {
-      name: "Q4",
-      field: "q4",
+      name: "PIC",
+      field: "pic",
     },
 
-
+    {
+      name: "Status Pekerjaan",
+      field: "status_pekerjaan",
+    },
+    {
+      name: "Dokumen Perintah Kerja",
+      field: "dokumen_perintah_kerja",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
     {
       name: "Nilai Project",
       field: "nilai_project",
-      className: 'text-right',
       type: 'custom',
       render: (data) => {
         return data.nilai_project ? data.nilai_project.toLocaleString("id-ID") : 0
       }
     },
     {
+      name: "Tanggal Selesai Pekerjaan",
+      field: "tgl_selesai_pekerjaan",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal BAST",
+      field: "tgl_bast",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal Scoring",
+      field: "tgl_scoring",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "SLA",
+      field: "sla",
+    },
+    {
+      name: "Actual",
+      field: "actual",
+    },
+    {
+      name: "Meet The SLA",
+      field: "meet_the_sla",
+    },
+    {
+      name: "Scoring Vendor",
+      field: "scoring_vendor",
+    },
+    {
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
+    },
+    {
       name: "Action",
-      field: "detail",
+      field: "action",
       className: "text-center",
       render: (data) => (
-        <Link href={route('gap.scoring_projects.detail',data.scoring_vendor)}>
-          <Button variant="outlined">Detail</Button>
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+            console.log(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
-
-
   ];
 
   const handleSubmitImport = (e) => {
@@ -263,7 +306,8 @@ export default function Page({ auth, branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/scoring_projects"}
+            className="w-[1500px]"
+            fetchUrl={`/api/gap/scoring_projects/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
@@ -287,7 +331,6 @@ export default function Page({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"

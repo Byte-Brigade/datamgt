@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/assets/{id}', [GapAssetController::class, 'destroy'])->name('assets.delete');
 
             Route::get('/scoring-projects', [GapScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::get('/scoring-projects/{scoring_vendor}', [GapScoringProjectController::class, 'detail'])->name('scoring_projects.detail');
             Route::post('/scoring-projects/import', [GapScoringProjectController::class, 'import'])->name('scoring_projects.import');
             Route::post('/scoring-projects', [GapScoringProjectController::class, 'store'])->name('scoring_projects.store');
             Route::put('/scoring-projects/{id}', [GapScoringProjectController::class, 'update'])->name('scoring_projects.update');
