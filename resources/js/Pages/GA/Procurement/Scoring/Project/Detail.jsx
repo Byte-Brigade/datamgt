@@ -8,7 +8,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -23,14 +23,21 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const initialData = {
     branch_id: 0,
     description: null,
     pic: null,
+    status_pekerjaan: null,
     dokumen_perintah_kerja: null,
     vendor: null,
+    nilai_project: null,
+    tgl_selesai_pekerjaan: null,
+    tgl_bast: null,
+    tgl_request_scoring: null,
     tgl_scoring: null,
+    sla: null,
+    actual: null,
     scoring_vendor: null,
     schedule_scoring: null,
     keterangan: null,
@@ -59,45 +66,102 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
+
+    {
+      name: "Description",
+      field: "description",
+    },
+    {
+      name: "PIC",
+      field: "pic",
+    },
+
+    {
+      name: "Status Pekerjaan",
+      field: "status_pekerjaan",
+    },
+    {
+      name: "Dokumen Perintah Kerja",
+      field: "dokumen_perintah_kerja",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Nilai Project",
+      field: "nilai_project",
+      type: 'custom',
+      render: (data) => {
+        return data.nilai_project ? data.nilai_project.toLocaleString("id-ID") : 0
+      }
+    },
+    {
+      name: "Tanggal Selesai Pekerjaan",
+      field: "tgl_selesai_pekerjaan",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal BAST",
+      field: "tgl_bast",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "Tanggal Scoring",
+      field: "tgl_scoring",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
+    {
+      name: "SLA",
+      field: "sla",
+    },
+    {
+      name: "Actual",
+      field: "actual",
+    },
+    {
+      name: "Meet The SLA",
+      field: "meet_the_sla",
+    },
     {
       name: "Scoring Vendor",
       field: "scoring_vendor",
     },
     {
-      name: "Jumlah Vendor",
-      field: "jumlah_vendor",
-    },
-    {
-      name: "Q1",
-      field: "q1",
-    },
-    {
-      name: "Q2",
-      field: "q2",
-    },
-    {
-      name: "Q3",
-      field: "q3",
-    },
-    {
-      name: "Q4",
-      field: "q4",
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
     },
     {
       name: "Action",
-      field: "detail",
+      field: "action",
       className: "text-center",
       render: (data) => (
-        <Link href={route('gap.scoring_assessments.detail',data.scoring_vendor)}>
-          <Button  variant="outlined">Detail</Button>
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+            console.log(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
   ];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.import"), {
+    post(route("gap.scoring_projects.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -109,12 +173,12 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.scoring_assessments.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.scoring_projects.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.upload", data.id), {
+    post(route("gap.scoring_projects.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -125,7 +189,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.scoring_assessments.update", data.id), {
+    put(route("gap.scoring_projects.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -136,7 +200,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.store", data.id), {
+    post(route("gap.scoring_projects.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -148,7 +212,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.scoring_assessments.delete", data.id), {
+    destroy(route("gap.scoring_projects.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -156,6 +220,33 @@ export default function Page({ auth, branches, sessions }) {
       },
     });
   };
+
+  const calculateDifference = (startDate, endDate) => {
+    let days = 0;
+    const tgl_bast = new Date(startDate)
+    const tgl_scoring = new Date(endDate)
+    if (isNaN(tgl_bast) || isNaN(tgl_bast)) {
+      console.log("tgl tidak valid")
+      return;
+    }
+    const difference = Math.abs(tgl_scoring - tgl_bast); // Menggunakan nilai mutlak
+    days = difference / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+    console.log(days)
+    setData({ ...data, tgl_bast: startDate, tgl_scoring: endDate, actual: days })
+  };
+
+
+  const handleTglBast = (e) => {
+    setData('tgl_bast', e.target.value)
+    calculateDifference(e.target.value, data.tgl_scoring)
+    console.log(e.target.value)
+  }
+  const handleTglScoring = (e) => {
+    setData('tgl_scoring', e.target.value)
+    calculateDifference(data.tgl_bast, e.target.value)
+    console.log(e.target.value)
+
+  }
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -173,7 +264,7 @@ export default function Page({ auth, branches, sessions }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
-    setData(initialData)
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -215,7 +306,8 @@ export default function Page({ auth, branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/scoring_assessments"}
+            className="w-[1500px]"
+            fetchUrl={`/api/gap/scoring_projects/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
@@ -239,7 +331,6 @@ export default function Page({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"
@@ -352,7 +443,7 @@ export default function Page({ auth, branches, sessions }) {
               >
                 {branches.map((branch) =>
                   branch.branch_name.includes("Pusat") ? (
-                    <Option key={branch.id} value={`${branch.id}`}>
+                    <Option value={`${branch.id}`}>
                       {branch.branch_name}
                     </Option>
                   ) : (
@@ -376,6 +467,19 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("pic", e.target.value)}
               />
+              <Select
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
+                disabled={processing}
+                onChange={(e) => setData("status_pekerjaan", e)}
+              >
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
+              </Select>
               <Input
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
@@ -389,11 +493,56 @@ export default function Page({ auth, branches, sessions }) {
                 onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
+                label="Nilai Project"
+                type="number"
+                value={data.nilai_project || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_project", e.target.value)}
+              />
+              <Input
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_selesai_pekerjaan", e.target.value)
+                }
+              />
+              <Input
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglBast}
+              />
+              <Input
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
+              />
+              <Input
                 label="Tanggal Scoring"
                 value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData('tgl_scoring', e.target.value)}
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
+                type="number"
+                value={data.sla || ""}
+                disabled={processing}
+                onChange={(e) => setData('sla', e.target.value)}
+              />
+              <Input
+                label="Actual"
+                value={data.actual || ""}
+                disabled={processing}
+                onChange={(e) => setData("actual", e.target.value)}
               />
               <Input
                 label="Scoring Vendor"
@@ -489,6 +638,19 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("pic", e.target.value)}
               />
+              <Select
+                label="Status Pekerjaan"
+                value={`${data.status_pekerjaan}`}
+                disabled={processing}
+                onChange={(e) => setData("status_pekerjaan", e)}
+              >
+                <Option value="Done">
+                  Done
+                </Option>
+                <Option value="On Progress">
+                  On Progress
+                </Option>
+              </Select>
               <Input
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
@@ -502,11 +664,57 @@ export default function Page({ auth, branches, sessions }) {
                 onChange={(e) => setData("vendor", e.target.value)}
               />
               <Input
+                label="Nilai Project"
+                type="number"
+                value={data.nilai_project || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_project", e.target.value)}
+              />
+              <Input
+                label="Tanggal Selesai Pekerjaan"
+                value={data.tgl_selesai_pekerjaan || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_selesai_pekerjaan", e.target.value)
+                }
+              />
+              <Input
+                label="Tanggal BAST"
+                value={data.tgl_bast || ""}
+                disabled={processing}
+                type="date"
+                onChange={handleTglBast}
+              />
+              <Input
+                label="Tanggal Request Scoring"
+                value={data.tgl_request_scoring || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) =>
+                  setData("tgl_request_scoring", e.target.value)
+                }
+              />
+              <Input
                 label="Tanggal Scoring"
                 value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData('tgl_scoring', e.target.value)}
+                onChange={handleTglScoring}
+              />
+              <Input
+                label="SLA"
+                type="number"
+                value={data.sla || ""}
+                disabled={processing}
+                onChange={(e) => setData('sla', e.target.value)}
+              />
+              <Input
+                label="Actual"
+                value={data.actual || ""}
+                type="number"
+                disabled={processing}
+                onChange={(e) => setData("actual", e.target.value)}
               />
               <Input
                 label="Scoring Vendor"

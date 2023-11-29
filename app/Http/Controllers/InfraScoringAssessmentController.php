@@ -64,9 +64,10 @@ class InfraScoringAssessmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function detail($scoring_vendor)
     {
-        //
+        $branchesProps = Branch::get();
+        return Inertia::render('GA/Infra/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
     }
 
     /**

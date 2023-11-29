@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DisnakerResource;
 use App\Http\Resources\ScoringAssessmentsResource;
@@ -63,7 +64,6 @@ class InfraApiController extends Controller
         return SewaGedungResource::collection($data);
     }
 
-    protected array $sortFields = ['branches.branch_code', 'entity'];
 
     public function scoring_projects(InfraScoring $infra_scoring_project, Request $request)
     {
@@ -71,6 +71,48 @@ class InfraApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $infra_scoring_project->select('infra_scorings.*')->where('type', 'Post Project')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'infra_scorings.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('pic', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery)
+                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    });
+            });
+        }
+        $data = $query->get();
+
+        $collections = $data->groupBy('scoring_vendor')->map(function ($scorings, $grade) {
+            return [
+                'scoring_vendor' => $grade == '' ? 'Tidak Ada' : $grade,
+                'jumlah_vendor' => $scorings->count(),
+                'q1' => $scorings->where('schedule_scoring', 'Q1')->count(),
+                'q2' => $scorings->where('schedule_scoring', 'Q2')->count(),
+                'q3' => $scorings->where('schedule_scoring', 'Q3')->count(),
+                'q4' => $scorings->where('schedule_scoring', 'Q4')->count(),
+                'nilai_project' => $scorings->sum('nilai_project')
+            ];
+        })->sortBy('scoring_vendor');
+
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+
+    public function scoring_project_details(InfraScoring $infra_scoring_project, Request $request, $scoring_vendor)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $infra_scoring_project->select('infra_scorings.*')->where('type', 'Post Project')->where('scoring_vendor', $scoring_vendor == 'Tidak Ada' ? null : $scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'infra_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
@@ -118,7 +160,49 @@ class InfraApiController extends Controller
                     });
             });
         }
+        $data = $query->get();
+
+        $collections = $data->groupBy('scoring_vendor')->map(function ($scorings, $grade) {
+            return [
+                'scoring_vendor' => $grade == '' ? 'Tidak Ada' : $grade,
+                'jumlah_vendor' => $scorings->count(),
+                'q1' => $scorings->where('schedule_scoring', 'Q1')->count(),
+                'q2' => $scorings->where('schedule_scoring', 'Q2')->count(),
+                'q3' => $scorings->where('schedule_scoring', 'Q3')->count(),
+                'q4' => $scorings->where('schedule_scoring', 'Q4')->count(),
+            ];
+        })->sortBy('scoring_vendor');
+
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+    public function scoring_assessment_details(InfraScoring $infra_scoring_assessment, Request $request, $scoring_vendor)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $infra_scoring_assessment->select('infra_scorings.*')->where('type', 'Assessment')->where('scoring_vendor', $scoring_vendor == 'Tidak Ada' ? null : $scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'infra_scorings.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('pic', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery)
+                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    });
+            });
+        }
+
         $data = $query->paginate($perpage);
         return ScoringAssessmentsResource::collection($data);
     }
+
 }

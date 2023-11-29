@@ -8,7 +8,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const initialData = {
     branch_id: 0,
     description: null,
@@ -59,45 +59,67 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
+    { name: "Entity", field: "entity", sortable: true },
+
+    {
+      name: "Description",
+      field: "description",
+    },
+    {
+      name: "PIC",
+      field: "pic",
+    },
+    {
+      name: "Dokumen Perintah Kerja",
+      field: "dokumen_perintah_kerja",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Tanggal Scoring",
+      field: "tgl_scoring",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
     {
       name: "Scoring Vendor",
       field: "scoring_vendor",
     },
     {
-      name: "Jumlah Vendor",
-      field: "jumlah_vendor",
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
     },
     {
-      name: "Q1",
-      field: "q1",
-    },
-    {
-      name: "Q2",
-      field: "q2",
-    },
-    {
-      name: "Q3",
-      field: "q3",
-    },
-    {
-      name: "Q4",
-      field: "q4",
+      name: "Keterangan",
+      field: "keterangan",
     },
     {
       name: "Action",
-      field: "detail",
+      field: "action",
       className: "text-center",
       render: (data) => (
-        <Link href={route('gap.scoring_assessments.detail',data.scoring_vendor)}>
-          <Button  variant="outlined">Detail</Button>
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
   ];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.import"), {
+    post(route("infra.scoring_assessments.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -109,12 +131,12 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.scoring_assessments.export") + `?branch=${branch}`, "_self");
+    window.open(route("infra.scoring_assessments.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.upload", data.id), {
+    post(route("infra.scoring_assessments.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -125,7 +147,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.scoring_assessments.update", data.id), {
+    put(route("infra.scoring_assessments.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -136,7 +158,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_assessments.store", data.id), {
+    post(route("infra.scoring_assessments.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -148,7 +170,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.scoring_assessments.delete", data.id), {
+    destroy(route("infra.scoring_assessments.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -215,7 +237,8 @@ export default function Page({ auth, branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/scoring_assessments"}
+            className="w-[1500px]"
+            fetchUrl={`/api/infra/scoring_assessments/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
@@ -239,7 +262,6 @@ export default function Page({ auth, branches, sessions }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"

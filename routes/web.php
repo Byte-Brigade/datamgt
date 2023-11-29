@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/assets/{id}', [GapAssetController::class, 'destroy'])->name('assets.delete');
 
             Route::get('/scoring-projects', [GapScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::get('/scoring-projects/{scoring_vendor}', [GapScoringProjectController::class, 'detail'])->name('scoring_projects.detail');
             Route::post('/scoring-projects/import', [GapScoringProjectController::class, 'import'])->name('scoring_projects.import');
             Route::post('/scoring-projects', [GapScoringProjectController::class, 'store'])->name('scoring_projects.store');
             Route::put('/scoring-projects/{id}', [GapScoringProjectController::class, 'update'])->name('scoring_projects.update');
@@ -104,6 +105,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/scoring-projects/{id}', [GapScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
 
             Route::get('/scoring-assessments', [GapScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::get('/scoring-assessments/{scoring_vendor}', [GapScoringAssessmentController::class, 'detail'])->name('scoring_assessments.detail');
             Route::post('/scoring-assessments/import', [GapScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
             Route::post('/scoring-assessments', [GapScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
             Route::put('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
@@ -140,6 +142,7 @@ Route::middleware('auth')->group(function () {
 
 
             Route::get('/scoring-projects', [InfraScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::get('/scoring-projects/{scoring_vendor}', [InfraScoringProjectController::class, 'detail'])->name('scoring_projects.detail');
             Route::post('/scoring-projects/import', [InfraScoringProjectController::class, 'import'])->name('scoring_projects.import');
             Route::post('/scoring-projects', [InfraScoringProjectController::class, 'store'])->name('scoring_projects.store');
             Route::put('/scoring-projects/{id}', [InfraScoringProjectController::class, 'update'])->name('scoring_projects.update');
@@ -147,6 +150,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/scoring-projects/{id}', [InfraScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
 
             Route::get('/scoring-assessments', [InfraScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::get('/scoring-assessments/{scoring_vendor}', [InfraScoringAssessmentController::class, 'detail'])->name('scoring_assessments.detail');
             Route::post('/scoring-assessments/import', [InfraScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
             Route::post('/scoring-assessments', [InfraScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
             Route::put('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'update'])->name('scoring_assessments.update');
