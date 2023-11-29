@@ -94,6 +94,7 @@ export default function Page({ sessions, auth }) {
       name: 'Nilai Perolehan',
       field: 'nilai_perolehan_non_depre',
       className: "text-center",
+
       type: "custom",
       render: (data) => {
         return data.assets.filter(asset => asset.category === 'Non-Depre').reduce(

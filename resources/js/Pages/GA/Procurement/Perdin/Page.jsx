@@ -63,6 +63,9 @@ export default function Page({ auth,  sessions }) {
       field: "airline",
       className: "text-center",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
+
       render: (data) => data.airline.toLocaleString('id-ID')
     },
     {
@@ -70,6 +73,8 @@ export default function Page({ auth,  sessions }) {
       field: "ka",
       className: "text-center",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.ka.toLocaleString('id-ID')
     },
     {
@@ -77,6 +82,8 @@ export default function Page({ auth,  sessions }) {
       field: "hotel",
       className: "text-center",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.hotel.toLocaleString('id-ID')
     },
     {
@@ -84,6 +91,8 @@ export default function Page({ auth,  sessions }) {
       field: "total",
       className: "text-center",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.total.toLocaleString('id-ID')
     },
 

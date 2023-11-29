@@ -62,13 +62,16 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name", sortable: true },
+    { name: "Cabang", field: "branches.branch_name", sortable: true,
+  freeze: true
+  },
 
     {
       name: "Category",
       field: "category",
       className: "text-center",
       sortable: true,
+      freeze: true
     },
     {
       name: "Asset Number",
@@ -97,7 +100,9 @@ export default function Page({ auth, branches, sessions }) {
       name: "Net Book Value",
       field: "net_book_value",
       className: "text-center",
+      agg: 'sum',
       sortable: true,
+      type: 'currency'
     },
     {
       name: "Major Category",
@@ -114,6 +119,8 @@ export default function Page({ auth, branches, sessions }) {
       field: "depre_exp",
       className: "text-center",
       sortable: true,
+      agg: 'sum',
+      type: 'currency'
     },
     {
       name: "Action",

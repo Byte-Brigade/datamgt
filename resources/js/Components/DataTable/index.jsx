@@ -346,7 +346,7 @@ export default function DataTable({
           }`}
       >
         <table className={`${className} text-sm leading-3 bg-white`}>
-          <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+          <thead className="sticky z-10 top-0 border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
 
@@ -362,7 +362,7 @@ export default function DataTable({
             <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
-                <th key={i} >
+                <th className={column.freeze && `sticky z-20 left-0 bg-slate-100 border-b-2 `} key={i} >
                   {column.sortable === true ? (
                     <div
                       className="cursor-pointer hover:underline"
@@ -415,41 +415,69 @@ export default function DataTable({
                 </td>
               </tr>
             ) : (
-              data.map((data, index) => (
-                <tr
-                  key={index}
-                  className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}
-                >
-                  <td className="text-center">
-                    {Object.keys(pagination).length === 0 ? (
-                      <p className="py-3">{index + 1}</p>
-                    ) : (
-                      <p className="py-3">{pagination.from + index}</p>
-                    )}
-                  </td>
-                  {columns.map((column, id) =>
-                    column.field ? (
-                      column.field === "action" || column.field === "detail" ? (
-                        <td key={column.field} colSpan={column.colSpan} className={column.className}>
-                          {column.render(data)}
-                        </td>
+              <>
+                {data.map((data, index) => (
+                  <tr
+                    key={index}
+                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}
+                  >
+                    <td className="text-center">
+                      {Object.keys(pagination).length === 0 ? (
+                        <p className="py-3">{index + 1}</p>
                       ) : (
-                        <td key={column.field} colSpan={column.colSpan} className={column.className}>
-                          {column.type === "date"
-                            ? convertDate(getNestedValue(data, column.field))
-                            : column.type === "custom"
-                              ? column.render(data)
-                              : getNestedValue(data, column.field) || "-"}
+                        <p className="py-3">{pagination.from + index}</p>
+                      )}
+                    </td>
+                    {columns.map((column, id) =>
+                      column.field ? (
+                        column.field === "action" || column.field === "detail" ? (
+                          <td key={column.field} colSpan={column.colSpan} className={`${column.className} ${column.freeze && 'sticky left-0 bg-white'}`}>
+                            {column.render(data)}
+                          </td>
+                        ) : (
+                          <td key={column.field} colSpan={column.colSpan} className={`${column.className} ${column.freeze && 'sticky left-0 bg-white'}`}>
+                            {column.type === "date"
+                              ? convertDate(getNestedValue(data, column.field))
+                              : column.type === "custom"
+                                ? column.render(data)
+                                : getNestedValue(data, column.field) || "-"}
+                          </td>
+                        )
+                      ) : (
+                        <td key={id} className={column.className} colSpan={column.colSpan} >
+                          {column.value || "-"}
                         </td>
                       )
-                    ) : (
-                      <td key={id} className={column.className} colSpan={column.colSpan} >
-                        {column.value || "-"}
-                      </td>
-                    )
-                  )}
-                </tr>
-              ))
+                    )}
+                  </tr>
+                ))}
+                {columns.filter(column => column.agg !== undefined).length > 0 &&
+                  <tr className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}>
+                    <td className="font-bold text-center">
+                      Total
+                    </td>
+                    {columns.map(column => (
+                      column.agg === "sum" ? (
+                        <td className={`font-bold ${column.className}`}>{column.type === 'custom' ? (column.format === 'currency' ? data.reduce((total, acc) => {
+                          return total + parseInt(column.render(acc).replace(/\D/g, ''), 10)
+                        },0).toLocaleString('id-ID') : data.reduce((total, acc) => {
+                          return total + parseInt(column.render(acc).replace(/\D/g, ''), 10)
+                        },0)) : data.reduce((total, acc) => {
+                          return total + acc[column.field];
+                        }, 0)}</td>
+                      ) : column.agg === "count" ? (
+                        (
+                          <td className={`font-bold ${column.className}`}>{column.type === 'custom' ? data.reduce((total, acc) => {
+                            return total + parseInt(column.render(acc))
+                          },0) : data.reduce((total, acc) => {
+                            return total + acc[column.field].length;
+                          }, 0)}</td>
+                        )
+                      ) : (<td></td>)
+                    ))}
+
+                  </tr>}
+              </>
             )}
           </tbody>
         </table>

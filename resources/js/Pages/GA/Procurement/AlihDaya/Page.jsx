@@ -54,14 +54,18 @@ export default function Page({ auth,  sessions }) {
 
 
   const heading1 = [
-
+    {
+      name: 'Jenis Pekerjaan',
+      colSpan: 2,
+    },
     {
       name: 'Jumlah Tenaga Kerja',
-      colSpan: 9,
+      colSpan: 7,
     },
   ]
 
   const heading2 = [
+
 
     {
       name: 'Jumlah Biaya Tenaga Kerja',
@@ -71,7 +75,7 @@ export default function Page({ auth,  sessions }) {
   const columnItems = [
 
     {
-      name: "Jenis Pekerjaan",
+      name: "Nama",
       field: "jenis_pekerjaan",
       type: 'custom',
       render: (data) => (
@@ -85,6 +89,7 @@ export default function Page({ auth,  sessions }) {
       name: "Permata",
       field: "permata",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Permata').length
     },
@@ -92,6 +97,7 @@ export default function Page({ auth,  sessions }) {
       name: "Sigap",
       field: "sigap",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').length
     },
@@ -99,6 +105,7 @@ export default function Page({ auth,  sessions }) {
       name: "Pusaka",
       field: "pusaka",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Pusaka').length
     },
@@ -106,6 +113,7 @@ export default function Page({ auth,  sessions }) {
       name: "Assa",
       field: "assa",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Assa').length
     },
@@ -113,6 +121,7 @@ export default function Page({ auth,  sessions }) {
       name: "Indorent",
       field: "indorent",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Indorent').length
     },
@@ -120,13 +129,15 @@ export default function Page({ auth,  sessions }) {
       name: "Salawati",
       field: "salawati",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.filter(item => item.vendor === 'Salawati').length
     },
     {
       name: "Total",
-      field: "total",
+      field: "vendor",
       type: 'custom',
+      agg: "count",
       className: 'text-center',
       render: (data) => data.vendor.length
     },
@@ -160,8 +171,10 @@ export default function Page({ auth,  sessions }) {
 
     {
       name: "Permata",
-      field: "permata",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'Permata').reduce((total, acc)  => {
         return total + acc.cost
@@ -169,8 +182,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Sigap",
-      field: "sigap",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').reduce((total, acc)  => {
         return total + acc.cost
@@ -178,8 +193,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Pusaka",
-      field: "pusaka",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'Pusaka').reduce((total, acc)  => {
         return total + acc.cost
@@ -187,8 +204,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Assa",
-      field: "assa",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'Assa').reduce((total, acc)  => {
         return total + acc.cost
@@ -196,8 +215,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Indorent",
-      field: "indorent",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'Indorent').reduce((total, acc)  => {
         return total + acc.cost
@@ -205,8 +226,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Salawati",
-      field: "salawati",
+      field: "vendor",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       className: 'text-right',
       render: (data) => data.vendor.filter(item => item.vendor === 'Salawati').reduce((total, acc)  => {
         return total + acc.cost
@@ -214,8 +237,10 @@ export default function Page({ auth,  sessions }) {
     },
     {
       name: "Total",
-      field: "total",
+      field: "total_biaya",
       type: 'custom',
+      agg: "sum",
+      format: 'currency',
       className: 'text-right',
       render: (data) => data.total_biaya.toLocaleString('id-ID')
     },
