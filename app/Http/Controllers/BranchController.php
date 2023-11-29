@@ -41,7 +41,7 @@ class BranchController extends Controller
             (new BranchesImport)->import($request->file('file'));
 
 
-            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 

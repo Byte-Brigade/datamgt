@@ -18,7 +18,6 @@ class KdoMobilResource extends JsonResource
         $latest_periode = $this->biaya_sewas()->where('value', '>', 0)->orderBy('periode', 'desc')->get()->first();
         return [
             'id' => $this->id,
-            'gap_kdo_id' => $this->gap_kdo_id,
             'branch_id' => $this->branch_id,
             'vendor' => $this->vendor,
             'nopol' => $this->nopol,

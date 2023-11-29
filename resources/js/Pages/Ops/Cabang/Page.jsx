@@ -94,7 +94,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("branches.import"), {
+    post(route("ops.branches.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -105,7 +105,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("branches.upload", data.id), {
+    post(route("ops.branches.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -117,12 +117,12 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("branches.export"), "_self");
+    window.open(route("ops.branches.export"), "_self");
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("branches.update", data.id), {
+    put(route("ops.branches.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -134,7 +134,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("branches.store", data.id), {
+    post(route("ops.branches.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -146,7 +146,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("branches.delete", data.id), {
+    destroy(route("ops.branches.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);

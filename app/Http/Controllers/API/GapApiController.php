@@ -52,7 +52,7 @@ class GapApiController extends Controller
         return AssetsResource::collection($data);
     }
 
-    public function kdo_mobils(GapKdo $gap_kdo, Request $request)
+    public function kdos(GapKdo $gap_kdo, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
@@ -68,47 +68,19 @@ class GapApiController extends Controller
         }
         $query = $query->get();
 
-        $collections = collect([]);
-        $year = date('Y');
-        foreach ($query as $item) {
-            $branch = Branch::find($item->branch_id);
-
-            $biaya_sewa = $item->gap_kdo_mobil->flatMap(function ($mobil) {
+        $collections = $query->groupBy('branches.id')->map(function ($kdos, $branch) {
+            $biaya_sewa = $kdos->flatMap(function ($mobil) {
                 return $mobil->biaya_sewas;
             })->groupBy('periode')->sortKeysDesc()->first();
-            $item = [
-                'id' => $item->id,
-                'branches' => $branch,
-                'branch_types' => BranchType::find($branch->branch_type_id),
-                'jumlah_kendaraan' => $item->gap_kdo_mobil->unique('nopol')->count(),
-                'sewa_perbulan' => isset($biaya_sewa)  ? number_format(
-                    $biaya_sewa->sum('value'),
-                    0,
-                    ',',
-                    '.'
-                ) : 0,
-                'akhir_sewa' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
-                'sewa_kendaraan' => collect(range(1, 12))->map(function ($num) use ($item, $year) {
-                    $value = $item->gap_kdo_mobil->flatMap(function ($mobil) {
-                        $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                        return $mobil->biaya_sewa;
-                    })->filter(function ($biaya) use ($year, $num) {
-                        $biaya = collect($biaya);
-                        return Carbon::parse($biaya['periode'])->year == $year && Carbon::parse($biaya['periode'])->month == $num;
-                    })->sum('value');
-                    if ($value) {
-
-                        return [strtolower(date('F', mktime(0, 0, 0, $num, 1))) => "Rp " . number_format($value, 0, ',', '.')];
-                    }
-                })->filter(function ($value) {
-                    return $value != null;
-                })->flatMap(function ($data) {
-                    return $data;
-                }),
+            return [
+                'branches' => Branch::find($branch),
+                'branch_types' => $kdos->first()->branches->branch_types,
+                'jumlah_kendaraan' => $kdos->count(),
+                'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                    : 0,
+                'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
             ];
-
-            $collections->push($item);
-        }
+        });
 
 
         if ($sortOrder == 'desc') {
@@ -120,12 +92,12 @@ class GapApiController extends Controller
         return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));
     }
 
-    public function kdo_mobil_details(GapKdoMobil $gap_kdo_mobil, Request $request, $id)
+    public function kdo_mobil_details(GapKdo $gap_kdo_mobil, Request $request, $branch_id)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_kdo_mobil->where('gap_kdo_id', $id)->orderBy($sortFieldInput, $sortOrder);
+        $query = $gap_kdo_mobil->where('branch_id', $branch_id)->orderBy($sortFieldInput, $sortOrder);
 
         $perpage = $request->perpage ?? 15;
 
@@ -164,7 +136,7 @@ class GapApiController extends Controller
         }
         $data = $query->get();
 
-        $collections = $data->groupBy('scoring_vendor')->map(function($scorings, $grade) {
+        $collections = $data->groupBy('scoring_vendor')->map(function ($scorings, $grade) {
             return [
                 'scoring_vendor' => $grade,
                 'jumlah_vendor' => $scorings->count(),
@@ -185,7 +157,7 @@ class GapApiController extends Controller
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_scoring_project->select('gap_scorings.*')->where('type', 'Project')->where('scoring_vendor',$scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
+        $query = $gap_scoring_project->select('gap_scorings.*')->where('type', 'Project')->where('scoring_vendor', $scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
@@ -237,7 +209,7 @@ class GapApiController extends Controller
         }
         $data = $query->get();
 
-        $collections = $data->groupBy('scoring_vendor')->map(function($scorings, $grade) {
+        $collections = $data->groupBy('scoring_vendor')->map(function ($scorings, $grade) {
             return [
                 'scoring_vendor' => $grade == "" ?  'Tidak Ada' : $grade,
                 'jumlah_vendor' => $scorings->count(),
@@ -257,7 +229,7 @@ class GapApiController extends Controller
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_scoring_assessment->select('gap_scorings.*')->where('type', 'Assessment')->where('scoring_vendor', $scoring_vendor == 'Tidak Ada' ? null : $scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
+        $query = $gap_scoring_assessment->select('gap_scorings.*')->where('type', 'Assessment')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_scorings.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
@@ -380,25 +352,14 @@ class GapApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
-
-        if($type == 'jenis_pekerjaan') {
-            $query = $query->where('jenis_pekerjaan', $request->type_item);
-        } else if($type == 'vendor') {
-            $query = $query->where('vendor', $request->type_item);
-        }
         $perpage = $request->perpage ?? 15;
 
-        if (!is_null($request->branch_code)) {
-            $query = $query->where('branch_code', $request->branch_code);
+        if ($type == 'jenis_pekerjaan') {
+            $query = $query->where('jenis_pekerjaan', $request->type_item);
+        } else if ($type == 'vendor') {
+            $query = $query->where('vendor', $request->type_item);
         }
 
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('divisi_pembebanan', 'like', $searchQuery)
-                    ->orWhere('category', 'like', $searchQuery);
-            });
-        }
 
         $data = $query->paginate($perpage);
 

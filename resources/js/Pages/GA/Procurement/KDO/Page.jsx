@@ -59,7 +59,10 @@ export default function Page({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
-    { name: "Jumlah", field: "jumlah_kendaraan", className: "text-center" },
+    {
+      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
+      agg: 'sum'
+    },
     {
       name: "Tipe Cabang",
       field: "branch_types.type_name",
@@ -67,13 +70,17 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
-      className: "text-center"
+      agg: 'sum',
+      type: 'custom',
+      format: 'currency',
+      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
+      className: "text-right"
     },
     {
       name: "Jatuh Tempo",
       field: "akhir_sewa",
       type: "date",
-      sortable:true,
+      sortable: true,
       className: "justify-center text-center"
     },
 
@@ -82,7 +89,7 @@ export default function Page({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdo.mobil", data.branches.branch_code)}>
+        <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -93,7 +100,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.kdo.import"), {
+    post(route("gap.kdos.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -105,13 +112,13 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.kdo.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.kdos.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.kdo.update", data.id), {
+    put(route("gap.kdos.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -122,7 +129,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.kdo.store"), {
+    post(route("gap.kdos.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -134,7 +141,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.kdo.delete", data.id), {
+    destroy(route("gap.kdos.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -186,9 +193,9 @@ export default function Page({ auth, branches, sessions }) {
             </PrimaryButton>
           </div>
           <DataTable
-            agg={{name: 'sewa_perbulan', value: 0}}
+            agg={{ name: 'sewa_perbulan', value: 0 }}
             columns={columns}
-            fetchUrl={"/api/gap/kdo_mobils"}
+            fetchUrl={"/api/gap/kdos"}
             refreshUrl={isRefreshed}
           />
         </div>

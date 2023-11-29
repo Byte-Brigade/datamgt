@@ -11,19 +11,17 @@ class GapKdo extends Model
 
     protected $fillable = [
         'branch_id',
-        'unit',
-        'jumlah_driver',
-        'periode',
-        'biaya_driver',
-        'ot',
-        'rfid',
-        'non_rfid',
-        'grab',
+        'vendor',
+        'nopol',
+        'awal_sewa',
+        'akhir_sewa',
+        'biaya_sewa',
     ];
 
 
-    public function gap_kdo_mobil() {
-        return $this->hasMany(GapKdoMobil::class, 'gap_kdo_id');
+    public function biaya_sewas()
+    {
+        return $this->hasMany(KdoMobilBiayaSewa::class, 'gap_kdo_id');
     }
 
     public function branches()

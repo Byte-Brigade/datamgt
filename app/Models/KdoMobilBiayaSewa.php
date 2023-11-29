@@ -10,14 +10,14 @@ class KdoMobilBiayaSewa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'gap_kdo_mobil_id',
+        'gap_kdo_id',
         'periode',
         'value',
 
     ];
 
-    public function gap_kdo_mobil()
+    public function gap_kdos()
     {
-        $this->belongsTo(GapKdoMobil::class, 'gap_kdo_mobil_id', 'id');
+        $this->belongsTo(GapKdo::class, 'gap_kdo_id', 'id');
     }
 }
