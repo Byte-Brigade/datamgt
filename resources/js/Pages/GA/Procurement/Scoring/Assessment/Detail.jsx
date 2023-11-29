@@ -8,7 +8,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const initialData = {
     branch_id: 0,
     description: null,
@@ -59,38 +59,60 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Cabang", field: "branches.branch_name", sortable: true },
+    { name: "Entity", field: "entity", sortable: true },
+
+    {
+      name: "Description",
+      field: "description",
+    },
+    {
+      name: "PIC",
+      field: "pic",
+    },
+    {
+      name: "Dokumen Perintah Kerja",
+      field: "dokumen_perintah_kerja",
+    },
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Tanggal Scoring",
+      field: "tgl_scoring",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center w-[100px]",
+    },
     {
       name: "Scoring Vendor",
       field: "scoring_vendor",
     },
     {
-      name: "Jumlah Vendor",
-      field: "jumlah_vendor",
+      name: "Schedule Scoring",
+      field: "schedule_scoring",
     },
     {
-      name: "Q1",
-      field: "q1",
-    },
-    {
-      name: "Q2",
-      field: "q2",
-    },
-    {
-      name: "Q3",
-      field: "q3",
-    },
-    {
-      name: "Q4",
-      field: "q4",
+      name: "Keterangan",
+      field: "keterangan",
     },
     {
       name: "Action",
-      field: "detail",
+      field: "action",
       className: "text-center",
       render: (data) => (
-        <Link href={route('gap.scoring_assessments.detail',data.scoring_vendor)}>
-          <Button  variant="outlined">Detail</Button>
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
   ];
@@ -215,7 +237,8 @@ export default function Page({ auth, branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/scoring_assessments"}
+            className="w-[1500px]"
+            fetchUrl={`/api/gap/scoring_assessments/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />

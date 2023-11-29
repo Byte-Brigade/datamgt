@@ -131,8 +131,6 @@ class GapScoringProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-
         try {
             DB::beginTransaction();
             $branch = Branch::find($request->branch_id);

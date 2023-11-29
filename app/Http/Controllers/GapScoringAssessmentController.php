@@ -55,8 +55,6 @@ class GapScoringAssessmentController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             DB::beginTransaction();
             GapScoring::create(
@@ -77,7 +75,6 @@ class GapScoringAssessmentController extends Controller
             DB::commit();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan']);
         } catch (Throwable $e) {
-
             DB::rollBack();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
@@ -89,9 +86,10 @@ class GapScoringAssessmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function detail($scoring_vendor)
     {
-        //
+        $branchesProps = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
     }
 
     /**
@@ -163,7 +161,7 @@ class GapScoringAssessmentController extends Controller
             $gap_scoring = GapScoring::find($id);
             $gap_scoring->delete();
             DB::commit();
-         return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+            return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
         } catch (Throwable $e) {
             DB::rollBack();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);

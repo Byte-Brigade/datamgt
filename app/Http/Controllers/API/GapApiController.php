@@ -235,6 +235,47 @@ class GapApiController extends Controller
                     });
             });
         }
+        $data = $query->get();
+
+        $collections = $data->groupBy('scoring_vendor')->map(function($scorings, $grade) {
+            return [
+                'scoring_vendor' => $grade == "" ?  'Tidak Ada' : $grade,
+                'jumlah_vendor' => $scorings->count(),
+                'q1' => $scorings->where('schedule_scoring', 'Q1')->count(),
+                'q2' => $scorings->where('schedule_scoring', 'Q2')->count(),
+                'q3' => $scorings->where('schedule_scoring', 'Q3')->count(),
+                'q4' => $scorings->where('schedule_scoring', 'Q4')->count(),
+            ];
+        })->sortBy('scoring_vendor');
+
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+
+    public function scoring_assessment_details(GapScoring $gap_scoring_assessment, Request $request, $scoring_vendor)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_scoring_assessment->select('gap_scorings.*')->where('type', 'Assessment')->where('scoring_vendor', $scoring_vendor == 'Tidak Ada' ? null : $scoring_vendor)->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'gap_scorings.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('pic', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery)
+                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    });
+            });
+        }
         $data = $query->paginate($perpage);
         return ScoringAssessmentsResource::collection($data);
     }

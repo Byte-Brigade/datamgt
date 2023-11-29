@@ -55,6 +55,7 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('scoring_projects', [GapApiController::class, 'scoring_projects']);
     Route::get('scoring_projects/{scoring_vendor}', [GapApiController::class, 'scoring_project_details']);
     Route::get('scoring_assessments', [GapApiController::class, 'scoring_assessments']);
+    Route::get('scoring_assessments/{scoring_vendor}', [GapApiController::class, 'scoring_assessment_details']);
 
 });
 
@@ -69,6 +70,8 @@ Route::prefix('infra')->name('infra.')->group(function () {
     Route::get('sewa-gedungs', [InfraApiController::class, 'sewa_gedungs']);
     Route::get('disnakers', [InfraApiController::class, 'disnakers']);
     Route::get('scoring_projects', [InfraApiController::class, 'scoring_projects']);
+    Route::get('scoring_projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);
     Route::get('scoring_assessments', [InfraApiController::class, 'scoring_assessments']);
+    Route::get('scoring_assessments/{scoring_vendor}', [InfraApiController::class, 'scoring_assessment_details']);
 
 });
