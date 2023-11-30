@@ -74,16 +74,16 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('gap')->name('gap.')->group(function () {
             /* [START] GA Procurement KDO */
-            Route::get('/kdo', [GapKdoController::class, 'index'])->name('kdo');
-            Route::post('/kdo/import', [GapKdoController::class, 'import'])->name('kdo.import');
-            Route::post('/kdo/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdo.mobil.import');
-            Route::post('/kdo', [GapKdoController::class, 'store'])->name('kdo.store');
-            Route::get('/kdo/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdo.mobil');
-            Route::post('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdo.mobil.store');
-            Route::put('/kdo/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdo.mobil.update');
-            Route::delete('/kdo/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdo.mobil.destroy');
-            Route::get('/kdo/export', [GapKdoController::class, 'export'])->name('kdo.export');
-            Route::get('/kdo/mobil/{branch_code}/export', [GapKdoController::class, 'kdo_mobil_export'])->name('kdo.mobil.export');
+            Route::get('/kdos', [GapKdoController::class, 'index'])->name('kdos');
+            Route::post('/kdos/import', [GapKdoController::class, 'import'])->name('kdos.import');
+            Route::post('/kdos/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdos.mobil.import');
+            Route::post('/kdos', [GapKdoController::class, 'store'])->name('kdos.store');
+            Route::get('/kdos/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdos.mobil');
+            Route::post('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdos.mobil.store');
+            Route::put('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdos.mobil.update');
+            Route::delete('/kdos/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdos.mobil.destroy');
+            Route::get('/kdos/export', [GapKdoController::class, 'export'])->name('kdos.export');
+            Route::get('/kdos/mobil/{branch_code}/export', [GapKdoController::class, 'kdo_mobil_export'])->name('kdos.mobil.export');
             /* [END] GA Procurement KDO */
             Route::get('/maintenance', function () {
                 abort(404);

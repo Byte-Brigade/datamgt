@@ -97,7 +97,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "KDO Mobil",
-      path: "gap.kdo",
+      path: "gap.kdos",
     },
     {
       name: "Toner",
