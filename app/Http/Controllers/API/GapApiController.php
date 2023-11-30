@@ -124,6 +124,8 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
+
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -265,6 +267,10 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
+        if(!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -300,6 +306,10 @@ class GapApiController extends Controller
 
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if(!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
         if (!is_null($searchInput)) {

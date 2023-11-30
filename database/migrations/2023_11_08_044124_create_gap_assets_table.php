@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('minor_category')->nullable();
             $table->unsignedBigInteger('depre_exp')->nullable();
             $table->unsignedBigInteger('net_book_value')->nullable();
+            $table->date('periode');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
         });

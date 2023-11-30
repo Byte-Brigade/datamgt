@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Branch;
 use App\Models\GapAsset;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -37,6 +38,7 @@ class AssetsImport implements ToModel, WithHeadingRow, WithUpserts, WithBatchIns
                 'minor_category' => $row['minor_category'],
                 'depre_exp' => round($row['depre_exp']),
                 'net_book_value' => round($row['net_book_value']),
+                'periode' => is_int($row['periode']) ? Date::excelToDateTimeObject($row['periode']) : Carbon::now()->format('Y-m-d'),
             ]);
         }
     }

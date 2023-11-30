@@ -99,10 +99,12 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Net Book Value",
       field: "net_book_value",
-      className: "text-center",
+      className: "text-right",
       agg: 'sum',
       sortable: true,
-      type: 'currency'
+      format: 'currency',
+      type:'custom',
+      render: (data) => data.net_book_value.toLocaleString('id-ID')
     },
     {
       name: "Major Category",
@@ -117,10 +119,12 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Depre Exp",
       field: "depre_exp",
-      className: "text-center",
+      className: "text-right",
       sortable: true,
       agg: 'sum',
-      type: 'currency'
+      type:'custom',
+      format: 'currency',
+      render: (data) => data.depre_exp.toLocaleString('id-ID')
     },
     {
       name: "Action",
