@@ -101,7 +101,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Toner",
-      path: "gap.maintenance",
+      path: "gap.toners",
     },
     {
       name: "Alih Daya",

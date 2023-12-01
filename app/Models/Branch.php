@@ -94,5 +94,10 @@ class Branch extends Model
     {
         return $this->hasOne(InfraSewaGedung::class, 'branch_id');
     }
+
+    public function gap_toners()
+    {
+        return $this->hasMany(GapToner::class, 'branch_id');
+    }
 }
 
