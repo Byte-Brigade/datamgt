@@ -34,7 +34,6 @@ return new class extends Migration
             $table->char('schedule_scoring', 20)->nullable();
             $table->string('type');
             $table->text('keterangan')->nullable();
-            $table->date('periode');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
             $table->unique(['description','vendor','type']);

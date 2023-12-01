@@ -12,7 +12,7 @@ import {
   Checkbox,
   Button,
 } from "@material-tailwind/react";
-import { CalendarDaysIcon, CogIcon } from "@heroicons/react/24/outline";
+import { CogIcon } from "@heroicons/react/24/outline";
 import Datepicker from "react-tailwindcss-datepicker";
 
 const SORT_ASC = "asc";
@@ -71,8 +71,6 @@ export default function DataTable({
     }, 500)
   ).current;
 
-
-
   const handleFilter = () => {
     fetchData(1);
   };
@@ -130,7 +128,6 @@ export default function DataTable({
       sort_order: sortOrder,
       search,
       ...filterData,
-      ...dateRange
     };
 
     if (fetchUrl) {
@@ -155,14 +152,14 @@ export default function DataTable({
     }
   };
 
-  const [dateRange, setDateRange] = useState({
+  const [value, setValue] = useState({
     startDate: new Date(),
     endDate: new Date().setMonth(11),
   });
 
-  const handleValueChange = (newDateRange) => {
-    console.log("dateRange:", newDateRange);
-    setDateRange(newDateRange);
+  const handleValueChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setValue(newValue);
   };
 
   useEffect(() => {
@@ -175,7 +172,6 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    dateRange
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -214,38 +210,21 @@ export default function DataTable({
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <div className="flex flex-col w-72">
-          <div className="inline-block">
-            <span>Periode</span>
-            <Datepicker
-            useRange={false}
-            placeholder={"Pilih Periode"}
-
-              value={dateRange}
-              separator={"s/d"}
-              popoverDirection="down"
-              toggleClassName="absolute bg-black rounded-r-lg text-white right-0 h-full px-3 text-gray-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-              onChange={handleValueChange}
-            />
-
-          </div>
-
-          <div className="flex items-center gap-x-2">
-            Show
-            <select
-              name="perpage"
-              id="perpage"
-              className="rounded-lg form-select"
-              value={perPage}
-              onChange={(e) => handlePerPage(e.target.value)}
-            >
-              <option value="15">15</option>
-              <option value="30">30</option>
-              <option value="45">45</option>
-              <option value="60">60</option>
-            </select>
-            entries
-          </div>
+        <div className="flex items-center gap-x-2">
+          Show
+          <select
+            name="perpage"
+            id="perpage"
+            className="rounded-lg form-select"
+            value={perPage}
+            onChange={(e) => handlePerPage(e.target.value)}
+          >
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
+          </select>
+          entries
         </div>
         <div className="flex gap-2">
           <div className="flex items-center gap-2">
@@ -367,7 +346,7 @@ export default function DataTable({
           }`}
       >
         <table className={`${className} text-sm leading-3 bg-white`}>
-          <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+          <thead className="sticky z-10 top-0 border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
 
@@ -481,16 +460,16 @@ export default function DataTable({
                       column.agg === "sum" ? (
                         <td className={`font-bold ${column.className}`}>{column.type === 'custom' ? (column.format === 'currency' ? data.reduce((total, acc) => {
                           return total + parseInt(column.render(acc).replace(/\D/g, ''), 10)
-                        }, 0).toLocaleString('id-ID') : data.reduce((total, acc) => {
+                        },0).toLocaleString('id-ID') : data.reduce((total, acc) => {
                           return total + parseInt(column.render(acc).replace(/\D/g, ''), 10)
-                        }, 0)) : data.reduce((total, acc) => {
+                        },0)) : data.reduce((total, acc) => {
                           return total + acc[column.field];
                         }, 0)}</td>
                       ) : column.agg === "count" ? (
                         (
                           <td className={`font-bold ${column.className}`}>{column.type === 'custom' ? data.reduce((total, acc) => {
                             return total + parseInt(column.render(acc))
-                          }, 0) : data.reduce((total, acc) => {
+                          },0) : data.reduce((total, acc) => {
                             return total + acc[column.field].length;
                           }, 0)}</td>
                         )

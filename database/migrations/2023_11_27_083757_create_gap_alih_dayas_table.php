@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('lokasi');
             $table->string('vendor');
             $table->integer('cost')->nullable();
-            $table->date('periode');
             $table->timestamps();
         });
     }
