@@ -193,7 +193,6 @@ export default function Page({ auth, branches, sessions }) {
             </PrimaryButton>
           </div>
           <DataTable
-            agg={{ name: 'sewa_perbulan', value: 0 }}
             columns={columns}
             fetchUrl={"/api/gap/kdos"}
             refreshUrl={isRefreshed}

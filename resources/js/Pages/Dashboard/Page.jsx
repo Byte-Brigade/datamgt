@@ -860,61 +860,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
             </table>
           )}
 
-          {/* Tabel ATM */}
-          {active === "toner" && (
 
-
-            <table className={`text-sm leading-3 bg-white w-full`}>
-              <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                <tr className="[&>th]:p-2 bg-slate-100">
-                  <th className="text-center">Kategori Kantor</th>
-                  {data.months.map(month => (
-                    <th className="text-center">
-                      {`${month} ${Object.values(data.gap_toners)[0].idecice_date !== undefined ? new Date(Object.values(data.gap_toners)[0].idecice_date).getFullYear() : new Date().getFullYear()}`}
-                    </th>
-                  ))}
-                </tr>
-
-              </thead>
-              <tbody className="overflow-y-auto">
-                {Object.entries(groupBy(data.gap_toners, 'kategori')).map(([key, values]) => (
-                  <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                    <td className="text-center">{key}</td>
-                    {data.months.map(month => {
-                      console.log(values)
-                      return (
-
-                        <td className="text-center">{values.filter(value => new Date(value.idecice_date.toLocaleString('en-US', { month: 'long' }) === month)).reduce((acc, toner) => {
-                          return acc + toner.total;
-                        },0).toLocaleString('id-ID')}</td>
-                      )
-                    })}
-                  </tr>
-                ))}
-
-                <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                  <td className="text-center">
-                    <strong>Total</strong>
-                  </td>
-                  <td className="text-center">
-                    <strong>
-                      {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
-                        return (
-                          acc +
-                          data.jumlah_atm[atm].filter(
-                            (branch) =>
-                              (branchId === 0 || branch.id === branchId) &&
-                              (area === "none" || branch.area === area)
-                          ).length
-                        );
-                      }, 0)}
-                    </strong>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-          )}
         </div>
       </div>
     </AuthenticatedLayout>
