@@ -5,7 +5,7 @@ use App\Http\Controllers\API\InfraApiController;
 use App\Http\Controllers\API\InqueryApiController;
 use App\Http\Controllers\API\OpsApiController;
 use App\Http\Controllers\API\ReportApiController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\UAMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +42,7 @@ Route::prefix('ops')->name('ops.')->group(function() {
 });
 
 Route::get('uam', [UAMController::class, 'api']);
-Route::get('/dashboard/branch', [DashboardController::class, 'api']);
+Route::get('/dashboard/branch', [DashboardApiController::class, 'branches']);
 
 Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('kdos', [GapApiController::class, 'kdos']);

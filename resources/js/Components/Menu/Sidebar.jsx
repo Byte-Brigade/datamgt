@@ -140,12 +140,12 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       path: "infra.maintenance",
     },
     {
-      name: "Hasil Self Asssessment",
-      path: "infra.scoring_assessments",
-    },
-    {
       name: "Hasil Scoring Vendor",
       path: "infra.scoring_projects",
+    },
+    {
+      name: "Hasil Self Asssessment",
+      path: "infra.scoring_assessments",
     },
     {
       name: "Izin Disnaker",

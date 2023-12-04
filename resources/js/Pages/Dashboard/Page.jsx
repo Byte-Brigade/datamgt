@@ -11,12 +11,15 @@ import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
+import { useEffect } from "react";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
   const [area, setArea] = useState("none");
   const [active, setActive] = useState("branch");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [branchData, setBranchData] = useState([]);
 
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
@@ -94,7 +97,23 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     //   color: "purple",
     // },
   ];
-  console.log(data)
+
+  const fetchBranchesData = async () => {
+    setLoading(true);
+    const params = {
+      area,
+      branch_code: branchId,
+    };
+    const { data } = await axios.get("api/dashboard/branch", { params });
+    setBranchData(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchBranchesData();
+  }, [branchId, area]);
+  console.log("branch data:", branchData);
+  console.log(data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
@@ -185,33 +204,78 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-                    {Object.keys(data.jumlah_cabang).map((cabang, index) => {
-                      return (
-                        <tr
-                          key={index}
-                          className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200"
+                    {loading ? (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="p-2 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
                         >
-                          <td>{cabang}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Milik').length}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Sewa').length}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Pinjam Pakai').length}</td>
-
-                          <td>{data.jumlah_cabang[cabang].length}</td>
-                        </tr>
-                      );
-                    })}
-                    <tr  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                          Loading ...
+                        </td>
+                      </tr>
+                    ) : branchData.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="p-2 text-lg font-semibold text-center bg-slate-200"
+                        >
+                          Tidak ada data tersedia
+                        </td>
+                      </tr>
+                    ) : (
+                      Object.keys(branchData.jumlah_cabang).map(
+                        (cabang, index) => {
+                          return (
+                            <tr
+                              key={index}
+                              className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200"
+                            >
+                              <td>{cabang}</td>
+                              <td>
+                                {
+                                  branchData.jumlah_cabang[cabang].filter(
+                                    (data) => data.status === "Milik"
+                                  ).length
+                                }
+                              </td>
+                              <td>
+                                {
+                                  branchData.jumlah_cabang[cabang].filter(
+                                    (data) => data.status === "Sewa"
+                                  ).length
+                                }
+                              </td>
+                              <td>
+                                {
+                                  branchData.jumlah_cabang[cabang].filter(
+                                    (data) => data.status === "Pinjam Pakai"
+                                  ).length
+                                }
+                              </td>
+                              <td>{branchData.jumlah_cabang[cabang].length}</td>
+                            </tr>
+                          );
+                        }
+                      )
+                    )}
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td colSpan={4}>
                         <strong>Total</strong>
                       </td>
                       <td>
                         <strong>
-                          {Object.keys(data.jumlah_cabang).reduce(
-                            (acc, item) => {
-                              return acc + data.jumlah_cabang[item].length;
-                            },
-                            0
-                          )}
+                          {loading
+                            ? "Loading"
+                            : branchData.length === 0
+                            ? "No branches"
+                            : Object.keys(branchData.jumlah_cabang).reduce(
+                                (acc, item) => {
+                                  return (
+                                    acc + branchData.jumlah_cabang[item].length
+                                  );
+                                },
+                                0
+                              )}
                         </strong>
                       </td>
                     </tr>

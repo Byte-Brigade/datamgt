@@ -355,20 +355,22 @@ export default function Page({ auth,  sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <DataTable
-            columns={columnItems}
-            headings={heading1}
-            fetchUrl={"/api/gap/alihdayas"}
-            refreshUrl={isRefreshed}
-            bordered={true}
-          />
-          <DataTable
-            columns={columnCosts}
-            headings={heading2}
-            fetchUrl={"/api/gap/alihdayas"}
-            refreshUrl={isRefreshed}
-            bordered={true}
-          />
+          <div className="flex flex-col gap-y-8">
+            <DataTable
+              columns={columnItems}
+              headings={heading1}
+              fetchUrl={"/api/gap/alihdayas"}
+              refreshUrl={isRefreshed}
+              bordered={true}
+            />
+            <DataTable
+              columns={columnCosts}
+              headings={heading2}
+              fetchUrl={"/api/gap/alihdayas"}
+              refreshUrl={isRefreshed}
+              bordered={true}
+            />
+          </div>
         </div>
       </div>
       {/* Modal Import */}
