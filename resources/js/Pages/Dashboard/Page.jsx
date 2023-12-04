@@ -82,17 +82,17 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
-    // {
-    //   label: "Jumlah Vendor",
-    //   data,
-    //   type: "gap_scorings",
-    //   Icon: ArchiveBoxIcon,
-    //   active,
-    //   onClick: () => setActive("gap_scorings"),
-    //   branchState: branchId,
-    //   areaState: area,
-    //   color: "purple",
-    // },
+    {
+      label: "Toner",
+      data,
+      type: "toner",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => setActive("toner"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
   ];
   console.log(data)
   return (
@@ -200,7 +200,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         </tr>
                       );
                     })}
-                    <tr  className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                       <td colSpan={4}>
                         <strong>Total</strong>
                       </td>
@@ -859,6 +859,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </tbody>
             </table>
           )}
+
+
         </div>
       </div>
     </AuthenticatedLayout>

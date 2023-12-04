@@ -10,6 +10,7 @@ use App\Http\Resources\KdoMobilResource;
 use App\Http\Resources\PerdinResource;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Http\Resources\ScoringProjectsResource;
+use App\Http\Resources\TonerResource;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapAlihDaya;
@@ -18,6 +19,7 @@ use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
 use App\Models\GapScoring;
+use App\Models\GapToner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -375,5 +377,32 @@ class GapApiController extends Controller
 
 
         return AlihDayaResource::collection($data);
+    }
+    public function toners(GapToner $gap_toner, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->whereHas('branches', function ($q) use ($searchQuery) {
+                        $q->where('branch_name', 'like', $searchQuery);
+                    });
+            });
+        }
+        if(!is_null($request->startDate)) {
+            $query = $query->whereBetween('idecice_date',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        }
+
+
+
+        $data = $query->paginate($perpage);
+
+
+        return TonerResource::collection($data);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapScoring;
+use App\Models\GapToner;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -25,11 +26,23 @@ class DashboardController extends Controller
         $gap_asset = GapAsset::with('branches')->get();
         $gap_scorings = GapScoring::with('branches')->get();
         // dd($branches->groupBy('branch_types.type_name'));
+        $gap_toners = GapToner::orderBy('idecice_date','asc')->with('branches')->get()->map(function ($toner) {
+            $type_name = $toner->branches->branch_types->type_name;
+            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ?  $type_name : 'Cabang'));
+            return $toner;
+
+        });
 
 
+        $months = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
 
         $data = [
+            'months' => $months,
             'branches' => $branches,
+            'gap_toners' => $gap_toners,
             'list_branches' => Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']),
             'areas' => $areas,
             'jumlah_atm' => $jumlahATM->groupBy('layanan_atm'),
@@ -44,26 +57,28 @@ class DashboardController extends Controller
                 return $asset;
             })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
 
-            return [
-                $branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
-                    return [
-                        'name' => $index,
-                        'jumlah_item' => $assets->count(),
-                        'nilai_perolehan' => $assets->sum('asset_cost'),
-                        'penyusutan' => $assets->sum('accum_depre'),
-                        'net_book_value' => $assets->sum('net_book_value'),
-                    ];
-                })
-            ];
-        }),
-            'assets' => GapAsset::with('branches')->get()->map(function($asset) {
-                return ['branch_id'=> $asset->branch_id,
-                'branch_name' => $asset->branches->branch_name,
-                'area' => $asset->branches->area,
-                'nilai_perolehan' => $asset->asset_cost,
-                'penyusutan' => $asset->accum_depre,
-                'net_book_value' => $asset->net_book_value,
-                'category' =>$asset->category];
+                return [
+                    $branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
+                        return [
+                            'name' => $index,
+                            'jumlah_item' => $assets->count(),
+                            'nilai_perolehan' => $assets->sum('asset_cost'),
+                            'penyusutan' => $assets->sum('accum_depre'),
+                            'net_book_value' => $assets->sum('net_book_value'),
+                        ];
+                    })
+                ];
+            }),
+            'assets' => GapAsset::with('branches')->get()->map(function ($asset) {
+                return [
+                    'branch_id' => $asset->branch_id,
+                    'branch_name' => $asset->branches->branch_name,
+                    'area' => $asset->branches->area,
+                    'nilai_perolehan' => $asset->asset_cost,
+                    'penyusutan' => $asset->accum_depre,
+                    'net_book_value' => $asset->net_book_value,
+                    'category' => $asset->category
+                ];
             }),
             'gap_scorings' => $gap_scorings,
             'jumlah_cabang' => $branches->sortBy('branch_code')->groupBy('branch_types.alt_name'),

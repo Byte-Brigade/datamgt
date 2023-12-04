@@ -12,6 +12,7 @@ use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
+use App\Http\Controllers\GapTonerController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InfraSewaGedungController;
@@ -127,6 +128,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
             Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
             Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
+
+            Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
+            Route::get('/toners/{type}', [GapTonerController::class, 'detail'])->name('toners.type');
+            Route::post('/toners/import', [GapTonerController::class, 'import'])->name('toners.import');
+            Route::post('/toners', [GapTonerController::class, 'store'])->name('toners.store');
+            Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');
+            Route::get('/toners/export', [GapTonerController::class, 'export'])->name('toners.export');
+            Route::delete('/toners/{id}', [GapTonerController::class, 'destroy'])->name('toners.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */

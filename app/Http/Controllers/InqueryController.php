@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\EmployeePosition;
 use App\Models\GapDisnaker;
 use App\Models\GapScoring;
+use App\Models\GapToner;
 use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
 use App\Models\OpsSkbirtgs;
@@ -77,7 +78,23 @@ class InqueryController extends Controller
     }
     public function assets()
     {
-        return Inertia::render('Inquery/Asset/Page');
+        $gap_toners = GapToner::orderBy('idecice_date','asc')->with('branches')->get()->map(function ($toner) {
+            $type_name = $toner->branches->branch_types->type_name;
+            $toner->cabang = $toner->branches->branch_name;
+            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ?  $type_name : 'Cabang'));
+            return $toner;
+
+        });
+
+
+        $months = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
+        return Inertia::render('Inquery/Asset/Page', ['data' => [
+            'gap_toners' => $gap_toners,
+            'months' => $months
+        ]]);
     }
     public function scorings()
     {

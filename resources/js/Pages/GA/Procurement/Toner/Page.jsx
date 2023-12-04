@@ -23,13 +23,8 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth,  sessions }) {
   const initialData = {
-    branch_id: 0,
-    branches: {
-      branch_code: null,
-      branch_name: null,
-    },
     jumlah_kendaraan: null,
     jumlah_driver: null,
     sewa_kendaraan: null,
@@ -57,50 +52,73 @@ export default function Page({ auth, branches, sessions }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
+
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
+
     {
-      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
-      agg: 'sum'
+      name: "Invoice No",
+      field: "invoice",
+
     },
     {
-      name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      name: "Cabang",
+      field: "branches.branch_name",
+
     },
     {
-      name: "Sewa Perbulan",
-      field: "sewa_perbulan",
-      agg: 'sum',
-      type: 'custom',
-      format: 'currency',
-      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
-      className: "text-right"
-    },
-    {
-      name: "Jatuh Tempo",
-      field: "akhir_sewa",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center"
+      name: 'Tipe Cabang',
+      field: 'branch_types.type_name'
     },
 
     {
-      name: "Detail KDO",
-      field: "detail",
-      className: "text-center",
-      render: (data) => (
-        <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
-          <Button variant="outlined">Detail</Button>
-        </Link>
-      ),
+      name: 'Cartridge Order',
+      field : 'cartridge_order',
     },
+    {
+      name: 'Quantity',
+      field : 'quantity',
+      agg: 'sum',
+    },
+    {
+      name: 'Unit Price',
+      type: 'custom',
+      field : 'price',
+      format:'currency',
+      className: 'text-right',
+      render: (data) => data.price.toLocaleString('id-ID'),
+      agg: 'sum',
+    },
+    {
+      name: 'Total Price',
+      field : 'total',
+      className: 'text-right',
+      type: 'custom',
+      format:'currency',
+      agg: 'sum',
+      render: (data) => data.total.toLocaleString('id-ID'),
+    },
+
+
+    // {
+    //   name: "Detail",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.toners.detail", data.vendor)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
+
+
   ];
+
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.kdos.import"), {
+    post(route("gap.toners.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -112,13 +130,13 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.kdos.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.kdos.update", data.id), {
+    put(route("gap.toners.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -129,7 +147,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.kdos.store"), {
+    post(route("gap.toners.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -141,7 +159,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.kdos.delete", data.id), {
+    destroy(route("gap.toners.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -194,9 +212,11 @@ export default function Page({ auth, branches, sessions }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/kdos"}
+            fetchUrl={"/api/gap/toners"}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
+
         </div>
       </div>
       {/* Modal Import */}
@@ -248,21 +268,7 @@ export default function Page({ auth, branches, sessions }) {
         onToggle={toggleModalExport}
         onSubmit={handleSubmitExport}
       >
-        <div className="flex flex-col gap-y-4">
-          <select
-            label="Branch"
-            disabled={processing}
-            value={data.branch_id}
-            onChange={(e) => setData("branch", e.target.value)}
-          >
-            <option value="0">All</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={`${branch.id}`}>
-                {branch.branch_code} - {branch.branch_name}
-              </option>
-            ))}
-          </select>
-        </div>
+        Export data
       </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
@@ -325,24 +331,25 @@ export default function Page({ auth, branches, sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
-              <Select
-                label="Branch"
-                value={`${data.branch_id}`}
-                disabled={processing}
-                onChange={(e) => setData("branch_id", e)}
-              >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
+
 
               <Input
-                label="Jumlah Kendaraan"
-                value={data.jumlah_kendaraan || ""}
+                label="Divisi Pembebanan"
+                value={data.divisi_pembebanan || ""}
                 disabled={processing}
-                onChange={(e) => setData("jumlah_kendaraan", e.target.value)}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Category"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Tipe"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
               />
               <Input
                 label="Jumlah Driver"
@@ -425,7 +432,7 @@ export default function Page({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+
             </span>{" "}
             ?
           </Typography>

@@ -70,7 +70,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "maintenance" },
     { name: "Asset", path: "inquery.assets" },
-    { name: "Vendor", path: "inquery.scorings" },
     { name: "Lisensi", path: "inquery.licenses" },
   ];
 
@@ -78,6 +77,9 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "reporting.branches", state: "reporting.*" },
     { name: "Asset", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
+
+    { name: "Vendor", path: "maintenance" },
+    { name: "Branch Roll Out", path: "maintenance" },
   ];
 
   const opsRouter = [
@@ -101,7 +103,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Toner",
-      path: "gap.maintenance",
+      path: "gap.toners",
     },
     {
       name: "Alih Daya",
