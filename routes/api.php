@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('report')->name('report.')->group(function() {
     Route::get('branches', [ReportApiController::class, 'branches'])->name('branches');
+    Route::get('bros', [ReportApiController::class, 'bros'])->name('bros');
     Route::get('disnaker/{id}', [ReportApiController::class, 'disnaker_details']);
 
 });
@@ -69,6 +70,7 @@ Route::prefix('inquery')->name('inquery.')->group(function() {
 Route::prefix('infra')->name('infra.')->group(function () {
 
     Route::get('sewa-gedungs', [InfraApiController::class, 'sewa_gedungs']);
+    Route::get('bros', [InfraApiController::class, 'bros']);
     Route::get('disnakers', [InfraApiController::class, 'disnakers']);
     Route::get('scoring_projects', [InfraApiController::class, 'scoring_projects']);
     Route::get('scoring_projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);

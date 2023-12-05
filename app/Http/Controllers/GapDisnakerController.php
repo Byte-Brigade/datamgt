@@ -90,7 +90,8 @@ class GapDisnakerController extends Controller
     public function upload(Request $request, $id)
     {
         try {
-            $disnaker = GapDisnaker::find($id);
+            $disnaker = GapDisnaker::with('branches')->find($id);
+
 
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('infra/disnaker/'.$disnaker->id.'/', $fileName, ["disk" => 'public']);

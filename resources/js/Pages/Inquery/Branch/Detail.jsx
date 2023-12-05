@@ -90,6 +90,7 @@ export default function Detail({
                       <th className="w-[50%]">Jenis</th>
                       <th>Remark</th>
                       <th>Jatuh Tempo</th>
+                      <th>Lampiran</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -98,6 +99,15 @@ export default function Detail({
                         <td>{license.name}</td>
                         <td>{license.remark}</td>
                         <td>{ConvertDate(license.jatuh_tempo)}</td>
+                        {license.url && (
+                          <td><a
+                            className="text-blue-500 hover:underline text-ellipsis"
+                            href={`/storage/${license.url}`}
+                            target="__blank"
+                          >
+                            Lihat
+                          </a></td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
