@@ -39,24 +39,31 @@ class InqueryController extends Controller
             return [
                 'name' => $disnaker->jenis_perizinan->name,
                 'remark' =>  'Ada',
-                'jatuh_tempo' => $disnaker->tgl_masa_berlaku
+                'jatuh_tempo' => $disnaker->tgl_masa_berlaku,
+                'url' => isset($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
+
             ];
         });
         $lisensi = collect([
             [
                 'name' => 'Izin OJK',
                 'remark' => isset($branch->izin) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => '-'
+                'jatuh_tempo' => '-',
+                'url' => isset($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
+
             ],
             [
                 'name' => 'SK BI RTGS',
                 'remark' => isset($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => '-'
+                'jatuh_tempo' => '-',
+                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->id}/{$ops_skbirtgs->file}" : false,
             ],
             [
                 'name' => 'Reklame',
                 'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-'
+                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
+                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_pajak_reklame->id}/{$ops_skbirtgs->file_izin_reklame}" : false,
+
             ],
             [
                 'name' => 'APAR',
@@ -78,12 +85,11 @@ class InqueryController extends Controller
     }
     public function assets()
     {
-        $gap_toners = GapToner::orderBy('idecice_date','asc')->with('branches')->get()->map(function ($toner) {
+        $gap_toners = GapToner::orderBy('idecice_date', 'asc')->with('branches')->get()->map(function ($toner) {
             $type_name = $toner->branches->branch_types->type_name;
             $toner->cabang = $toner->branches->branch_name;
             $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ?  $type_name : 'Cabang'));
             return $toner;
-
         });
 
 
