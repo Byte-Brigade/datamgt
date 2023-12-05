@@ -82,17 +82,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
-    {
-      label: "Toner",
-      data,
-      type: "toner",
-      Icon: ArchiveBoxIcon,
-      active,
-      onClick: () => setActive("toner"),
-      branchState: branchId,
-      areaState: area,
-      color: "purple",
-    },
+
   ];
   console.log(data)
   return (

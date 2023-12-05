@@ -26,12 +26,7 @@ class DashboardController extends Controller
         $gap_asset = GapAsset::with('branches')->get();
         $gap_scorings = GapScoring::with('branches')->get();
         // dd($branches->groupBy('branch_types.type_name'));
-        $gap_toners = GapToner::orderBy('idecice_date','asc')->with('branches')->get()->map(function ($toner) {
-            $type_name = $toner->branches->branch_types->type_name;
-            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ?  $type_name : 'Cabang'));
-            return $toner;
 
-        });
 
 
         $months = [
@@ -42,7 +37,6 @@ class DashboardController extends Controller
         $data = [
             'months' => $months,
             'branches' => $branches,
-            'gap_toners' => $gap_toners,
             'list_branches' => Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']),
             'areas' => $areas,
             'jumlah_atm' => $jumlahATM->groupBy('layanan_atm'),
