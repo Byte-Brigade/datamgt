@@ -13,6 +13,7 @@ use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\GapTonerController;
+use App\Http\Controllers\InfraBroController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InfraSewaGedungController;
@@ -67,6 +68,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
+        Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
         Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
         Route::get('/disnaker/{branch_code}', [ReportController::class, 'disnaker'])->name('disnaker');
     });
@@ -172,6 +174,13 @@ Route::middleware('auth')->group(function () {
             Route::put('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'update'])->name('sewa_gedungs.update');
             Route::get('/sewa-gedungs/export', [InfraSewaGedungController::class, 'export'])->name('sewa_gedungs.export');
             Route::delete('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'destroy'])->name('sewa_gedungs.delete');
+
+            Route::get('/bros', [InfraBroController::class, 'index'])->name('bros');
+            Route::post('/bros/import', [InfraBroController::class, 'import'])->name('bros.import');
+            Route::post('/bros', [InfraBroController::class, 'store'])->name('bros.store');
+            Route::put('/bros/{id}', [InfraBroController::class, 'update'])->name('bros.update');
+            Route::get('/bros/export', [InfraBroController::class, 'export'])->name('bros.export');
+            Route::delete('/bros/{id}', [InfraBroController::class, 'destroy'])->name('bros.delete');
 
             Route::get('/maintenance', function () {
                 abort(404);

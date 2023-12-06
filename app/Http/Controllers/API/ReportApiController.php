@@ -8,6 +8,7 @@ use App\Http\Resources\DisnakerResource;
 use App\Http\Resources\Report\BranchResource;
 use App\Models\Branch;
 use App\Models\GapDisnaker;
+use App\Models\InfraBro;
 use Illuminate\Http\Request;
 
 class ReportApiController extends Controller
@@ -50,6 +51,40 @@ class ReportApiController extends Controller
         $branches = $query->paginate($perpage);
 
         return BranchResource::collection($branches);
+    }
+
+    public function bros(InfraBro $infra_bro, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order') ?? 'asc';
+        $searchInput = $request->search;
+        $query = $infra_bro;
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+
+
+
+        $query = $query->get();
+
+        $collections = $query->groupBy('activity')->map(function($bros, $activity) {
+            return [
+                'activity' => $activity,
+                'target' => $bros->count(),
+                'done' => $bros->where('status','Done')->count(),
+                'on_progress' => $bros->where('status','On Progress')->count(),
+                'not_start' => $bros->where('all_progress',0)->count(),
+                'drop' => $bros->where('status','Drop')->count(),
+            ];
+        });
+
+
+
+        return PaginationHelper::paginate($collections,$perpage);
     }
 
 

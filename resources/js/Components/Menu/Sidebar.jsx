@@ -79,7 +79,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Lisensi", path: "maintenance" },
 
     { name: "Vendor", path: "maintenance" },
-    { name: "Branch Roll Out", path: "maintenance" },
+    { name: "Branch Roll Out", path: "reporting.bros" },
   ];
 
   const opsRouter = [
@@ -134,7 +134,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Branch Roll Out",
-      path: "infra.maintenance",
+      path: "infra.bros",
     },
 
     {

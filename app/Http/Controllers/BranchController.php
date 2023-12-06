@@ -86,12 +86,12 @@ class BranchController extends Controller
     {
         try {
             $branch = Branch::find($id);
-            $file = $request->file('photo');
+            $file = $request->file('file_ojk');
 
             $fileName = $file->getClientOriginalName();
-            $file->storeAs('branches/' . $branch->id . '/', $fileName, ["disk" => 'public']);
+            $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => 'public']);
 
-            $branch->photo = $fileName;
+            $branch->file_ojk = $fileName;
             $branch->save();
 
             return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);

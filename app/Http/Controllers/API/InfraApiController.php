@@ -4,11 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BroResource;
 use App\Http\Resources\DisnakerResource;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Http\Resources\ScoringProjectsResource;
 use App\Http\Resources\SewaGedungResource;
 use App\Models\GapDisnaker;
+use App\Models\InfraBro;
 use App\Models\InfraScoring;
 use App\Models\InfraSewaGedung;
 use Illuminate\Http\Request;
@@ -22,7 +24,7 @@ class InfraApiController extends Controller
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_disnaker->orderBy($sortFieldInput, $sortOrder)
+        $query = $gap_disnaker->select('gap_disnakers.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_disnakers.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
@@ -62,6 +64,29 @@ class InfraApiController extends Controller
 
 
         return SewaGedungResource::collection($data);
+    }
+
+    public function bros(InfraBro $infra_bro, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order') ?? 'asc';
+        $searchInput = $request->search;
+        $query = $infra_bro;
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+
+
+
+        $data = $query->paginate($perpage);
+
+
+
+        return BroResource::collection($data);
     }
 
 

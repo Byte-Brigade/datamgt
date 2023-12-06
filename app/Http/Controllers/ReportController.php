@@ -7,6 +7,7 @@ use App\Http\Resources\DisnakerResource;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapDisnaker;
+use App\Models\InfraBro;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -33,6 +34,13 @@ class ReportController extends Controller
 
         return Inertia::render('GA/Infra/Disnaker/Detail', [
             'disnaker' => $disnaker
+        ]);
+    }
+
+    public function bros(){
+        return Inertia::render('Reporting/BRO/Page', [
+            'branches' => Branch::get(),
+            'branch_types' => BranchType::get(),
         ]);
     }
 

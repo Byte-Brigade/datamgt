@@ -1,14 +1,11 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -24,7 +21,8 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Cabang({ auth, sessions, branch_types, branches }) {
+export default function Branch({ auth, sessions, branch_types, branches }) {
+  const { url } = usePage();
   const initialData = {
     file: null,
     branch_code: null,
@@ -46,86 +44,38 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const headings = [
+    {
+      name: 'Aktivitas',
+      colSpan: 2,
+    },
+    {
+      name: 'Target',
+    },
+    {
+      name: 'Status',
+      colSpan: 4,
+    },
+  ]
   const columns = [
-    { name: "Kode Cabang", field: "branch_code" },
-    {
-      name: "Tipe Cabang",
-      field: "branch_types.type_name",
-      sortable: false,
-      filterable: true,
-    },
-    { name: "Nama Cabang", field: "branch_name"},
-    { name: "NPWP", field: "npwp" },
-    { name: "Area", field: "area", className: "text-center" },
-    { name: "Alamat", field: "address", className: "w-[300px]" },
-    { name: "No. Telpon", field: "telp" },
-    { name: "Fasilitas ATM", field: "fasilitas_atm" },
-    {
-      name: "Layanan ATM",
-      field: "layanan_atm",
-      filterable: true,
-      component: "branches",
-    },
-    {
-      name: "Lampiran Izin OJK",
-      field: "file",
-      type: "custom",
-      render: (data) =>
-        data.file_ojk ? (
-          <a
-            className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/ops/branches/${data.id}/${data.file_ojk}`}
-            target="__blank"
-          >
-            {" "}
-            {data.file_ojk}
-          </a>
-        ) : (
-          <Button
-            variant="outlined"
-            size="sm"
-            color="blue"
-            onClick={() => {
-              toggleModalUpload();
-              setData(data);
-            }}
-          >
-            <div className="flex items-center gap-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
-              Upload Lampiran
-            </div>
-          </Button>
-        ),
-    },
-    {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
-    },
+
+    { name: "Nama", field: "activity", sortable: false },
+    { name: "", field: "target", sortable: false , agg:"sum"},
+    { name: "Done", field: "done", sortable: false, agg:"sum" },
+    { name: "On Progress", field: "on_progress", sortable: false, agg:"sum" },
+    { name: "Not Start", field: "not_start", sortable: false},
+    { name: "Drop", field: "drop", sortable: false , agg:"sum"},
   ];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.branches.import"), {
+    post(route("branches.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -134,26 +84,15 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
     });
   };
 
-  const handleSubmitUpload = (e) => {
-    e.preventDefault();
-    post(route("ops.branches.upload", data.id), {
-      replace: true,
-      onFinish: () => {
-        setIsRefreshed(!isRefreshed);
-        setIsModalUploadOpen(!isModalUploadOpen);
-      },
-    });
-  };
-
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("ops.branches.export"), "_self");
+    window.open(route("reporting.branches.export"), "_self");
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.branches.update", data.id), {
+    put(route("branches.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -165,7 +104,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("ops.branches.store", data.id), {
+    post(route("branches.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -177,7 +116,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.branches.delete", data.id), {
+    destroy(route("branches.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -194,12 +133,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-  const toggleModalUpload = () => {
-    setIsModalUploadOpen(!isModalUploadOpen);
-  };
-
   const toggleModalCreate = () => {
-    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
   const toggleModalEdit = () => {
@@ -212,80 +146,22 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <BreadcrumbsDefault />
+      <BreadcrumbsDefault url={url} />
       <Head title="Data Cabang" />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("branch_ops|superadmin", auth) &&
-            ["can add", "can export"].some((permission) =>
-              auth.permissions.includes(permission)
-            ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
-                )}
-                {auth.permissions.includes("can export") && (
-                  <PrimaryButton onClick={toggleModalExport}>
-                  <div className="flex items-center gap-x-2">
-                    <DocumentArrowDownIcon className="w-4 h-4" />
-                    Create Report
-                  </div>
-                </PrimaryButton>
-                )}
-              </div>
-            )}
+          <div className="flex items-center justify-between mb-4">
+            <PrimaryButton onClick={toggleModalExport}>
+              Create Report
+            </PrimaryButton>
+          </div>
           <DataTable
-            columns={columns.filter((column) =>
-              column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
-                : true
-            )}
-            fetchUrl={"/api/ops/branches"}
+          headings={headings}
+            columns={columns}
+            fetchUrl={"/api/report/bros"}
             refreshUrl={isRefreshed}
-            className="w-[1500px]"
-            component={[
-              {
-                data: Array.from(
-                  new Set(branches.map((branch) => branch.layanan_atm))
-                ),
-                field: "layanan_atm",
-              },
-              {
-                data: Array.from(
-                  new Set(
-                    branch_types
-                      .filter((type) =>
-                        ["KC", "KCP", "KF"].includes(type.type_name)
-                      )
-                      .map((type) => type.type_name)
-                  )
-                ),
-                field: "branch_types.type_name",
-              },
-            ]}
+            bordered={true}
           />
         </div>
       </div>
@@ -330,47 +206,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
           </DialogFooter>
         </form>
       </Dialog>
-      {/* Modal Upload */}
-      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Upload Lampiran
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalUpload}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
-          <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-              <Input
-                variant="standard"
-                label="Upload Gambar"
-                disabled={processing}
-                type="file"
-                name="upload"
-                id="upload"
-                accept=".jpg,.jpeg,.png"
-                onChange={(e) => setData("file_ojk", e.target.files[0])}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <div className="flex flex-row-reverse gap-x-4">
-              <Button disabled={processing} type="submit">
-                Simpan
-              </Button>
-              <SecondaryButton type="button" onClick={toggleModalUpload}>
-                Tutup
-              </SecondaryButton>
-            </div>
-          </DialogFooter>
-        </form>
-      </Dialog>
       {/* Modal Export */}
       <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -399,7 +234,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
             >
               Buat
             </Button>
-            <SecondaryButton type="button" onClick={toggleModalExport}>
+            <SecondaryButton type="button" onClick={toggleModalImport}>
               Tutup
             </SecondaryButton>
           </div>
@@ -457,12 +292,6 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 value={data.telp}
                 disabled={processing}
                 onChange={(e) => setData("telp", e.target.value)}
-              />
-              <Input
-                label="NPWP"
-                value={data.npwp}
-                disabled={processing}
-                onChange={(e) => setData("npwp", e.target.value)}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>
