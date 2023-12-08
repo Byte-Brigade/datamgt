@@ -52,8 +52,11 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const headings = [
     {
-      name: 'Aktivitas',
+      name: 'Kategori',
       colSpan: 2,
+    },
+    {
+      name: 'Tipe',
     },
     {
       name: 'Target',
@@ -65,12 +68,13 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
   ]
   const columns = [
 
-    { name: "Nama", field: "activity", sortable: false },
+    { name: "Nama", field: "category", sortable: false },
+    { name: "", field: "branch_type", sortable: false},
     { name: "", field: "target", sortable: false , agg:"sum"},
-    { name: "Done", field: "done", sortable: false, agg:"sum" },
-    { name: "On Progress", field: "on_progress", sortable: false, agg:"sum" },
+    { name: "Done", field: "done", sortable: false },
+    { name: "On Progress", field: "on_progress", sortable: false },
     { name: "Not Start", field: "not_start", sortable: false},
-    { name: "Drop", field: "drop", sortable: false , agg:"sum"},
+    { name: "Drop", field: "drop", sortable: false },
   ];
 
   const handleSubmitImport = (e) => {
