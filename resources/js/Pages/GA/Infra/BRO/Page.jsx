@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions}) {
+export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -54,13 +54,17 @@ export default function Page({ auth, branches, sessions}) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Branch Name", sortable:true, field: "branch_name" },
-    { name: "Branch Type", sortable:true, field: "branch_type" },
-    { name: "Aktivitas", sortable:true, field: "activity" },
-    { name: "Status", sortable:true, field: "status" },
-    { name: "Target", sortable:true, field: "target" },
-    { name: "Jatuh Tempo Sewa", sortable:true, field: "jatuh_tempo_sewa" },
-    { name: "All Progress", sortable:true, field: "all_progress" },
+    { name: "Branch Name", sortable: true, field: "branch_name" },
+    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Kategori", sortable: true, field: "category" },
+    { name: "Status", sortable: true, field: "status" },
+    { name: "Target", sortable: true, field: "target" },
+    { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
+    {
+      name: "All Progress", sortable: true, field: "all_progress",
+      type: "custom",
+      render: (data) => (data.all_progress * 100).toFixed(2) + "%"
+    },
 
     {
       name: "Action",

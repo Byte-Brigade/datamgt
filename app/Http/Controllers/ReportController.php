@@ -13,14 +13,16 @@ use Inertia\Inertia;
 
 class ReportController extends Controller
 {
-    public function branches(){
+    public function branches()
+    {
         return Inertia::render('Reporting/Branch/Page', [
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
     }
 
-    public function export_branches() {
+    public function export_branches()
+    {
         $fileName = 'Data_Cabang_' . date('d-m-y') . '.xlsx';
         return (new BranchesExport(true))->download($fileName);
     }
@@ -37,11 +39,29 @@ class ReportController extends Controller
         ]);
     }
 
-    public function bros(){
+    public function bros()
+    {
+        // $query = InfraBro::get();
+        // $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
+        //     return $bros->map(function ($bros, $branch_type) use ($category){
+        //             return [
+        //                 'category' => $category,
+        //                 'branch_type' => $branch_type,
+        //                 'target' => $bros->count(),
+        //                 'done' => $bros->where('status', 'Done')->count(),
+        //                 'on_progress' => $bros->where('status', 'On Progress')->count(),
+        //                 'not_start' => $bros->where('all_progress', 0)->count(),
+        //                 'drop' => $bros->where('status', 'Drop')->count(),
+        //             ];
+        //         });
+
+        // })->flatten(1);
+
+
+        // dd($collections);
         return Inertia::render('Reporting/BRO/Page', [
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
     }
-
 }

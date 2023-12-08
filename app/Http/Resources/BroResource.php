@@ -18,7 +18,7 @@ class BroResource extends JsonResource
             'id' => $this->id,
             'branch_name' => $this->branch_name,
             'branch_type' => $this->branch_type,
-            'activity' => $this->activity,
+            'category' => $this->category,
             'status' => $this->status,
             'target' => $this->target,
             'all_progress' => $this->all_progress,
