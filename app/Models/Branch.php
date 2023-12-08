@@ -73,10 +73,6 @@ class Branch extends Model
     {
         return $this->hasMany(GapKdo::class, 'branch_id');
     }
-    public function gap_kdo_mobil()
-    {
-        return $this->hasMany(GapKdoMobil::class, 'branch_id');
-    }
 
     public function gap_assets()
     {
