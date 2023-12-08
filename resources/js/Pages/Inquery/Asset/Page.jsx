@@ -196,10 +196,19 @@ export default function Page({ sessions, auth, data }) {
           <CardMenu
             label="KDO"
             data
-            type="toner"
+            type="kdo"
             Icon={ArchiveBoxIcon}
             active
             onClick={() => setActive("kdo")}
+            color="purple"
+          />
+          <CardMenu
+            label="STO"
+            data
+            type="sto"
+            Icon={ArchiveBoxIcon}
+            active
+            onClick={() => setActive("sto")}
             color="purple"
           />
           </div>

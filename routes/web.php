@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+        Route::post('/assets/sto', [InqueryController::class, 'assets_sto'])->name('inquery.assets.sto');
         Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');

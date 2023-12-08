@@ -11,10 +11,12 @@ import {
   Collapse,
   Checkbox,
   Button,
+  select,
 } from "@material-tailwind/react";
 import { CalendarDaysIcon, CogIcon } from "@heroicons/react/24/outline";
 import Datepicker from "react-tailwindcss-datepicker";
-
+import TableRow from "./Partials/TableRow";
+import { useFormContext } from "../Context/FormProvider";
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
@@ -29,7 +31,8 @@ export default function DataTable({
   agg,
   parameters = {},
   bordered = false,
-  headings
+  headings,
+  children
 }) {
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
@@ -43,7 +46,11 @@ export default function DataTable({
   const [open, setOpen] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [fixedTable, setFixedTable] = useState(false);
-
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
+  const [remarks, setRemarks] = useState([]);
+  const [allMarked, setAllMarked] = useState(false);
+  const { form, setInitialData, handleFormSubmit } = useFormContext();
   // filters
   const [filters, setFilters] = useState([]);
   const [filterData, setFilterData] = useState({});
@@ -62,6 +69,10 @@ export default function DataTable({
     }
   };
 
+
+
+
+
   const handleSearch = useRef(
     debounce((query) => {
       setSearch(query);
@@ -70,6 +81,49 @@ export default function DataTable({
       setSortColumn(columns[0].field);
     }, 500)
   ).current;
+
+
+  const handleRowClick = (event, clickedRowIndex) => {
+    const isCtrlPressed = event.ctrlKey || event.metaKey;
+    const isShiftPressed = event.shiftKey;
+
+    let newSelectedRows;
+
+    if (isCtrlPressed) {
+      newSelectedRows = selectedRows.includes(clickedRowIndex) ? selectedRows.filter(id => id !== clickedRowIndex)
+        : [...selectedRows, clickedRowIndex];
+    } else if (isShiftPressed && lastSelectedRowIndex !== null) {
+      const rangeStart = Math.min(lastSelectedRowIndex, clickedRowIndex);
+      const rangeEnd = Math.max(lastSelectedRowIndex, clickedRowIndex);
+      const newRange = [...Array(rangeEnd - rangeStart + 1).keys()].map(i => rangeStart + i);
+      newSelectedRows = [...new Set([...selectedRows, ...newRange])];
+    } else {
+      newSelectedRows = [clickedRowIndex];
+    }
+
+    setSelectedRows(newSelectedRows);
+    setLastSelectedRowIndex(clickedRowIndex);
+  }
+
+  const handleRowCheckboxChange = (e, id) => {
+    const newCheckedStatus = e.target.checked;
+    const updatedRemarks = [...remarks];
+    updatedRemarks[id] = newCheckedStatus;
+    setRemarks(updatedRemarks);
+
+    const areAllMarked = updatedRemarks.every(Boolean);
+    setAllMarked(areAllMarked);
+    form.setData('remark',updatedRemarks);
+
+  }
+
+
+
+  const toggleAllRemarks = () => {
+    const newAllMarked = !allMarked;
+    setAllMarked(newAllMarked);
+    setRemarks(remarks.map(() => newAllMarked));
+  }
 
 
 
@@ -145,7 +199,7 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-
+      setRemarks(new Array(data.data.length).fill(false));
       console.log(data.data);
     }
     if (dataArr) {
@@ -155,7 +209,7 @@ export default function DataTable({
     }
   };
 
-  const getFormattedDate = (currentDate, months=0) => {
+  const getFormattedDate = (currentDate, months = 0) => {
     // Mendapatkan tanggal saat ini
     // const currentDate = new Date();
 
@@ -182,6 +236,9 @@ export default function DataTable({
 
   useEffect(() => {
     fetchData();
+
+    setInitialData({ remark: [] })
+
   }, [
     perPage,
     sortColumn,
@@ -190,7 +247,7 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    dateRange
+    dateRange,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -258,40 +315,48 @@ export default function DataTable({
               <option value="30">30</option>
               <option value="45">45</option>
               <option value="60">60</option>
+              <option value="All">Show All</option>
             </select>
             entries
           </div>
         </div>
-        <div className="flex gap-2">
-          <div className="flex items-center gap-2">
-            <InputLabel htmlFor="search">Search : </InputLabel>
-            <TextInput
-              type="search"
-              name="search"
-              id="search"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-
-          <IconButton onClick={toggleOpen}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+        <div className="flex flex-col">
+          <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <InputLabel htmlFor="search">Search : </InputLabel>
+              <TextInput
+                type="search"
+                name="search"
+                id="search"
+                onChange={(e) => handleSearch(e.target.value)}
               />
-            </svg>
-          </IconButton>
-          <IconButton onClick={toggleOpenSetting}>
-            <CogIcon className="w-5 h-5" />
-          </IconButton>
+            </div>
+
+
+            <IconButton onClick={toggleOpen}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+                />
+              </svg>
+            </IconButton>
+            <IconButton onClick={toggleOpenSetting}>
+              <CogIcon className="w-5 h-5" />
+            </IconButton>
+          </div>
+          <form onSubmit={handleFormSubmit}>
+
+          {children}
+          </form>
         </div>
       </div>
       {/* <Datepicker value={value} onChange={handleValueChange} /> */}
@@ -388,13 +453,14 @@ export default function DataTable({
 
                 {headings.map((column, i) => (
                   <th key={i} rowSpan={column.rowSpan} colSpan={column.colSpan}>
-
                     <div>{column.name}</div>
+
 
                   </th>
                 ))}
               </tr>
             )}
+
             <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
@@ -424,9 +490,18 @@ export default function DataTable({
                         </span>
                       </div>
                     </div>
+                  ) : (column.remark ? (
+                    <>
+                      <Checkbox
+                        color="lightBlue"
+                        checked={allMarked}
+                        onChange={toggleAllRemarks}
+                      />
+                      {column.name}
+                    </>
                   ) : (
                     <div>{column.name}</div>
-                  )}
+                  ))}
                 </th>
               ))}
             </tr>
@@ -453,9 +528,11 @@ export default function DataTable({
             ) : (
               <>
                 {data.map((data, index) => (
-                  <tr
+                  <TableRow
                     key={index}
                     className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}
+                    isSelected={selectedRows.includes(index)}
+                    onClick={(event) => handleRowClick(event, index)}
                   >
                     <td className="text-center">
                       {Object.keys(pagination).length === 0 ? (
@@ -469,6 +546,10 @@ export default function DataTable({
                         column.field === "action" || column.field === "detail" ? (
                           <td key={column.field} colSpan={column.colSpan} className={`${column.className} ${column.freeze && 'sticky left-0 bg-white'}`}>
                             {column.render(data)}
+                          </td>
+                        ) : column.remark ? (
+                          <td>
+                            <Checkbox key={id} checked={remarks[index]} color="light-blue" onChange={(e) => handleRowCheckboxChange(e, data.id)} />
                           </td>
                         ) : (
                           <td key={column.field} colSpan={column.colSpan} className={`${column.className} ${column.freeze && 'sticky left-0 bg-white'}`}>
@@ -485,7 +566,8 @@ export default function DataTable({
                         </td>
                       )
                     )}
-                  </tr>
+
+                  </TableRow>
                 ))}
                 {columns.filter(column => column.agg !== undefined).length > 0 &&
                   <tr className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}>

@@ -9,6 +9,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
+import { useFormContext } from "@/Components/Context/FormProvider";
+
 import {
   Button,
   Dialog,
@@ -22,7 +24,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
-
+import { FormProvider } from "@/Components/Context/FormProvider";
 export default function Detail({ auth, branch, sessions }) {
 
 
@@ -119,7 +121,17 @@ export default function Detail({ auth, branch, sessions }) {
       className: "text-center",
       sortable: true,
     },
+
+    {
+      name: "Remark All",
+      field: 'remark',
+      remark: true,
+      url: 'inquery.assets.sto',
+      method: 'post'
+    }
   ];
+
+
 
   return (
     <AuthenticatedLayout auth={auth}>
@@ -128,13 +140,24 @@ export default function Detail({ auth, branch, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <FormProvider  url={'inquery.assets.sto'}
+          >
+            <DataTable
+              columns={columns}
+              fetchUrl={`/api/gap/assets`}
+              bordered={true}
+              parameters={{ branch_code: branch.branch_code }}
+            >
 
-          <DataTable
-            columns={columns}
-            fetchUrl={`/api/gap/assets`}
-            bordered={true}
-            parameters={{branch_code: branch.branch_code}}
-          />
+              <Button type="submit"
+                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+
+              >
+                Submit
+              </Button>
+            </DataTable>
+          </FormProvider>
+
         </div>
       </div>
     </AuthenticatedLayout>

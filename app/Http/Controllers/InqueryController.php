@@ -113,6 +113,10 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Lisensi/Page');
     }
 
+    public function assets_sto(Request $request) {
+        dd($request->all);
+    }
+
     public function asset_detail($id)
     {
         $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
