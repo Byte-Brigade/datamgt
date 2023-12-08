@@ -13,7 +13,7 @@ import {
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -55,7 +55,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Nomor Surat", field: "no_surat" },
-    { name: "Kantor Cabang", field: "branch_name" },
+    { name: "Kantor Cabang", field: "branches.branch_name" },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa",

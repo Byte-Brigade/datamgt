@@ -11,6 +11,7 @@ use App\Models\ErrorLog;
 use App\Models\OpsSkbirtgs;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -20,8 +21,8 @@ class OpsSkbirtgsController extends Controller
 
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('Ops/SKBIRTGS/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('Ops/SKBIRTGS/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)
@@ -29,25 +30,19 @@ class OpsSkbirtgsController extends Controller
         try {
             (new SkBirtgsImport)->import($request->file('file'));
 
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-            $list_error = collect([]);
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
-                $error = ErrorLog::create([
-                    'row' => $failure->row(),
-                    'attribute' => $failure->row(),
-                    'error_message' => $failure->errors(),
-                    'value' => $failure->values(),
-                ]);
-
-                $list_error->push($error);
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
             }
-            return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            $errorString = trim($errorString);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

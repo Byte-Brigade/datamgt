@@ -13,7 +13,6 @@ class OpsSkbirtgs extends Model
     protected $fillable = [
         'no_surat',
         'branch_id',
-        'status',
         'file'
     ];
 

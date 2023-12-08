@@ -35,8 +35,8 @@ class BroImport implements ToModel, WithHeadingRow
 
         $status = preg_match('/drop/i', $row['cabang'], $match) ? ucfirst($match[0]) : $row['status'];
         $branch_name = preg_replace('/bss|cabang|[!@#$%^&*()_+-]|drop/i', '', $row['cabang']);
-        $branch_type = preg_match('/\b(KF|KFO|KFNO|SFI|KC)\b/', $branch_name, $match) ? $match[0] : null;
-        $branch_name = trim(preg_replace('/\b(KF|KFO|KFNO|SFI|KC)\b/','', $branch_name));
+        $branch_type = preg_match('/\b(KF|KFO|KFNO|SFI|KC|KCP)\b/', $branch_name, $match) ? $match[0] : null;
+        $branch_name = trim(preg_replace('/\b(KF|KFO|KFNO|SFI|KC|KCP)\b/','', $branch_name));
         $branch = Branch::where('branch_name', $branch_name)->first();
         $branch_type = !is_null($branch_type) ? $branch_type : (isset($branch) ? $branch->branch_types->type_name : null);
         $target = is_int($row['target']) ? Date::excelToDateTimeObject($row['target'])->format('Y-m-d') : null;

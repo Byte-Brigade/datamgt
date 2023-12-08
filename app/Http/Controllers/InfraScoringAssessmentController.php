@@ -20,8 +20,8 @@ class InfraScoringAssessmentController extends Controller
      */
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Assessment/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/Scoring/Assessment/Page', ['branches' => $branches]);
     }
 
 
@@ -66,8 +66,8 @@ class InfraScoringAssessmentController extends Controller
      */
     public function detail($scoring_vendor)
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches]);
     }
 
     /**

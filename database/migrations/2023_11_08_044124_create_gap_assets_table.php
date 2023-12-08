@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->string('category');
-            $table->integer('asset_number')->unique();
+            $table->integer('asset_number');
             $table->text('asset_description')->nullable();
             $table->date('date_in_place_service')->nullable();
             $table->unsignedBigInteger('asset_cost')->nullable();
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('depre_exp')->nullable();
             $table->unsignedBigInteger('net_book_value')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->date('periode');
             $table->timestamps();
         });
     }

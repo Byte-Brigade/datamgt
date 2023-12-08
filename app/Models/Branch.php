@@ -56,7 +56,7 @@ class Branch extends Model
 
     public function ops_apar()
     {
-        return $this->hasOne(OpsApar::class, 'branch_id');
+        return $this->hasMany(OpsApar::class, 'branch_id');
     }
 
     public function ops_skoperasional()

@@ -22,8 +22,8 @@ class GapScoringAssessmentController extends Controller
      */
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Procurement/Scoring/Assessment/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Assessment/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)
@@ -88,8 +88,8 @@ class GapScoringAssessmentController extends Controller
      */
     public function detail($scoring_vendor)
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Procurement/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches]);
     }
 
     /**

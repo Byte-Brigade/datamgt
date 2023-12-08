@@ -11,6 +11,7 @@ use App\Models\OpsSkOperasional;
 use App\Imports\SkOperasionalsImport;
 use App\Http\Resources\SkOperasionalResource;
 use App\Models\Branch;
+use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class OpsSkOperasionalController extends Controller
@@ -18,9 +19,9 @@ class OpsSkOperasionalController extends Controller
 
     public function index()
     {
-        $branchesProps = Branch::get();
+        $branches = Branch::get();
 
-        return Inertia::render('Ops/SkOperasional/Page', ['branches' => $branchesProps]);
+        return Inertia::render('Ops/SkOperasional/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)
@@ -28,26 +29,20 @@ class OpsSkOperasionalController extends Controller
         try {
             (new SkOperasionalsImport)->import($request->file('file'));
 
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-            dd($failures);
-            $list_error = collect([]);
-            // foreach ($failures as $failure) {
-            //     $failure->row(); // row that went wrong
-            //     $failure->attribute(); // either heading key (if using heading row concern) or column index
-            //     $failure->errors(); // Actual error messages from Laravel validator
-            //     $failure->values(); // The values of the row that has failed.
-            //     $error = ErrorLog::create([
-            //         'row' => $failure->row(),
-            //         'attribute' => $failure->row(),
-            //         'error_message' => $failure->errors(),
-            //         'value' => $failure->values(),
-            //     ]);
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
 
-            //     $list_error->push($error);
-            // }
-            return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => 'Import Failed']);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

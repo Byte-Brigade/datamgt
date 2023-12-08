@@ -111,16 +111,28 @@ class OpsApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
-        $employees = $query->paginate($perpage);
-        return AparResource::collection($employees);
+        $query = $query->get();
+
+        $collections = $query->map(function($apar) {
+            $apar->branch_name = $apar->branches->branch_name;
+            $apar->branch_code = $apar->branches->branch_code;
+            return $apar;
+        })->groupBy('branch_name')->map(function($apar, $branch_name)  {
+            return ['branch_name' => $branch_name,
+            'branch_code' => $apar->first()->branch_code,
+            'branch_id' => $apar->first()->branch_id,
+            'jumlah_tabung' => $apar->count()];
+        });
+
+        return PaginationHelper::paginate($collections, $perpage);
     }
 
-    public function apar_details(OpsAparDetail $ops_apar_detail, Request $request, $id)
+    public function apar_details(OpsApar $ops_apar, Request $request, $branch_id)
     {
         $sortFieldInput = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $ops_apar_detail->where('ops_apar_id', $id)->orderBy($sortFieldInput, $sortOrder);
+        $query = $ops_apar->where('branch_id', $branch)->orderBy($sortFieldInput, $sortOrder);
 
         $perpage = $request->perpage ?? 10;
 
@@ -129,7 +141,7 @@ class OpsApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
         $data = $query->paginate($perpage);
-        return AparDetailResource::collection($data);
+        return AparResource::collection($data);
     }
 
 

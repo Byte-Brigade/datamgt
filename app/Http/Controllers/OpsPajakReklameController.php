@@ -9,6 +9,8 @@ use App\Models\Branch;
 use App\Models\OpsPajakReklame;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
 
@@ -17,27 +19,30 @@ class OpsPajakReklameController extends Controller
 
     public function index(Request $request)
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)
     {
         try {
+            DB::beginTransaction();
             (new PajakReklameImport)->import($request->file('file'));
-
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            DB::commit();
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
             }
-            dd($failures);
-            return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
+            $errorString = trim($errorString);
+
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

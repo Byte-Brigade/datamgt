@@ -12,8 +12,8 @@ class InfraBroController extends Controller
 {
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/BRO/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/BRO/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)
