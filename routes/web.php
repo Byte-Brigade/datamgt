@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
+        Route::get('/bros/{category}', [ReportController::class, 'bro_category'])->name('bros.category');
         Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
         Route::get('/disnaker/{branch_code}', [ReportController::class, 'disnaker'])->name('disnaker');
     });

@@ -80,6 +80,9 @@ class InfraApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
+        if(!is_null($request->category)) {
+            $query = $query->where('category', $request->category);
+        }
 
 
         $data = $query->paginate($perpage);

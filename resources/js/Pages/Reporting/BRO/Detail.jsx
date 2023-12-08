@@ -1,11 +1,14 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -15,22 +18,22 @@ import {
   IconButton,
   Input,
   Option,
-  Radio,
   Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Branch({ auth, sessions, branch_types, branches }) {
-  const { url } = usePage();
+export default function Detail({ auth, branches, category, sessions }) {
   const initialData = {
-    file: null,
-    branch_code: null,
-    branch_name: null,
-    address: null,
-    branch_type_id: null,
-    layanan_atm: null,
-    npwp: null,
+    branch_id: 0,
+    jenis_perizinan_id: 0,
+    tgl_pengesahan: null,
+    tgl_masa_berlaku: null,
+    branches: {
+      branch_code: null,
+      branch_name: null,
+    },
+    expired_date: null,
   };
   const {
     data,
@@ -44,46 +47,48 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [open, setOpen] = useState(false);
 
-  const headings = [
-    {
-      name: 'Kategori',
-      colSpan: 2,
-    },
-    {
-      name: 'Target',
-    },
-    {
-      name: 'Status',
-      colSpan: 4,
-    },
-  ]
   const columns = [
+    { name: "Branch Name", sortable: true, field: "branch_name" },
+    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Kategori", sortable: true, field: "category" },
+    { name: "Status", sortable: true, field: "status" },
+    { name: "Target", sortable: true, field: "target" },
+    { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
+    {
+      name: "All Progress", sortable: true, field: "all_progress",
+      type: "custom",
+      render: (data) => (data.all_progress * 100).toFixed(2) + "%"
+    },
 
     {
-      name: "Nama", field: "category", sortable: false,
-      type: "custom",
+      name: "Action",
+      field: "action",
+      className: "text-center",
       render: (data) => (
-        <Link href={route("reporting.bros.category", data.category)}>
-          {data.category}
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
-    { name: "", field: "target", className: "text-center", sortable: false, agg: "sum" },
-    { name: "Done", field: "done", className: "text-center", sortable: false, agg: "sum" },
-    { name: "On Progress", field: "on_progress", className: "text-center", sortable: false, agg: "sum" },
-    { name: "Not Start", field: "not_start", className: "text-center", sortable: false, agg: "sum" },
-    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg:"sum" },
   ];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("branches.import"), {
+    post(route("infra.bros.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -93,15 +98,26 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
   };
 
   const handleSubmitExport = (e) => {
+    const { branch } = data;
     e.preventDefault();
+    window.open(route("infra.bros.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("reporting.branches.export"), "_self");
+  };
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("infra.bros.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("branches.update", data.id), {
-      method: "put",
+    post(route("infra.bros.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -109,10 +125,9 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
       },
     });
   };
-
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("branches.store", data.id), {
+    post(route("infra.bros.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -124,7 +139,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("branches.delete", data.id), {
+    destroy(route("infra.bros.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -141,11 +156,15 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
-  const toggleModalCreate = () => {
-    setIsModalCreateOpen(!isModalCreateOpen);
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
   };
+
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
+  };
+  const toggleModalCreate = () => {
+    setIsModalCreateOpen(!isModalCreateOpen);
   };
 
   const toggleModalDelete = () => {
@@ -154,22 +173,42 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <BreadcrumbsDefault url={url} />
-      <Head title="Data Cabang" />
+      <Head title="GA | Sewa Gedung" />
+      <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
+            <div>
+              <PrimaryButton
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add
+                </div>
+              </PrimaryButton>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
+                <div className="flex items-center gap-x-2">
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
+                </div>
+              </PrimaryButton>
+            </div>
             <PrimaryButton onClick={toggleModalExport}>
               Create Report
             </PrimaryButton>
           </div>
           <DataTable
-            headings={headings}
             columns={columns}
-            fetchUrl={"/api/report/bros"}
+            className="w-[1200px]"
+            fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
-            bordered={true}
+            parameters={{category: category}}
           />
         </div>
       </div>
@@ -214,40 +253,71 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
           </DialogFooter>
         </form>
       </Dialog>
-      {/* Modal Export */}
-      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Create Report
+          Upload Lampiran
           <IconButton
             size="sm"
             variant="text"
             className="p-2"
             color="gray"
-            onClick={toggleModalExport}
+            onClick={toggleModalUpload}
           >
             <XMarkIcon className="w-6 h-6" />
           </IconButton>
         </DialogHeader>
-        <DialogBody divider>
-          <div className="flex flex-col gap-y-4">
-            <Typography>Buat Report Data Cabang?</Typography>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <div className="flex flex-row-reverse gap-x-4">
-            <Button
-              onClick={handleSubmitExport}
-              disabled={processing}
-              type="submit"
-            >
-              Buat
-            </Button>
-            <SecondaryButton type="button" onClick={toggleModalImport}>
-              Tutup
-            </SecondaryButton>
-          </div>
-        </DialogFooter>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
       </Dialog>
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch_id}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -266,69 +336,50 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Select
-                label="Tipe Cabang"
-                value={`${data.branch_type_id || ""}`}
+                label="Branch"
+                value={`${data.branch_id}`}
                 disabled={processing}
-                onChange={(e) => setData("branch_type_id", e)}
+                onChange={(e) => setData("branch_id", e)}
               >
-                {branch_types.map((type) => (
-                  <Option key={type.id} value={`${type.id}`}>
-                    {type.type_name}
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
                   </Option>
                 ))}
               </Select>
               <Input
-                label="Kode Cabang"
-                value={data.branch_code}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
-                onChange={(e) => setData("branch_code", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
               />
               <Input
-                label="Nama Cabang"
-                value={data.branch_name}
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
                 disabled={processing}
-                onChange={(e) => setData("branch_name", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
               />
               <Input
-                label="Alamat"
-                value={data.address}
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
                 disabled={processing}
-                onChange={(e) => setData("address", e.target.value)}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
               <Input
-                label="Telp"
-                value={data.telp}
+                label="Upload Lampiran"
+                type="file"
                 disabled={processing}
-                onChange={(e) => setData("telp", e.target.value)}
+                name="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  return setData("file", e.target.files[0]);
+                }}
               />
-              <div className="flex flex-col">
-                <span className="text-sm font-light">Fasilitas ATM</span>
-                <div className="flex gap-x-4">
-                  <Radio
-                    name="layanan_atm"
-                    label="24 Jam"
-                    checked={data.layanan_atm === "24 Jam"}
-                    value="24 Jam"
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                  <Radio
-                    name="layanan_atm"
-                    label="Jam Operasional"
-                    checked={data.layanan_atm === "Jam Operasional"}
-                    value="Jam Operasional"
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                  <Radio
-                    name="layanan_atm"
-                    label="Tidak Ada"
-                    checked={
-                      data.layanan_atm === null || data.layanan_atm === ""
-                    }
-                    value=""
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
           </DialogBody>
           <DialogFooter>
@@ -358,78 +409,43 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+          <DialogBody className="overflow-y-scroll " divider>
             <div className="flex flex-col gap-y-4">
               <Select
-                label="Tipe Cabang"
-                value={`${data.branch_type_id || ""}`}
+                label="Branch"
+                value={`${data.branch_id}`}
                 disabled={processing}
-                onChange={(e) => setData("branch_type_id", e)}
+                onChange={(e) => setData("branch_id", e)}
               >
-                {branch_types.map((type) => (
-                  <Option key={type.id} value={`${type.id}`}>
-                    {type.type_name}
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
                   </Option>
                 ))}
               </Select>
+
               <Input
-                label="Kode Cabang"
-                value={data.branch_code}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
-                onChange={(e) => setData("branch_code", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
               />
               <Input
-                label="Nama Cabang"
-                value={data.branch_name}
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
                 disabled={processing}
-                onChange={(e) => setData("branch_name", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
               />
               <Input
-                label="Alamat"
-                value={data.address}
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
                 disabled={processing}
-                onChange={(e) => setData("address", e.target.value)}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
-              <Input
-                label="Telp"
-                value={data.telp}
-                disabled={processing}
-                onChange={(e) => setData("telp", e.target.value)}
-              />
-              <Input
-                label="NPWP"
-                value={data.npwp}
-                disabled={processing}
-                onChange={(e) => setData("npwp", e.target.value)}
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-light">Fasilitas ATM</span>
-                <div className="flex gap-x-4">
-                  <Radio
-                    name="layanan_atm"
-                    label="24 Jam"
-                    checked={data.layanan_atm === "24 Jam"}
-                    value="24 Jam"
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                  <Radio
-                    name="layanan_atm"
-                    label="Jam Operasional"
-                    checked={data.layanan_atm === "Jam Operasional"}
-                    value="Jam Operasional"
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                  <Radio
-                    name="layanan_atm"
-                    label="Tidak Ada"
-                    checked={
-                      data.layanan_atm === null || data.layanan_atm === ""
-                    }
-                    value=""
-                    onChange={(e) => setData("layanan_atm", e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
           </DialogBody>
           <DialogFooter>
@@ -462,7 +478,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branch_code} - {data.branch_name}
+              {data.branches.branch_code} - {data.branches.branch_name}
             </span>{" "}
             ?
           </Typography>
