@@ -11,6 +11,7 @@ use App\Http\Resources\Inquery\StoResource;
 use App\Models\Branch;
 use App\Models\GapAsset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InqueryApiController extends Controller
 {
