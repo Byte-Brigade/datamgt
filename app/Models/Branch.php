@@ -100,5 +100,10 @@ class Branch extends Model
     {
         return $this->hasMany(GapToner::class, 'branch_id');
     }
+
+    public function gap_stos()
+    {
+        return $this->hasOne(GapSto::class, 'branch_id');
+    }
 }
 

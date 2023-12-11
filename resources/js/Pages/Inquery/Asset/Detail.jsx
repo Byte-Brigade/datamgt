@@ -23,9 +23,11 @@ import {
   Select,
   Typography,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider } from "@/Components/Context/FormProvider";
 export default function Detail({ auth, branch, sessions }) {
+
+
 
 
   const headings = [
@@ -123,10 +125,9 @@ export default function Detail({ auth, branch, sessions }) {
     },
 
     {
-      name: "Remark All",
+      name: "Remark",
       field: 'remark',
       remark: true,
-      url: 'inquery.assets.sto',
       method: 'post'
     }
   ];
@@ -140,12 +141,12 @@ export default function Detail({ auth, branch, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <FormProvider  url={'inquery.assets.sto'}
-          >
+
             <DataTable
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
+              submitUrl={`inquery.assets.remark`}
               parameters={{ branch_code: branch.branch_code }}
             >
 
@@ -156,7 +157,7 @@ export default function Detail({ auth, branch, sessions }) {
                 Submit
               </Button>
             </DataTable>
-          </FormProvider>
+
 
         </div>
       </div>

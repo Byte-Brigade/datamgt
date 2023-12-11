@@ -21,7 +21,7 @@ const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
 export default function DataTable({
-  columns = { name: "", value: "", field: "", type: "", render: (any) => any },
+  columns = [{ name: "", value: "", field: "", type: "", render: (any) => any }],
   fetchUrl,
   refreshUrl = false,
   dataArr,
@@ -32,7 +32,8 @@ export default function DataTable({
   parameters = {},
   bordered = false,
   headings,
-  children
+  children,
+  submitUrl = "",
 }) {
   const [data, setData] = useState([]);
   const [sumData, setSumData] = useState(0);
@@ -48,9 +49,9 @@ export default function DataTable({
   const [fixedTable, setFixedTable] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
-  const [remarks, setRemarks] = useState([]);
+  const [remarks, setRemarks] = useState({});
   const [allMarked, setAllMarked] = useState(false);
-  const { form, setInitialData, handleFormSubmit } = useFormContext();
+  const { form, setInitialData, handleFormSubmit, setUrl } = useFormContext();
   // filters
   const [filters, setFilters] = useState([]);
   const [filterData, setFilterData] = useState({});
@@ -61,7 +62,7 @@ export default function DataTable({
   const { auth } = usePage().props;
   const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
-    if (column === sortColumn) {
+    if (columns === sortColumn) {
       sortOrder === SORT_ASC ? setSortOrder(SORT_DESC) : setSortOrder(SORT_ASC);
     } else {
       setSortColumn(column);
@@ -105,25 +106,26 @@ export default function DataTable({
     setLastSelectedRowIndex(clickedRowIndex);
   }
 
-  const handleRowCheckboxChange = (e, id) => {
+  const handleRowCheckboxChange = (e, id, url) => {
     const newCheckedStatus = e.target.checked;
-    const updatedRemarks = [...remarks];
-    updatedRemarks[id] = newCheckedStatus;
-    setRemarks(updatedRemarks);
 
-    const areAllMarked = updatedRemarks.every(Boolean);
-    setAllMarked(areAllMarked);
-    form.setData('remark',updatedRemarks);
+    // Update the remarks state correctly
+    setRemarks((prevRemarks) => {
+      const updatedRemarks = { ...prevRemarks, [id]: newCheckedStatus };
+      console.log('Updated Remarks:', newCheckedStatus); // Add this line for debugging
+      console.log('Updated Remarks:', remarks); // Add this line for debugging
+      return updatedRemarks;
+    });
+
+
+    form.setData('remark', { ...remarks, [id]: newCheckedStatus });
+
 
   }
 
 
 
-  const toggleAllRemarks = () => {
-    const newAllMarked = !allMarked;
-    setAllMarked(newAllMarked);
-    setRemarks(remarks.map(() => newAllMarked));
-  }
+
 
 
 
@@ -199,8 +201,21 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-      setRemarks(new Array(data.data.length).fill(false));
+
+      if(columns.some(column => column.remark)) {
+
+        const remarksData = data.data.reduce((acc, current) => {
+          const remark = Boolean(current.remark);
+          acc[current.id] = remark;
+          return acc;
+        }, {});
+
+        setRemarks(remarksData);
+      }
+
+      setInitialData({ remark: {} })
       console.log(data.data);
+
     }
     if (dataArr) {
       console.log(dataArr);
@@ -236,8 +251,8 @@ export default function DataTable({
 
   useEffect(() => {
     fetchData();
+    setUrl(submitUrl)
 
-    setInitialData({ remark: [] })
 
   }, [
     perPage,
@@ -355,7 +370,7 @@ export default function DataTable({
           </div>
           <form onSubmit={handleFormSubmit}>
 
-          {children}
+            {children}
           </form>
         </div>
       </div>
@@ -490,18 +505,9 @@ export default function DataTable({
                         </span>
                       </div>
                     </div>
-                  ) : (column.remark ? (
-                    <>
-                      <Checkbox
-                        color="lightBlue"
-                        checked={allMarked}
-                        onChange={toggleAllRemarks}
-                      />
-                      {column.name}
-                    </>
                   ) : (
                     <div>{column.name}</div>
-                  ))}
+                  )}
                 </th>
               ))}
             </tr>
@@ -549,7 +555,12 @@ export default function DataTable({
                           </td>
                         ) : column.remark ? (
                           <td>
-                            <Checkbox key={id} checked={remarks[index]} color="light-blue" onChange={(e) => handleRowCheckboxChange(e, data.id)} />
+                            <Checkbox
+                              key={id}
+                              checked={remarks[data.id]}
+                              color="light-blue"
+                              onChange={(e) => handleRowCheckboxChange(e, data.id, column.url)}
+                            />
                           </td>
                         ) : (
                           <td key={column.field} colSpan={column.colSpan} className={`${column.className} ${column.freeze && 'sticky left-0 bg-white'}`}>

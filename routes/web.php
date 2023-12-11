@@ -12,6 +12,7 @@ use App\Http\Controllers\GapPerdinController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
+use App\Http\Controllers\GapStoController;
 use App\Http\Controllers\GapTonerController;
 use App\Http\Controllers\InfraBroController;
 use App\Http\Controllers\InfraScoringAssessmentController;
@@ -61,7 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
-        Route::post('/assets/sto', [InqueryController::class, 'assets_sto'])->name('inquery.assets.sto');
+        Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
         Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
@@ -139,6 +140,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');
             Route::get('/toners/export', [GapTonerController::class, 'export'])->name('toners.export');
             Route::delete('/toners/{id}', [GapTonerController::class, 'destroy'])->name('toners.delete');
+
+            Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
+            Route::get('/stos/{type}', [GapStoController::class, 'detail'])->name('stos.type');
+            Route::post('/stos/import', [GapStoController::class, 'import'])->name('stos.import');
+            Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
+            Route::put('/stos/{id}', [GapStoController::class, 'update'])->name('stos.update');
+            Route::get('/stos/export', [GapStoController::class, 'export'])->name('stos.export');
+            Route::delete('/stos/{id}', [GapStoController::class, 'destroy'])->name('stos.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */

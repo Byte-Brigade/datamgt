@@ -64,8 +64,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
 Route::prefix('inquery')->name('inquery.')->group(function() {
     Route::get('assets', [InqueryApiController::class, 'assets']);
     Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
-    Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('branches');
-
+    Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
+    Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 
