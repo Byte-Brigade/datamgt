@@ -1,22 +1,21 @@
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
+import { CogIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
+import { usePage } from "@inertiajs/react";
+import {
+  Button,
+  Checkbox,
+  Collapse,
+  IconButton
+} from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import Paginator from "./Paginator";
-import { usePage } from "@inertiajs/react";
-import {
-  IconButton,
-  Collapse,
-  Checkbox,
-  Button,
-  select,
-} from "@material-tailwind/react";
-import { CalendarDaysIcon, CogIcon } from "@heroicons/react/24/outline";
 import Datepicker from "react-tailwindcss-datepicker";
-import TableRow from "./Partials/TableRow";
 import { useFormContext } from "../Context/FormProvider";
+import Paginator from "./Paginator";
+import TableRow from "./Partials/TableRow";
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
@@ -51,7 +50,7 @@ export default function DataTable({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
   const [remarks, setRemarks] = useState({});
   const [allMarked, setAllMarked] = useState(false);
-  const { form, setInitialData, handleFormSubmit, setUrl } = useFormContext();
+  const { form, setInitialData, handleFormSubmit, setUrl, isRefreshed } = useFormContext();
   // filters
   const [filters, setFilters] = useState([]);
   const [filterData, setFilterData] = useState({});
@@ -202,7 +201,7 @@ export default function DataTable({
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
 
-      if(columns.some(column => column.remark)) {
+      if(data.data.some(data => data.remark)) {
 
         const remarksData = data.data.reduce((acc, current) => {
           const remark = Boolean(current.remark);
@@ -263,6 +262,7 @@ export default function DataTable({
     refreshUrl,
     clearFilter,
     dateRange,
+    isRefreshed,
   ]);
 
   const getNestedValue = (obj, field) => {

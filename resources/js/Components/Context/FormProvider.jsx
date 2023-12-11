@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const FormContext = createContext();
 
@@ -35,6 +35,7 @@ export const FormProvider = ({ children }) => {
     form.post(route(url), {
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
+        setModalOpen(!modalOpen);
       }
     })
   }
