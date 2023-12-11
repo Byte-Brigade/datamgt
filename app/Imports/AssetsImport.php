@@ -37,6 +37,7 @@ class AssetsImport implements ToModel, WithHeadingRow, WithUpserts, WithBatchIns
                 'minor_category' => $row['minor_category'],
                 'depre_exp' => round($row['depre_exp']),
                 'net_book_value' => round($row['net_book_value']),
+                'periode' => Date::excelToDateTimeObject($row['periode']),
             ]);
         }
     }

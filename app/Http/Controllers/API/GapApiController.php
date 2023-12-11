@@ -50,8 +50,16 @@ class GapApiController extends Controller
                     });
             });
         }
-        $data = $query->paginate($perpage);
-        return AssetsResource::collection($data);
+
+
+        if ($perpage == "All") {
+            $query = $query->get();
+        } else {
+            $query = $query->paginate($perpage);
+        }
+
+
+        return AssetsResource::collection($query);
     }
 
     public function kdos(GapKdo $gap_kdo, Request $request)
