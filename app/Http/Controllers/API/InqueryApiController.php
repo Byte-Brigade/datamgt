@@ -10,6 +10,7 @@ use App\Http\Resources\Inquery\LicensesResource;
 use App\Models\Branch;
 use App\Models\GapAsset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InqueryApiController extends Controller
 {
@@ -18,7 +19,7 @@ class InqueryApiController extends Controller
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->select('branches.*')->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 10;
 
@@ -58,7 +59,7 @@ class InqueryApiController extends Controller
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->select('branches.*')->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 15;
 
@@ -98,7 +99,7 @@ class InqueryApiController extends Controller
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->with(['branch_types','ops_pajak_reklames','gap_disnaker','ops_apar','ops_skoperasional','ops_skbirtgs'])->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder);
+        $query = $branch->with(['branch_types', 'ops_pajak_reklames', 'gap_disnaker', 'ops_apar', 'ops_skoperasional', 'ops_skbirtgs'])->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
 
@@ -131,7 +132,4 @@ class InqueryApiController extends Controller
 
         return LicensesResource::collection($branches);
     }
-
-
-
 }
