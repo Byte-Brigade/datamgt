@@ -23,9 +23,10 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function UAM({ positions, sessions, permissions, auth }) {
+export default function UAM({ positions, sessions,branches, permissions, auth }) {
   const initialData = {
     name: null,
+    branch_id: 0,
     nik: null,
     position: null,
     entity: null,
@@ -285,6 +286,27 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                 <Option value="bss">BSS</Option>
                 <Option value="ksp">KSP</Option>
               </Select>
+
+              <Select
+                label="Branch"
+                value={`${data.branch_id || 0}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+                className="bg-white"
+              >
+                {branches
+                  .map((branch, index) => {
+                    return branch.branch_code === "none" ? (
+                      <Option key={index} value="0">
+                        {branch.branch_name}
+                      </Option>
+                    ) : (
+                      <Option key={index} value={`${branch.id} `}>
+                        {branch.branch_code} - {branch.branch_name}
+                      </Option>
+                    );
+                  })}
+              </Select>
               <Input
                 v-model="password"
                 type="password"
@@ -319,8 +341,8 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                           "permissions",
                           data.permissions.includes(permission.name)
                             ? data.permissions.filter(
-                                (p) => p != e.target.value
-                              )
+                              (p) => p != e.target.value
+                            )
                             : [...data.permissions, e.target.value]
                         )
                       }
@@ -414,8 +436,8 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                           "permissions",
                           data.permissions.includes(permission.name)
                             ? data.permissions.filter(
-                                (p) => p != e.target.value
-                              )
+                              (p) => p != e.target.value
+                            )
                             : [...data.permissions, e.target.value]
                         )
                       }

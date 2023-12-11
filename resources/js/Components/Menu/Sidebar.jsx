@@ -335,7 +335,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </AccordionBody>
         </Accordion>
 
-        {auth.role !== "cabang" && (
+        {auth.role !== "branch" && (
           <>
             {/* Data Maintenance */}
             <hr className="my-2 border-blue-gray-50" />
