@@ -58,6 +58,24 @@ class OpsPajakReklameController extends Controller
                 'note' => $request->note,
             ]);
 
+            // if (!is_null($request->file('file_izin_reklame'))) {
+            //     $file_izin_reklame = $request->file('file_izin_reklame');
+            // }
+
+            // if (!is_null($request->file('file_skpd'))) {
+            //     $file_skpd = $request->file('file_skpd');
+            // }
+            // if ($file_izin_reklame || $file_skpd) {
+            //     if ($file_izin_reklame) {
+            //         $fileName = $file_izin_reklame->getClientOriginalName();
+            //         $file_izin_reklame->storeAs('ops/pajak-reklame/', $fileName, ["disk" => 'public']);
+            //     } else {
+            //         $fileName = $file_skpd->getClientOriginalName();
+            //         $file_skpd->storeAs('ops/pajak-reklame/', $fileName, ["disk" => 'public']);
+            //     }
+            // }
+
+
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (\Exception $e) {
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);

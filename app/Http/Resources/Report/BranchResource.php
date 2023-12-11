@@ -45,7 +45,7 @@ class BranchResource extends JsonResource
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada' ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
-            'branch_types' => $this->branch_types,
+            'type_name' => $this->branch_types->type_name,
         ];
     }
 }

@@ -19,7 +19,7 @@ export default function Branch({ sessions, auth }) {
     },
     {
       name: "Tipe",
-      field: "branch_types.type_name",
+      field: "type_name",
       className: "w-28 text-center",
     },
     { name: "Area", field: "area" },

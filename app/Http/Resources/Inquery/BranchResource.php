@@ -21,7 +21,7 @@ class BranchResource extends JsonResource
             'branch_code' => $this->branch_code,
             'area' => $this->area,
             'address' => $this->address,
-            'branch_types' => $this->branch_types,
+            'type_name' => $this->branch_types->type_name,
             'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
         ];
     }

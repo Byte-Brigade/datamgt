@@ -418,7 +418,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.branch_code} - {data.branch_name}
             </span>{" "}
             ?
           </Typography>

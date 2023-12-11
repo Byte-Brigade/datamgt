@@ -62,7 +62,7 @@ export default function Cabang({ auth, sessions, branch_types, branches, areas }
     { name: "Kode Cabang", field: "branch_code" },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
       sortable: false,
       filterable: true,
     },
