@@ -125,7 +125,7 @@ export default function Detail({ auth, branch, sessions }) {
     },
 
     {
-      name: "Remark",
+      name: "Ada/Tidak",
       field: 'remark',
       remark: true,
       method: 'post'
