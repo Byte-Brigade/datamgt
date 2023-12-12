@@ -49,6 +49,10 @@ Route::get('/maintenance', function () {
     abort(404);
 })->name('maintenance');
 
+Route::get('/test', function () {
+    return Inertia::render('Cabang');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -61,10 +65,14 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-      Route::middleware(['check.branchcode'])->group(function () {
-                Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-                Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
-            });
+        Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+        Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
+        Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+        Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+        Route::middleware(['check.branchcode'])->group(function () {
+          Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+          Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+        });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
@@ -80,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
         Route::get('/bros/{category}', [ReportController::class, 'bro_category'])->name('bros.category');
         Route::get('/branches/export', [ReportController::class, 'export_branches'])->name('branches.export');
-        Route::get('/disnaker/{branch_code}', [ReportController::class, 'disnaker'])->name('disnaker');
+        Route::get('/disnaker/{slug}', [ReportController::class, 'disnaker'])->name('disnaker');
     });
 
     Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {

@@ -59,11 +59,11 @@ export default function Page({ sessions, auth, data }) {
   const columns = [
     {
       name: "Nama",
-      field: "branch_code",
+      field: "branch_name",
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.assets.detail", data.branch_code)}>
+        <Link href={route("inquery.assets.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
@@ -97,6 +97,7 @@ export default function Page({ sessions, auth, data }) {
       name: 'Penyusutan',
       field: 'penyusutan',
       className: "text-right",
+      format: 'currency',
       type: "custom",
       render: (data) => {
         return data.assets.filter(asset => asset.category === 'Depre').reduce(
@@ -110,6 +111,7 @@ export default function Page({ sessions, auth, data }) {
       name: 'Net Book Value',
       field: 'net_book_value',
       className: "text-right",
+      format: 'currency',
       type: "custom",
       render: (data) => {
         return data.assets.filter(asset => asset.category === 'Depre').reduce(
@@ -227,7 +229,6 @@ export default function Page({ sessions, auth, data }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div className="grid grid-cols-4 gap-4 mb-2">
-
             <CardMenu
               label="Asset"
               data
@@ -356,26 +357,6 @@ export default function Page({ sessions, auth, data }) {
                       })}
                     </tr>
                   ))}
-
-                  {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                    <td className="text-center">
-                      <strong>Total</strong>
-                    </td>
-                    <td className="text-center">
-                      <strong>
-                        {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
-                          return (
-                            acc +
-                            data.jumlah_atm[atm].filter(
-                              (branch) =>
-                                (branchId === 0 || branch.id === branchId) &&
-                                (area === "none" || branch.area === area)
-                            ).length
-                          );
-                        }, 0)}
-                      </strong>
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
               <h2 className="text-lg font-semibold mb-2">Quantity Per Cabang</h2>
@@ -407,25 +388,6 @@ export default function Page({ sessions, auth, data }) {
                     </tr>
                   ))}
 
-                  {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                    <td className="text-center">
-                      <strong>Total</strong>
-                    </td>
-                    <td className="text-center">
-                      <strong>
-                        {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
-                          return (
-                            acc +
-                            data.jumlah_atm[atm].filter(
-                              (branch) =>
-                                (branchId === 0 || branch.id === branchId) &&
-                                (area === "none" || branch.area === area)
-                            ).length
-                          );
-                        }, 0)}
-                      </strong>
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
               <h2 className="text-lg font-semibold mb-2">Nominal Per Cabang</h2>
@@ -456,26 +418,6 @@ export default function Page({ sessions, auth, data }) {
                       })}
                     </tr>
                   ))}
-
-                  {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                    <td className="text-center">
-                      <strong>Total</strong>
-                    </td>
-                    <td className="text-center">
-                      <strong>
-                        {Object.keys(data.jumlah_atm).reduce((acc, atm) => {
-                          return (
-                            acc +
-                            data.jumlah_atm[atm].filter(
-                              (branch) =>
-                                (branchId === 0 || branch.id === branchId) &&
-                                (area === "none" || branch.area === area)
-                            ).length
-                          );
-                        }, 0)}
-                      </strong>
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
             </>

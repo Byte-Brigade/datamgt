@@ -19,7 +19,8 @@ class SpecimentResource extends JsonResource
             'branch_id' => $this->branch_id,
             'tgl_speciment' => $this->tgl_speciment,
             'file' => $this->file,
-            'branch_name' => $this->branches->branch_name
+            'branch_name' => $this->branches->branch_name,
+            'branch_code' => $this->branches->branch_code
         ];
     }
 }

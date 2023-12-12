@@ -376,7 +376,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
               <Input
                 label="Kantor Cabang"
                 disabled={processing}
-                defaultValue={data.branches.branch_name}
+                defaultValue={data.branch_name}
               />
               <Input
                 label="Status"
@@ -426,7 +426,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.no_surat} - {data.branches.branch_name}
+              {data.no_surat} - {data.branch_name}
             </span>{" "}
             ?
           </Typography>

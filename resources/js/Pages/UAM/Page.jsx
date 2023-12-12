@@ -277,16 +277,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                   </Option>
                 ))}
               </Select>
-              <Select
-                label="Entitas"
-                value={`${data.entity || ""}`}
-                disabled={processing}
-                onChange={(e) => setData("entity", e)}
-              >
-                <Option value="bss">BSS</Option>
-                <Option value="ksp">KSP</Option>
-              </Select>
-
               {data.position === "5" && (
                 <Select
                   label="Branch"

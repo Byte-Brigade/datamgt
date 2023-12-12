@@ -26,7 +26,6 @@ class LicensesResource extends JsonResource
             'apar' => isset($this->ops_apar) ? 'Ada' : 'Tidak Ada',
             'skoperasional' => isset($this->ops_skoperasional) ? 'Ada' : 'Tidak Ada',
             'pajak_reklame' => isset($this->ops_pajak_reklames) ? 'Ada' : 'Tidak Ada',
-
         ];
     }
 }
