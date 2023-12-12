@@ -70,18 +70,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
         Route::middleware(['check.branchcode'])->group(function () {
-          Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-          Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+            Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+            Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
         });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
-
     });
-
-
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
@@ -275,7 +272,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/apar', [OpsAparController::class, 'store'])->name('apar.store');
 
 
-            Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
+            Route::get('/apar/detail/{slug}', [OpsAparController::class, 'detail'])->name('apar.detail');
             Route::get('/apar/export', [OpsAparController::class, 'export'])->name('apar.export');
             /* [END] Ops APAR */
 

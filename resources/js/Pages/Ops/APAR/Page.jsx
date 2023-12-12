@@ -60,7 +60,7 @@ export default function Apar({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("ops.apar.detail", data.branch_code)}>
+        <Link href={route("ops.apar.detail", data.slug)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),

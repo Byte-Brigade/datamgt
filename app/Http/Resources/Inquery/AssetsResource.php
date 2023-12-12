@@ -20,6 +20,7 @@ class AssetsResource extends JsonResource
             'branch_name' => $this->branch_name,
             'branch_code' => $this->branch_code,
             'assets' => $this->gap_assets,
+            'type_name' => $this->branch_types->type_name,
             'slug' => $this->slug,
         ];
     }

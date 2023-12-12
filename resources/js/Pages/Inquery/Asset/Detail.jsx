@@ -3,41 +3,25 @@ import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
-import { useFormContext } from "@/Components/Context/FormProvider";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-  Option,
-  Select,
-  Typography,
-} from "@material-tailwind/react";
-import { useEffect, useState } from "react";
-import { FormProvider } from "@/Components/Context/FormProvider";
+import { Button } from "@material-tailwind/react";
+
 export default function Detail({ auth, branch, sessions }) {
   const headings = [
     {
-      name: 'Scoring Schedule',
+      name: "Scoring Schedule",
       rowsSpan: 3,
       colsSpan: 2,
     },
     {
-      name: 'Jumlah Vendor',
+      name: "Jumlah Vendor",
       rowsSpan: 3,
       colsSpan: 2,
     },
     {
-      name: 'Type Scoring',
+      name: "Type Scoring",
       colsSpan: 7,
-    }
-  ]
+    },
+  ];
   const columns = [
     {
       name: "Asset Number",
@@ -59,31 +43,31 @@ export default function Detail({ auth, branch, sessions }) {
       name: "Assst Cost",
       field: "asset_cost",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       sortable: true,
       render: (data) => {
-        return data.asset_cost ? data.asset_cost.toLocaleString('id-ID') : 0
-      }
+        return data.asset_cost ? data.asset_cost.toLocaleString("id-ID") : 0;
+      },
     },
     {
       name: "Depre Exp",
       field: "depre_exp",
       className: "text-right",
       sortable: true,
-      type: 'custom',
+      type: "custom",
       render: (data) => {
-        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : 0
-      }
+        return data.depre_exp ? data.depre_exp.toLocaleString("id-ID") : 0;
+      },
     },
     {
       name: "Accum Depre",
       field: "accum_depre",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       sortable: true,
       render: (data) => {
-        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : 0
-      }
+        return data.accum_depre ? data.accum_depre.toLocaleString("id-ID") : 0;
+      },
     },
     {
       name: "Net Book Value",
@@ -112,15 +96,14 @@ export default function Detail({ auth, branch, sessions }) {
       className: "text-center",
       sortable: true,
     },
-
     {
       name: "Remark",
-      field: 'remark',
+      field: "remark",
       remark: true,
-      method: 'post'
-    }
+      method: "post",
+    },
   ];
-  
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Assets" />
@@ -129,21 +112,20 @@ export default function Detail({ auth, branch, sessions }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
 
-            <DataTable
-              columns={columns}
-              fetchUrl={`/api/gap/assets`}
-              bordered={true}
-              submitUrl={`inquery.assets.remark`}
-              parameters={{ branch_code: branch.branch_code }}
+          <DataTable
+            columns={columns}
+            fetchUrl={`/api/gap/assets`}
+            bordered={true}
+            submitUrl={`inquery.assets.remark`}
+            parameters={{ branch_code: branch.branch_code }}
+          >
+            <Button
+              type="submit"
+              className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
             >
-
-              <Button type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-
-              >
-                Submit
-              </Button>
-            </DataTable>
+              Submit
+            </Button>
+          </DataTable>
         </div>
       </div>
     </AuthenticatedLayout>

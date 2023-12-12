@@ -13,7 +13,7 @@ export default function Page({ sessions, auth }) {
     },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
       className: 'text-center'
     },
     {
