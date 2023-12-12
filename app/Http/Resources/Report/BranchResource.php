@@ -41,11 +41,12 @@ class BranchResource extends JsonResource
             'jumlah_karyawan' => $this->employees->count() > 0 ? $this->employees->count() . ' Orang' : 'Tidak Ada',
             'perizinan' => $this->gap_disnaker->count() > 0
                 ? 'Ada' : 'Tidak Ada',
-            'kdo_mobil' => $this->gap_kdo_mobil->count(),
+            'kdo_mobil' => $this->gap_kdo->count(),
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada' ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
-            'branch_types' => $this->branch_types,
+            'type_name' => $this->branch_types->type_name,
+            'slug' => $this->slug
         ];
     }
 }

@@ -1,16 +1,12 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
-import PrimaryButton from "@/Components/PrimaryButton";
-import Modal from "@/Components/Reports/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head } from "@inertiajs/react";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import { useFormContext } from "@/Components/Context/FormProvider";
-
 import {
   Button,
   Dialog,
@@ -26,10 +22,6 @@ import {
 import { useEffect, useState } from "react";
 import { FormProvider } from "@/Components/Context/FormProvider";
 export default function Detail({ auth, branch, sessions }) {
-
-
-
-
   const headings = [
     {
       name: 'Scoring Schedule',
@@ -47,7 +39,6 @@ export default function Detail({ auth, branch, sessions }) {
     }
   ]
   const columns = [
-
     {
       name: "Asset Number",
       field: "asset_number",
@@ -115,8 +106,6 @@ export default function Detail({ auth, branch, sessions }) {
       field: "minor_category",
       className: "text-center",
     },
-
-
     {
       name: "Category",
       field: "category",
@@ -131,9 +120,7 @@ export default function Detail({ auth, branch, sessions }) {
       method: 'post'
     }
   ];
-
-
-
+  
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Assets" />
@@ -157,8 +144,6 @@ export default function Detail({ auth, branch, sessions }) {
                 Submit
               </Button>
             </DataTable>
-
-
         </div>
       </div>
     </AuthenticatedLayout>

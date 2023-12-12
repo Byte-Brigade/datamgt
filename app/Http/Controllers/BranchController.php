@@ -28,10 +28,12 @@ class BranchController extends Controller
 
     public function index(Request $request)
     {
+        $areas = Branch::distinct()->whereNotNull('area')->pluck('area');
 
         return Inertia::render('Ops/Cabang/Page', [
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
+            'areas' => $areas
         ]);
     }
 
