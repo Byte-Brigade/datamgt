@@ -583,7 +583,7 @@ export default function DataTable({
                 {columns.filter(column => column.agg !== undefined).length > 0 &&
                   <tr className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && 'divide-x-2 divide-slate-200'}`}>
                     <td className="font-bold text-center">
-                      Total
+                      Subtotal
                     </td>
                     {columns.map(column => (
                       column.agg === "sum" ? (

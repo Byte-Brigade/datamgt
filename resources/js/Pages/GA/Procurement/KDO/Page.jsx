@@ -1,12 +1,12 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
@@ -56,6 +56,7 @@ export default function Page({ auth, branches, sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
+  const [active, setActive] = useState("cabang");
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
@@ -94,6 +95,40 @@ export default function Page({ auth, branches, sessions }) {
         </Link>
       ),
     },
+  ];
+  const columnsVendor = [
+    { name: "Vendor", field: "vendor" },
+    {
+      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
+      agg: 'sum'
+    },
+    {
+      name: "Sewa Perbulan",
+      field: "sewa_perbulan",
+      agg: 'sum',
+      type: 'custom',
+      format: 'currency',
+      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
+      className: "text-right"
+    },
+    {
+      name: "Jatuh Tempo",
+      field: "akhir_sewa",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center"
+    },
+
+    // {
+    //   name: "Detail KDO",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -175,7 +210,30 @@ export default function Page({ auth, branches, sessions }) {
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
+
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <div className="grid grid-cols-4 gap-4 mb-2">
+
+            <CardMenu
+              label="Cabang"
+              data
+              type="cabang"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("cabang")}
+              color="purple"
+            />
+            <CardMenu
+              label="Vendor"
+              data
+              type="vendor"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("vendor")}
+              color="purple"
+            />
+
+          </div>
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
@@ -192,11 +250,20 @@ export default function Page({ auth, branches, sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <DataTable
+          {active === "cabang" && (
+            <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/kdos"}
+            fetchUrl={"/api/gap/kdos/cabang"}
             refreshUrl={isRefreshed}
           />
+          )}
+          {active === "vendor" && (
+            <DataTable
+            columns={columnsVendor}
+            fetchUrl={"/api/gap/kdos/vendor"}
+            refreshUrl={isRefreshed}
+          />
+          )}
         </div>
       </div>
       {/* Modal Import */}
