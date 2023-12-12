@@ -142,7 +142,8 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
-            Route::get('/toners/{type}', [GapTonerController::class, 'detail'])->name('toners.type');
+            Route::get('/toners/{type}', [GapTonerController::class, 'type'])->name('toners.type');
+            Route::get('/toners/{branch_code}/detail', [GapTonerController::class, 'detail'])->name('toners.detail');
             Route::post('/toners/import', [GapTonerController::class, 'import'])->name('toners.import');
             Route::post('/toners', [GapTonerController::class, 'store'])->name('toners.store');
             Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');

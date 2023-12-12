@@ -92,7 +92,7 @@ class GapApiController extends Controller
                 ];
             });
         } else if ($type == 'vendor') {
-            $collections = $collections->groupBy('vendor')->map(function($kdos, $vendor) {
+            $collections = $collections->groupBy('vendor')->map(function ($kdos, $vendor) {
                 $biaya_sewa = $kdos->flatMap(function ($mobil) {
                     return $mobil->biaya_sewas;
                 })->groupBy('periode')->sortKeysDesc()->first();
@@ -408,6 +408,46 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->whereHas('branches', function ($q) use ($searchQuery) {
+                    $q->where('branch_name', 'like', $searchQuery);
+                });
+            });
+        }
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        }
+
+
+
+        $data = $query->get();
+
+        $collections = $data->groupBy('branch_id')->map(function ($toners, $id) {
+            $branch = Branch::find($id);
+            return [
+                'branch_id' => $id,
+                'branch_name' => $branch->branch_name,
+                'branch_code' => $branch->branch_code,
+                'quantity' => $toners->sum('quantity'),
+                'price' => $toners->sum('price'),
+            ];
+        });
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+
+    public function toner_details(GapToner $gap_toner, Request $request, $branch_code)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $branch = Branch::where('branch_code', $branch_code)->first();
+        $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";

@@ -6,7 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -58,7 +58,7 @@ export default function Page({ auth, branches, sessions }) {
     { name: "Branch Type", sortable: true, field: "branch_type" },
     { name: "Kategori", sortable: true, field: "category" },
     { name: "Status", sortable: true, field: "status" },
-    { name: "Target", sortable: true, field: "target" },
+    { name: "Target", sortable: true, field: "target", type: 'date' },
     { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
     {
       name: "All Progress", sortable: true, field: "all_progress",

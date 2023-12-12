@@ -1,14 +1,13 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -17,13 +16,11 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth,  sessions, type, type_item }) {
+export default function Page({ auth,  sessions, branch_code }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -52,41 +49,59 @@ export default function Detail({ auth,  sessions, type, type_item }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
+
   const columns = [
 
     {
-      name: "Jenis Pekerjaan",
-      field: "jenis_pekerjaan",
+      name: "Invoice No",
+      field: "invoice",
+
     },
     {
-      name: "Nama Pegawai",
-      field: "nama_pegawai",
+      name: "Cabang",
+      field: "branches.branch_name",
+
     },
     {
-      name: "User",
-      field: "user",
+      name: 'Tipe Cabang',
+      field: 'branch_types.type_name'
+    },
+
+    {
+      name: 'Cartridge Order',
+      field : 'cartridge_order',
     },
     {
-      name: "Lokasi",
-      field: "lokasi",
+      name: 'Quantity',
+      field : 'quantity',
+      agg: 'sum',
     },
     {
-      name: "Vendor",
-      field: "vendor",
-    },
-    {
-      name: "Cost",
-      field: "cost",
-      className: "text-center",
+      name: 'Unit Price',
       type: 'custom',
-      render: (data) => data.cost.toLocaleString('id-ID')
+      field : 'price',
+      format:'currency',
+      className: 'text-right',
+      render: (data) => data.price.toLocaleString('id-ID'),
+      agg: 'sum',
     },
+    {
+      name: 'Total Price',
+      field : 'total',
+      className: 'text-right',
+      type: 'custom',
+      format:'currency',
+      agg: 'sum',
+      render: (data) => data.total.toLocaleString('id-ID'),
+    },
+
+
     // {
     //   name: "Detail",
     //   field: "detail",
     //   className: "text-center",
     //   render: (data) => (
-    //     <Link href={route("gap.alihdayas.detail", data.divisi_pembebanan)}>
+    //     <Link href={route("gap.toners.detail", data.vendor)}>
     //       <Button variant="outlined">Detail</Button>
     //     </Link>
     //   ),
@@ -95,11 +110,12 @@ export default function Detail({ auth,  sessions, type, type_item }) {
 
   ];
 
+
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.alihdayas.import"), {
+    post(route("gap.toners.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -111,13 +127,13 @@ export default function Detail({ auth,  sessions, type, type_item }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.alihdayas.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.alihdayas.update", data.id), {
+    put(route("gap.toners.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -128,7 +144,7 @@ export default function Detail({ auth,  sessions, type, type_item }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.alihdayas.store"), {
+    post(route("gap.toners.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -140,7 +156,7 @@ export default function Detail({ auth,  sessions, type, type_item }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.alihdayas.delete", data.id), {
+    destroy(route("gap.toners.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -193,9 +209,11 @@ export default function Detail({ auth,  sessions, type, type_item }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
+            fetchUrl={`/api/gap/toners/${branch_code}`}
             refreshUrl={isRefreshed}
+            bordered={true}
           />
+
         </div>
       </div>
       {/* Modal Import */}
