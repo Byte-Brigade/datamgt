@@ -276,15 +276,6 @@ export default function UAM({ positions, sessions, permissions, auth }) {
                   </Option>
                 ))}
               </Select>
-              <Select
-                label="Entitas"
-                value={`${data.entity || ""}`}
-                disabled={processing}
-                onChange={(e) => setData("entity", e)}
-              >
-                <Option value="bss">BSS</Option>
-                <Option value="ksp">KSP</Option>
-              </Select>
               <Input
                 v-model="password"
                 type="password"

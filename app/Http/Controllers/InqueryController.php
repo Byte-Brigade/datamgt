@@ -24,9 +24,9 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Branch/Page');
     }
 
-    public function branchDetail($id)
+    public function branchDetail($slug)
     {
-        $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
+        $branch = Branch::with('employees')->where('slug', $slug)->firstOrFail();
         $positions = EmployeePosition::get();
 
         // Lisensi
@@ -113,9 +113,9 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Lisensi/Page');
     }
 
-    public function asset_detail($id)
+    public function asset_detail($slug)
     {
-        $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
+        $branch = Branch::with('employees')->where('slug', $slug)->firstOrFail();
         return Inertia::render('Inquery/Asset/Detail', [
             'branch' => $branch,
         ]);

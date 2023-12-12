@@ -1,27 +1,8 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
-import PrimaryButton from "@/Components/PrimaryButton";
-import Modal from "@/Components/Reports/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-  Option,
-  Select,
-  Typography,
-} from "@material-tailwind/react";
-import { useState } from "react";
+import { Head } from "@inertiajs/react";
 
 export default function Detail({ auth, branch, sessions }) {
 
@@ -111,8 +92,6 @@ export default function Detail({ auth, branch, sessions }) {
       field: "minor_category",
       className: "text-center",
     },
-
-
     {
       name: "Category",
       field: "category",

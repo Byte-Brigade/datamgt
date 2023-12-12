@@ -57,11 +57,7 @@ class InfraApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
-
-
         $data = $query->paginate($perpage);
-
-
 
         return SewaGedungResource::collection($data);
     }

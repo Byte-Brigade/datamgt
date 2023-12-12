@@ -28,10 +28,10 @@ class ReportController extends Controller
     }
 
 
-    public function disnaker($branch_code)
+    public function disnaker($slug)
     {
-        $disnaker = GapDisnaker::whereHas('branches', function ($query) use ($branch_code) {
-            $query->where('branch_code', $branch_code);
+        $disnaker = GapDisnaker::whereHas('branches', function ($query) use ($slug) {
+            $query->where('slug', $slug);
         })->with('branches')->first();
 
         return Inertia::render('GA/Infra/Disnaker/Detail', [

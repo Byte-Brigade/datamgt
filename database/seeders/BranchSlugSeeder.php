@@ -20,13 +20,13 @@ class BranchSlugSeeder extends Seeder
         foreach($branch_names as $branch) {
             $name = $branch->branch_name;
             $type = $branch->branch_types->type_name;
-            $type = strtolower($type);
             $branches = Branch::with('branch_types')->where('branch_name', $name)->get();
 
             if ($branches->count() > 1 && (in_array($type, $branches->pluck('branch_types.type_name')->toArray()))) {
                 $type = 'kf';
             }
 
+            $type = strtolower($type);
             $name = strtolower($name);
             $name = explode(' ', $name);
             array_unshift($name, $type);

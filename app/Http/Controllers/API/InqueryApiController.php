@@ -101,7 +101,6 @@ class InqueryApiController extends Controller
         $query = $branch->with(['branch_types','ops_pajak_reklames','gap_disnaker','ops_apar','ops_skoperasional','ops_skbirtgs'])->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
             $type_name = $input['branch_types_type_name'];
@@ -126,12 +125,8 @@ class InqueryApiController extends Controller
             });
         }
 
-
         $branches = $query->paginate($perpage);
 
         return LicensesResource::collection($branches);
     }
-
-
-
 }
