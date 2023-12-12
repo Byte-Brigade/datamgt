@@ -1,9 +1,8 @@
 import { DateTime } from "@/Utils/DateTime";
 import {
-  Bars2Icon,
   Bars3Icon,
   ChevronDownIcon,
-  UserCircleIcon,
+  UserCircleIcon
 } from "@heroicons/react/24/outline";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import { Link, usePage } from "@inertiajs/react";
@@ -17,9 +16,7 @@ import {
   Navbar,
   Typography,
 } from "@material-tailwind/react";
-import React from "react";
-import { createElement } from "react";
-import { useState } from "react";
+import { createElement, useState } from "react";
 
 // profile menu component
 const profileMenuItems = [
@@ -43,6 +40,7 @@ const profileMenuItems = [
 ];
 
 function ProfileMenu({ auth }) {
+  console.log(auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
   return (
@@ -138,7 +136,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
                 </Typography>
               </div>
             </div>
-            <ProfileMenu />
+            <ProfileMenu auth={auth} />
           </div>
         )}
       </div>

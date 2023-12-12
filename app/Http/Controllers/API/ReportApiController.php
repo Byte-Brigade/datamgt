@@ -64,20 +64,32 @@ class ReportApiController extends Controller
 
         $query = $query->get();
 
-        $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
-            return $bros->map(function ($bros, $branch_type) use ($category){
-                    return [
-                        'category' => $category,
-                        'branch_type' => $branch_type,
-                        'target' => $bros->count(),
-                        'done' => $bros->where('status', 'Done')->count(),
-                        'on_progress' => $bros->where('status', 'On Progress')->count(),
-                        'not_start' => $bros->where('all_progress', 0)->count(),
-                        'drop' => $bros->where('status', 'Drop')->count(),
-                    ];
-                });
+        // $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
+        //     return $bros->map(function ($bros, $branch_type) use ($category){
+        //             return [
+        //                 'category' => $category,
+        //                 'branch_type' => $branch_type,
+        //                 'target' => $bros->count(),
+        //                 'done' => $bros->where('status', 'Done')->count(),
+        //                 'on_progress' => $bros->where('status', 'On Progress')->count(),
+        //                 'not_start' => $bros->where('all_progress', 0)->count(),
+        //                 'drop' => $bros->where('status', 'Drop')->count(),
+        //             ];
+        //         });
 
-        })->flatten(1);
+        // })->flatten(1);
+
+        $collections = $query->sortBy('category')->groupBy('category')->map(function ($bros, $category) {
+            return  [
+                'category' => $category,
+                'target' => $bros->count(),
+                'done' => $bros->where('status', 'Done')->count(),
+                'on_progress' => $bros->where('status', 'On Progress')->count(),
+                'not_start' => $bros->where('all_progress', 0)->count(),
+                'drop' => $bros->where('status', 'Drop')->count(),
+            ];
+
+        });
 
 
 

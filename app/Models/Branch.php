@@ -34,6 +34,11 @@ class Branch extends Model
         'file_ojk',
     ];
 
+    public function users()
+    {
+        return $this->hasMany(User::class, 'branch_id');
+    }
+
     public function branch_types()
     {
         return $this->belongsTo(BranchType::class, 'branch_type_id', 'id');
@@ -95,6 +100,11 @@ class Branch extends Model
     public function gap_toners()
     {
         return $this->hasMany(GapToner::class, 'branch_id');
+    }
+
+    public function gap_stos()
+    {
+        return $this->hasOne(GapSto::class, 'branch_id');
     }
 }
 

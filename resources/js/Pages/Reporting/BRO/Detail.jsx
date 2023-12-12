@@ -1,14 +1,14 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
-import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -23,22 +23,17 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Detail({ auth, branches, category, sessions }) {
   const initialData = {
     branch_id: 0,
+    jenis_perizinan_id: 0,
+    tgl_pengesahan: null,
+    tgl_masa_berlaku: null,
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    jumlah_kendaraan: null,
-    jumlah_driver: null,
-    sewa_kendaraan: null,
-    biaya_driver: null,
-    ot: null,
-    rfid: null,
-    non_rfid: null,
-    grab: null,
-    periode: null,
+    expired_date: null,
   };
   const {
     data,
@@ -52,90 +47,48 @@ export default function Page({ auth, branches, sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [active, setActive] = useState("cabang");
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
+    { name: "Branch Name", sortable: true, field: "branch_name" },
+    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Kategori", sortable: true, field: "category" },
+    { name: "Status", sortable: true, field: "status" },
+    { name: "Target", sortable: true, field: "target" },
+    { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
     {
-      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
-      agg: 'sum'
-    },
-    {
-      name: "Tipe Cabang",
-      field: "branch_types.type_name",
-    },
-    {
-      name: "Sewa Perbulan",
-      field: "sewa_perbulan",
-      agg: 'sum',
-      type: 'custom',
-      format: 'currency',
-      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
-      className: "text-right"
-    },
-    {
-      name: "Jatuh Tempo",
-      field: "akhir_sewa",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center"
+      name: "All Progress", sortable: true, field: "all_progress",
+      type: "custom",
+      render: (data) => (data.all_progress * 100).toFixed(2) + "%"
     },
 
     {
-      name: "Detail KDO",
-      field: "detail",
+      name: "Action",
+      field: "action",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
-          <Button variant="outlined">Detail</Button>
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
   ];
-  const columnsVendor = [
-    { name: "Vendor", field: "vendor" },
-    {
-      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
-      agg: 'sum'
-    },
-    {
-      name: "Sewa Perbulan",
-      field: "sewa_perbulan",
-      agg: 'sum',
-      type: 'custom',
-      format: 'currency',
-      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
-      className: "text-right"
-    },
-    {
-      name: "Jatuh Tempo",
-      field: "akhir_sewa",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center"
-    },
-
-    // {
-    //   name: "Detail KDO",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
-  ];
-
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.kdos.import"), {
+    post(route("infra.bros.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -147,14 +100,24 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.kdos.export") + `?branch=${branch}`, "_self");
+    window.open(route("infra.bros.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
+  };
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("infra.bros.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.kdos.update", data.id), {
-      method: "put",
+    post(route("infra.bros.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -164,7 +127,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.kdos.store"), {
+    post(route("infra.bros.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -176,7 +139,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.kdos.delete", data.id), {
+    destroy(route("infra.bros.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -193,6 +156,10 @@ export default function Page({ auth, branches, sessions }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
+  };
+
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -206,36 +173,22 @@ export default function Page({ auth, branches, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA | Sewa Gedung" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
-
-            <CardMenu
-              label="Cabang"
-              data
-              type="cabang"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("cabang")}
-              color="purple"
-            />
-            <CardMenu
-              label="Vendor"
-              data
-              type="vendor"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("vendor")}
-              color="purple"
-            />
-
-          </div>
           <div className="flex items-center justify-between mb-4">
             <div>
+              <PrimaryButton
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add
+                </div>
+              </PrimaryButton>
               <PrimaryButton
                 className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                 onClick={toggleModalImport}
@@ -250,20 +203,13 @@ export default function Page({ auth, branches, sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          {active === "cabang" && (
-            <DataTable
+          <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/kdos/cabang"}
+            className="w-[1200px]"
+            fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
+            parameters={{category: category}}
           />
-          )}
-          {active === "vendor" && (
-            <DataTable
-            columns={columnsVendor}
-            fetchUrl={"/api/gap/kdos/vendor"}
-            refreshUrl={isRefreshed}
-          />
-          )}
         </div>
       </div>
       {/* Modal Import */}
@@ -301,6 +247,47 @@ export default function Page({ auth, branches, sessions }) {
                 Simpan
               </Button>
               <SecondaryButton type="button" onClick={toggleModalImport}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Tutup
               </SecondaryButton>
             </div>
@@ -348,18 +335,50 @@ export default function Page({ auth, branches, sessions }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("expired_date", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
               />
               <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
                 disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
+              />
+              <Input
+                label="Upload Lampiran"
+                type="file"
+                disabled={processing}
+                name="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  return setData("file", e.target.files[0]);
+                }}
               />
             </div>
           </DialogBody>
@@ -390,7 +409,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll max-h-96" divider>
+          <DialogBody className="overflow-y-scroll " divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -406,59 +425,26 @@ export default function Page({ auth, branches, sessions }) {
               </Select>
 
               <Input
-                label="Jumlah Kendaraan"
-                value={data.jumlah_kendaraan || ""}
-                disabled={processing}
-                onChange={(e) => setData("jumlah_kendaraan", e.target.value)}
-              />
-              <Input
-                label="Jumlah Driver"
-                value={data.jumlah_driver || ""}
-                disabled={processing}
-                onChange={(e) => setData("jumlah_driver", e.target.value)}
-              />
-              <Input
-                label="Sewa Kendaraan"
-                value={data.sewa_kendaraan || ""}
-                disabled={processing}
-                onChange={(e) => setData("sewa_kendaraan", e.target.value)}
-              />
-              <Input
-                label="Biaya Driver"
-                value={data.biaya_driver || ""}
-                disabled={processing}
-                onChange={(e) => setData("biaya_driver", e.target.value)}
-              />
-              <Input
-                label="OT"
-                value={data.ot || ""}
-                disabled={processing}
-                onChange={(e) => setData("ot", e.target.value)}
-              />
-              <Input
-                label="RFID"
-                value={data.rfid || ""}
-                disabled={processing}
-                onChange={(e) => setData("rfid", e.target.value)}
-              />
-              <Input
-                label="NON RFID"
-                value={data.non_rfid || ""}
-                disabled={processing}
-                onChange={(e) => setData("non_rfid", e.target.value)}
-              />
-              <Input
-                label="GRAB"
-                value={data.grab || ""}
-                disabled={processing}
-                onChange={(e) => setData("grab", e.target.value)}
-              />
-              <Input
-                label="Periode"
-                value={data.expired_date || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("periode", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+              />
+              <Input
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
             </div>
           </DialogBody>

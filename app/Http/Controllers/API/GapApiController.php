@@ -50,11 +50,19 @@ class GapApiController extends Controller
                     });
             });
         }
-        $data = $query->paginate($perpage);
-        return AssetsResource::collection($data);
+
+
+        if ($perpage == "All") {
+            $query = $query->get();
+        } else {
+            $query = $query->paginate($perpage);
+        }
+
+
+        return AssetsResource::collection($query);
     }
 
-    public function kdos(GapKdo $gap_kdo, Request $request)
+    public function kdos(GapKdo $gap_kdo, Request $request, $type)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
@@ -68,21 +76,36 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
-        $query = $query->get();
+        $collections = $query->get();
+        if ($type == 'cabang') {
+            $collections = $collections->groupBy('branches.id')->map(function ($kdos, $branch) {
+                $biaya_sewa = $kdos->flatMap(function ($mobil) {
+                    return $mobil->biaya_sewas;
+                })->groupBy('periode')->sortKeysDesc()->first();
+                return [
+                    'branches' => Branch::find($branch),
+                    'branch_types' => $kdos->first()->branches->branch_types,
+                    'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                        : 0,
+                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
+                ];
+            });
+        } else if ($type == 'vendor') {
+            $collections = $collections->groupBy('vendor')->map(function($kdos, $vendor) {
+                $biaya_sewa = $kdos->flatMap(function ($mobil) {
+                    return $mobil->biaya_sewas;
+                })->groupBy('periode')->sortKeysDesc()->first();
+                return [
+                    'vendor' => $vendor,
+                    'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                        : 0,
+                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
+                ];
+            });
+        }
 
-        $collections = $query->groupBy('branches.id')->map(function ($kdos, $branch) {
-            $biaya_sewa = $kdos->flatMap(function ($mobil) {
-                return $mobil->biaya_sewas;
-            })->groupBy('periode')->sortKeysDesc()->first();
-            return [
-                'branches' => Branch::find($branch),
-                'branch_types' => $kdos->first()->branches->branch_types,
-                'jumlah_kendaraan' => $kdos->count(),
-                'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
-                    : 0,
-                'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
-            ];
-        });
 
 
         if ($sortOrder == 'desc') {
@@ -269,8 +292,8 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
         if (!is_null($searchInput)) {
@@ -310,8 +333,8 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
         if (!is_null($searchInput)) {
@@ -390,12 +413,12 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->whereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    $q->where('branch_name', 'like', $searchQuery);
+                });
             });
         }
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('idecice_date',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
 

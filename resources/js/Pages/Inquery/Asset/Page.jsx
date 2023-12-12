@@ -1,30 +1,45 @@
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
+import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
-import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Head, Link, usePage } from "@inertiajs/react";
-import { Button } from "@material-tailwind/react";
-import { useState } from "react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 
 export default function Page({ sessions, auth, data }) {
   const { url } = usePage();
   const [active, setActive] = useState("asset");
+  const { handleFormSubmit, setInitialData, isRefreshed, setUrl, setId, modalOpen, setModalOpen, form } = useFormContext();
+
+  const toggleModalCreate = (id) => {
+    setInitialData({ disclaimer: null, branch_code: null })
+    setUrl("gap.stos.store")
+    form.setData('branch_code', id)
+
+    setModalOpen(prevModalOpen => {
+      const updatedModalOpen = { ...prevModalOpen, ['create']: !modalOpen.create }
+      return updatedModalOpen;
+    });
+  };
+
   const groupBy = (array, key) =>
-  array.reduce((result, item) => {
-    // Extract the value for the current key
-    const keyValue = item[key];
+    array.reduce((result, item) => {
+      // Extract the value for the current key
+      const keyValue = item[key];
 
-    // If the key doesn't exist in the result object, create it with an empty array
-    if (!result[keyValue]) {
-      result[keyValue] = [];
-    }
+      // If the key doesn't exist in the result object, create it with an empty array
+      if (!result[keyValue]) {
+        result[keyValue] = [];
+      }
 
-    // Push the current item to the array associated with the key
-    result[keyValue].push(item);
+      // Push the current item to the array associated with the key
+      result[keyValue].push(item);
 
-    return result;
-  }, {});
+      return result;
+    }, {});
 
   const headings = [
     {
@@ -67,7 +82,7 @@ export default function Page({ sessions, auth, data }) {
       name: 'Nilai Perolehan',
       field: 'nilai_perolehan_depre',
       className: "text-right",
-      agg:"sum",
+      agg: "sum",
       format: 'currency',
       type: "custom",
       render: (data) => {
@@ -169,6 +184,44 @@ export default function Page({ sessions, auth, data }) {
       ),
     },
   ];
+  const columnsSTO = [
+    {
+      name: "Cabang",
+      field: "branch_code",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("inquery.assets.detail", data.branch_code)}>
+          {data.branch_name}
+        </Link>
+      ),
+    },
+    {
+      name: "Total Remark", field: "total_remarked", className: "text-center",
+    },
+    {
+      name: "Sudah STO", field: "remarked", className: "text-center",
+      type: 'custom', render: (data) => data.remarked === 1 ? 'Sudah' : 'Belum'
+    },
+    {
+      name: "Disclaimer", field: "disclaimer", className: "text-center",
+
+    },
+
+    {
+      name: "Submit",
+      field: "detail",
+      className: "text-center",
+      render: (data) => (
+        <Button onClick={(e) => toggleModalCreate(data.branch_code)} variant="outlined">Submit</Button>
+
+      ),
+    },
+  ];
+
+
+
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="Inquery Data | Assets" />
@@ -176,42 +229,100 @@ export default function Page({ sessions, auth, data }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div className="grid grid-cols-4 gap-4 mb-2">
-          <CardMenu
-            label="Asset"
-            data
-            type="toner"
-            Icon={ArchiveBoxIcon}
-            active
-            onClick={() => setActive("asset")}
-            color="purple"
-          />
-          <CardMenu
-            label="Toner"
-            data
-            type="toner"
-            Icon={ArchiveBoxIcon}
-            active
-            onClick={() => setActive("toner")}
-            color="purple"
-          />
-          <CardMenu
-            label="KDO"
-            data
-            type="toner"
-            Icon={ArchiveBoxIcon}
-            active
-            onClick={() => setActive("kdo")}
-            color="purple"
-          />
+            <CardMenu
+              label="Asset"
+              data
+              type="toner"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("asset")}
+              color="purple"
+            />
+            <CardMenu
+              label="Toner"
+              data
+              type="toner"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("toner")}
+              color="purple"
+            />
+            <CardMenu
+              label="KDO"
+              data
+              type="kdo"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("kdo")}
+              color="purple"
+            />
+            <CardMenu
+              label="STO"
+              data
+              type="sto"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("sto")}
+              color="purple"
+            />
           </div>
 
           {active === "asset" && (
             <DataTable
               fetchUrl={"/api/inquery/assets"}
               columns={columns}
+
               headings={headings}
               bordered={true}
             />
+          )}
+          {active === "sto" && (
+
+            <>
+
+              <DataTable
+                fetchUrl={"/api/inquery/stos"}
+                columns={columnsSTO}
+
+                isRefreshed={isRefreshed}
+                bordered={true}
+              />
+              <Dialog open={modalOpen.create} handler={toggleModalCreate} size="md">
+                <DialogHeader className="flex items-center justify-between">
+                  Ubah Data
+                  <IconButton
+                    size="sm"
+                    variant="text"
+                    className="p-2"
+                    color="gray"
+                    onClick={toggleModalCreate}
+                  >
+                    <XMarkIcon className="w-6 h-6" />
+                  </IconButton>
+                </DialogHeader>
+                <form onSubmit={handleFormSubmit}>
+                  <DialogBody divider>
+                    <div className="flex flex-col gap-y-4">
+                      <Input
+                        label="Disclaimer"
+                        disabled={form.processing}
+                        onChange={(e) => form.setData("disclaimer", e.target.value)}
+                      />
+                    </div>
+                  </DialogBody>
+                  <DialogFooter>
+                    <div className="flex flex-row-reverse gap-x-4">
+                      <Button disabled={form.processing} type="submit">
+                        Ubah
+                      </Button>
+                      <SecondaryButton type="button" onClick={toggleModalCreate}>
+                        Tutup
+                      </SecondaryButton>
+                    </div>
+                  </DialogFooter>
+                </form>
+              </Dialog>
+            </>
           )}
 
           {/* Tabel ATM */}
@@ -312,11 +423,11 @@ export default function Page({ sessions, auth, data }) {
             </>
           )}
           {active === "kdo" && (
-                      <DataTable
-                      columns={columnsKdo}
-                      fetchUrl={"/api/gap/kdos"}
-                      bordered={true}
-                    />
+            <DataTable
+              columns={columnsKdo}
+              fetchUrl={"/api/gap/kdos"}
+              bordered={true}
+            />
           )}
         </div>
       </div>

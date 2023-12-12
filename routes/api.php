@@ -46,7 +46,7 @@ Route::get('uam', [UAMController::class, 'api']);
 Route::get('/dashboard/branch', [DashboardController::class, 'api']);
 
 Route::prefix('gap')->name('gap.')->group(function () {
-    Route::get('kdos', [GapApiController::class, 'kdos']);
+    Route::get('kdos/{type}', [GapApiController::class, 'kdos']);
     Route::get('kdos/{branch_id}', [GapApiController::class, 'kdo_mobil_details']);
     Route::get('assets', [GapApiController::class, 'assets']);
     Route::get('perdins', [GapApiController::class, 'perdins']);
@@ -64,8 +64,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
 Route::prefix('inquery')->name('inquery.')->group(function() {
     Route::get('assets', [InqueryApiController::class, 'assets']);
     Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
-    Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('branches');
-
+    Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
+    Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 

@@ -23,6 +23,20 @@ class GapKdoController extends Controller
 {
     public function index()
     {
+        // $collections = GapKdo::with('biaya_sewas')->get();
+        // $collections = $collections->groupBy('vendor')->map(function ($kdos, $vendor) {
+        //     $biaya_sewa = $kdos->flatMap(function ($mobil) {
+        //         return $mobil->biaya_sewas;
+        //     })->groupBy('periode')->sortKeysDesc()->first();
+        //     return [
+        //         'vendor' => $vendor,
+        //         'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+        //         'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+        //             : 0,
+        //         'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
+        //     ];
+        // });
+        // dd($collections);
 
         $branchesProps = Branch::get();
         return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branchesProps]);
@@ -32,7 +46,7 @@ class GapKdoController extends Controller
     {
         $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
             $query->where('branch_code', $branch_code);
-        })->with(['branches','biaya_sewas'])->first();
+        })->with(['branches', 'biaya_sewas'])->first();
 
         $currentYear = date('Y');
         $futureYears = range($currentYear, $currentYear + 10);
@@ -89,7 +103,7 @@ class GapKdoController extends Controller
                 ]);
             } else {
                 $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
-                if($request->biaya_sewa['value'] >0) {
+                if ($request->biaya_sewa['value'] > 0) {
 
                     $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
                 } else {

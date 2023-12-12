@@ -6,6 +6,7 @@ import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 import { ThemeProvider } from "@material-tailwind/react";
+import { FormProvider } from "./Components/Context/FormProvider";
 
 const appName =
   window.document.getElementsByTagName("title")[0]?.innerText || "PDBOM";
@@ -50,8 +51,10 @@ createInertiaApp({
     };
     root.render(
       <ThemeProvider value={theme}>
+        <FormProvider>
         <App {...props} />
-      </ThemeProvider>
+      </FormProvider>
+      </ThemeProvider >
     );
   },
   progress: {
