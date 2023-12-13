@@ -54,7 +54,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
     { name: "Nama Cabang", field: "branch_name", sortable: false },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
       sortable: false,
       filterable: true,
     },
@@ -72,7 +72,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
       name: "Izin Disnaker",
       field: "detail",
       render: (data) => (
-        <Link href={route("reporting.disnaker", data.branch_code)}>
+        <Link href={route("reporting.disnaker", data.slug)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),

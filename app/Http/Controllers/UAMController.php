@@ -77,11 +77,7 @@ class UAMController extends Controller
                 $email = $names[0] . '.' . $names[0];
             }
 
-            if ($request->entity == "bss") {
-                $email = $email . '@banksampoerna.com';
-            } else {
-                $email = $email . '@sahabat-ukm.co.id';
-            }
+            $email = $email . '@banksampoerna.com';
 
             $user = User::create([
                 'name' => $request->name,

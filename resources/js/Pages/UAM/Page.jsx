@@ -277,8 +277,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                   </Option>
                 ))}
               </Select>
-
-
               {data.position === "5" && (
                 <Select
                   label="Branch"

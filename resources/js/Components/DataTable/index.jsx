@@ -200,17 +200,19 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
+      if(Array.isArray(data.data)) {
+        if(data.data.some(data => data.remark)) {
 
-      if(data.data.some(data => data.remark)) {
+          const remarksData = data.data.reduce((acc, current) => {
+            const remark = Boolean(current.remark);
+            acc[current.id] = remark;
+            return acc;
+          }, {});
 
-        const remarksData = data.data.reduce((acc, current) => {
-          const remark = Boolean(current.remark);
-          acc[current.id] = remark;
-          return acc;
-        }, {});
-
-        setRemarks(remarksData);
+          setRemarks(remarksData);
+        }
       }
+
 
       setInitialData({ remark: {} })
       console.log(data.data);

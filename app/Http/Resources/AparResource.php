@@ -17,9 +17,9 @@ class AparResource extends JsonResource
         return [
             'id' => $this->id,
             'branch_id' => $this->branch_id,
-            'details' => $this->detail,
             'keterangan' => isset($this->detail) ? $this->detail->count().' Tabung' : 'Tidak Ada',
-            'branches' => $this->branches
+            'branch_code' => $this->branches->branch_code,
+            'branch_name' => $this->branches->branch_name,
         ];
     }
 }
