@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\BranchesExport;
-use App\Http\Resources\BranchResource;
-use App\Imports\BranchesImport;
+use Exception;
+use Inertia\Inertia;
 use App\Models\Branch;
 use App\Models\BranchType;
-use Exception;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Exports\BranchesExport;
+use App\Imports\BranchesImport;
+use App\Http\Resources\BranchResource;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class BranchController extends Controller
@@ -68,19 +69,38 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         try {
-
-            Branch::create([
+            $branch = Branch::create([
                 'branch_type_id' => $request->branch_type_id,
                 'branch_code' => $request->branch_code,
                 'branch_name' => $request->branch_name,
                 'address' => $request->address,
                 'telp' => $request->telp,
                 'layanan_atm' => $request->layanan_atm,
-                'npwp' => $request->npwp
+                'npwp' => $request->npwp,
+                'area' => $request->area,
             ]);
 
-            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+            $branch_type = strtolower($branch->branch_types->type_name);
+            $branch_name = strtolower($request->branch_name);
+            if ($branch_type == 'kfno' || $branch_type == 'kfo') {
+                $branch_type = 'kf';
+            }
+
+            $slug = Str::slug($branch_type . " " . $branch_name, '-');
+            $branch->slug = $slug;
+            $branch->save();
+
+            if (!is_null($request->file('file_ojk'))) {
+                $file = $request->file('file_ojk');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+
+                $branch->file_ojk = $fileName;
+                $branch->save();
+            }
+
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil ditambah']);
+        } catch (Exception $e) {
             return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
@@ -118,8 +138,30 @@ class BranchController extends Controller
                 'layanan_atm' => $layanan_atm,
             ]);
 
+            if ($branch->isDirty(['branch_code', 'branch_name'])) {
+                $branch_type = strtolower($branch->branch_types->type_name);
+                $branch_name = strtolower($request->branch_name);
+
+                if ($branch_type == 'kfno' || $branch_type == 'kfo') {
+                    $branch_type = 'kf';
+                }
+
+                $slug = Str::slug($branch_type . " " . $branch_name, '-');
+                $branch->slug = $slug;
+                $branch->save();
+            }
+
+            if (!is_null($request->file('file_ojk'))) {
+                $file = $request->file('file_ojk');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+
+                $branch->file_ojk = $fileName;
+                $branch->save();
+            }
+
             return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
@@ -127,6 +169,7 @@ class BranchController extends Controller
     public function destroy($id)
     {
         $branch = Branch::find($id);
+        Storage::disk('public')->delete('ops/branches/' . $branch->id . '/');
         $branch->delete();
 
         return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);

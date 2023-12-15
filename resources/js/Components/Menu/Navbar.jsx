@@ -40,7 +40,6 @@ const profileMenuItems = [
 ];
 
 function ProfileMenu({ auth }) {
-  console.log(auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
   return (

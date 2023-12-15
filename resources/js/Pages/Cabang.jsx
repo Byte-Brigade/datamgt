@@ -21,7 +21,7 @@ import { useEffect } from "react";
 export default function Branch({ sessions, auth }) {
   const { url } = usePage();
   const [active, setActive] = useState("branch");
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState("branch");
   const contentRef = useRef(null);
 
   const handleItemClick = (item) => {
