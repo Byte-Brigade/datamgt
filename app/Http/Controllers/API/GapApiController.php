@@ -39,6 +39,9 @@ class GapApiController extends Controller
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
         }
+        if (!is_null($request->category)) {
+            $query = $query->where('category', $request->category);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
@@ -114,7 +117,7 @@ class GapApiController extends Controller
             $collections = $collections->sortBy($sortFieldInput);
         }
 
-        return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
     public function kdo_mobil_details(GapKdo $gap_kdo_mobil, Request $request, $branch_id)
@@ -305,18 +308,34 @@ class GapApiController extends Controller
         }
 
         $query = $query->get();
+        $collections = collect([]);
+        if(!is_null($request->summary) && $request->summary == "divisi") {
+            $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
+                return [
+                    'divisi_pembebanan' => $divisi,
+                    'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                    'ka' => $perdins->where('category', 'KA')->sum('value'),
+                    'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                    'total' => $perdins->sum('value')
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['total'];
+            });
+        } else if (!is_null($request->summary) && $request->summary == "spender")
+        {
+            $collections = $query->groupBy('user')->map(function ($perdins, $user) {
+                return [
+                    'user' => $user,
+                    'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                    'ka' => $perdins->where('category', 'KA')->sum('value'),
+                    'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                    'total' => $perdins->sum('value')
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['total'];
+            });
+        }
 
-        $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
-            return [
-                'divisi_pembebanan' => $divisi,
-                'airline' => $perdins->where('category', 'Airline')->sum('value'),
-                'ka' => $perdins->where('category', 'KA')->sum('value'),
-                'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
-                'total' => $perdins->sum('value')
-            ];
-        })->sortByDesc(function ($item) {
-            return $item['total'];
-        });
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -345,8 +364,17 @@ class GapApiController extends Controller
             });
         }
 
-        $data = $query->paginate($perpage);
-        return PerdinResource::collection($data);
+        $data = $query->get();
+        $collections = $data->groupBy('periode')->map(function($perdins, $periode) {
+            return [
+                'periode' => Carbon::parse($periode)->format('F Y'),
+                'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                'ka' => $perdins->where('category', 'KA')->sum('value'),
+                'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                'total' => $perdins->sum('value'),
+            ];
+        });
+        return PaginationHelper::paginate($collections, $perpage);
     }
     public function alihdayas(GapAlihDaya $gap_alih_daya, Request $request)
     {

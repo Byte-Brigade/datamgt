@@ -22,7 +22,8 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
     {
         foreach ($rows as $row) {
             $unit = str_contains($row['unit'], 'KF') ? trim(str_replace('KF', '', $row['unit'])) : $row['unit'];
-            $branches = Branch::where('branch_name', 'like', '%' . $unit == 'KPO' ? 'Kantor Pusat' : $unit . '%')->get();
+            $branches = Branch::where('branch_name', 'like', '%' . ($unit == 'KPO' ? 'Kantor Pusat' : $unit) . '%')->get();
+
             $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));

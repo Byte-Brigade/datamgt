@@ -50,7 +50,7 @@ export default function DataTable({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
   const [remarks, setRemarks] = useState({});
   const [allMarked, setAllMarked] = useState(false);
-  const { form, setInitialData, handleFormSubmit, setUrl, isRefreshed } = useFormContext();
+  const { form, setInitialData, handleFormSubmit, setUrl, isRefreshed,selected, setSelected} = useFormContext();
   // filters
   const [filters, setFilters] = useState([]);
   const [filterData, setFilterData] = useState({});
@@ -105,22 +105,22 @@ export default function DataTable({
     setLastSelectedRowIndex(clickedRowIndex);
   }
 
-  const handleRowCheckboxChange = (e, id, url) => {
-    const newCheckedStatus = e.target.checked;
+  // const handleRowCheckboxChange = (e, id, url) => {
+  //   const newCheckedStatus = e.target.checked;
 
-    // Update the remarks state correctly
-    setRemarks((prevRemarks) => {
-      const updatedRemarks = { ...prevRemarks, [id]: newCheckedStatus };
-      console.log('Updated Remarks:', newCheckedStatus); // Add this line for debugging
-      console.log('Updated Remarks:', remarks); // Add this line for debugging
-      return updatedRemarks;
-    });
-
-
-    form.setData('remark', { ...remarks, [id]: newCheckedStatus });
+  //   // Update the remarks state correctly
+  //   setRemarks((prevRemarks) => {
+  //     const updatedRemarks = { ...prevRemarks, [id]: newCheckedStatus };
+  //     console.log('Updated Remarks:', newCheckedStatus); // Add this line for debugging
+  //     console.log('Updated Remarks:', remarks); // Add this line for debugging
+  //     return updatedRemarks;
+  //   });
 
 
-  }
+  //   form.setData('remark', { ...remarks, [id]: newCheckedStatus });
+
+
+  // }
 
 
 
@@ -184,6 +184,7 @@ export default function DataTable({
       sort_field: sortColumn,
       sort_order: sortOrder,
       search,
+
       ...filterData,
       ...dateRange
     };
@@ -194,22 +195,21 @@ export default function DataTable({
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
       // setSumData(data.data.reduce((total, item) => {
-      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
+    //   let value = parseInt(item[agg.name].replace(/\./g, ""));
 
       //   return total + value;
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
       if(Array.isArray(data.data)) {
-        if(data.data.some(data => data.remark)) {
+        if(data.data.some(data => data.remark !== undefined && data.remark !== null)) {
 
           const remarksData = data.data.reduce((acc, current) => {
-            const remark = Boolean(current.remark);
-            acc[current.id] = remark;
+            acc[current.id] = current.remark;
             return acc;
           }, {});
 
-          setRemarks(remarksData);
+          setSelected(remarksData);
         }
       }
 
@@ -569,7 +569,7 @@ export default function DataTable({
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                                ? column.render(data)
+                                ? (column.render(data) && column.render(data) != 0) ? column.render(data) : "-"
                                 : getNestedValue(data, column.field) || "-"}
                           </td>
                         )

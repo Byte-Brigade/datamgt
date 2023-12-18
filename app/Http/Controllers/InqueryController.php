@@ -120,7 +120,6 @@ class InqueryController extends Controller
     public function assets_remark(Request $request)
     {
         $remarks = $request->input('remark');
-
         // Format the data for createMany
         DB::beginTransaction();
         try {

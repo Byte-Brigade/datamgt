@@ -14,7 +14,8 @@ class GapPerdin extends Model
         'category',
         'periode',
         'value',
-        'tipe'
+        'tipe',
+        'user',
     ];
 
 }

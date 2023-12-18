@@ -65,13 +65,11 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-        Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
-        Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
-        Route::middleware(['check.branchcode'])->group(function () {
-          Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-          Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+        Route::middleware(['check.slug'])->group(function () {
+          Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+          Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
         });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');

@@ -1,27 +1,30 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
-import { useFormContext } from "@/Components/Context/FormProvider";
 import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-  Option,
-  Select,
-  Typography,
+  Button, Option, Select
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
-import { FormProvider } from "@/Components/Context/FormProvider";
+import { useState } from "react";
 export default function Detail({ auth, branch, sessions }) {
+  const { form, selected, setSelected } = useFormContext();
+  const [active, setActive] = useState("depre");
+
+  const handleChanged = (id, value) => {
+    setSelected((prevSelected) => {
+      const updatedSelected = { ...prevSelected, [id]: value };
+      console.log('Updated Selected:', value); // Add this line for debugging
+      console.log('Updated Selected:', selected); // Add this line for debugging
+      return updatedSelected;
+    });
+
+    form.setData('remark', { ...selected, [id]: value });
+  }
+
   const headings = [
     {
       name: 'Scoring Schedule',
@@ -62,7 +65,7 @@ export default function Detail({ auth, branch, sessions }) {
       type: 'custom',
       sortable: true,
       render: (data) => {
-        return data.asset_cost ? data.asset_cost.toLocaleString('id-ID') : 0
+        return data.asset_cost ? data.asset_cost.toLocaleString('id-ID') : '-'
       }
     },
     {
@@ -72,7 +75,7 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
       type: 'custom',
       render: (data) => {
-        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : 0
+        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : '-'
       }
     },
     {
@@ -82,7 +85,7 @@ export default function Detail({ auth, branch, sessions }) {
       type: 'custom',
       sortable: true,
       render: (data) => {
-        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : 0
+        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : '-'
       }
     },
     {
@@ -90,6 +93,8 @@ export default function Detail({ auth, branch, sessions }) {
       field: "net_book_value",
       className: "text-right",
       sortable: true,
+      type: 'custom',
+      render: (data) => data.net_book_value  ?data.net_book_value.toLocaleString('id-ID') : '-'
     },
     {
       name: "Asset Location",
@@ -116,11 +121,40 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Ada/Tidak",
       field: 'remark',
-      remark: true,
-      method: 'post'
+      type: 'custom',
+      render: (data) => (
+        <Select
+          className="bg-white"
+          label="Status"
+          value={`${data.remark || ""}`}
+          onChange={(e) => handleChanged(data.id, e)}
+        >
+          <Option value={`Ada`}>
+            Ada
+          </Option>
+          <Option value={`Tidak Ada`}>
+            Tidak Ada
+          </Option>
+          <Option value={`Ada Rusak`}>
+            Ada Rusak
+          </Option>
+          <Option value={`Sudah dihapus buku`}>
+            Sudah dihapus buku
+          </Option>
+          <Option value={`Mutasi`}>
+            Mutasi
+          </Option>
+          <Option value={`Lelang`}>
+            Lelang
+          </Option>
+          <Option value={`Non Asset`}>
+            Non Asset
+          </Option>
+        </Select>
+      )
     }
   ];
-  
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Assets" />
@@ -128,13 +162,35 @@ export default function Detail({ auth, branch, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <div className="grid grid-cols-4 gap-4 mb-2">
+            <CardMenu
+              label="Depre"
+              data
+              type="depre"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("depre")}
+              color="purple"
+            />
+            <CardMenu
+              label="Non-Depre"
+              data
+              type="nonDepre"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("nonDepre")}
+              color="purple"
+            />
 
+          </div>
+
+          {active == "depre" && (
             <DataTable
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
               submitUrl={`inquery.assets.remark`}
-              parameters={{ branch_code: branch.branch_code }}
+              parameters={{ branch_code: branch.branch_code, category: 'Depre' }}
             >
 
               <Button type="submit"
@@ -144,6 +200,26 @@ export default function Detail({ auth, branch, sessions }) {
                 Submit
               </Button>
             </DataTable>
+          )}
+
+          {active == "nonDepre" && (
+            <DataTable
+              columns={columns}
+              fetchUrl={`/api/gap/assets`}
+              bordered={true}
+              submitUrl={`inquery.assets.remark`}
+              parameters={{ branch_code: branch.branch_code, category: 'Non-Depre' }}
+            >
+
+              <Button type="submit"
+                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+
+              >
+                Submit
+              </Button>
+            </DataTable>
+          )}
+
         </div>
       </div>
     </AuthenticatedLayout>

@@ -36,6 +36,7 @@ export default function Branch({ sessions, auth }) {
           <DataTable
             fetchUrl={"/api/inquery/branches"}
             columns={columns}
+            parameters={{branch_id: auth.user.branch_id}}
           />
         </div>
       </div>

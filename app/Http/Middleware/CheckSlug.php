@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CheckBranchCode
+class CheckSlug
 {
     /**
      * Handle an incoming request.
@@ -19,13 +19,13 @@ class CheckBranchCode
     public function handle(Request $request, Closure $next)
     {
         // Retrieve the branch_code from the URL.
-        $branchCode = $request->route('id');
+        $slug = $request->route('slug');
 
         // Get the authenticated user's branch code using Eloquent's Find method.
         $userBranch = Branch::find(Auth::user()->branch_id);
 
         // Check if the user's branch code matches the branch_code from the URL.
-        if ($userBranch && $userBranch->branch_code == $branchCode) {
+        if ($userBranch && $userBranch->slug == $slug) {
             // If match, proceed with the request.
             return $next($request);
         } else if (!Auth::user()->hasRole('cabang')) {
