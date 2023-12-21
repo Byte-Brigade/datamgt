@@ -85,7 +85,7 @@ class ReportApiController extends Controller
                 'target' => $bros->count(),
                 'done' => $bros->where('status', 'Done')->count(),
                 'on_progress' => $bros->where('status', 'On Progress')->count(),
-                'not_start' => $bros->where('all_progress', 0)->count(),
+                'not_start' => $bros->where('all_progress', 0)->whereNotIn('status',['Done','On Progress','Drop'])->count(),
                 'drop' => $bros->where('status', 'Drop')->count(),
             ];
 

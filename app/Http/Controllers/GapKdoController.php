@@ -23,20 +23,6 @@ class GapKdoController extends Controller
 {
     public function index()
     {
-        // $collections = GapKdo::with('biaya_sewas')->get();
-        // $collections = $collections->groupBy('vendor')->map(function ($kdos, $vendor) {
-        //     $biaya_sewa = $kdos->flatMap(function ($mobil) {
-        //         return $mobil->biaya_sewas;
-        //     })->groupBy('periode')->sortKeysDesc()->first();
-        //     return [
-        //         'vendor' => $vendor,
-        //         'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
-        //         'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
-        //             : 0,
-        //         'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
-        //     ];
-        // });
-        // dd($collections);
 
         $branchesProps = Branch::get();
         return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branchesProps]);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->boolean('remarked')->default(false);
-            $table->text('disclaimer')->nullable();
+            $table->string('disclaimer')->nullable();
             $table->date('periode');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();

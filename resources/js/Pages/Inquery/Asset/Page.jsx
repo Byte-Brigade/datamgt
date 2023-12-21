@@ -6,16 +6,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { ArchiveBoxIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Head, Link, usePage } from "@inertiajs/react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-} from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { useState } from "react";
+
 
 export default function Page({ sessions, auth, data }) {
   const { url } = usePage();
@@ -208,7 +202,7 @@ export default function Page({ sessions, auth, data }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
+        <Link href={route("gap.kdos.mobil", data.branches.slug)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -221,15 +215,25 @@ export default function Page({ sessions, auth, data }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.assets.detail", data.branch_code)}>
+        <Link href={route("inquery.assets.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
     },
     {
-      name: "Total Remark",
-      field: "total_remarked",
-      className: "text-center",
+
+      name: "Tipe Cabang", field: "type_name", className: "text-center",
+
+    },
+    {
+      name: "Depre", field: "depre", className: "text-center",
+    },
+    {
+      name: "Non-Depre", field: "non_depre", className: "text-center",
+    },
+    {
+      name: "Total Remark", field: "total_remarked", className: "text-center",
+
     },
     {
       name: "Sudah STO",
@@ -238,23 +242,25 @@ export default function Page({ sessions, auth, data }) {
       type: "custom",
       render: (data) => (data.remarked === 1 ? "Sudah" : "Belum"),
     },
-    {
-      name: "Disclaimer",
-      field: "disclaimer",
-      className: "text-center",
-    },
+
 
     {
       name: "Submit",
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Button
-          onClick={(e) => toggleModalCreate(data.branch_code)}
-          variant="outlined"
-        >
-          Submit
-        </Button>
+
+        data.disclaimer ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            target="__blank"
+          >
+            {" "}
+            {data.disclaimer}
+          </a>
+        ) : (<Button onClick={(e) => toggleModalCreate(data.branch_code)} variant="outlined">Submit</Button>)
+
       ),
     },
   ];
@@ -308,6 +314,9 @@ export default function Page({ sessions, auth, data }) {
             <DataTable
               fetchUrl={"/api/inquery/assets"}
               columns={columns}
+
+              parameters={{ branch_id: auth.user.branch_id }}
+
               headings={headings}
               bordered={true}
             />
@@ -317,8 +326,12 @@ export default function Page({ sessions, auth, data }) {
               <DataTable
                 fetchUrl={"/api/inquery/stos"}
                 columns={columnsSTO}
+
+                parameters={{ branch_id: auth.user.branch_id }}
+
                 isRefreshed={isRefreshed}
                 bordered={true}
+
               />
               <Dialog
                 open={modalOpen.create}
@@ -326,7 +339,7 @@ export default function Page({ sessions, auth, data }) {
                 size="md"
               >
                 <DialogHeader className="flex items-center justify-between">
-                  Ubah Data
+                  Disclaimer
                   <IconButton
                     size="sm"
                     variant="text"
@@ -341,11 +354,15 @@ export default function Page({ sessions, auth, data }) {
                   <DialogBody divider>
                     <div className="flex flex-col gap-y-4">
                       <Input
-                        label="Disclaimer"
-                        disabled={form.processing}
-                        onChange={(e) =>
-                          form.setData("disclaimer", e.target.value)
-                        }
+
+                        variant="standard"
+                        label="Upload Lampiran (.pdf)"
+                        type="file"
+                        name="upload"
+                        id="upload"
+                        accept=".pdf"
+                        onChange={(e) => form.setData("file", e.target.files[0])}
+
                       />
                     </div>
                   </DialogBody>
@@ -520,8 +537,9 @@ export default function Page({ sessions, auth, data }) {
           {active === "kdo" && (
             <DataTable
               columns={columnsKdo}
-              fetchUrl={"/api/gap/kdos"}
+              fetchUrl={"/api/inquery/kdos"}
               bordered={true}
+              parameters={{ branch_id: auth.user.branch_id }}
             />
           )}
         </div>

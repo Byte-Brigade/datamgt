@@ -1,7 +1,6 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -17,9 +16,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -54,26 +51,18 @@ export default function Page({ auth,  sessions }) {
 
 
   const columns = [
-
-    {
-      name: "Invoice No",
-      field: "invoice",
-
-    },
     {
       name: "Cabang",
-      field: "branches.branch_name",
+      field: "branch_name",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("gap.toners.detail", data.branch_code)}>
+          {data.branch_name}
+        </Link>
+      ),
+    },
 
-    },
-    {
-      name: 'Tipe Cabang',
-      field: 'branch_types.type_name'
-    },
-
-    {
-      name: 'Cartridge Order',
-      field : 'cartridge_order',
-    },
     {
       name: 'Quantity',
       field : 'quantity',
@@ -88,15 +77,7 @@ export default function Page({ auth,  sessions }) {
       render: (data) => data.price.toLocaleString('id-ID'),
       agg: 'sum',
     },
-    {
-      name: 'Total Price',
-      field : 'total',
-      className: 'text-right',
-      type: 'custom',
-      format:'currency',
-      agg: 'sum',
-      render: (data) => data.total.toLocaleString('id-ID'),
-    },
+
 
 
     // {

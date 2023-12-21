@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class GapStoController extends Controller
 {
@@ -40,16 +41,20 @@ class GapStoController extends Controller
     public function store(Request $request)
     {
         try {
+
             $branch = Branch::with('gap_assets')->where('branch_code', $request->branch_code)->first();
+
+            $fileName = $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/', $fileName, ["disk" => 'public']);
             GapSto::updateOrCreate(
                 ['branch_id' => $branch->id],
                 [
-                'branch_id' => $branch->id,
-                'remarked' => $branch->gap_assets->where('remark', 1)->count() == $branch->gap_assets->count() ? true : false,
-                'disclaimer' => $request->disclaimer,
-                'periode' => Carbon::now()->format('Y-m-d'),
-            ]);
-
+                    'branch_id' => $branch->id,
+                    'remarked' => $branch->gap_assets->whereNotNull('remark')->count() == $branch->gap_assets->count() ? true : false,
+                    'disclaimer' => $fileName,
+                    'periode' => Carbon::now()->format('Y-m-d'),
+                ]
+            );
 
             return redirect(route('inquery.assets'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan!']);
         } catch (Exception $e) {

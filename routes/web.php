@@ -65,13 +65,13 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-        Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
-        Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
-        Route::middleware(['check.branchcode'])->group(function () {
-            Route::get('/branch/{id}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-            Route::get('/assets/{id}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+
+        Route::middleware(['check.slug'])->group(function () {
+          Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+          Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+
         });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
@@ -147,7 +147,8 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
-            Route::get('/toners/{type}', [GapTonerController::class, 'detail'])->name('toners.type');
+            Route::get('/toners/{type}', [GapTonerController::class, 'type'])->name('toners.type');
+            Route::get('/toners/{branch_code}/detail', [GapTonerController::class, 'detail'])->name('toners.detail');
             Route::post('/toners/import', [GapTonerController::class, 'import'])->name('toners.import');
             Route::post('/toners', [GapTonerController::class, 'store'])->name('toners.store');
             Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');

@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             BranchTypeSeeder::class,
-            EmployeePositionSeeder::class
+            EmployeePositionSeeder::class,
         ]);
     }
 }
