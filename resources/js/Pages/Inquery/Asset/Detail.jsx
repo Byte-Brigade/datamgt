@@ -6,6 +6,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
+
 import {
   Button, Option, Select
 } from "@material-tailwind/react";
@@ -27,20 +28,20 @@ export default function Detail({ auth, branch, sessions }) {
 
   const headings = [
     {
-      name: 'Scoring Schedule',
+      name: "Scoring Schedule",
       rowsSpan: 3,
       colsSpan: 2,
     },
     {
-      name: 'Jumlah Vendor',
+      name: "Jumlah Vendor",
       rowsSpan: 3,
       colsSpan: 2,
     },
     {
-      name: 'Type Scoring',
+      name: "Type Scoring",
       colsSpan: 7,
-    }
-  ]
+    },
+  ];
   const columns = [
     {
       name: "Asset Number",
@@ -62,9 +63,10 @@ export default function Detail({ auth, branch, sessions }) {
       name: "Assst Cost",
       field: "asset_cost",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       sortable: true,
       render: (data) => {
+
         return data.asset_cost ? data.asset_cost.toLocaleString('id-ID') : '-'
       }
     },
@@ -73,8 +75,9 @@ export default function Detail({ auth, branch, sessions }) {
       field: "depre_exp",
       className: "text-right",
       sortable: true,
-      type: 'custom',
+      type: "custom",
       render: (data) => {
+
         return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : '-'
       }
     },
@@ -82,9 +85,10 @@ export default function Detail({ auth, branch, sessions }) {
       name: "Accum Depre",
       field: "accum_depre",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       sortable: true,
       render: (data) => {
+
         return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : '-'
       }
     },
@@ -117,8 +121,8 @@ export default function Detail({ auth, branch, sessions }) {
       className: "text-center",
       sortable: true,
     },
-
     {
+
       name: "Ada/Tidak",
       field: 'remark',
       type: 'custom',
@@ -183,6 +187,7 @@ export default function Detail({ auth, branch, sessions }) {
             />
 
           </div>
+
 
           {active == "depre" && (
             <DataTable

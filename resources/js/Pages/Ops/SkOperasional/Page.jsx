@@ -152,8 +152,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.sk-operasional.update", data.id), {
-      method: "put",
+    post(route("ops.sk-operasional.update", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);

@@ -67,19 +67,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+
         Route::middleware(['check.slug'])->group(function () {
           Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
           Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+
         });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
-
     });
-
-
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
@@ -219,9 +218,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/branches', [BranchController::class, 'index'])->name('branches');
             Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
             Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
-            Route::post('/branches/{id}', [BranchController::class, 'upload'])->name('branches.upload');
+            Route::post('/branches/upload/{id}', [BranchController::class, 'upload'])->name('branches.upload');
 
-            Route::put('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
+            Route::post('/branches/{id}', [BranchController::class, 'update'])->name('branches.update');
             Route::delete('/branches/{id}', [BranchController::class, 'destroy'])->name('branches.delete');
             Route::get('/branches/export', [BranchController::class, 'export'])->name('branches.export');
             /* [END] Branches */
@@ -238,14 +237,14 @@ Route::middleware(['auth'])->group(function () {
             /* [START] Ops SKBIRTGS */
             Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
             Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
-            Route::post('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
+            Route::post('/skbirtgs/upload/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
             Route::get('/skbirtgs/export', [OpsSkbirtgsController::class, 'export'])->name('skbirtgs.export');
             /* [END] Ops SKBIRTGS */
 
             /* [START] Ops SK Operasional Cabang */
             Route::get('/sk-operasional', [OpsSkOperasionalController::class, 'index'])->name('sk-operasional');
             Route::post('/sk-operasional', [OpsSkOperasionalController::class, 'import'])->name('sk-operasional.import');
-            Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
+            Route::post('/sk-operasional/upload/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
             Route::get('/sk-operasional/export', [OpsSkOperasionalController::class, 'export'])->name('sk-operasional.export');
             /* [END] Ops SK Operasional Cabang */
 
@@ -254,7 +253,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/pajak-reklame/import', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
             Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'store'])->name('pajak-reklame.store');
 
-            Route::post('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'upload'])->name('pajak-reklame.upload');
+            Route::post('/pajak-reklame/upload/{id}', [OpsPajakReklameController::class, 'upload'])->name('pajak-reklame.upload');
             Route::get('/pajak-reklame/export', [OpsPajakReklameController::class, 'export'])->name('pajak-reklame.export');
             /* [END] Ops Pajak Reklame */
 
@@ -263,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/speciment', [OpsSpecimentController::class, 'index'])->name('speciment');
             Route::post('/speciment/import', [OpsSpecimentController::class, 'import'])->name('speciment.import');
             Route::post('/speciment', [OpsSpecimentController::class, 'store'])->name('speciment.store');
-            Route::post('/speciment/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
+            Route::post('/speciment/upload/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
             Route::get('/speciment/export', [OpsSpecimentController::class, 'export'])->name('speciment.export');
             /* [END] Ops Speciment */
 
@@ -274,14 +273,14 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/apar', [OpsAparController::class, 'store'])->name('apar.store');
 
 
-            Route::get('/apar/detail/{id}', [OpsAparController::class, 'detail'])->name('apar.detail');
+            Route::get('/apar/detail/{slug}', [OpsAparController::class, 'detail'])->name('apar.detail');
             Route::get('/apar/export', [OpsAparController::class, 'export'])->name('apar.export');
             /* [END] Ops APAR */
 
             Route::group(['middleware' => ['role:branch_ops|superadmin']], function () {
                 Route::group(['middleware' => ['permission:can edit']], function () {
-                    Route::put('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'update'])->name('skbirtgs.update');
-                    Route::put('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'update'])->name('sk-operasional.update');
+                    Route::post('/skbirtgs/{id}', [OpsSkbirtgsController::class, 'update'])->name('skbirtgs.update');
+                    Route::post('/sk-operasional/{id}', [OpsSkOperasionalController::class, 'update'])->name('sk-operasional.update');
                     Route::put('/apar/{id}', [OpsAparController::class, 'update'])->name('apar.update');
                     Route::put('/apar/detail/{id}', [OpsAparController::class, 'update_detail'])->name('apar.detail.update');
                     Route::put('/pajak-reklame/{id}', [OpsPajakReklameController::class, 'update'])->name('pajak-reklame.update');

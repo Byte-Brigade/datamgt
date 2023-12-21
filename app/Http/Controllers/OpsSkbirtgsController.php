@@ -75,6 +75,14 @@ class OpsSkbirtgsController extends Controller
                 'no_surat' => $request->no_surat,
                 'status' => $request->status,
             ]);
+
+            if ($request->file('file')) {
+                $fileName = $request->file('file')->getClientOriginalName();
+                $request->file('file')->storeAs('ops/skbirtgs/', $fileName, ["disk" => 'public']);
+                $ops_skbirtgs->file = $fileName;
+                $ops_skbirtgs->save();
+            }
+
             return redirect(route('ops.skbirtgs'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (Exception $e) {
             return redirect(route('ops.skbirtgs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);

@@ -151,8 +151,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.skbirtgs.update", data.id), {
-      method: "put",
+    post(route("ops.skbirtgs.update", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);

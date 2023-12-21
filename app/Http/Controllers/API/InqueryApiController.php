@@ -181,7 +181,7 @@ class InqueryApiController extends Controller
         }
 
         $branches = $query->paginate($perpage);
-
+        // dd($branches);
         return LicensesResource::collection($branches);
     }
 

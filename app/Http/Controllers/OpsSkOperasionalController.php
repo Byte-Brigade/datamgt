@@ -85,6 +85,15 @@ class OpsSkOperasionalController extends Controller
                 'expiry_date' => $request->expiry_date,
 
             ]);
+
+            if ($request->file('file')) {
+                $fileName = $request->file('file')->getClientOriginalName();
+                $request->file('file')->storeAs('ops/skoperasional/', $fileName, ["disk" => 'public']);
+
+                $ops_skoperasional->file = $fileName;
+                $ops_skoperasional->save();
+            }
+
             return redirect(route('ops.sk-operasional'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
         } catch (Exception $e) {
             return redirect(route('ops.sk-operasional'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
