@@ -1,15 +1,12 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
-import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
-  DocumentArrowDownIcon,
-  DocumentPlusIcon,
+  DocumentArrowDownIcon
 } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -19,9 +16,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -178,46 +173,50 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
   };
 
   const columns = [
-    { name: "Divisi Pembebanan", field: "divisi_pembebanan", className: "" },
-    { name: "Category", field: "category", sortable: true },
-    { name: "Tipe", field: "tipe", sortable: true },
+
     {
       name: "Periode",
       field: "periode",
-      sortable: true,
     },
     {
-      name: "Nilai", field: "value",
+      name: "Airline",
+      field: "airline",
+      className: "text-right",
       type: 'custom',
-      sortable: true,
-      render: (data) => data.value.toLocaleString('id-ID'),
+      agg: "sum",
+      format: "currency",
+
+      render: (data) => data.airline.toLocaleString('id-ID')
     },
     {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            const dateObject = data.biaya_sewa ? new Date(data.biaya_sewa.periode) : new Date();
-
-            const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
-            const month = dateObject.getMonth() + 1
-
-            setData({ ...data, month: month.toString(), year: year })
-            console.log(month);
-            console.log();
-            // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
+      name: "KA",
+      field: "ka",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.ka.toLocaleString('id-ID')
     },
+    {
+      name: "Hotel",
+      field: "hotel",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.hotel.toLocaleString('id-ID')
+    },
+    {
+      name: "Total",
+      field: "total",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.total.toLocaleString('id-ID')
+    },
+
+
   ];
   console.log(data.month)
 
@@ -230,33 +229,14 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <h2 className="text-xl font-semibold text-center">
 
+            <h2 className="text-xl font-semibold text-center">
+              {divisi_pembebanan}
             </h2>
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/perdins/${divisi_pembebanan}`}
+            fetchUrl={`/api/gap/perdin/${divisi_pembebanan}`}
             refreshUrl={isRefreshed}
           />
         </div>

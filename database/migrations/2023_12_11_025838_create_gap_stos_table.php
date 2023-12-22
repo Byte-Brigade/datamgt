@@ -13,18 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gap_kdo_mobils', function (Blueprint $table) {
+        Schema::create('gap_stos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
-            $table->unsignedBigInteger('gap_kdo_id');
-            $table->string('vendor')->nullable();
-            $table->string('nopol')->nullable();
-            $table->date('awal_sewa')->nullable();
-            $table->date('akhir_sewa')->nullable();
+            $table->boolean('remarked')->default(false);
+            $table->string('disclaimer')->nullable();
+            $table->date('periode');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-            $table->foreign('gap_kdo_id')->references('id')->on('gap_kdos')->onDelete('cascade');
             $table->timestamps();
-            $table->unique(['gap_kdo_id','nopol']);
         });
     }
 
@@ -35,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gap_kdo_mobils');
+        Schema::dropIfExists('gap_stos');
     }
 };

@@ -17,44 +17,6 @@ use Illuminate\Support\Facades\Storage;
 class GapDisnakerController extends Controller
 {
 
-    protected array $sortFields = ['jenis_perizinan.name', 'tgl_pengesahan','tgl_masa_berlaku'];
-
-    public function api(GapDisnaker $gap_disnaker, Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_disnaker->orderBy($sortField, $sortOrder)
-        ->join('branches', 'gap_disnakers.branch_id', 'branches.id');
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $data = $query->paginate($perpage);
-        return DisnakerResource::collection($data);
-    }
-    public function api_detail(GapDisnaker $gap_disnaker, Request $request, $id)
-    {
-        $sortField = 'id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_disnaker->where('branch_id', $id)->orderBy($sortField, $sortOrder);
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $data = $query->paginate($perpage);
-        return DisnakerResource::collection($data);
-    }
-
-
     public function index()
     {
         $branchesProps = Branch::get();
@@ -128,7 +90,8 @@ class GapDisnakerController extends Controller
     public function upload(Request $request, $id)
     {
         try {
-            $disnaker = GapDisnaker::find($id);
+            $disnaker = GapDisnaker::with('branches')->find($id);
+
 
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('infra/disnaker/'.$disnaker->id.'/', $fileName, ["disk" => 'public']);

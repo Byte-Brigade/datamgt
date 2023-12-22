@@ -27,36 +27,6 @@ class GapScoringProjectController extends Controller
         return Inertia::render('GA/Procurement/Scoring/Project/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code', 'entity'];
-
-    public function api(GapScoring $gap_scoring_project, Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_scoring_project->select('gap_scorings.*')->where('type', 'Project')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'gap_scorings.branch_id', 'branches.id');
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($request->branch_code)) {
-            $query = $query->where('branch_code', $request->branch_code);
-        }
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('pic', 'like', $searchQuery)
-                    ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
-            });
-        }
-        $data = $query->paginate($perpage);
-        return ScoringProjectsResource::collection($data);
-    }
 
     public function import(Request $request)
     {
@@ -135,9 +105,10 @@ class GapScoringProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function detail($scoring_vendor)
     {
-        //
+        $branchesProps = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
     }
 
     /**
@@ -160,8 +131,6 @@ class GapScoringProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-
         try {
             DB::beginTransaction();
             $branch = Branch::find($request->branch_id);

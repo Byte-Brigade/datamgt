@@ -16,15 +16,13 @@ return new class extends Migration
         Schema::create('gap_kdos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
-            $table->date('jumlah_driver')->nullable();
-            $table->date('periode')->nullable();
-            $table->date('biaya_driver')->nullable();
-            $table->date('ot')->nullable();
-            $table->date('rfid')->nullable();
-            $table->date('non_rfid')->nullable();
-            $table->date('grab')->nullable();
+            $table->string('vendor')->nullable();
+            $table->string('nopol')->nullable();
+            $table->date('awal_sewa')->nullable();
+            $table->date('akhir_sewa')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['nopol']);
         });
     }
 

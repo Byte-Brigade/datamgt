@@ -17,10 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('divisi_pembebanan');
             $table->string('category');
+            $table->string('user');
             $table->date('periode');
             $table->unsignedBigInteger('value');
             $table->string('tipe');
-            $table->unique(['divisi_pembebanan','category','periode','tipe']);
+            // $table->unique(['user','category','periode','tipe']);
             $table->timestamps();
         });
     }

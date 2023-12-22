@@ -5,23 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GapScoringAssessment extends Model
+class GapToner extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'branch_id',
-        'entity',
-        'description',
-        'pic',
-        'dokumen_perintah_kerja',
-        'vendor',
-        'tgl_scoring',
-        'schedule_scoring',
-        'scoring_vendor',
-        'type',
-        'keterangan',
+        'invoice',
+        'idecice_date',
+        'cartridge_order',
+        'quantity',
+        'price',
+        'total',
+
     ];
+
 
     public function branches()
     {

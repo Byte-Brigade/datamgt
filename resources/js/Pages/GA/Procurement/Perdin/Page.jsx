@@ -1,12 +1,12 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
@@ -17,9 +17,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -51,40 +49,48 @@ export default function Page({ auth,  sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
+  const [active, setActive] = useState("divisi")
   const columns = [
 
     {
       name: "Divisi Pembebanan",
       field: "divisi_pembebanan",
-      className: "text-center"
     },
     {
       name: "Airline",
       field: "airline",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
+
       render: (data) => data.airline.toLocaleString('id-ID')
     },
     {
       name: "KA",
       field: "ka",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.ka.toLocaleString('id-ID')
     },
     {
       name: "Hotel",
       field: "hotel",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.hotel.toLocaleString('id-ID')
     },
     {
       name: "Total",
       field: "total",
-      className: "text-center",
+      className: "text-right",
       type: 'custom',
+      agg: "sum",
+      format: "currency",
       render: (data) => data.total.toLocaleString('id-ID')
     },
 
@@ -101,6 +107,57 @@ export default function Page({ auth,  sessions }) {
 
 
   ];
+
+  const columnsSpender = [
+
+    {
+      name: "Spender",
+      field: "user",
+    },
+    {
+      name: "Airline",
+      field: "airline",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+
+      render: (data) => data.airline.toLocaleString('id-ID')
+    },
+    {
+      name: "KA",
+      field: "ka",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.ka.toLocaleString('id-ID')
+    },
+    {
+      name: "Hotel",
+      field: "hotel",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.hotel.toLocaleString('id-ID')
+    },
+    {
+      name: "Total",
+      field: "total",
+      className: "text-right",
+      type: 'custom',
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.total.toLocaleString('id-ID')
+    },
+
+
+
+
+  ];
+
+  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
@@ -180,6 +237,28 @@ export default function Page({ auth,  sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <div className="grid grid-cols-4 gap-4 mb-2">
+
+            <CardMenu
+              label="Divisi"
+              data
+              type="divisi"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("divisi")}
+              color="purple"
+            />
+            <CardMenu
+              label="Spender"
+              data
+              type="spender"
+              Icon={ArchiveBoxIcon}
+              active
+              onClick={() => setActive("spender")}
+              color="purple"
+            />
+
+          </div>
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
@@ -196,12 +275,24 @@ export default function Page({ auth,  sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          <DataTable
-            agg={{name: 'sewa_perbulan', value: 0}}
+          {active === "divisi" && (
+            <DataTable
             columns={columns}
             fetchUrl={"/api/gap/perdins"}
             refreshUrl={isRefreshed}
+            bordered={true}
+            parameters={{summary: "divisi"}}
           />
+          )}
+          {active === "spender" && (
+            <DataTable
+            columns={columnsSpender}
+            fetchUrl={"/api/gap/perdins"}
+            refreshUrl={isRefreshed}
+            bordered={true}
+            parameters={{summary: "spender"}}
+          />
+          )}
         </div>
       </div>
       {/* Modal Import */}
@@ -319,10 +410,22 @@ export default function Page({ auth,  sessions }) {
 
 
               <Input
-                label="Jumlah Kendaraan"
-                value={data.jumlah_kendaraan || ""}
+                label="Divisi Pembebanan"
+                value={data.divisi_pembebanan || ""}
                 disabled={processing}
-                onChange={(e) => setData("jumlah_kendaraan", e.target.value)}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Category"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Tipe"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
               />
               <Input
                 label="Jumlah Driver"

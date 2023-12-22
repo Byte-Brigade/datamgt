@@ -30,13 +30,14 @@ class AssetsImport implements ToModel, WithHeadingRow, WithUpserts, WithBatchIns
                 'asset_number' => $row['asset_number'],
                 'asset_description' => $row['asset_description'],
                 'date_in_place_service' => is_int($row['date_in_place_service']) ? Date::excelToDateTimeObject($row['date_in_place_service']) : null,
-                'asset_cost' => $row['asset_cost'],
-                'accum_depre' => $row['accum_depre'],
+                'asset_cost' => round($row['asset_cost']),
+                'accum_depre' => round($row['accum_depre']),
                 'asset_location' => $row['asset_location'],
                 'major_category' => $row['major_category'],
                 'minor_category' => $row['minor_category'],
-                'depre_exp' => $row['depre_exp'],
-                'net_book_value' => $row['net_book_value'],
+                'depre_exp' => round($row['depre_exp']),
+                'net_book_value' => round($row['net_book_value']),
+                'periode' => Date::excelToDateTimeObject($row['periode']),
             ]);
         }
     }

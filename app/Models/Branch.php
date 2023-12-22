@@ -30,8 +30,14 @@ class Branch extends Model
         'owner',
         'sewa_per_tahun',
         'total_biaya_sewa',
-        'area'
+        'area',
+        'file_ojk',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'branch_id');
+    }
 
     public function branch_types()
     {
@@ -48,6 +54,21 @@ class Branch extends Model
         return $this->hasOne(OpsPajakReklame::class, 'branch_id');
     }
 
+    public function ops_skbirtgs()
+    {
+        return $this->hasOne(OpsSkbirtgs::class, 'branch_id');
+    }
+
+    public function ops_apar()
+    {
+        return $this->hasOne(OpsApar::class, 'branch_id');
+    }
+
+    public function ops_skoperasional()
+    {
+        return $this->hasOne(OpsSkOperasional::class, 'branch_id');
+    }
+
     public function gap_disnaker()
     {
         return $this->hasMany(GapDisnaker::class, 'branch_id');
@@ -56,10 +77,6 @@ class Branch extends Model
     public function gap_kdo()
     {
         return $this->hasMany(GapKdo::class, 'branch_id');
-    }
-    public function gap_kdo_mobil()
-    {
-        return $this->hasMany(GapKdoMobil::class, 'branch_id');
     }
 
     public function gap_assets()
@@ -78,6 +95,16 @@ class Branch extends Model
     public function sewa_gedung()
     {
         return $this->hasOne(InfraSewaGedung::class, 'branch_id');
+    }
+
+    public function gap_toners()
+    {
+        return $this->hasMany(GapToner::class, 'branch_id');
+    }
+
+    public function gap_stos()
+    {
+        return $this->hasOne(GapSto::class, 'branch_id');
     }
 }
 

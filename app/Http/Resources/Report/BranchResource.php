@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Report;
 
 use App\Models\Branch;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -41,16 +41,12 @@ class BranchResource extends JsonResource
             'jumlah_karyawan' => $this->employees->count() > 0 ? $this->employees->count() . ' Orang' : 'Tidak Ada',
             'perizinan' => $this->gap_disnaker->count() > 0
                 ? 'Ada' : 'Tidak Ada',
-            'kdo_mobil' => $this->gap_kdo_mobil->count(),
+            'kdo_mobil' => $this->gap_kdo->count(),
             'telp' => $this->telp,
             'fasilitas_atm' => isset($this->layanan_atm) && $this->layanan_atm != 'Tidak Ada' ? 'Ada' : 'Tidak Ada',
             'layanan_atm' => isset($this->layanan_atm) ? $this->layanan_atm : 'Tidak Ada',
-            'branch_types' => $branch_types,
-            'photo' => $this->photo,
-            'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
-            'assets' => $this->gap_assets
-
-
+            'type_name' => $this->branch_types->type_name,
+            'slug' => $this->slug
         ];
     }
 }

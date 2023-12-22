@@ -60,8 +60,8 @@ export default function PajakReklame({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [fileType, setFileType] = useState("file");
   const columns = [
-    { name: "Kode Cabang", field: "branches.branch_code", sortable: true },
-    { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
+    { name: "Kode Cabang", field: "branch_code", sortable: true },
+    { name: "Nama Cabang", field: "branch_name", sortable: true },
     {
       name: "Periode Awal",
       field: "periode_awal",
@@ -207,7 +207,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.pajak-reklame.update", data.id), {
+    post(route("ops.pajak-reklame.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -334,7 +334,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 : true
             )}
             className="w-[1500px]"
-            fetchUrl={"/api/ops/pajak-reklame"}
+            fetchUrl={"/api/ops/pajak-reklames"}
             refreshUrl={isRefreshed}
           />
         </div>
@@ -477,6 +477,18 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 onChange={(e) => setData("periode_akhir", e.target.value)}
               />
               <Input
+                label="No Izin"
+                value={data.no_izin || ""}
+                disabled={processing}
+                onChange={(e) => setData("no_izin", e.target.value)}
+              />
+              <Input
+                label="Nilai Pajak"
+                value={data.nilai_pajak || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_pajak", e.target.value)}
+              />
+              <Input
                 label="Keterangan"
                 value={data.note || ""}
                 disabled={processing}
@@ -489,7 +501,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 type="file"
                 name="file_izin_reklame"
                 id="file_izin_reklame"
-                accept=".xlsx"
+                accept=".pdf"
                 onChange={(e) =>
                   setData("file_izin_reklame", e.target.files[0])
                 }
@@ -501,7 +513,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 type="file"
                 name="file_skpd"
                 id="file_skpd"
-                accept=".xlsx"
+                accept=".pdf"
                 onChange={(e) => setData("file_skpd", e.target.files[0])}
               />
             </div>
@@ -537,13 +549,13 @@ export default function PajakReklame({ auth, branches, sessions }) {
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
-                value={`${data.branch_id}`}
+                value={`${data.branch_id || ""}`}
                 disabled={processing}
                 onChange={(e) => setData("branch_id", e)}
               >
                 {branches.map((branch) => (
                   <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
+                    [{branch.branch_code}] {branch.branch_types.type_name} {branch.branch_name}
                   </Option>
                 ))}
               </Select>
@@ -562,6 +574,18 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 onChange={(e) => setData("periode_akhir", e.target.value)}
               />
               <Input
+                label="No Izin"
+                value={data.no_izin || ""}
+                disabled={processing}
+                onChange={(e) => setData("no_izin", e.target.value)}
+              />
+              <Input
+                label="Nilai Pajak"
+                value={data.nilai_pajak || ""}
+                disabled={processing}
+                onChange={(e) => setData("nilai_pajak", e.target.value)}
+              />
+              <Input
                 label="Keterangan"
                 value={data.note || ""}
                 disabled={processing}
@@ -574,7 +598,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 type="file"
                 name="file_izin_reklame"
                 id="file_izin_reklame"
-                accept=".xlsx"
+                accept=".pdf"
                 onChange={(e) =>
                   setData("file_izin_reklame", e.target.files[0])
                 }
@@ -586,7 +610,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
                 type="file"
                 name="file_skpd"
                 id="file_skpd"
-                accept=".xlsx"
+                accept=".pdf"
                 onChange={(e) => setData("file_skpd", e.target.files[0])}
               />
             </div>
@@ -621,7 +645,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.branch_code} - {data.branch_name}
             </span>{" "}
             ?
           </Typography>

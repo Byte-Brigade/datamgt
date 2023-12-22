@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('kdo_mobil_biaya_sewas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('gap_kdo_mobil_id');
+            $table->unsignedBigInteger('gap_kdo_id');
             $table->date('periode');
             $table->integer('value');
-            $table->foreign('gap_kdo_mobil_id')->references('id')->on('gap_kdo_mobils')->onDelete('cascade');
+            $table->foreign('gap_kdo_id')->references('id')->on('gap_kdos')->onDelete('cascade');
 
             $table->timestamps();
         });

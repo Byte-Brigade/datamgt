@@ -70,13 +70,16 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "maintenance" },
     { name: "Asset", path: "inquery.assets" },
-    { name: "Lisensi", path: "maintenance" },
+    { name: "Lisensi", path: "inquery.licenses" },
   ];
 
   const reportRouter = [
     { name: "Branch", path: "reporting.branches", state: "reporting.*" },
     { name: "Asset", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
+
+    { name: "Vendor", path: "maintenance" },
+    { name: "Branch Roll Out", path: "reporting.bros" },
   ];
 
   const opsRouter = [
@@ -96,15 +99,15 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "KDO Mobil",
-      path: "gap.kdo",
+      path: "gap.kdos",
     },
     {
       name: "Toner",
-      path: "gap.maintenance",
+      path: "gap.toners",
     },
     {
       name: "Alih Daya",
-      path: "gap.maintenance",
+      path: "gap.alihdayas",
     },
     {
       name: "Hasil Scoring Vendor",
@@ -126,13 +129,14 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const infraRouter = [
     {
-      name: "Izin Disnaker",
-      path: "infra.disnaker",
-    },
-    {
-      name: "Sewa Gedung",
+      name: "Data Gedung",
       path: "infra.sewa_gedungs",
     },
+    {
+      name: "Branch Roll Out",
+      path: "infra.bros",
+    },
+
     {
       name: "Maintenance Cost Gedung",
       path: "infra.maintenance",
@@ -144,6 +148,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     {
       name: "Hasil Scoring Vendor",
       path: "infra.scoring_projects",
+    },
+    {
+      name: "Izin Disnaker",
+      path: "infra.disnaker",
     },
   ];
 
@@ -327,7 +335,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </AccordionBody>
         </Accordion>
 
-        {auth.role !== "cabang" && (
+        {auth.role !== "branch" && (
           <>
             {/* Data Maintenance */}
             <hr className="my-2 border-blue-gray-50" />

@@ -2,64 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\BranchesExport;
-use App\Http\Resources\BranchResource;
-use App\Imports\BranchesImport;
+use Exception;
+use Inertia\Inertia;
 use App\Models\Branch;
 use App\Models\BranchType;
-use Exception;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Exports\BranchesExport;
+use App\Imports\BranchesImport;
+use App\Http\Resources\BranchResource;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class BranchController extends Controller
 {
-    protected array $sortFields = ['branch_types.type_name', 'branch_code', 'branch_name', 'address'];
-
-    public function __construct(public Branch $branch)
-    {
-    }
-    public function api(Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branch_name';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $this->branch->select('branches.*')->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortField, $sortOrder)
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
-        $perpage = $request->perpage ?? 10;
-
-
-        $input = $request->all();
-        if (isset($input['branch_types_type_name'])) {
-            $type_name = $input['branch_types_type_name'];
-            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
-                if (in_array('KF', $type_name)) {
-                    return $q->whereIn('type_name', ['KF', 'KFNO']);
-                }
-                return $q->whereIn('type_name', $type_name);
-            });
-        }
-
-        if (isset($request->layanan_atm)) {
-            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
-        }
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('branch_code', 'like', $searchQuery)
-                    ->orWhere('branch_name', 'like', $searchQuery)
-                    ->orWhere('address', 'like', $searchQuery);
-            });
-        }
-
-
-        $branches = $query->paginate($perpage);
-
-        return BranchResource::collection($branches);
-    }
 
     private function handleColumn($column)
     {
@@ -73,10 +29,12 @@ class BranchController extends Controller
 
     public function index(Request $request)
     {
+        $areas = Branch::distinct()->whereNotNull('area')->pluck('area');
 
         return Inertia::render('Ops/Cabang/Page', [
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
+            'areas' => $areas
         ]);
     }
 
@@ -86,7 +44,7 @@ class BranchController extends Controller
             (new BranchesImport)->import($request->file('file'));
 
 
-            return redirect(route('branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -111,19 +69,38 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         try {
-
-            Branch::create([
+            $branch = Branch::create([
                 'branch_type_id' => $request->branch_type_id,
                 'branch_code' => $request->branch_code,
                 'branch_name' => $request->branch_name,
                 'address' => $request->address,
                 'telp' => $request->telp,
                 'layanan_atm' => $request->layanan_atm,
-                'npwp' => $request->npwp
+                'npwp' => $request->npwp,
+                'area' => $request->area,
             ]);
 
-            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+            $branch_type = strtolower($branch->branch_types->type_name);
+            $branch_name = strtolower($request->branch_name);
+            if ($branch_type == 'kfno' || $branch_type == 'kfo') {
+                $branch_type = 'kf';
+            }
+
+            $slug = Str::slug($branch_type . " " . $branch_name, '-');
+            $branch->slug = $slug;
+            $branch->save();
+
+            if (!is_null($request->file('file_ojk'))) {
+                $file = $request->file('file_ojk');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+
+                $branch->file_ojk = $fileName;
+                $branch->save();
+            }
+
+            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil ditambah']);
+        } catch (Exception $e) {
             return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
@@ -131,12 +108,12 @@ class BranchController extends Controller
     {
         try {
             $branch = Branch::find($id);
-            $file = $request->file('photo');
+            $file = $request->file('file_ojk');
 
             $fileName = $file->getClientOriginalName();
-            $file->storeAs('branches/' . $branch->id . '/', $fileName, ["disk" => 'public']);
+            $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => 'public']);
 
-            $branch->photo = $fileName;
+            $branch->file_ojk = $fileName;
             $branch->save();
 
             return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'File berhasil diupload!']);
@@ -161,8 +138,30 @@ class BranchController extends Controller
                 'layanan_atm' => $layanan_atm,
             ]);
 
+            if ($branch->isDirty(['branch_code', 'branch_name'])) {
+                $branch_type = strtolower($branch->branch_types->type_name);
+                $branch_name = strtolower($request->branch_name);
+
+                if ($branch_type == 'kfno' || $branch_type == 'kfo') {
+                    $branch_type = 'kf';
+                }
+
+                $slug = Str::slug($branch_type . " " . $branch_name, '-');
+                $branch->slug = $slug;
+                $branch->save();
+            }
+
+            if (!is_null($request->file('file_ojk'))) {
+                $file = $request->file('file_ojk');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+
+                $branch->file_ojk = $fileName;
+                $branch->save();
+            }
+
             return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
@@ -170,6 +169,7 @@ class BranchController extends Controller
     public function destroy($id)
     {
         $branch = Branch::find($id);
+        Storage::disk('public')->delete('ops/branches/' . $branch->id . '/');
         $branch->delete();
 
         return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);

@@ -26,37 +26,6 @@ class GapScoringAssessmentController extends Controller
         return Inertia::render('GA/Procurement/Scoring/Assessment/Page', ['branches' => $branchesProps]);
     }
 
-    protected array $sortFields = ['branches.branch_code', 'entity'];
-
-    public function api(GapScoring $gap_scoring_assessment, Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_scoring_assessment->select('gap_scorings.*')->where('type', 'Assessment')->orderBy($sortField, $sortOrder)
-            ->join('branches', 'gap_scorings.branch_id', 'branches.id');
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($request->branch_code)) {
-            $query = $query->where('branch_code', $request->branch_code);
-        }
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('pic', 'like', $searchQuery)
-                    ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
-            });
-        }
-        $data = $query->paginate($perpage);
-        return ScoringAssessmentsResource::collection($data);
-    }
-
     public function import(Request $request)
     {
         try {
@@ -86,8 +55,6 @@ class GapScoringAssessmentController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             DB::beginTransaction();
             GapScoring::create(
@@ -108,7 +75,6 @@ class GapScoringAssessmentController extends Controller
             DB::commit();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan']);
         } catch (Throwable $e) {
-
             DB::rollBack();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
@@ -120,9 +86,10 @@ class GapScoringAssessmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function detail($scoring_vendor)
     {
-        //
+        $branchesProps = Branch::get();
+        return Inertia::render('GA/Procurement/Scoring/Assessment/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
     }
 
     /**
@@ -194,7 +161,7 @@ class GapScoringAssessmentController extends Controller
             $gap_scoring = GapScoring::find($id);
             $gap_scoring->delete();
             DB::commit();
-         return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+            return redirect(route('gap.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
         } catch (Throwable $e) {
             DB::rollBack();
             return redirect(route('gap.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);

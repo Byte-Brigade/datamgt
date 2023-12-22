@@ -60,7 +60,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.kdo.mobil.store", data.branch_id), {
+    post(route("gap.kdos.mobil.store", data.branch_id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -72,7 +72,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.kdo.mobil.import"), {
+    post(route("gap.kdos.mobil.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -85,14 +85,14 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     const { gap_kdo_id } = data;
     e.preventDefault();
     window.open(
-      route("gap.kdo.mobil.export", kdo_mobil.branches.branch_code) +
+      route("gap.kdos.mobil.export", kdo_mobil.branches.branch_code) +
       `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.kdo.mobil.update", data.id), {
+    put(route("gap.kdos.mobil.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -105,7 +105,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
   const handleSubmitDelete = (e) => {
     e.preventDefault();
     destroy(
-      route("gap.kdo.mobil.destroy", {
+      route("gap.kdos.mobil.destroy", {
         branch_code: kdo_mobil.branches.branch_code,
         id: data.id,
       }),
@@ -324,7 +324,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/kdo/mobil/${kdo_mobil.id}`}
+            fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}/detail`}
             refreshUrl={isRefreshed}
             className="w-[2200px]"
           />

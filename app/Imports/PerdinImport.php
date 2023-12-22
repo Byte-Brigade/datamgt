@@ -13,11 +13,25 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PerdinImport implements ToCollection, WithHeadingRow
+class PerdinImport implements ToCollection, WithHeadingRow, WithEvents
 {
     use Importable;
+
+    protected $sheetName;
+
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeSheet::class => function(BeforeSheet $event) {
+                $this->sheetName = $event->getSheet()->getTitle();
+            }
+        ];
+    }
 
     public function collection(Collection $rows)
     {
@@ -37,15 +51,17 @@ class PerdinImport implements ToCollection, WithHeadingRow
                     // dd($value);
                     GapPerdin::updateOrCreate(
                         [
-                            'divisi_pembebanan' => $row['divisi_pembebanan'],
+                            'divisi_pembebanan' => $row['divisi_pembebanan_biaya'],
                             'periode' => $tanggal_periode,
                             'category' => $row['kategori'],
-                            'tipe' => $row['tipe'],
+                            'user' => $row['user'],
+                            'tipe' => $this->sheetName,
                         ],
                         [
-                            'divisi_pembebanan' => $row['divisi_pembebanan'],
+                            'divisi_pembebanan' => $row['divisi_pembebanan_biaya'],
                             'category' => $row['kategori'],
-                            'tipe' => $row['tipe'],
+                            'user' => $row['user'],
+                            'tipe' => $this->sheetName,
                             'periode' => $tanggal_periode,
                             'value' => round($value)
                         ]

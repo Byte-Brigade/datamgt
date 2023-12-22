@@ -21,33 +21,63 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
+            $unit = str_contains($row['unit'], 'KF') ? trim(str_replace('KF', '', $row['unit'])) : $row['unit'];
+            $branches = Branch::where('branch_name', 'like', '%' . ($unit == 'KPO' ? 'Kantor Pusat' : $unit) . '%')->get();
 
-            $branch = Branch::where('branch_name', 'like', '%' . str_contains($row['unit'], 'KF') ? trim(str_replace('KF', '', $row['unit'])) : $row['unit'] . '%')->first();
             $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
 
-            if (isset($branch)) {
-                $kdo = GapKdo::where('branch_id', $branch->id)->first();
-                if (!isset($kdo)) {
-                    $kdo = GapKdo::create([
-                        'branch_id' => $branch->id
-                    ]);
-                }
+            if ($branches->count() > 0) {
+                if ($branches->count() > 1) {
+                    foreach ($branches as $branch) {
+                        $gap_kdo_mobil = GapKdo::updateOrCreate(
+                            [
+                                'nopol' => $row['nopol'],
+                            ],
+                            [
+                                'branch_id' => $branch->id,
+                                'vendor' => $row['vendor'],
+                                'nopol' => $row['nopol'],
+                                'awal_sewa' => is_int($row['awal_sewa']) ? Date::excelToDateTimeObject($row['awal_sewa']) : null,
+                                'akhir_sewa' => is_int($row['akhir_sewa']) ? Date::excelToDateTimeObject($row['akhir_sewa']) : null,
+                            ]
+                        );
+                        $periode = [];
+                        foreach ($filteredData as $key => $value) {
+                            if (!is_null($value)) {
+                                $value = preg_replace('/[^0-9]/', '', $value);
+                                $tanggal_periode = strtoupper($key) . '_' . Carbon::now()->year;
+                                $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
+                                $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
-                $gap_kdo_mobil = GapKdoMobil::updateOrCreate(
+                                KdoMobilBiayaSewa::updateOrCreate(
+                                    [
+                                        'gap_kdo_id' => $gap_kdo_mobil->id,
+                                        'periode' => $tanggal_periode,
+                                    ],
+
+                                    [
+                                        'gap_kdo_id' => $gap_kdo_mobil->id,
+                                        'periode' => $tanggal_periode,
+                                        'value' => (int) $value
+                                    ]
+                                );
+                            }
+                        }
+                    }
+                }
+                $branch = $branches->first();
+                $gap_kdo_mobil = GapKdo::updateOrCreate(
                     [
-                        'gap_kdo_id' => $kdo->id,
                         'nopol' => $row['nopol'],
                     ],
                     [
                         'branch_id' => $branch->id,
-                        'gap_kdo_id' => $kdo->id,
                         'vendor' => $row['vendor'],
                         'nopol' => $row['nopol'],
                         'awal_sewa' => is_int($row['awal_sewa']) ? Date::excelToDateTimeObject($row['awal_sewa']) : null,
                         'akhir_sewa' => is_int($row['akhir_sewa']) ? Date::excelToDateTimeObject($row['akhir_sewa']) : null,
-
                     ]
                 );
                 $periode = [];
@@ -57,16 +87,15 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
                         $tanggal_periode = strtoupper($key) . '_' . Carbon::now()->year;
                         $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
                         $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
-                        // array_push($periode, ['periode' => $tanggal_periode, 'value' => (int) $value]);
-                        // dd($value);
+
                         KdoMobilBiayaSewa::updateOrCreate(
                             [
-                                'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
+                                'gap_kdo_id' => $gap_kdo_mobil->id,
                                 'periode' => $tanggal_periode,
                             ],
 
                             [
-                                'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
+                                'gap_kdo_id' => $gap_kdo_mobil->id,
                                 'periode' => $tanggal_periode,
                                 'value' => (int) $value
                             ]

@@ -62,13 +62,19 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name", sortable: true },
+    {
+      name: "Cabang",
+      field: "branches.branch_name",
+      sortable: true,
+      freeze: true,
+    },
 
     {
       name: "Category",
       field: "category",
       className: "text-center",
       sortable: true,
+      freeze: true,
     },
     {
       name: "Asset Number",
@@ -77,7 +83,7 @@ export default function Page({ auth, branches, sessions }) {
       sortable: true,
     },
     {
-      name: "Date In Place Service",
+      name: "Date In Place",
       field: "date_in_place_service",
       type: "date",
       sortable: true,
@@ -96,8 +102,12 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Net Book Value",
       field: "net_book_value",
-      className: "text-center",
+      className: "text-right",
+      agg: "sum",
       sortable: true,
+      format: "currency",
+      type: "custom",
+      render: (data) => data.net_book_value.toLocaleString("id-ID"),
     },
     {
       name: "Major Category",
@@ -112,8 +122,12 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Depre Exp",
       field: "depre_exp",
-      className: "text-center",
+      className: "text-right",
       sortable: true,
+      agg: "sum",
+      type: "custom",
+      format: "currency",
+      render: (data) => data.depre_exp.toLocaleString("id-ID"),
     },
     {
       name: "Action",

@@ -82,17 +82,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
-    {
-      label: "Jumlah Vendor",
-      data,
-      type: "gap_scorings",
-      Icon: ArchiveBoxIcon,
-      active,
-      onClick: () => setActive("gap_scorings"),
-      branchState: branchId,
-      areaState: area,
-      color: "purple",
-    },
+
   ];
   console.log(data)
   return (
@@ -178,6 +168,9 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
                       <th className="text-center">Tipe Cabang</th>
+                      <th className="text-center">Milik</th>
+                      <th className="text-center">Sewa</th>
+                      <th className="text-center">Pinjam Pakai</th>
                       <th className="text-center">Jumlah</th>
                     </tr>
                   </thead>
@@ -189,12 +182,16 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200"
                         >
                           <td>{cabang}</td>
+                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Milik').length}</td>
+                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Sewa').length}</td>
+                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Pinjam Pakai').length}</td>
+
                           <td>{data.jumlah_cabang[cabang].length}</td>
                         </tr>
                       );
                     })}
                     <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                      <td>
+                      <td colSpan={4}>
                         <strong>Total</strong>
                       </td>
                       <td>
@@ -852,6 +849,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </tbody>
             </table>
           )}
+
+
         </div>
       </div>
     </AuthenticatedLayout>

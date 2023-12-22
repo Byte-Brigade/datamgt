@@ -152,8 +152,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.sk-operasional.update", data.id), {
-      method: "put",
+    post(route("ops.sk-operasional.update", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -234,7 +233,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/ops/sk-operasional"}
+            fetchUrl={"/api/ops/sk-operasionals"}
             refreshUrl={isRefreshed}
           />
         </div>
@@ -418,7 +417,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.branch_code} - {data.branch_name}
             </span>{" "}
             ?
           </Typography>

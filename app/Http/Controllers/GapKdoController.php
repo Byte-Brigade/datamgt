@@ -23,104 +23,16 @@ class GapKdoController extends Controller
 {
     public function index()
     {
+
         $branchesProps = Branch::get();
         return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branchesProps]);
-    }
-
-    protected array $sortFields = ['branches.branch_code', 'akhir_sewa', 'awal_sewa'];
-
-    public function api(GapKdo $gap_kdo, Request $request)
-    {
-        $sortFieldInput = $request->input('sort_field', 'branches.branch_code');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'branches.branch_code';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_kdo->select('gap_kdos.*')->orderBy('branches.branch_code', 'asc')
-            ->join('branches', 'gap_kdos.branch_id', 'branches.id');
-
-        $perpage = $request->perpage ?? 15;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $query = $query->get();
-
-        $collections = collect([]);
-        $year = date('Y');
-        foreach ($query as $item) {
-            $branch = Branch::find($item->branch_id);
-
-            $biaya_sewa = $item->gap_kdo_mobil->flatMap(function ($mobil) {
-                return $mobil->biaya_sewas;
-            })->groupBy('periode')->sortKeysDesc()->first();
-            $item = [
-                'id' => $item->id,
-                'branches' => $branch,
-                'branch_types' => BranchType::find($branch->branch_type_id),
-                'jumlah_kendaraan' => $item->gap_kdo_mobil->unique('nopol')->count(),
-                'sewa_perbulan' => isset($biaya_sewa)  ? number_format(
-                    $biaya_sewa->sum('value'),
-                    0,
-                    ',',
-                    '.'
-                ) : 0,
-                'akhir_sewa' => $item->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa,
-                'sewa_kendaraan' => collect(range(1, 12))->map(function ($num) use ($item, $year) {
-                    $value = $item->gap_kdo_mobil->flatMap(function ($mobil) {
-                        $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                        return $mobil->biaya_sewa;
-                    })->filter(function ($biaya) use ($year, $num) {
-                        $biaya = collect($biaya);
-                        return Carbon::parse($biaya['periode'])->year == $year && Carbon::parse($biaya['periode'])->month == $num;
-                    })->sum('value');
-                    if ($value) {
-
-                        return [strtolower(date('F', mktime(0, 0, 0, $num, 1))) => "Rp " . number_format($value, 0, ',', '.')];
-                    }
-                })->filter(function ($value) {
-                    return $value != null;
-                })->flatMap(function ($data) {
-                    return $data;
-                }),
-            ];
-
-            $collections->push($item);
-        }
-
-
-        if ($sortOrder == 'desc') {
-            $collections = $collections->sortByDesc($sortField);
-        } else {
-            $collections = $collections->sortBy($sortField);
-        }
-
-        return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));
-    }
-
-    public function api_kdo_mobil(GapKdoMobil $gap_kdo_mobil, Request $request, $id)
-    {
-        $sortFieldInput = $request->input('sort_field', 'id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $gap_kdo_mobil->where('gap_kdo_id', $id)->orderBy($sortField, $sortOrder);
-
-        $perpage = $request->perpage ?? 15;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $data = $query->paginate($perpage);
-        return KdoMobilResource::collection($data);
     }
 
     public function kdo_mobil($branch_code)
     {
         $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
             $query->where('branch_code', $branch_code);
-        })->with(['gap_kdo_mobil', 'branches'])->first();
+        })->with(['branches', 'biaya_sewas'])->first();
 
         $currentYear = date('Y');
         $futureYears = range($currentYear, $currentYear + 10);
@@ -149,9 +61,9 @@ class GapKdoController extends Controller
                 'biaya_sewa' => [['periode' => Carbon::create($request->year, $request->month, 1), 'value' => $request->biaya_sewa]],
             ]);
 
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
     public function kdo_mobil_update(Request $request, $id)
@@ -177,7 +89,7 @@ class GapKdoController extends Controller
                 ]);
             } else {
                 $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
-                if($request->biaya_sewa['value'] >0) {
+                if ($request->biaya_sewa['value'] > 0) {
 
                     $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
                 } else {
@@ -185,9 +97,9 @@ class GapKdoController extends Controller
                 }
             }
 
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -198,9 +110,9 @@ class GapKdoController extends Controller
             $kdo_mobil = GapKdoMobil::find($id);
             $kdo_mobil->delete();
 
-            return redirect(route('gap.kdo.mobil', $branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);
+            return redirect(route('gap.kdos.mobil', $branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);
         } catch (Throwable $e) {
-            return redirect(route('gap.kdo.mobil', $branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.kdos.mobil', $branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -210,10 +122,10 @@ class GapKdoController extends Controller
         try {
             (new KdoImport)->import($request->file('file'));
 
-            return redirect(route('gap.kdo'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('gap.kdos'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);
-            return redirect(route('gap.kdo'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.kdos'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
     public function kdo_mobil_import(Request $request)
@@ -223,10 +135,10 @@ class GapKdoController extends Controller
         try {
             (new KdoMobilImport($request->branch_id, $request->gap_kdo_id))->import($request->file('file'));
 
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);
-            return redirect(route('gap.kdo.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 

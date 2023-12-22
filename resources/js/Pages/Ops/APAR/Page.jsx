@@ -52,7 +52,7 @@ export default function Apar({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branches.branch_name" },
+    { name: "Cabang", field: "branch_name" },
 
     { name: "Jumlah Tabung", field: "keterangan", className: "text-center" },
     {
@@ -60,7 +60,7 @@ export default function Apar({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("ops.apar.detail", data.branches.branch_code)}>
+        <Link href={route("ops.apar.detail", data.slug)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -208,7 +208,7 @@ console.log(auth)
             )}
           <DataTable
             columns={columns}
-            fetchUrl={"/api/ops/apar"}
+            fetchUrl={"/api/ops/apars"}
             refreshUrl={isRefreshed}
           />
         </div>

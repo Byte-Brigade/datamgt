@@ -6,7 +6,11 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  DocumentArrowDownIcon,
+  DocumentPlusIcon,
+} from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -24,7 +28,13 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Cabang({ auth, sessions, branch_types, branches }) {
+export default function Cabang({
+  auth,
+  sessions,
+  branch_types,
+  branches,
+  areas,
+}) {
   const initialData = {
     file: null,
     branch_code: null,
@@ -33,6 +43,8 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
     branch_type_id: null,
     layanan_atm: null,
     npwp: null,
+    area: null,
+    file_ojk: null,
   };
   const {
     data,
@@ -51,16 +63,16 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [open, setOpen] = useState(false);
+
   const columns = [
-    { name: "Kode Cabang", field: "branch_code", sortable: false },
+    { name: "Kode Cabang", field: "branch_code" },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
       sortable: false,
       filterable: true,
     },
-    { name: "Nama Cabang", field: "branch_name", sortable: false },
+    { name: "Nama Cabang", field: "branch_name" },
     { name: "NPWP", field: "npwp" },
     { name: "Area", field: "area", className: "text-center" },
     { name: "Alamat", field: "address", className: "w-[300px]" },
@@ -71,6 +83,37 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
       field: "layanan_atm",
       filterable: true,
       component: "branches",
+    },
+    {
+      name: "Lampiran Izin OJK",
+      field: "file",
+      type: "custom",
+      render: (data) =>
+        data.file_ojk ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/ops/branches/${data.id}/${data.file_ojk}`}
+            target="__blank"
+          >
+            {" "}
+            {data.file_ojk}
+          </a>
+        ) : (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ),
     },
     {
       name: "Action",
@@ -94,7 +137,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("branches.import"), {
+    post(route("ops.branches.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -105,7 +148,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("branches.upload", data.id), {
+    post(route("ops.branches.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -117,13 +160,13 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("branches.export"), "_self");
+    window.open(route("ops.branches.export"), "_self");
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("branches.update", data.id), {
-      method: "put",
+    post(route("ops.branches.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -134,7 +177,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("branches.store", data.id), {
+    post(route("ops.branches.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -146,7 +189,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("branches.delete", data.id), {
+    destroy(route("ops.branches.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -215,11 +258,11 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
-                  <div className="flex items-center gap-x-2">
-                    <DocumentArrowDownIcon className="w-4 h-4" />
-                    Create Report
-                  </div>
-                </PrimaryButton>
+                    <div className="flex items-center gap-x-2">
+                      <DocumentArrowDownIcon className="w-4 h-4" />
+                      Create Report
+                    </div>
+                  </PrimaryButton>
                 )}
               </div>
             )}
@@ -232,7 +275,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                   )
                 : true
             )}
-            fetchUrl={"/api/branches"}
+            fetchUrl={"/api/ops/branches"}
             refreshUrl={isRefreshed}
             className="w-[1500px]"
             component={[
@@ -318,13 +361,13 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
             <div className="flex flex-col gap-y-4">
               <Input
                 variant="standard"
-                label="Upload Photo"
+                label="Upload Lampiran File OJK (.pdf)"
                 disabled={processing}
                 type="file"
                 name="upload"
                 id="upload"
-                accept=".jpg,.jpeg,.png"
-                onChange={(e) => setData("photo", e.target.files[0])}
+                accept=".pdf"
+                onChange={(e) => setData("file_ojk", e.target.files[0])}
               />
             </div>
           </DialogBody>
@@ -388,8 +431,8 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
             <XMarkIcon className="w-6 h-6" />
           </IconButton>
         </DialogHeader>
-        <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider>
+        <form onSubmit={handleSubmitEdit} encType="multipart/form-data">
+          <DialogBody divider className="max-h-96 overflow-auto">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Tipe Cabang"
@@ -408,6 +451,8 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 value={data.branch_code}
                 disabled={processing}
                 onChange={(e) => setData("branch_code", e.target.value)}
+                maxLength="10"
+                max="10"
               />
               <Input
                 label="Nama Cabang"
@@ -415,6 +460,18 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_name", e.target.value)}
               />
+              <Select
+                label="Area"
+                value={`${data.area || ""}`}
+                disabled={processing}
+                onChange={(e) => setData("area", e)}
+              >
+                {areas.map((area, index) => (
+                  <Option key={index} value={`${area}`}>
+                    {area}
+                  </Option>
+                ))}
+              </Select>
               <Input
                 label="Alamat"
                 value={data.address}
@@ -432,6 +489,16 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 value={data.npwp}
                 disabled={processing}
                 onChange={(e) => setData("npwp", e.target.value)}
+              />
+              <Input
+                variant="standard"
+                label="Upload Lampiran Izin OJK (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file_ojk", e.target.files[0])}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>
@@ -454,7 +521,7 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                     name="layanan_atm"
                     label="Tidak Ada"
                     checked={
-                      data.layanan_atm === null || data.layanan_atm === ""
+                      data.layanan_atm === null || data.layanan_atm === "Tidak Ada"
                     }
                     value=""
                     onChange={(e) => setData("layanan_atm", e.target.value)}
@@ -489,8 +556,8 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
             <XMarkIcon className="w-6 h-6" />
           </IconButton>
         </DialogHeader>
-        <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+        <form onSubmit={handleSubmitCreate} encType="multipart/form-data">
+          <DialogBody divider className="max-h-96 overflow-auto">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Tipe Cabang"
@@ -516,6 +583,18 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 disabled={processing}
                 onChange={(e) => setData("branch_name", e.target.value)}
               />
+              <Select
+                label="Area"
+                value={`${data.area || ""}`}
+                disabled={processing}
+                onChange={(e) => setData("area", e)}
+              >
+                {areas.map((area, index) => (
+                  <Option key={index} value={`${area}`}>
+                    {area}
+                  </Option>
+                ))}
+              </Select>
               <Input
                 label="Alamat"
                 value={data.address}
@@ -533,6 +612,16 @@ export default function Cabang({ auth, sessions, branch_types, branches }) {
                 value={data.npwp}
                 disabled={processing}
                 onChange={(e) => setData("npwp", e.target.value)}
+              />
+              <Input
+                variant="standard"
+                label="Upload Lampiran Izin OJK (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file_ojk", e.target.files[0])}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>

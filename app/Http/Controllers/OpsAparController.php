@@ -16,47 +16,6 @@ use Throwable;
 class OpsAparController extends Controller
 {
 
-    protected array $sortFields = ['titik_posisi', 'expired_date'];
-    public function __construct(public OpsApar $ops_apar)
-    {
-    }
-
-    public function api(Request $request)
-    {
-        $sortField = 'id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $this->ops_apar->orderBy($sortField, $sortOrder);
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $employees = $query->paginate($perpage);
-        return AparResource::collection($employees);
-    }
-
-    public function api_detail(OpsAparDetail $ops_apar_detail, Request $request, $id)
-    {
-        $sortFieldInput = $request->input('sort_field', 'id');
-        $sortField = in_array($sortFieldInput, $this->sortFields) ? $sortFieldInput : 'id';
-        $sortOrder = $request->input('sort_order', 'asc');
-        $searchInput = $request->search;
-        $query = $ops_apar_detail->where('ops_apar_id', $id)->orderBy($sortField, $sortOrder);
-
-        $perpage = $request->perpage ?? 10;
-
-        if (!is_null($searchInput)) {
-            $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
-        }
-        $employees = $query->paginate($perpage);
-        return AparDetailResource::collection($employees);
-    }
-
-
 
     public function index()
     {
@@ -64,16 +23,15 @@ class OpsAparController extends Controller
         return Inertia::render('Ops/APAR/Page', ['branches' => $branchesProps]);
     }
 
-    public function detail($branch_code)
+    public function detail($slug)
     {
-        $ops_apar = OpsApar::whereHas('branches', function($query) use($branch_code) {
-            $query->where('branch_code', $branch_code);
+        $ops_apar = OpsApar::whereHas('branches', function($query) use($slug) {
+            $query->where('slug', $slug);
         })->with('branches')->get()->first();
         return Inertia::render('Ops/APAR/Detail', [
             'ops_apar' => $ops_apar
         ]);
     }
-
 
     public function import(Request $request)
     {
