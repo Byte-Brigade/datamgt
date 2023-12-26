@@ -14,11 +14,22 @@ class InfraBro extends Model
         'branch_id',
         'branch_name',
         'branch_type',
-        'activity',
+        'category',
         'status',
         'target',
         'jatuh_tempo_sewa',
+        'start_date',
         'all_progress',
         'periode'
+        'gedung',
+        'layout',
+        'kontraktor',
+        'kontraktor',
+        'line_telp',
+        'tambah_daya',
+        'renovation',
+        'inventory_non_it',
+        'barang_it',
+        'asuransi',
     ];
 }

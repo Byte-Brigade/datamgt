@@ -34,7 +34,7 @@ class GapKdoController extends Controller
     {
         $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
             $query->where('branch_code', $branch_code);
-        })->with(['branches','biaya_sewas'])->first();
+        })->with(['branches', 'biaya_sewas'])->first();
 
         $currentYear = date('Y');
         $futureYears = range($currentYear, $currentYear + 10);
@@ -92,7 +92,7 @@ class GapKdoController extends Controller
                 ]);
             } else {
                 $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
-                if($request->biaya_sewa['value'] >0) {
+                if ($request->biaya_sewa['value'] > 0) {
 
                     $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
                 } else {

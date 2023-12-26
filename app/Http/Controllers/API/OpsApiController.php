@@ -27,7 +27,7 @@ class OpsApiController extends Controller
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->select('branches.*')->where('branches.branch_name' , '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 10;
 
@@ -103,7 +103,7 @@ class OpsApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $ops_apar->orderBy($sortFieldInput, $sortOrder)
-        ->join('branches', 'ops_apars.branch_id', 'branches.id');
+            ->join('branches', 'ops_apars.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
 
@@ -178,9 +178,7 @@ class OpsApiController extends Controller
         $query = $ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
 
-
         $perpage = $request->perpage ?? 15;
-
 
         if (isset($filters)) {
             $query->selectRaw(implode(', ', $filters));
@@ -192,11 +190,9 @@ class OpsApiController extends Controller
         }
 
         $query = $query->get();
-
         $collections = collect([]);
 
         // Nilai default untuk item ketika tidak ada penerima kuasa
-
         foreach ($query as $item) {
 
             // Nilai default untuk item ketika tidak ada penerima kuasa
@@ -207,7 +203,7 @@ class OpsApiController extends Controller
                 'status' => $item->status,
                 'file' => $item->file,
                 'penerima_kuasa' => str_contains($item->status, 'Kanwil') ? $item->status : 'Centralized - SKN',
-                'branches' => $item->branches
+                'branch_name' => $item->branches->branch_name
             ];
             $penerima_kuasa = $item->penerima_kuasa()->get();
 
@@ -227,7 +223,7 @@ class OpsApiController extends Controller
                         'status' => $item->status,
                         'file' => $item->file,
                         'penerima_kuasa' => '[' . $penerima->getPosition() . ']' . ' ' . $penerima->name,
-                        'branches' => $item->branches
+                        'branch_name' => $item->branches->branch_name
                     ]);
 
                     // Jika 'BM' belum ditambahkan dan saat ini adalah 'BM',
@@ -277,7 +273,6 @@ class OpsApiController extends Controller
                 ->orWhere('branch_name', 'like', $searchQuery);
         }
         $query = $query->get();
-
         $collections = collect([]);
 
         // Nilai default untuk item ketika tidak ada penerima kuasa
@@ -287,15 +282,16 @@ class OpsApiController extends Controller
 
             // Nilai default untuk item ketika tidak ada penerima kuasa
             $defaultValues = [
-            'id' => $item->id,
-            'no_surat' => $item->no_surat,
-            'branch_id' => $item->branch_id,
-            'expiry_date' => $item->expiry_date,
-            'note' => $item->note,
-            'file' => $item->file,
-            'penerima_kuasa' => '-',
-            'branches' => $item->branches
-        ];
+                'id' => $item->id,
+                'no_surat' => $item->no_surat,
+                'branch_id' => $item->branch_id,
+                'expiry_date' => $item->expiry_date,
+                'note' => $item->note,
+                'file' => $item->file,
+                'penerima_kuasa' => '-',
+                'branch_name' => $item->branches->branch_name,
+                'branch_code' => $item->branches->branch_code,
+            ];
             $penerima_kuasa = $item->penerima_kuasa()->get();
 
             // Jika ada penerima kuasa
@@ -314,7 +310,8 @@ class OpsApiController extends Controller
                         'status' => $item->status,
                         'file' => $item->file,
                         'penerima_kuasa' => '[' . $penerima->getPosition() . ']' . ' ' . $penerima->name,
-                        'branches' => $item->branches
+                        'branch_name' => $item->branches->branch_name,
+                        'branch_code' => $item->branches->branch_code
                     ]);
 
                     // Jika 'BM' belum ditambahkan dan saat ini adalah 'BM',
@@ -354,8 +351,8 @@ class OpsApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $ops_speciment->select('ops_speciments.*')->orderBy($sortFieldInput, $sortOrder)
-        ->orderBy('branches.branch_code', 'asc')
-        ->join('branches', 'ops_speciments.branch_id', 'branches.id');
+            ->orderBy('branches.branch_code', 'asc')
+            ->join('branches', 'ops_speciments.branch_id', 'branches.id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
@@ -365,7 +362,4 @@ class OpsApiController extends Controller
         $employees = $query->paginate($perpage);
         return SpecimentResource::collection($employees);
     }
-
-
-
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InqueryAssetsResource;
 use App\Models\Branch;
 use App\Models\EmployeePosition;
+use App\Models\GapAsset;
 use App\Models\GapDisnaker;
 use App\Models\GapScoring;
 use App\Models\GapToner;
@@ -12,7 +13,10 @@ use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
 use App\Models\OpsSkbirtgs;
 use App\Models\OpsSkOperasional;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class InqueryController extends Controller
@@ -24,9 +28,9 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Branch/Page');
     }
 
-    public function branchDetail($id)
+    public function branchDetail($slug)
     {
-        $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
+        $branch = Branch::with('employees')->where('slug', $slug)->firstOrFail();
         $positions = EmployeePosition::get();
 
         // Lisensi
@@ -113,9 +117,35 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Lisensi/Page');
     }
 
-    public function asset_detail($id)
+    public function assets_remark(Request $request)
     {
-        $branch = Branch::with('employees')->where('branch_code', $id)->firstOrFail();
+        $remarks = $request->input('remark');
+        // Format the data for createMany
+        DB::beginTransaction();
+        try {
+            foreach ($remarks as $id => $value) {
+                // Assuming you have a 'gap_assets' table
+                $gapAsset = GapAsset::find($id);
+
+                if ($gapAsset) {
+                    // Update the 'remark' field based on the condition
+                    $gapAsset->remark = $value;
+                    $gapAsset->save();
+                }
+            }
+            DB::commit();
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data gagal disimpan. ' . $th->getMessage()]);
+        }
+    }
+
+
+
+    public function asset_detail($slug)
+    {
+        $branch = Branch::where('slug', $slug)->firstOrFail();
         return Inertia::render('Inquery/Asset/Detail', [
             'branch' => $branch,
         ]);

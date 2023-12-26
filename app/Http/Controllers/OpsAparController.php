@@ -26,16 +26,15 @@ class OpsAparController extends Controller
         return Inertia::render('Ops/APAR/Page', ['branches' => $branches]);
     }
 
-    public function detail($branch_code)
+    public function detail($slug)
     {
-        $ops_apar = OpsApar::whereHas('branches', function($query) use($branch_code) {
-            $query->where('branch_code', $branch_code);
+        $ops_apar = OpsApar::whereHas('branches', function($query) use($slug) {
+            $query->where('slug', $slug);
         })->with('branches')->get()->first();
         return Inertia::render('Ops/APAR/Detail', [
             'ops_apar' => $ops_apar
         ]);
     }
-
 
     public function import(Request $request)
     {

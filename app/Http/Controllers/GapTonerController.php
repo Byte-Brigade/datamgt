@@ -40,9 +40,9 @@ class GapTonerController extends Controller
         }
     }
 
-    public function detail(Request $request, $type)
+    public function detail(Request $request, $branch_code)
     {
-        return Inertia::render('GA/Procurement/Toner/Detail', ['type' => $type, 'type_item' => $request->type_item]);
+        return Inertia::render('GA/Procurement/Toner/Detail', ['branch_code' => $branch_code]);
     }
 
 }

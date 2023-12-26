@@ -52,7 +52,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const headings = [
     {
-      name: 'Aktivitas',
+      name: 'Kategori',
       colSpan: 2,
     },
     {
@@ -65,12 +65,20 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
   ]
   const columns = [
 
-    { name: "Nama", field: "activity", sortable: false },
-    { name: "", field: "target", sortable: false , agg:"sum"},
-    { name: "Done", field: "done", sortable: false, agg:"sum" },
-    { name: "On Progress", field: "on_progress", sortable: false, agg:"sum" },
-    { name: "Not Start", field: "not_start", sortable: false},
-    { name: "Drop", field: "drop", sortable: false , agg:"sum"},
+    {
+      name: "Nama", field: "category", sortable: false,
+      type: "custom",
+      render: (data) => (
+        <Link href={route("reporting.bros.category", data.category)}>
+          {data.category}
+        </Link>
+      ),
+    },
+    { name: "", field: "target", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Done", field: "done", className: "text-center", sortable: false, agg: "sum" },
+    { name: "On Progress", field: "on_progress", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Not Start", field: "not_start", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg:"sum" },
   ];
 
   const handleSubmitImport = (e) => {
@@ -157,7 +165,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
             </PrimaryButton>
           </div>
           <DataTable
-          headings={headings}
+            headings={headings}
             columns={columns}
             fetchUrl={"/api/report/bros"}
             refreshUrl={isRefreshed}

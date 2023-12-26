@@ -45,7 +45,8 @@ class UAMController extends Controller
 
     public function index()
     {
-        $branches = Branch::get();
+        $branchesProps = Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']);
+
         $positionProps = Role::where('name', '!=', 'superadmin')->get();
         $permissionProps = Permission::get();
         return Inertia::render('UAM/Page', ['branches' => $branches, 'positions' => $positionProps, 'permissions' => $permissionProps]);
@@ -77,20 +78,18 @@ class UAMController extends Controller
                 $email = $names[0] . '.' . $names[0];
             }
 
-            if ($request->entity == "bss") {
-                $email = $email . '@banksampoerna.com';
-            } else {
-                $email = $email . '@sahabat-ukm.co.id';
-            }
+            $email = $email . '@banksampoerna.com';
 
             $user = User::create([
                 'name' => $request->name,
                 'email' => $email,
                 'nik' => $request->nik,
                 'password' => Hash::make($request->password),
+                'branch_id' => $request->branch_id != 0 ? $request->branch_id : null,
             ]);
             $user->assignRole($request->position);
             $user->syncPermissions($request->permissions);
+
             return redirect(route('uam'))->with(['status' => 'success', 'message' => 'User berhasil dibuat']);
         } catch (Throwable $th) {
             dd($th);

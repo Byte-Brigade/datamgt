@@ -335,7 +335,7 @@ export default function Detail({
           </div>
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}`}
+            fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}/detail`}
             refreshUrl={isRefreshed}
             className="w-[2200px]"
             parameters={{ periode }}

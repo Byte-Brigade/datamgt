@@ -22,7 +22,6 @@ class ReportApiController extends Controller
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 10;
 
-
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
             $type_name = $input['branch_types_type_name'];
@@ -33,11 +32,9 @@ class ReportApiController extends Controller
                 return $q->whereIn('type_name', $type_name);
             });
         }
-
         if (isset($request->layanan_atm)) {
             $query = $query->whereIn('layanan_atm', $request->layanan_atm);
         }
-
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -46,8 +43,6 @@ class ReportApiController extends Controller
                     ->orWhere('address', 'like', $searchQuery);
             });
         }
-
-
         $branches = $query->paginate($perpage);
 
         return BranchResource::collection($branches);
@@ -67,19 +62,33 @@ class ReportApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
-
-
         $query = $query->get();
 
-        $collections = $query->groupBy('activity')->map(function($bros, $activity) {
-            return [
-                'activity' => $activity,
+        // $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
+        //     return $bros->map(function ($bros, $branch_type) use ($category){
+        //             return [
+        //                 'category' => $category,
+        //                 'branch_type' => $branch_type,
+        //                 'target' => $bros->count(),
+        //                 'done' => $bros->where('status', 'Done')->count(),
+        //                 'on_progress' => $bros->where('status', 'On Progress')->count(),
+        //                 'not_start' => $bros->where('all_progress', 0)->count(),
+        //                 'drop' => $bros->where('status', 'Drop')->count(),
+        //             ];
+        //         });
+
+        // })->flatten(1);
+
+        $collections = $query->sortBy('category')->groupBy('category')->map(function ($bros, $category) {
+            return  [
+                'category' => $category,
                 'target' => $bros->count(),
-                'done' => $bros->where('status','Done')->count(),
-                'on_progress' => $bros->where('status','On Progress')->count(),
-                'not_start' => $bros->where('all_progress',0)->count(),
-                'drop' => $bros->where('status','Drop')->count(),
+                'done' => $bros->where('status', 'Done')->count(),
+                'on_progress' => $bros->where('status', 'On Progress')->count(),
+                'not_start' => $bros->where('all_progress', 0)->whereNotIn('status',['Done','On Progress','Drop'])->count(),
+                'drop' => $bros->where('status', 'Drop')->count(),
             ];
+
         });
 
 

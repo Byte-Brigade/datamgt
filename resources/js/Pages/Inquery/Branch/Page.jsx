@@ -8,18 +8,18 @@ export default function Branch({ sessions, auth }) {
   const columns = [
     {
       name: "Nama",
-      field: "branch_code",
+      field: "branch_name",
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.branch.detail", data.branch_code)}>
+        <Link href={route("inquery.branch.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
     },
     {
       name: "Tipe",
-      field: "branch_types.type_name",
+      field: "type_name",
       className: "w-28 text-center",
     },
     { name: "Area", field: "area" },
@@ -36,6 +36,7 @@ export default function Branch({ sessions, auth }) {
           <DataTable
             fetchUrl={"/api/inquery/branches"}
             columns={columns}
+            parameters={{branch_id: auth.user.branch_id}}
           />
         </div>
       </div>

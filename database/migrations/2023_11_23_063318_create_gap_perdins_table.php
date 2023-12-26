@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('divisi_pembebanan');
             $table->string('category');
+            $table->string('user');
             $table->date('periode');
             $table->string('tipe');
             $table->timestamps();

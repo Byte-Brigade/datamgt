@@ -14,7 +14,9 @@ class GapPerdin extends Model
         'divisi_pembebanan',
         'category',
         'periode',
-        'tipe'
+        'value',
+        'tipe',
+        'user',
     ];
 
     public function gap_perdin_details()

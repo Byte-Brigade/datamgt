@@ -17,12 +17,22 @@ return new class extends Migration
             $table->id();
             $table->string('branch_name');
             $table->string('branch_type')->nullable();
-            $table->string('activity')->nullable();
+            $table->string('category')->nullable();
             $table->string('status')->nullable();
-            $table->date('target')->nullable();
+            $table->string('target')->nullable();
             $table->date('jatuh_tempo_sewa')->nullable();
-            $table->double('all_progress');
             $table->date('periode');
+            $table->string('start_date')->nullable();
+            $table->double('all_progress')->nullable();
+            $table->double('gedung')->nullable();
+            $table->double('layout')->nullable();
+            $table->double('kontraktor')->nullable();
+            $table->double('line_telp')->nullable();
+            $table->double('tambah_daya')->nullable();
+            $table->double('renovation')->nullable();
+            $table->double('inventory_non_it')->nullable();
+            $table->double('barang_it')->nullable();
+            $table->double('asuransi')->nullable();
             $table->timestamps();
 
         });

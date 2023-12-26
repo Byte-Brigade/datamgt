@@ -19,8 +19,9 @@ class OpsPajakReklameController extends Controller
 
     public function index(Request $request)
     {
-        $branches = Branch::get();
-        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branches]);
+
+        $branchesProps = Branch::with('branch_types')->get();
+        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branchesProps]);
     }
 
     public function import(Request $request)
@@ -53,6 +54,14 @@ class OpsPajakReklameController extends Controller
         return (new PajakReklameExport($request->branch))->download($fileName);
     }
 
+    private function store_file($file)
+    {
+        $fileName = $file->getClientOriginalName();
+        $file->storeAs('ops/pajak-reklame/', $fileName, ["disk", "public"]);
+
+        return $fileName;
+    }
+
     public function store(Request $request)
     {
         try {
@@ -60,14 +69,29 @@ class OpsPajakReklameController extends Controller
                 'branch_id' => $request->branch_id,
                 'periode_awal' => $request->periode_awal,
                 'periode_akhir' => $request->periode_akhir,
+                'no_izin' => $request->no_izin,
                 'note' => $request->note,
             ]);
 
+            if (!is_null($request->file('file_izin_reklame'))) {
+                $file_izin_reklame = $request->file('file_izin_reklame');
+                $fileNameIzin = $this->store_file($file_izin_reklame);
+                $pajak_reklame->file_izin_reklame = $fileNameIzin;
+            }
+
+            if (!is_null($request->file('file_skpd'))) {
+                $file_skpd = $request->file('file_skpd');
+                $fileNameSkpd = $this->store_file($file_skpd);
+                $pajak_reklame->file_skpd = $fileNameSkpd;
+            }
+            $pajak_reklame->save();
+
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+
     public function update(Request $request, $id)
     {
         try {
@@ -75,12 +99,25 @@ class OpsPajakReklameController extends Controller
             $pajak_reklame->update([
                 'periode_awal' => $request->periode_awal,
                 'periode_akhir' => $request->periode_akhir,
+                'no_izin' => $request->no_izin,
                 'note' => $request->note,
-                'additional_info' => $request->additional_info,
             ]);
 
+            if (!is_null($request->file('file_izin_reklame'))) {
+                $file_izin_reklame = $request->file('file_izin_reklame');
+                $fileNameIzin = $this->store_file($file_izin_reklame);
+                $pajak_reklame->file_izin_reklame = $fileNameIzin;
+            }
+
+            if (!is_null($request->file('file_skpd'))) {
+                $file_skpd = $request->file('file_skpd');
+                $fileNameSkpd = $this->store_file($file_skpd);
+                $pajak_reklame->file_skpd = $fileNameSkpd;
+            }
+            $pajak_reklame->save();
+
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect(route('ops.pajak-reklame'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
@@ -91,14 +128,14 @@ class OpsPajakReklameController extends Controller
             $ops_pajak_reklame = OpsPajakReklame::find($id);
             $file = $request->file('file_izin_reklame');
 
-            if(!is_null($request->file('file_skpd'))) {
+            if (!is_null($request->file('file_skpd'))) {
                 $file = $request->file('file_skpd');
             }
 
             $fileName = $file->getClientOriginalName();
             $file->storeAs('ops/pajak-reklame/', $fileName, ["disk" => 'public']);
 
-            if(!is_null($request->file('file_skpd'))) {
+            if (!is_null($request->file('file_skpd'))) {
                 $ops_pajak_reklame->file_skpd = $fileName;
             } else {
                 $ops_pajak_reklame->file_izin_reklame = $fileName;

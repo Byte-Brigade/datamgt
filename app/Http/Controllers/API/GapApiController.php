@@ -39,6 +39,9 @@ class GapApiController extends Controller
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
         }
+        if (!is_null($request->category)) {
+            $query = $query->where('category', $request->category);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
@@ -61,11 +64,16 @@ class GapApiController extends Controller
             $latestPeriode = $query->max('periode');
             $query->where('periode', $latestPeriode);
         }
-        $data = $query->paginate($perpage);
+        if ($perpage == "All") {
+            $query = $query->get();
+        } else {
+            $query = $query->paginate($perpage);
+        }
         return AssetsResource::collection($data);
+
     }
 
-    public function kdos(GapKdo $gap_kdo, Request $request)
+    public function kdos(GapKdo $gap_kdo, Request $request, $type)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
@@ -80,7 +88,7 @@ class GapApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
-        if (!is_null($request->month) && !is_null($request->year)) {
+   if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
             // Create a Carbon instance using the year and month
@@ -90,22 +98,37 @@ class GapApiController extends Controller
             $latestPeriode = $query->max('periode');
             $query->where('periode', $latestPeriode);
         }
-        $query = $query->get();
-
-        $collections = $query->groupBy('branches.id')->map(function ($kdos, $branch) {
-            $biaya_sewa = $kdos->flatMap(function ($mobil) {
-                return $mobil->biaya_sewas;
-            })->groupBy('periode')->sortKeysDesc()->first();
-            return [
-                'branches' => Branch::find($branch),
-                'branch_types' => $kdos->first()->branches->branch_types,
-                'jumlah_kendaraan' => $kdos->count(),
-                'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
-                    : 0,
-                'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
-                'periode' => $kdos->first()->periode,
-            ];
-        });
+        $collections = $query->get();
+        if ($type == 'cabang') {
+            $collections = $collections->groupBy('branches.id')->map(function ($kdos, $branch) {
+                $biaya_sewa = $kdos->flatMap(function ($mobil) {
+                    return $mobil->biaya_sewas;
+                })->groupBy('periode')->sortKeysDesc()->first();
+                return [
+                    'branches' => Branch::find($branch),
+                    'branch_types' => $kdos->first()->branches->branch_types,
+                    'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                        : 0,
+                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
+                  'periode' => $kdos->first()->periode,
+                ];
+            });
+        } else if ($type == 'vendor') {
+            $collections = $collections->groupBy('vendor')->map(function ($kdos, $vendor) {
+                $biaya_sewa = $kdos->flatMap(function ($mobil) {
+                    return $mobil->biaya_sewas;
+                })->groupBy('periode')->sortKeysDesc()->first();
+                return [
+                    'vendor' => $vendor,
+                    'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                        : 0,
+                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
+                  'periode' => $kdos->first()->periode,
+                ];
+            });
+        }
 
 
         if ($sortOrder == 'desc') {
@@ -114,7 +137,7 @@ class GapApiController extends Controller
             $collections = $collections->sortBy($sortFieldInput);
         }
 
-        return response()->json(PaginationHelper::paginate($collections->unique('branches.branch_code'), $perpage));
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
     public function kdo_mobil_details(GapKdo $gap_kdo_mobil, Request $request, $branch_id)
@@ -311,18 +334,34 @@ class GapApiController extends Controller
         }
 
         $query = $query->get();
+        $collections = collect([]);
+        if(!is_null($request->summary) && $request->summary == "divisi") {
+            $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
+                return [
+                    'divisi_pembebanan' => $divisi,
+                    'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                    'ka' => $perdins->where('category', 'KA')->sum('value'),
+                    'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                    'total' => $perdins->sum('value')
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['total'];
+            });
+        } else if (!is_null($request->summary) && $request->summary == "spender")
+        {
+            $collections = $query->groupBy('user')->map(function ($perdins, $user) {
+                return [
+                    'user' => $user,
+                    'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                    'ka' => $perdins->where('category', 'KA')->sum('value'),
+                    'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                    'total' => $perdins->sum('value')
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['total'];
+            });
+        }
 
-        $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
-            return [
-                'divisi_pembebanan' => $divisi,
-                'airline' => $perdins->where('category', 'Airline')->sum('value'),
-                'ka' => $perdins->where('category', 'KA')->sum('value'),
-                'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
-                'total' => $perdins->sum('value')
-            ];
-        })->sortByDesc(function ($item) {
-            return $item['total'];
-        });
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -351,8 +390,17 @@ class GapApiController extends Controller
             });
         }
 
-        $data = $query->paginate($perpage);
-        return PerdinResource::collection($data);
+        $data = $query->get();
+        $collections = $data->groupBy('periode')->map(function($perdins, $periode) {
+            return [
+                'periode' => Carbon::parse($periode)->format('F Y'),
+                'airline' => $perdins->where('category', 'Airline')->sum('value'),
+                'ka' => $perdins->where('category', 'KA')->sum('value'),
+                'hotel' => $perdins->where('category', 'Hotel')->sum('value'),
+                'total' => $perdins->sum('value'),
+            ];
+        });
+        return PaginationHelper::paginate($collections, $perpage);
     }
     public function alihdayas(GapAlihDaya $gap_alih_daya, Request $request)
     {
@@ -421,10 +469,60 @@ class GapApiController extends Controller
                 $query->whereHas('branches', function ($q) use ($searchQuery) {
                     $q->where('branch_name', 'like', $searchQuery);
                 });
+
+            });
+        }
+           if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+
+        $data = $query->get();
+
+        $collections = $data->groupBy('branch_id')->map(function ($toners, $id) {
+            $branch = Branch::find($id);
+            return [
+                'branch_id' => $id,
+                'branch_name' => $branch->branch_name,
+                'branch_code' => $branch->branch_code,
+                'quantity' => $toners->sum('quantity'),
+                'price' => $toners->sum('price'),
+            ];
+        });
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+
+    public function toner_details(GapToner $gap_toner, Request $request, $branch_code)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $branch = Branch::where('branch_code', $branch_code)->first();
+        $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->whereHas('branches', function ($q) use ($searchQuery) {
+                    $q->where('branch_name', 'like', $searchQuery);
+                });
+
             });
         }
         if (!is_null($request->startDate)) {
             $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+
         }
 
 
@@ -438,7 +536,6 @@ class GapApiController extends Controller
             $latestPeriode = $query->max('periode');
             $query->where('periode', $latestPeriode);
         }
-
 
 
         $data = $query->paginate($perpage);

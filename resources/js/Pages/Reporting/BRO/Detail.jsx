@@ -6,8 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -24,15 +23,17 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Speciment({ auth, sessions, branches }) {
+export default function Detail({ auth, branches, category, sessions }) {
   const initialData = {
     branch_id: 0,
+    jenis_perizinan_id: 0,
+    tgl_pengesahan: null,
+    tgl_masa_berlaku: null,
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    tgl_speciment: null,
-    file: null,
+    expired_date: null,
   };
   const {
     data,
@@ -53,54 +54,18 @@ export default function Speciment({ auth, sessions, branches }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "Branch Name", sortable: true, field: "branch_name" },
+    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Kategori", sortable: true, field: "category" },
+    { name: "Status", sortable: true, field: "status" },
+    { name: "Target", sortable: true, field: "target" },
+    { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
     {
-      name: "Tanggal Spesimen",
-      field: "tgl_speciment",
-      type: "date",
-      sortable: true,
-    },
-    {
-      name: "Lampiran",
-      field: "file",
+      name: "All Progress", sortable: true, field: "all_progress",
       type: "custom",
-      className: "text-center",
-      render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
-        auth.permissions.includes("can add") ? (
-          data.no_surat !== "-" ? (
-            data.file ? (
-              <a
-                className="text-blue-500 hover:underline"
-                href={`/storage/ops/speciment/${data.file}`}
-                target="__blank"
-              >
-                {" "}
-                {data.file}
-              </a>
-            ) : (
-              <Button
-                variant="outlined"
-                size="sm"
-                color="blue"
-                onClick={() => {
-                  toggleModalUpload();
-                  setData(data);
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <ArrowUpTrayIcon className="w-4 h-4" />
-                  Upload Lampiran
-                </div>
-              </Button>
-            )
-          ) : (
-            "-"
-          )
-        ) : (
-          <span>Belum upload lampiran</span>
-        ),
+      render: (data) => (data.all_progress * 100).toFixed(2) + "%"
     },
+
     {
       name: "Action",
       field: "action",
@@ -123,7 +88,7 @@ export default function Speciment({ auth, sessions, branches }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.import"), {
+    post(route("infra.bros.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -133,13 +98,14 @@ export default function Speciment({ auth, sessions, branches }) {
   };
 
   const handleSubmitExport = (e) => {
+    const { branch } = data;
     e.preventDefault();
-    window.open(route("ops.speciment.export"), "_self");
+    window.open(route("infra.bros.export") + `?branch=${branch}`, "_self");
+    setIsModalExportOpen(!isModalExportOpen);
   };
-
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.upload", data.id), {
+    post(route("infra.bros.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -150,8 +116,8 @@ export default function Speciment({ auth, sessions, branches }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("ops.speciment.update", data.id), {
-      method: "put",
+    post(route("infra.bros.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -161,7 +127,7 @@ export default function Speciment({ auth, sessions, branches }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("ops.speciment.store", data.id), {
+    post(route("infra.bros.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -173,7 +139,7 @@ export default function Speciment({ auth, sessions, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("ops.speciment.delete", data.id), {
+    destroy(route("infra.bros.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -181,22 +147,6 @@ export default function Speciment({ auth, sessions, branches }) {
       },
     });
   };
-
-  // const exportData = (e) => {
-  //   e.preventDefault();
-  //   const { branch, position } = data;
-  //   const query =
-  //     branch !== 0 && position !== 0
-  //       ? `?branch=${branch}&position=${position}`
-  //       : branch !== 0
-  //       ? `?branch=${branch}`
-  //       : position !== 0
-  //       ? `?position=${position}`
-  //       : "";
-
-  //   window.open(route("speciment.export") + query, "_self");
-  //   setData({ branch: 0, position: 0 });
-  // };
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -223,58 +173,42 @@ export default function Speciment({ auth, sessions, branches }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="Speciment" />
+      <Head title="GA | Sewa Gedung" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("branch_ops|superadmin", auth) &&
-            ["can add", "can export"].some((permission) =>
-              auth.permissions.includes(permission)
-            ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
-                )}
-                {auth.permissions.includes("can export") && (
-                  <PrimaryButton onClick={toggleModalExport}>
-                  <div className="flex items-center gap-x-2">
-                    <DocumentArrowDownIcon className="w-4 h-4" />
-                    Create Report
-                  </div>
-                </PrimaryButton>
-                )}
-              </div>
-            )}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <PrimaryButton
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add
+                </div>
+              </PrimaryButton>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
+                <div className="flex items-center gap-x-2">
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
+                </div>
+              </PrimaryButton>
+            </div>
+            <PrimaryButton onClick={toggleModalExport}>
+              Create Report
+            </PrimaryButton>
+          </div>
           <DataTable
-            columns={columns.filter((column) =>
-              column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) && ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
-                : true
-            )}
-            fetchUrl={"/api/ops/speciments"}
+            columns={columns}
+            className="w-[1200px]"
+            fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
+            parameters={{category: category}}
           />
         </div>
       </div>
@@ -369,10 +303,21 @@ export default function Speciment({ auth, sessions, branches }) {
         onSubmit={handleSubmitExport}
       >
         <div className="flex flex-col gap-y-4">
-          <Typography>Buat Report Data Cabang?</Typography>
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch_id}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
         </div>
       </Modal>
-
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -390,12 +335,50 @@ export default function Speciment({ auth, sessions, branches }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
               <Input
-                label="Tanggal Spesimen"
-                value={data.tgl_speciment || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("tgl_speciment", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+              />
+              <Input
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
+              />
+              <Input
+                label="Upload Lampiran"
+                type="file"
+                disabled={processing}
+                name="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  return setData("file", e.target.files[0]);
+                }}
               />
             </div>
           </DialogBody>
@@ -426,7 +409,7 @@ export default function Speciment({ auth, sessions, branches }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider>
+          <DialogBody className="overflow-y-scroll " divider>
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -440,12 +423,28 @@ export default function Speciment({ auth, sessions, branches }) {
                   </Option>
                 ))}
               </Select>
+
               <Input
-                label="Tanggal Spesimen"
-                value={data.tgl_speciment || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("tgl_speciment", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+              />
+              <Input
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
             </div>
           </DialogBody>
@@ -479,7 +478,7 @@ export default function Speciment({ auth, sessions, branches }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branch_code} - {data.branch_name}
+              {data.branches.branch_code} - {data.branches.branch_name}
             </span>{" "}
             ?
           </Typography>

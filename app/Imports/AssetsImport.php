@@ -29,29 +29,6 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithEvents, WithVali
     protected $sheetName;
     use Importable;
 
-    /**
-     * @return array
-     */
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                // Retrieve the sheet name from the event
-                $sheetName = $event->getSheet()->getTitle();
-                $this->sheetName = $sheetName;
-                // $gap_asset = GapAsset::get();
-                // $currentMonthDate = Carbon::parse($sheetName)->firstOfMonth()->toDateString();
-                // $exists = GapAsset::where('periode', '<', $currentMonthDate)->exists();
-
-                // if ($exists) {
-                //     // dd(Carbon::parse($sheetName)->firstOfMonth()->format('Ymd'));
-                //     // throw new Exception("test");
-                //     ProcessPartitioning::dispatch($sheetName, 'gap_assets');
-                // }
-                // Call the service to handle the partitioning
-            },
-        ];
-    }
 
 
     public function collection(Collection $rows)

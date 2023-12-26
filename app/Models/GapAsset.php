@@ -24,7 +24,8 @@ class GapAsset extends Model
         'major_category',
         'depre_exp',
         'net_book_value',
-        'periode'
+        'periode',
+        'remark',
     ];
 
     public function branches() {

@@ -13,16 +13,14 @@ export default function Page({ sessions, auth }) {
     },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
-      className: "cursor-pointer hover:text-blue-500",
+      field: "type_name",
+      className: 'text-center'
     },
-
     {
       name: 'Izin/Ojk',
       field: 'izin',
       className: "text-center",
     },
-
     {
       name: 'SK BI RTGS',
       field: 'skbirtgs',
