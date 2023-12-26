@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Exports\Assets\AssetsExport;
+use App\Helpers\PartitionManager;
 use App\Imports\AssetsImport;
 use App\Models\Branch;
 use App\Models\GapAsset;
 use Illuminate\Http\Request;
 use App\Http\Resources\AssetsResource;
+use App\Jobs\ProcessPartitioning;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class GapAssetController extends Controller
@@ -20,20 +24,31 @@ class GapAssetController extends Controller
      */
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branches]);
     }
     public function import(Request $request)
     {
         try {
             (new AssetsImport)->import($request->file('file'));
+            // ProcessPartitioning::dispatch('September 2023', 'gap_assets');
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (ValidationException $e) {
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
 
-            return redirect(route('gap.assets'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-            dd($e);
-            return redirect(route('gap.assets'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
+
 
     public function export(Request $request)
     {

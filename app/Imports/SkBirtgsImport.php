@@ -8,8 +8,10 @@ use App\Models\OpsSkbirtgs;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithUpserts;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class SkBirtgsImport implements ToModel, WithHeadingRow
+class SkBirtgsImport implements ToModel, WithHeadingRow, WithValidation
 {
     use Importable;
 
@@ -22,10 +24,13 @@ class SkBirtgsImport implements ToModel, WithHeadingRow
         $branch = trim($row['kantor_cabang']);
         $branch_id = Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first();
 
-        $ops_skbirtgs = OpsSkbirtgs::updateOrCreate([
+        $ops_skbirtgs = OpsSkbirtgs::updateOrCreate(
+            [
+                'branch_id' => $branch_id
+            ],
+            [
             'no_surat' => $row['nomor_surat'],
             'branch_id' => $branch_id,
-            'status' => $row['status']
         ]);
 
         $penerima_kuasa_ids = array_filter([$penerima_kuasa_1, $penerima_kuasa_2], fn($value) => !is_null($value) && $value !== '');
@@ -35,8 +40,11 @@ class SkBirtgsImport implements ToModel, WithHeadingRow
         return $ops_skbirtgs;
     }
 
-    public function headingRow()
+
+    public function rules(): array
     {
-        return 3;
+        return [
+            'kantor_cabang' => ['required', 'string'],
+        ];
     }
 }

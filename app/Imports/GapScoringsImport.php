@@ -52,6 +52,7 @@ class GapScoringsImport implements ToModel, WithHeadingRow, WithUpserts, WithBat
                 'schedule_scoring' => $row['schedule_scoring'],
                 'type' => $row['type'],
                 'keterangan' => $row['keterangan'],
+                'periode' => Date::excelToDateTimeObject($row['periode']),
             ]);
         }
     }

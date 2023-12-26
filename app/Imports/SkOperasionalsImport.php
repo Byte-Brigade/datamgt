@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class SkOperasionalsImport implements ToCollection, WithHeadingRow
@@ -35,11 +36,16 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
             $penerima_kuasa_id = isset($penerima_kuasa) ? Employee::where('name', 'like', "%$penerima_kuasa%")->where('branch_id', $branch_id)->pluck('id')->first() : null;
 
             if (isset($row['no_surat'])) {
-                $ops_sk_operasional = OpsSkOperasional::updateOrCreate([
-                    'no_surat' => $row['no_surat'],
-                    'branch_id' => $branch_id,
-                    'expiry_date' => Date::excelToDateTimeObject($row['expiry_date'])->format('Y-m-d')
-                ]);
+                $ops_sk_operasional = OpsSkOperasional::updateOrCreate(
+                    [
+                        'branch_id' => $branch_id,
+                    ],
+                    [
+                        'no_surat' => $row['no_surat'],
+                        'branch_id' => $branch_id,
+                        'expiry_date' => Date::excelToDateTimeObject($row['expiry_date'])->format('Y-m-d')
+                    ]
+                );
                 $ops_sk_operasional->penerima_kuasa()->sync($penerima_kuasa_id);
             } else if (isset($penerima_kuasa_id)) {
                 $ops_sk_operasional = OpsSkOperasional::where('branch_id', $branch_id)->get()->first();
@@ -48,8 +54,5 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
         }
     }
 
-    public function headingRow()
-    {
-        return 3;
-    }
+
 }

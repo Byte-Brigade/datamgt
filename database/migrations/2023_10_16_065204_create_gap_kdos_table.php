@@ -21,8 +21,9 @@ return new class extends Migration
             $table->date('awal_sewa')->nullable();
             $table->date('akhir_sewa')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->date('periode');
             $table->timestamps();
-            $table->unique(['nopol']);
+            $table->unique(['nopol','periode']);
         });
     }
 

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->text('keterangan')->nullable();
+            $table->string('titik_posisi');
+            $table->date('expired_date');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->timestamps();
         });

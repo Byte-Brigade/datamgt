@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mpociot\Versionable\VersionableTrait;
 
 class GapAlihDaya extends Model
 {
-    use HasFactory;
+    use HasFactory, VersionableTrait;
 
     protected $fillable = [
         'jenis_pekerjaan',
@@ -16,5 +17,6 @@ class GapAlihDaya extends Model
         'lokasi',
         'vendor',
         'cost',
+        'periode'
     ];
 }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('total');
+            $table->date('periode');
             $table->timestamps();
         });
     }

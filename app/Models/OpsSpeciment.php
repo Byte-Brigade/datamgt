@@ -13,8 +13,7 @@ class OpsSpeciment extends Model
     protected $fillable = [
         'branch_id',
         'tgl_speciment',
-        'hasil_konfirmasi_cabang',
-        'keterangan'
+        'file'
     ];
 
     public function branches()

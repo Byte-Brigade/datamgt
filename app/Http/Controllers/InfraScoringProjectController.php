@@ -20,8 +20,8 @@ class InfraScoringProjectController extends Controller
     public function index()
     {
 
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Project/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/Scoring/Project/Page', ['branches' => $branches]);
     }
 
 
@@ -72,8 +72,8 @@ class InfraScoringProjectController extends Controller
      */
     public function detail($scoring_vendor)
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches]);
     }
     /**
      * Show the form for editing the specified resource.

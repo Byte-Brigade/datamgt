@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ops_apar_details', function (Blueprint $table) {
+        Schema::create('gap_perdin_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ops_apar_id');
-            $table->string('titik_posisi');
-            $table->date('expired_date');
-            $table->foreign('ops_apar_id')->references('id')->on('ops_apars')->onDelete('cascade');
+            $table->unsignedBigInteger('gap_perdin_id');
+            $table->date('periode');
+            $table->unsignedBigInteger('value');
+            $table->foreign('gap_perdin_id')->references('id')->on('gap_perdins')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ops_apar_details');
+        Schema::dropIfExists('gap_perdin_details');
     }
 };

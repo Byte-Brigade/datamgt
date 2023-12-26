@@ -11,6 +11,7 @@ use App\Models\EmployeePosition;
 use App\Models\ErrorLog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
 
@@ -20,11 +21,11 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $branchesProps = Branch::all();
+        $branches = Branch::all();
         $positionsProps = EmployeePosition::all();
 
         return Inertia::render('Ops/Karyawan/Page', [
-            'branches' => $branchesProps,
+            'branches' => $branches,
             'positions' => $positionsProps
         ]);
     }
@@ -34,26 +35,19 @@ class EmployeeController extends Controller
         try {
             (new EmployeesImport)->import($request->file('file'));
 
-            return redirect(route('ops.employees'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-            $list_error = collect([]);
-            // dd($failures);
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed
-                $error = ErrorLog::create([
-                    'row' => $failure->row(),
-                    'attribute' => $failure->attribute(),
-                    'error_message' => json_encode($failure->errors(), JSON_FORCE_OBJECT),
-                    'value' => json_encode($failure->values(), JSON_FORCE_OBJECT),
-                ]);
-
-                $list_error->push($error);
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
             }
-            return redirect(route('ops.employees'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
+            $errorString = trim($errorString);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

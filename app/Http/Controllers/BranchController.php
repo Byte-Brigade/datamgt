@@ -8,6 +8,9 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redis;
+use Inertia\Inertia;
 use App\Exports\BranchesExport;
 use App\Imports\BranchesImport;
 use App\Http\Resources\BranchResource;
@@ -44,19 +47,20 @@ class BranchController extends Controller
             (new BranchesImport)->import($request->file('file'));
 
 
-            return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
             }
-            dd($failures);
+            $errorString = trim($errorString);
 
-            return redirect(route('ops.branches'))->with(['status' => 'failed', 'message' => 'Import Gagal']);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

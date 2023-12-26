@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mpociot\Versionable\VersionableTrait;
 
 class InfraScoring extends Model
 {
-    use HasFactory;
+    use HasFactory, VersionableTrait;
 
     protected $fillable = [
         'branch_id',
@@ -29,6 +30,7 @@ class InfraScoring extends Model
         'scoring_vendor',
         'type',
         'keterangan',
+        'periode',
     ];
 
     public function branches()

@@ -16,7 +16,9 @@ use App\Models\GapKdoMobil;
 use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class GapKdoController extends Controller
@@ -24,11 +26,11 @@ class GapKdoController extends Controller
     public function index()
     {
 
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branches]);
     }
 
-    public function kdo_mobil($branch_code)
+    public function kdo_mobil(Request $request, $branch_code)
     {
         $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
             $query->where('branch_code', $branch_code);
@@ -43,7 +45,8 @@ class GapKdoController extends Controller
         return Inertia::render('GA/Procurement/KDO/Detail', [
             'kdo_mobil' => $kdo_mobil,
             'years' => $futureYears,
-            'months' => $months
+            'months' => $months,
+            'periode' => $request->periode,
         ]);
     }
 
@@ -122,10 +125,20 @@ class GapKdoController extends Controller
         try {
             (new KdoImport)->import($request->file('file'));
 
-            return redirect(route('gap.kdos'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-            dd($e);
-            return redirect(route('gap.kdos'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (ValidationException $e) {
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
+
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
     public function kdo_mobil_import(Request $request)
@@ -135,10 +148,20 @@ class GapKdoController extends Controller
         try {
             (new KdoMobilImport($request->branch_id, $request->gap_kdo_id))->import($request->file('file'));
 
-            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-            dd($e);
-            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (ValidationException $e) {
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
+
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

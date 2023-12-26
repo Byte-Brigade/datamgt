@@ -14,8 +14,8 @@ class InfraSewaGedungController extends Controller
 {
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('GA/Infra/SewaGedung/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('GA/Infra/SewaGedung/Page', ['branches' => $branches]);
     }
 
     public function import(Request $request)

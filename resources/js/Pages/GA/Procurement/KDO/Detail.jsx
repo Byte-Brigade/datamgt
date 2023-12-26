@@ -25,7 +25,14 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
+export default function Detail({
+  auth,
+  sessions,
+  kdo_mobil,
+  years,
+  months,
+  periode,
+}) {
   console.log(kdo_mobil);
   const currentDate = new Date();
   const initialData = {
@@ -39,7 +46,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     year: null,
     month: null,
     biaya_sewas: null,
-    biaya_sewa: null
+    biaya_sewa: null,
   };
 
   const {
@@ -86,7 +93,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
     e.preventDefault();
     window.open(
       route("gap.kdos.mobil.export", kdo_mobil.branches.branch_code) +
-      `?gap_kdo_id=${gap_kdo_id}`,
+        `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
@@ -125,43 +132,46 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
 
     // Format the date to get the ISO string for the 1st day of the month
     return date.toISOString().slice(0, 10);
-  }
+  };
 
   const handlePeriode = (month, year) => {
-    let biaya_sewas = data.biaya_sewas
+    let biaya_sewas = data.biaya_sewas;
 
     if (!Array.isArray(biaya_sewas)) {
-      setData('biaya_sewa', 0)
+      setData("biaya_sewa", 0);
       return;
-
     }
-    let biaya_sewa = biaya_sewas.find(item => item.periode === getPeriode(month, year));
-    setData({...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0})
-    console.log(data.month)
-    console.log(data.year)
-  }
-  const handleMonth = (e) => {;
-    handlePeriode(e, data.year)
-  }
+    let biaya_sewa = biaya_sewas.find(
+      (item) => item.periode === getPeriode(month, year)
+    );
+    setData({
+      ...data,
+      month: month,
+      year: year,
+      biaya_sewa: biaya_sewa ? biaya_sewa : 0,
+    });
+    console.log(data.month);
+    console.log(data.year);
+  };
+  const handleMonth = (e) => {
+    handlePeriode(e, data.year);
+  };
   const handleYear = (e) => {
-    setData('year', e);
-    handlePeriode(data.month, e)
-  }
+    setData("year", e);
+    handlePeriode(data.month, e);
+  };
   const handleBiayaSewa = (val) => {
-    if (typeof data.biaya_sewa === 'object' && data.biaya_sewa !== null) {
-
-      let biaya_sewa = { ...data.biaya_sewa, value: val }
-      console.log("handle")
-      console.log(biaya_sewa)
-      setData('biaya_sewa', biaya_sewa)
+    if (typeof data.biaya_sewa === "object" && data.biaya_sewa !== null) {
+      let biaya_sewa = { ...data.biaya_sewa, value: val };
+      console.log("handle");
+      console.log(biaya_sewa);
+      setData("biaya_sewa", biaya_sewa);
       return;
     }
-    setData('biaya_sewa', Number(val))
+    setData("biaya_sewa", Number(val));
 
-    console.log(data.biaya_sewa)
-  }
-
-
+    console.log(data.biaya_sewa);
+  };
 
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
@@ -269,12 +279,14 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
           placement="left-start"
           onEditClick={() => {
             toggleModalEdit();
-            const dateObject = data.biaya_sewa ? new Date(data.biaya_sewa.periode) : new Date();
+            const dateObject = data.biaya_sewa
+              ? new Date(data.biaya_sewa.periode)
+              : new Date();
 
             const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
-            const month = dateObject.getMonth() + 1
+            const month = dateObject.getMonth() + 1;
 
-            setData({...data, month: month.toString(), year: year})
+            setData({ ...data, month: month.toString(), year: year });
             console.log(month);
             console.log();
             // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
@@ -287,8 +299,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
       ),
     },
   ];
-  console.log(data.month)
-
+  console.log(data.month);
 
   return (
     <AuthenticatedLayout auth={auth}>
@@ -327,6 +338,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
             fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}/detail`}
             refreshUrl={isRefreshed}
             className="w-[2200px]"
+            parameters={{ periode }}
           />
         </div>
       </div>
@@ -531,7 +543,7 @@ export default function Detail({ auth, sessions, kdo_mobil, years, months }) {
               </Select>
               <Input
                 label="Biaya Sewa"
-                value={data.biaya_sewa ? data.biaya_sewa.value : ''}
+                value={data.biaya_sewa ? data.biaya_sewa.value : ""}
                 type="number"
                 disabled={processing}
                 onChange={(e) => handleBiayaSewa(e.target.value)}

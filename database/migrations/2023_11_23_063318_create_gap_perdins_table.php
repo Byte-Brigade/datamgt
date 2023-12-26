@@ -19,10 +19,9 @@ return new class extends Migration
             $table->string('category');
             $table->string('user');
             $table->date('periode');
-            $table->unsignedBigInteger('value');
             $table->string('tipe');
-            // $table->unique(['user','category','periode','tipe']);
             $table->timestamps();
+
         });
     }
     public function down()

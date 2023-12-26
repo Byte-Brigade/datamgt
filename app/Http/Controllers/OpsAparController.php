@@ -10,7 +10,10 @@ use App\Models\Branch;
 use App\Models\OpsApar;
 use App\Models\OpsAparDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class OpsAparController extends Controller
@@ -19,8 +22,8 @@ class OpsAparController extends Controller
 
     public function index()
     {
-        $branchesProps = Branch::get();
-        return Inertia::render('Ops/APAR/Page', ['branches' => $branchesProps]);
+        $branches = Branch::get();
+        return Inertia::render('Ops/APAR/Page', ['branches' => $branches]);
     }
 
     public function detail($slug)
@@ -36,13 +39,13 @@ class OpsAparController extends Controller
     public function import(Request $request)
     {
         try {
+            DB::beginTransaction();
             (new AparImport)->import($request->file('file'));
-
-            return redirect(route('ops.apar'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-
-
-            return redirect(route('ops.apar'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            DB::commit();
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

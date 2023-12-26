@@ -27,6 +27,7 @@ class BroImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
 
+
         foreach ($rows as $row) {
             try {
 

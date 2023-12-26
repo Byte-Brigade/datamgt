@@ -12,9 +12,10 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
+class KdoImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use Importable;
 
@@ -27,13 +28,14 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
             $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
-
+            $periode = Date::excelToDateTimeObject($row['periode']);
             if ($branches->count() > 0) {
                 if ($branches->count() > 1) {
                     foreach ($branches as $branch) {
                         $gap_kdo_mobil = GapKdo::updateOrCreate(
                             [
                                 'nopol' => $row['nopol'],
+                                'periode' => $periode,
                             ],
                             [
                                 'branch_id' => $branch->id,
@@ -41,13 +43,13 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
                                 'nopol' => $row['nopol'],
                                 'awal_sewa' => is_int($row['awal_sewa']) ? Date::excelToDateTimeObject($row['awal_sewa']) : null,
                                 'akhir_sewa' => is_int($row['akhir_sewa']) ? Date::excelToDateTimeObject($row['akhir_sewa']) : null,
+                                'periode' => $periode,
                             ]
                         );
-                        $periode = [];
                         foreach ($filteredData as $key => $value) {
                             if (!is_null($value)) {
                                 $value = preg_replace('/[^0-9]/', '', $value);
-                                $tanggal_periode = strtoupper($key) . '_' . Carbon::now()->year;
+                                $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
                                 $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
                                 $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
@@ -71,6 +73,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
                 $gap_kdo_mobil = GapKdo::updateOrCreate(
                     [
                         'nopol' => $row['nopol'],
+                        'periode' => $periode,
                     ],
                     [
                         'branch_id' => $branch->id,
@@ -78,13 +81,13 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
                         'nopol' => $row['nopol'],
                         'awal_sewa' => is_int($row['awal_sewa']) ? Date::excelToDateTimeObject($row['awal_sewa']) : null,
                         'akhir_sewa' => is_int($row['akhir_sewa']) ? Date::excelToDateTimeObject($row['akhir_sewa']) : null,
+                        'periode' => $periode,
                     ]
                 );
-                $periode = [];
                 foreach ($filteredData as $key => $value) {
                     if (!is_null($value)) {
                         $value = preg_replace('/[^0-9]/', '', $value);
-                        $tanggal_periode = strtoupper($key) . '_' . Carbon::now()->year;
+                        $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
                         $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
                         $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
@@ -105,9 +108,10 @@ class KdoImport implements ToCollection, WithHeadingRow, WithUpserts
             }
         }
     }
-
-    public function uniqueBy()
+    public function rules(): array
     {
-        return 'branch_id';
+        return [
+            '*.periode' => 'required|integer',
+        ];
     }
 }

@@ -54,7 +54,10 @@ export default function Apar({ auth, branches, sessions }) {
   const columns = [
     { name: "Cabang", field: "branch_name" },
 
-    { name: "Jumlah Tabung", field: "keterangan", className: "text-center" },
+    {
+      name: "Jumlah Tabung", field: "jumlah_tabung", type: 'custom',
+      render: (data) => `${data.jumlah_tabung} Tabung`
+    },
     {
       name: "Data Detail",
       field: "detail",
@@ -164,7 +167,7 @@ export default function Apar({ auth, branches, sessions }) {
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
-console.log(auth)
+  console.log(auth)
   return (
     <AuthenticatedLayout auth={auth}>
       <BreadcrumbsDefault />

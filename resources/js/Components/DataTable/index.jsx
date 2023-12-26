@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import Datepicker from "react-tailwindcss-datepicker";
+import MonthPicker from "./MonthPicker";
 import { useFormContext } from "../Context/FormProvider";
 import Paginator from "./Paginator";
 import TableRow from "./Partials/TableRow";
@@ -62,6 +62,15 @@ export default function DataTable({
 
   const toggleOpen = () => setOpen((cur) => !cur);
 
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // Add 1 since getMonth() returns a 0-indexed value.
+  const currentYear = currentDate.getFullYear();
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  const [selectedMonthData, setSelectedMonthData] = useState({
+    month: null,
+    year: null,
+  });
   const { auth } = usePage().props;
   const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
@@ -188,7 +197,8 @@ export default function DataTable({
       search,
 
       ...filterData,
-      ...dateRange,
+      ...selectedMonthData
+
     };
 
     if (fetchUrl) {
@@ -264,7 +274,7 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    dateRange,
+    selectedMonthData
     isRefreshed,
   ]);
 
@@ -317,6 +327,12 @@ export default function DataTable({
       </div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col w-72">
+          <div className="inline-block z-50">
+            <span>Periode</span>
+          <MonthPicker onDateChange={setSelectedMonthData}/>
+          </div>
+
+
           <div className="flex items-center gap-x-2">
             Show
             <select
@@ -458,7 +474,7 @@ export default function DataTable({
           fixedTable ? "max-h-96" : "h-full"
         }`}
       >
-        <table className={`${className} text-sm leading-3 bg-white`}>
+        <table className={`${className} text-sm leading-3 bg-white z-0`}>
           <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr

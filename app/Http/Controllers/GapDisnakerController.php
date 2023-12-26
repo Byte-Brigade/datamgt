@@ -19,9 +19,9 @@ class GapDisnakerController extends Controller
 
     public function index()
     {
-        $branchesProps = Branch::get();
+        $branches = Branch::get();
         $jenis_perizinan = JenisPerizinan::get();
-        return Inertia::render('GA/Infra/Disnaker/Page', ['jenis_perizinan' => $jenis_perizinan, 'branches' => $branchesProps]);
+        return Inertia::render('GA/Infra/Disnaker/Page', ['jenis_perizinan' => $jenis_perizinan, 'branches' => $branches]);
     }
 
     public function import(Request $request)

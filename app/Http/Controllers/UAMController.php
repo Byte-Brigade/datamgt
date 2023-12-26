@@ -46,9 +46,10 @@ class UAMController extends Controller
     public function index()
     {
         $branchesProps = Branch::with('branch_types')->get()->prepend(['branch_name' => 'All', 'branch_code' => 'none']);
+
         $positionProps = Role::where('name', '!=', 'superadmin')->get();
         $permissionProps = Permission::get();
-        return Inertia::render('UAM/Page', ['branches' => $branchesProps, 'positions' => $positionProps, 'permissions' => $permissionProps]);
+        return Inertia::render('UAM/Page', ['branches' => $branches, 'positions' => $positionProps, 'permissions' => $permissionProps]);
     }
 
     public function create()

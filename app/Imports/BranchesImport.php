@@ -17,13 +17,13 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
     public function model(array $row)
     {
         $types = BranchType::all()->pluck('type_name')->toArray();
-        $branch_name_arr = explode(' ', $row['nama_cabang']);
-        $type_name = array_shift($branch_name_arr);
-        $branch_type = null;
-        if (in_array($type_name, $types)) {
-            $branch_type = BranchType::where('type_name', $type_name)->pluck('id')->first();
-        }
-        $branch_name = join(' ', $branch_name_arr);
+        $regexPattern =implode('|', array_map('preg_quote', $types));
+
+        $type_name = preg_match("/\b({$regexPattern})\b/", $row['nama_cabang'], $match) ? $match[0] : null;
+
+        $branch_type = BranchType::where('type_name', $type_name)->pluck('id')->first();
+        $branch_type = isset($branch_type) ? $branch_type : null;
+        $branch_name = trim(preg_replace("/\b({$regexPattern})\b/","",$row['nama_cabang']));
 
         # Generate kode baru untuk kode_cabang yang kosong
         if (is_null($row['kode_cabang'])) {
@@ -73,6 +73,7 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
         return [
             'nama_cabang' => ['required', 'string'],
             'alamat' => ['required', 'string'],
+
         ];
     }
 }

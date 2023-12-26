@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('target')->nullable();
             $table->date('jatuh_tempo_sewa')->nullable();
+            $table->date('periode');
             $table->string('start_date')->nullable();
             $table->double('all_progress')->nullable();
             $table->double('gedung')->nullable();

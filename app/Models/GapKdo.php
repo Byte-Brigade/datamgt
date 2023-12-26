@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mpociot\Versionable\VersionableTrait;
 
 class GapKdo extends Model
 {
-    use HasFactory;
+    use HasFactory, VersionableTrait;
 
     protected $fillable = [
         'branch_id',
@@ -16,6 +17,7 @@ class GapKdo extends Model
         'awal_sewa',
         'akhir_sewa',
         'biaya_sewa',
+        'periode'
     ];
 
 
