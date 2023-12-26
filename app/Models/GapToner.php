@@ -18,6 +18,7 @@ class GapToner extends Model
         'quantity',
         'price',
         'total',
+        'periode',
 
     ];
 

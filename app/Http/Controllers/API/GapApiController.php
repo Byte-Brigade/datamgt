@@ -50,6 +50,17 @@ class GapApiController extends Controller
                     });
             });
         }
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
         $data = $query->paginate($perpage);
         return AssetsResource::collection($data);
     }
@@ -269,8 +280,8 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
         if (!is_null($searchInput)) {
@@ -310,8 +321,8 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('periode',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('periode', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
         if (!is_null($searchInput)) {
@@ -390,12 +401,12 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->whereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    $q->where('branch_name', 'like', $searchQuery);
+                });
             });
         }
-        if(!is_null($request->startDate)) {
-            $query = $query->whereBetween('idecice_date',[Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
 

@@ -24,7 +24,10 @@ class AlihDayaImport implements ToCollection, WithHeadingRow
     {
         foreach ($rows as $row) {
 
-            GapAlihDaya::create(
+            GapAlihDaya::updateOrCreate(
+                [
+                'periode' => Date::excelToDateTimeObject($row['periode'])
+                ],
                 [
                     'jenis_pekerjaan' => $row['jenis_pekerjaan'],
                     'nama_pegawai' => $row['nama_pegawai'],
@@ -32,6 +35,7 @@ class AlihDayaImport implements ToCollection, WithHeadingRow
                     'lokasi' => $row['lokasi'],
                     'vendor' => $row['vendor'],
                     'cost' => $row['cost'],
+                    'periode' => Date::excelToDateTimeObject($row['periode'])
                 ]
             );
         }

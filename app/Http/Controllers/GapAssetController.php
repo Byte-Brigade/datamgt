@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Exports\Assets\AssetsExport;
+use App\Helpers\PartitionManager;
 use App\Imports\AssetsImport;
 use App\Models\Branch;
 use App\Models\GapAsset;
 use Illuminate\Http\Request;
 use App\Http\Resources\AssetsResource;
+use App\Jobs\ProcessPartitioning;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -29,7 +31,7 @@ class GapAssetController extends Controller
     {
         try {
             (new AssetsImport)->import($request->file('file'));
-
+            // ProcessPartitioning::dispatch('September 2023', 'gap_assets');
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';
@@ -46,6 +48,7 @@ class GapAssetController extends Controller
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
+
 
     public function export(Request $request)
     {

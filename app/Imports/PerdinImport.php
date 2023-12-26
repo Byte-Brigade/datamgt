@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
+use App\Models\GapPerdinDetail;
 use App\Models\KdoMobilBiayaSewa;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -23,11 +24,22 @@ class PerdinImport implements ToCollection, WithHeadingRow
     {
         foreach ($rows as $row) {
 
-           $row = $row->toArray();
+            $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
 
             $periode = [];
+            $gap_perdin = GapPerdin::updateOrCreate(
+                [
+                    'periode' => Date::excelToDateTimeObject($row['periode']),
+                ],
+                [
+                    'divisi_pembebanan' => $row['divisi_pembebanan'],
+                    'category' => $row['kategori'],
+                    'tipe' => $row['tipe'],
+                    'periode' => Date::excelToDateTimeObject($row['periode']),
+                ]
+            );
             foreach ($filteredData as $key => $value) {
                 if (!is_null($value)) {
                     $tanggal_periode = strtoupper($key) . '_' . $row['tahun'];
@@ -35,17 +47,12 @@ class PerdinImport implements ToCollection, WithHeadingRow
                     $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
                     // array_push($periode, ['periode' => $tanggal_periode, 'value' => (int) $value]);
                     // dd($value);
-                    GapPerdin::updateOrCreate(
+                    GapPerdinDetail::updateOrCreate(
                         [
-                            'divisi_pembebanan' => $row['divisi_pembebanan'],
+                            'gap_perdin_id' => $gap_perdin->id,
                             'periode' => $tanggal_periode,
-                            'category' => $row['kategori'],
-                            'tipe' => $row['tipe'],
                         ],
                         [
-                            'divisi_pembebanan' => $row['divisi_pembebanan'],
-                            'category' => $row['kategori'],
-                            'tipe' => $row['tipe'],
                             'periode' => $tanggal_periode,
                             'value' => round($value)
                         ]
@@ -54,5 +61,4 @@ class PerdinImport implements ToCollection, WithHeadingRow
             }
         }
     }
-
 }

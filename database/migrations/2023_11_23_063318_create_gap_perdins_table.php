@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('divisi_pembebanan');
             $table->string('category');
             $table->date('periode');
-            $table->unsignedBigInteger('value');
             $table->string('tipe');
-            $table->unique(['divisi_pembebanan','category','periode','tipe']);
             $table->timestamps();
+
         });
     }
     public function down()

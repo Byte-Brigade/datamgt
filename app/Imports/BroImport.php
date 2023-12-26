@@ -50,6 +50,7 @@ class BroImport implements ToModel, WithHeadingRow
             'target' => $target,
             'jatuh_tempo_sewa' => $jatuh_tempo,
             'all_progress' => $row['all_progress'],
+            'periode' => Date::excelToDateTimeObject($row['periode'])
         ]);
     }
 }

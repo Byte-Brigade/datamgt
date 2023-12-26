@@ -17,6 +17,7 @@ class GapKdo extends Model
         'awal_sewa',
         'akhir_sewa',
         'biaya_sewa',
+        'periode'
     ];
 
 

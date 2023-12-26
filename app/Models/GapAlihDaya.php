@@ -17,5 +17,6 @@ class GapAlihDaya extends Model
         'lokasi',
         'vendor',
         'cost',
+        'periode'
     ];
 }

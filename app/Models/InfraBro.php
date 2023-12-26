@@ -19,5 +19,6 @@ class InfraBro extends Model
         'target',
         'jatuh_tempo_sewa',
         'all_progress',
+        'periode'
     ];
 }

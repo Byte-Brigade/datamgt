@@ -24,45 +24,118 @@ class TonerImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
-            $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
-            if (in_array($branch_type, ['KF', 'SFI'])) {
+            $periode_exist = GapToner::where('periode', Date::dateTimeFromTimestamp($row['periode']))->exists();
+            if ($periode_exist) {
 
-                $branch = Branch::where('branch_name', 'like', '%' . trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang'])) . '%')
-                    ->whereHas('branch_types', function ($q) use ($branch_type) {
-                        return $q->where('type_name', $branch_type == 'KF' ? 'KFO' : 'KFNO');
-                    })->first();
-                if (isset($branch)) {
-                    GapToner::create(
-                        [
-                            'branch_id' => $branch->id,
-                            'invoice' => $row['invoice'],
-                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                            'cartridge_order' => $row['cartridge_order'],
-                            'quantity' => $row['quantity'],
-                            'price' => round($row['price']),
-                            'total' => round($row['total']),
 
-                        ]
-                    );
+                $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
+                $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
+                if (in_array($branch_type, ['KF', 'SFI'])) {
+
+                    $branch = Branch::where('branch_name', 'like', '%' . trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang'])) . '%')
+                        ->whereHas('branch_types', function ($q) use ($branch_type) {
+                            return $q->where('type_name', $branch_type == 'KF' ? 'KFO' : 'KFNO');
+                        })->first();
+                    if (isset($branch)) {
+                        GapToner::updateOrCreate(
+                            [
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            ],
+                            [
+                                'branch_id' => $branch->id,
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                                'cartridge_order' => $row['cartridge_order'],
+                                'quantity' => $row['quantity'],
+                                'price' => round($row['price']),
+                                'total' => round($row['total']),
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                            ]
+                        );
+                    }
+                } else {
+                    $cabang = trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang']));
+                    $branch = Branch::where('branch_name', 'like', '%' .  ($cabang == 'Head Office' ? 'Kantor Pusat' : $cabang) . '%')->first();
+
+                    if (isset($branch)) {
+                        GapToner::updateOrCreate(
+                            [
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+
+                            ],
+                            [
+                                'branch_id' => $branch->id,
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                                'cartridge_order' => $row['cartridge_order'],
+                                'quantity' => $row['quantity'],
+                                'price' => round($row['price']),
+                                'total' => round($row['total']),
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+
+                            ]
+                        );
+                    }
                 }
-            } else {
-                $cabang = trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang']));
-                $branch = Branch::where('branch_name', 'like', '%' .  ($cabang == 'Head Office' ? 'Kantor Pusat' : $cabang) . '%')->first();
+            } if ($periode_exist) {
 
-                if (isset($branch)) {
-                    GapToner::create(
-                        [
-                            'branch_id' => $branch->id,
-                            'invoice' => $row['invoice'],
-                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                            'cartridge_order' => $row['cartridge_order'],
-                            'quantity' => $row['quantity'],
-                            'price' => round($row['price']),
-                            'total' => round($row['total']),
 
-                        ]
-                    );
+                $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
+                $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
+                if (in_array($branch_type, ['KF', 'SFI'])) {
+
+                    $branch = Branch::where('branch_name', 'like', '%' . trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang'])) . '%')
+                        ->whereHas('branch_types', function ($q) use ($branch_type) {
+                            return $q->where('type_name', $branch_type == 'KF' ? 'KFO' : 'KFNO');
+                        })->first();
+                    if (isset($branch)) {
+                        GapToner::updateOrCreate(
+                            [
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            ],
+                            [
+                                'branch_id' => $branch->id,
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                                'cartridge_order' => $row['cartridge_order'],
+                                'quantity' => $row['quantity'],
+                                'price' => round($row['price']),
+                                'total' => round($row['total']),
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                            ]
+                        );
+                    }
+                } else {
+                    $cabang = trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang']));
+                    $branch = Branch::where('branch_name', 'like', '%' .  ($cabang == 'Head Office' ? 'Kantor Pusat' : $cabang) . '%')->first();
+
+                    if (isset($branch)) {
+                        GapToner::updateOrCreate(
+                            [
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+
+                            ],
+                            [
+                                'branch_id' => $branch->id,
+                                'invoice' => $row['invoice'],
+                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                                'cartridge_order' => $row['cartridge_order'],
+                                'quantity' => $row['quantity'],
+                                'price' => round($row['price']),
+                                'total' => round($row['total']),
+                                'periode' => Date::excelToDateTimeObject($row['periode']),
+
+                            ]
+                        );
+                    }
                 }
             }
         }

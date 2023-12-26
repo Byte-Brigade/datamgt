@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessPartitioning implements ShouldQueue
 {
@@ -32,6 +33,15 @@ class ProcessPartitioning implements ShouldQueue
      */
     public function handle(PartitionManager $partitionManager)
     {
-        $partitionManager->moveDataToPartition($this->sheet_name, $this->table_name);
+
+        try {
+            // Your job logic
+            $partitionManager->moveDataToPartition($this->sheet_name, $this->table_name);
+        } catch (\Exception $exception) {
+            // Log the exception
+            Log::error("Error processing job: " . $exception->getMessage());
+            // Optionally, you can re-throw the exception to let Laravel handle it as a failed job
+            throw $exception;
+        }
     }
 }

@@ -1,20 +1,20 @@
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
+import { CogIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
+import { usePage } from "@inertiajs/react";
+import {
+  Button,
+  Checkbox,
+  Collapse,
+  IconButton,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
+// import { MonthInput, MonthPicker } from "react-lite-month-picker";
+import MonthPicker from "./MonthPicker";
 import Paginator from "./Paginator";
-import { usePage } from "@inertiajs/react";
-import {
-  IconButton,
-  Collapse,
-  Checkbox,
-  Button,
-} from "@material-tailwind/react";
-import { CalendarDaysIcon, CogIcon } from "@heroicons/react/24/outline";
-import Datepicker from "react-tailwindcss-datepicker";
-
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
@@ -51,6 +51,15 @@ export default function DataTable({
 
   const toggleOpen = () => setOpen((cur) => !cur);
 
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // Add 1 since getMonth() returns a 0-indexed value.
+  const currentYear = currentDate.getFullYear();
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  const [selectedMonthData, setSelectedMonthData] = useState({
+    month: 9,
+    year: 2023,
+  });
   const { auth } = usePage().props;
   const initialPermission = ["can edit", "can delete"];
   const handleSort = (column) => {
@@ -130,7 +139,7 @@ export default function DataTable({
       sort_order: sortOrder,
       search,
       ...filterData,
-      ...dateRange
+      ...selectedMonthData
     };
 
     if (fetchUrl) {
@@ -155,7 +164,7 @@ export default function DataTable({
     }
   };
 
-  const getFormattedDate = (currentDate, months=0) => {
+  const getFormattedDate = (currentDate, months = 0) => {
     // Mendapatkan tanggal saat ini
     // const currentDate = new Date();
 
@@ -190,7 +199,7 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    dateRange
+    selectedMonthData
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -230,19 +239,21 @@ export default function DataTable({
     <>
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col w-72">
-          <div className="inline-block">
+          <div className="inline-block z-50">
             <span>Periode</span>
-            <Datepicker
-              useRange={false}
-              placeholder={"Pilih Periode"}
-
-              value={dateRange}
-              separator={"s/d"}
-              popoverDirection="down"
-              toggleClassName="absolute bg-black rounded-r-lg text-white right-0 h-full px-3 text-gray-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-              onChange={handleValueChange}
+            {/* <MonthInput
+              selected={selectedMonthData}
+              setShowMonthPicker={setIsPickerOpen}
+              showMonthPicker={isPickerOpen}
             />
-
+            {isPickerOpen ? (
+              <MonthPicker
+                setIsOpen={setIsPickerOpen}
+                selected={selectedMonthData}
+                onChange={setSelectedMonthData}
+              />
+            ) : null} */}
+          <MonthPicker/>
           </div>
 
           <div className="flex items-center gap-x-2">
@@ -381,7 +392,7 @@ export default function DataTable({
         className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${fixedTable ? "max-h-96" : "h-full"
           }`}
       >
-        <table className={`${className} text-sm leading-3 bg-white`}>
+        <table className={`${className} text-sm leading-3 bg-white z-0`}>
           <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr className={`[&>th]:p-2 bg-slate-100 ${bordered && 'divide-x-2 divide-slate-200'}`}>

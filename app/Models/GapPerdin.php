@@ -14,8 +14,14 @@ class GapPerdin extends Model
         'divisi_pembebanan',
         'category',
         'periode',
-        'value',
         'tipe'
     ];
+
+    public function gap_perdin_details()
+    {
+        return $this->hasMany(GapPerdin::class, 'gap_perdin_id');
+    }
+
+
 
 }
