@@ -79,6 +79,17 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
         $query = $query->get();
 
         $collections = $query->groupBy('branches.id')->map(function ($kdos, $branch) {
@@ -91,7 +102,8 @@ class GapApiController extends Controller
                 'jumlah_kendaraan' => $kdos->count(),
                 'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
                     : 0,
-                'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa
+                'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
+                'periode' => $kdos->first()->periode,
             ];
         });
 
@@ -107,6 +119,7 @@ class GapApiController extends Controller
 
     public function kdo_mobil_details(GapKdo $gap_kdo_mobil, Request $request, $branch_id)
     {
+
         $sortFieldInput = $request->input('sort_field') ?? 'id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
@@ -114,10 +127,15 @@ class GapApiController extends Controller
 
         $perpage = $request->perpage ?? 15;
 
+
+        $query = $query->where('periode', $request->periode);
+
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
+
         $data = $query->paginate($perpage);
         return KdoMobilResource::collection($data);
     }
@@ -407,6 +425,18 @@ class GapApiController extends Controller
         }
         if (!is_null($request->startDate)) {
             $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        }
+
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
         }
 
 

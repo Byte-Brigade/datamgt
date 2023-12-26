@@ -89,7 +89,10 @@ export default function Page({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
+        <Link href={route("gap.kdos.mobil", {
+          branch_code: data.branches.branch_code,
+          periode: data.periode,
+        })}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),

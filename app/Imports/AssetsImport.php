@@ -119,7 +119,7 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithEvents, WithVali
     public function rules(): array
     {
         return [
-            '*.periode  ' => 'required|integer',
+            '*.periode' => 'required|integer',
         ];
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gap_to  ners', function (Blueprint $table) {
+        Schema::create('gap_toners', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->string('invoice')->nullable();

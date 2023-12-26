@@ -57,8 +57,8 @@ export default function DataTable({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const [selectedMonthData, setSelectedMonthData] = useState({
-    month: 9,
-    year: 2023,
+    month: null,
+    year: null,
   });
   const { auth } = usePage().props;
   const initialPermission = ["can edit", "can delete"];
@@ -253,7 +253,7 @@ export default function DataTable({
                 onChange={setSelectedMonthData}
               />
             ) : null} */}
-          <MonthPicker/>
+          <MonthPicker onDateChange={setSelectedMonthData}/>
           </div>
 
           <div className="flex items-center gap-x-2">

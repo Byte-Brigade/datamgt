@@ -30,7 +30,7 @@ class GapKdoController extends Controller
         return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branches]);
     }
 
-    public function kdo_mobil($branch_code)
+    public function kdo_mobil(Request $request, $branch_code)
     {
         $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
             $query->where('branch_code', $branch_code);
@@ -45,7 +45,8 @@ class GapKdoController extends Controller
         return Inertia::render('GA/Procurement/KDO/Detail', [
             'kdo_mobil' => $kdo_mobil,
             'years' => $futureYears,
-            'months' => $months
+            'months' => $months,
+            'periode' => $request->periode,
         ]);
     }
 
