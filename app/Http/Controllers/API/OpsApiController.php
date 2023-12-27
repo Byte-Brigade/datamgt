@@ -113,26 +113,33 @@ class OpsApiController extends Controller
         }
         $query = $query->get();
 
-        $collections = $query->map(function($apar) {
+        $collections = $query->map(function ($apar) {
             $apar->branch_name = $apar->branches->branch_name;
             $apar->branch_code = $apar->branches->branch_code;
             return $apar;
-        })->groupBy('branch_name')->map(function($apar, $branch_name)  {
-            return ['branch_name' => $branch_name,
-            'branch_code' => $apar->first()->branch_code,
-            'branch_id' => $apar->first()->branch_id,
-            'jumlah_tabung' => $apar->count()];
+        })->groupBy('branch_name')->map(function ($apar, $branch_name) {
+            return [
+                'branch_name' => $branch_name,
+                'branch_code' => $apar->first()->branch_code,
+                'branch_id' => $apar->first()->branch_id,
+                'jumlah_tabung' => $apar->count(),
+                'slug' => $apar->first()->slug
+            ];
         });
 
         return PaginationHelper::paginate($collections, $perpage);
     }
 
-    public function apar_details(OpsApar $ops_apar, Request $request, $branch_id)
+    public function apar_details(OpsApar $ops_apar, Request $request, $id)
     {
         $sortFieldInput = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $ops_apar->where('branch_id', $branch)->orderBy($sortFieldInput, $sortOrder);
+        $query = $ops_apar->orderBy($sortFieldInput, $sortOrder);
+
+        $query = $query->whereHas('branches', function($q) use($id) {
+            return $q->where('id', $id);
+        });
 
         $perpage = $request->perpage ?? 10;
 
@@ -141,7 +148,7 @@ class OpsApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
         $data = $query->paginate($perpage);
-        return AparResource::collection($data);
+        return AparDetailResource::collection($data);
     }
 
 

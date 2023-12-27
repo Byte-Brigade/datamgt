@@ -69,8 +69,7 @@ class GapApiController extends Controller
         } else {
             $query = $query->paginate($perpage);
         }
-        return AssetsResource::collection($data);
-
+        return AssetsResource::collection($query);
     }
 
     public function kdos(GapKdo $gap_kdo, Request $request, $type)
@@ -88,7 +87,7 @@ class GapApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
-   if (!is_null($request->month) && !is_null($request->year)) {
+        if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
             // Create a Carbon instance using the year and month
@@ -111,7 +110,7 @@ class GapApiController extends Controller
                     'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
-                  'periode' => $kdos->first()->periode,
+                    'periode' => $kdos->first()->periode,
                 ];
             });
         } else if ($type == 'vendor') {
@@ -125,7 +124,7 @@ class GapApiController extends Controller
                     'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
-                  'periode' => $kdos->first()->periode,
+                    'periode' => $kdos->first()->periode,
                 ];
             });
         }
@@ -335,7 +334,7 @@ class GapApiController extends Controller
 
         $query = $query->get();
         $collections = collect([]);
-        if(!is_null($request->summary) && $request->summary == "divisi") {
+        if (!is_null($request->summary) && $request->summary == "divisi") {
             $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
                 return [
                     'divisi_pembebanan' => $divisi,
@@ -347,8 +346,7 @@ class GapApiController extends Controller
             })->sortByDesc(function ($item) {
                 return $item['total'];
             });
-        } else if (!is_null($request->summary) && $request->summary == "spender")
-        {
+        } else if (!is_null($request->summary) && $request->summary == "spender") {
             $collections = $query->groupBy('user')->map(function ($perdins, $user) {
                 return [
                     'user' => $user,
@@ -391,7 +389,7 @@ class GapApiController extends Controller
         }
 
         $data = $query->get();
-        $collections = $data->groupBy('periode')->map(function($perdins, $periode) {
+        $collections = $data->groupBy('periode')->map(function ($perdins, $periode) {
             return [
                 'periode' => Carbon::parse($periode)->format('F Y'),
                 'airline' => $perdins->where('category', 'Airline')->sum('value'),
@@ -421,6 +419,17 @@ class GapApiController extends Controller
                 $query->where('divisi_pembebanan', 'like', $searchQuery)
                     ->orWhere('category', 'like', $searchQuery);
             });
+        }
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
         }
 
         $query = $query->get();
@@ -469,10 +478,9 @@ class GapApiController extends Controller
                 $query->whereHas('branches', function ($q) use ($searchQuery) {
                     $q->where('branch_name', 'like', $searchQuery);
                 });
-
             });
         }
-           if (!is_null($request->month) && !is_null($request->year)) {
+        if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
             // Create a Carbon instance using the year and month
@@ -517,12 +525,10 @@ class GapApiController extends Controller
                 $query->whereHas('branches', function ($q) use ($searchQuery) {
                     $q->where('branch_name', 'like', $searchQuery);
                 });
-
             });
         }
         if (!is_null($request->startDate)) {
             $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
-
         }
 
 

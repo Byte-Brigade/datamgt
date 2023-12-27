@@ -30,7 +30,6 @@ return new class extends Migration
             $table->date('periode');
             $table->string('remark')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-            $table->date('periode');
             $table->timestamps();
         });
     }

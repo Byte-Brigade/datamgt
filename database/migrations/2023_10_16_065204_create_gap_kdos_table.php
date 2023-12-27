@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->date('periode');
             $table->timestamps();
-            $table->unique(['nopol','periode']);
         });
     }
 
