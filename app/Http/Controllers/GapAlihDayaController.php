@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Imports\AlihDayaImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class GapAlihDayaController extends Controller
@@ -21,11 +23,20 @@ class GapAlihDayaController extends Controller
             DB::beginTransaction();
             (new AlihDayaImport)->import($request->file('file'));
             DB::commit();
-            return redirect(route('gap.alihdayas'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-            DB::rollBack();
-            dd($e);
-            return redirect(route('gap.alihdayas'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (ValidationException $e) {
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
+
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 
@@ -33,5 +44,4 @@ class GapAlihDayaController extends Controller
     {
         return Inertia::render('GA/Procurement/AlihDaya/Detail', ['type' => $type, 'type_item' => $request->type_item]);
     }
-
 }

@@ -11,7 +11,9 @@ use App\Models\GapScoring;
 use App\Models\GapScoringProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Throwable;
 
 class GapScoringProjectController extends Controller
@@ -33,10 +35,20 @@ class GapScoringProjectController extends Controller
         try {
             (new GapScoringProjectsImport)->import($request->file('file'));
 
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
-        } catch (Throwable $e) {
-            dd($e);
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
+        } catch (ValidationException $e) {
+            $errorString = '';
+            /** @var array $messages */
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorString .= "Field {$field}: {$message} ";
+                }
+            }
+            $errorString = trim($errorString);
+
+            return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
 

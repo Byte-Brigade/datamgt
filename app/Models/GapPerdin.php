@@ -12,16 +12,13 @@ class GapPerdin extends Model
 
     protected $fillable = [
         'divisi_pembebanan',
-        'category',
         'periode',
-        'value',
-        'tipe',
         'user',
     ];
 
     public function gap_perdin_details()
     {
-        return $this->hasMany(GapPerdin::class, 'gap_perdin_id');
+        return $this->hasMany(GapPerdinDetail::class, 'gap_perdin_id');
     }
 
 

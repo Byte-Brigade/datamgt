@@ -18,11 +18,12 @@ return new class extends Migration
             $table->unsignedBigInteger('gap_perdin_id');
             $table->date('periode');
             $table->unsignedBigInteger('value');
+            $table->string('category');
+            $table->string('tipe');
             $table->foreign('gap_perdin_id')->references('id')->on('gap_perdins')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *
