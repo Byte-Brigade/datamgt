@@ -274,7 +274,7 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    selectedMonthData
+    selectedMonthData,
     isRefreshed,
   ]);
 
@@ -313,18 +313,6 @@ export default function DataTable({
 
   return (
     <div>
-      <div className="flex items-center gap-x-2 my-2 max-w-fit">
-        <span>Periode</span>
-        <Datepicker
-          useRange={false}
-          placeholder={"Pilih Periode"}
-          value={dateRange}
-          separator={"s/d"}
-          popoverDirection="down"
-          toggleClassName="absolute bg-black rounded-r-lg text-white right-0 h-full px-3 text-gray-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-          onChange={handleValueChange}
-        />
-      </div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col w-72">
           <div className="inline-block z-50">

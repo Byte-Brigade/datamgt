@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Mpociot\Versionable\VersionableTrait;
+
 
 class InfraBro extends Model
 {
-    use HasFactory, VersionableTrait;
+    use HasFactory;
 
     protected $fillable = [
         'branch_id',
@@ -20,7 +20,7 @@ class InfraBro extends Model
         'jatuh_tempo_sewa',
         'start_date',
         'all_progress',
-        'periode'
+        'periode',
         'gedung',
         'layout',
         'kontraktor',

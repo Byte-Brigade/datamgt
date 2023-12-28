@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Redis;
-use Inertia\Inertia;
 use App\Exports\BranchesExport;
 use App\Imports\BranchesImport;
 use App\Http\Resources\BranchResource;

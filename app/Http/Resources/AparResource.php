@@ -21,7 +21,6 @@ class AparResource extends JsonResource
             'keterangan' => isset($this->detail) ? $this->detail->count().' Tabung' : 'Tidak Ada',
             'branch_code' => $this->branches->branch_code,
             'branch_name' => $this->branches->branch_name,
-            'slug' => $this->slug
 
         ];
     }

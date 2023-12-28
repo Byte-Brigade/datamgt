@@ -32,6 +32,7 @@ class Branch extends Model
         'total_biaya_sewa',
         'area',
         'file_ojk',
+        'slug',
     ];
 
     public function users()

@@ -30,7 +30,7 @@ class AssetsResource extends JsonResource
             'net_book_value' => $this->net_book_value,
             'branches' => isset($this->branches) ? $this->branches : [],
 
-            'periode' => $this->periode
+            'periode' => $this->periode,
 
             'slug' => $this->slug,
             'remark' => $this->remark,

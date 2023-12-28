@@ -23,7 +23,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class AssetsImport implements ToCollection, WithHeadingRow, WithEvents, WithValidation
+class AssetsImport implements ToCollection, WithHeadingRow, WithValidation
 {
 
     protected $sheetName;

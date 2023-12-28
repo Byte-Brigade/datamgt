@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Mpociot\Versionable\VersionableTrait;
+
 
 class GapToner extends Model
 {
-    use HasFactory, VersionableTrait;
+    use HasFactory;
 
     protected $fillable = [
         'branch_id',

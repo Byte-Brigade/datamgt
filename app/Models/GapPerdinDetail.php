@@ -13,10 +13,12 @@ class GapPerdinDetail extends Model
         'gap_perdin_id',
         'periode',
         'value',
+        'tipe',
+        'category',
     ];
 
     public function gap_perdins()
     {
-        return $this->belongsTo(GapPerdin::class, 'gap_perdin_id','id')
+        return $this->belongsTo(GapPerdin::class, 'gap_perdin_id','id');
     }
 }
