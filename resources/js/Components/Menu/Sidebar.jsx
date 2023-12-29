@@ -110,6 +110,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       path: "gap.alihdayas",
     },
     {
+      name: "Perjanjian Kerjasama (PKS)",
+      path: "gap.pks",
+    },
+    {
       name: "Hasil Scoring Vendor",
       path: "gap.scoring_projects",
     },

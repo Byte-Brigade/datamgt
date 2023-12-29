@@ -9,6 +9,7 @@ use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
 use App\Http\Controllers\GapKdoController;
 use App\Http\Controllers\GapPerdinController;
+use App\Http\Controllers\GapPksController;
 use App\Http\Controllers\GapScoringAssessmentController;
 use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
@@ -154,6 +155,15 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');
             Route::get('/toners/export', [GapTonerController::class, 'export'])->name('toners.export');
             Route::delete('/toners/{id}', [GapTonerController::class, 'destroy'])->name('toners.delete');
+
+            Route::get('/pks', [GapPksController::class, 'index'])->name('pks');
+            Route::get('/pks/{type}', [GapPksController::class, 'type'])->name('pks.type');
+            Route::get('/pks/{branch_code}/detail', [GapPksController::class, 'detail'])->name('pks.detail');
+            Route::post('/pks/import', [GapPksController::class, 'import'])->name('pks.import');
+            Route::post('/pks', [GapPksController::class, 'store'])->name('pks.store');
+            Route::put('/pks/{id}', [GapPksController::class, 'update'])->name('pks.update');
+            Route::get('/pks/export', [GapPksController::class, 'export'])->name('pks.export');
+            Route::delete('/pks/{id}', [GapPksController::class, 'destroy'])->name('pks.delete');
 
             Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
             Route::get('/stos/{type}', [GapStoController::class, 'detail'])->name('stos.type');

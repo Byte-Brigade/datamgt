@@ -8,6 +8,7 @@ use App\Http\Resources\AlihDayaResource;
 use App\Http\Resources\AssetsResource;
 use App\Http\Resources\KdoMobilResource;
 use App\Http\Resources\PerdinResource;
+use App\Http\Resources\PksResource;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Http\Resources\ScoringProjectsResource;
 use App\Http\Resources\TonerResource;
@@ -18,6 +19,7 @@ use App\Models\GapAsset;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
+use App\Models\GapPks;
 use App\Models\GapScoring;
 use App\Models\GapToner;
 use Carbon\Carbon;
@@ -564,5 +566,33 @@ class GapApiController extends Controller
 
 
         return TonerResource::collection($data);
+    }
+    public function pks(GapPks $gap_pks, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'vendor';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+
+
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+        $data = $query->paginate($perpage);
+
+
+        return PksResource::collection($data);
     }
 }
