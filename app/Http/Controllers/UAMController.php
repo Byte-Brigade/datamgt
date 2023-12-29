@@ -49,7 +49,7 @@ class UAMController extends Controller
 
         $positionProps = Role::where('name', '!=', 'superadmin')->get();
         $permissionProps = Permission::get();
-        return Inertia::render('UAM/Page', ['branches' => $branches, 'positions' => $positionProps, 'permissions' => $permissionProps]);
+        return Inertia::render('UAM/Page', ['branches' => $branchesProps, 'positions' => $positionProps, 'permissions' => $permissionProps]);
     }
 
     public function create()

@@ -5,10 +5,9 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
-import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -21,7 +20,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth,  sessions }) {
+export default function Page({ auth,  sessions, branch_code }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -49,119 +48,74 @@ export default function Page({ auth,  sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [active, setActive] = useState("divisi")
+
+
   const columns = [
 
     {
-      name: "Divisi Pembebanan",
-      field: "divisi_pembebanan",
-    },
-    {
-      name: "Airline",
-      field: "airline",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
+      name: "Invoice No",
+      field: "invoice",
 
-      render: (data) => data.airline.toLocaleString('id-ID')
     },
     {
-      name: "KA",
-      field: "ka",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.ka.toLocaleString('id-ID')
+      name: "Cabang",
+      field: "branches.branch_name",
+
     },
     {
-      name: "Hotel",
-      field: "hotel",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.hotel.toLocaleString('id-ID')
-    },
-    {
-      name: "Total",
-      field: "total",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.total.toLocaleString('id-ID')
+      name: 'Tipe Cabang',
+      field: 'branch_types.type_name'
     },
 
     {
-      name: "Detail",
-      field: "detail",
-      className: "text-center",
-      render: (data) => (
-        <Link href={route("gap.perdins.detail", data.divisi_pembebanan)}>
-          <Button variant="outlined">Detail</Button>
-        </Link>
-      ),
+      name: 'Cartridge Order',
+      field : 'cartridge_order',
     },
+    {
+      name: 'Quantity',
+      field : 'quantity',
+      agg: 'sum',
+    },
+    {
+      name: 'Unit Price',
+      type: 'custom',
+      field : 'price',
+      format:'currency',
+      className: 'text-right',
+      render: (data) => data.price.toLocaleString('id-ID'),
+      agg: 'sum',
+    },
+    {
+      name: 'Total Price',
+      field : 'total',
+      className: 'text-right',
+      type: 'custom',
+      format:'currency',
+      agg: 'sum',
+      render: (data) => data.total.toLocaleString('id-ID'),
+    },
+
+
+    // {
+    //   name: "Detail",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.toners.detail", data.vendor)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
 
 
   ];
 
-  const columnsSpender = [
-
-    {
-      name: "Spender",
-      field: "user",
-    },
-    {
-      name: "Airline",
-      field: "airline",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-
-      render: (data) => data.airline.toLocaleString('id-ID')
-    },
-    {
-      name: "KA",
-      field: "ka",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.ka.toLocaleString('id-ID')
-    },
-    {
-      name: "Hotel",
-      field: "hotel",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.hotel.toLocaleString('id-ID')
-    },
-    {
-      name: "Total",
-      field: "total",
-      className: "text-right",
-      type: 'custom',
-      agg: "sum",
-      format: "currency",
-      render: (data) => data.total.toLocaleString('id-ID')
-    },
-
-
-
-
-  ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.perdins.import"), {
+    post(route("gap.toners.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -173,13 +127,13 @@ export default function Page({ auth,  sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.perdins.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.perdins.update", data.id), {
+    put(route("gap.toners.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -190,7 +144,7 @@ export default function Page({ auth,  sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.perdins.store"), {
+    post(route("gap.toners.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -202,7 +156,7 @@ export default function Page({ auth,  sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.perdins.delete", data.id), {
+    destroy(route("gap.toners.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -237,28 +191,6 @@ export default function Page({ auth,  sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
-
-            <CardMenu
-              label="By Division"
-              data
-              type="divisi"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("divisi")}
-              color="purple"
-            />
-            <CardMenu
-              label="By Staff"
-              data
-              type="spender"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("spender")}
-              color="purple"
-            />
-
-          </div>
           <div className="flex items-center justify-between mb-4">
             <div>
               <PrimaryButton
@@ -275,24 +207,13 @@ export default function Page({ auth,  sessions }) {
               Create Report
             </PrimaryButton>
           </div>
-          {active === "divisi" && (
-            <DataTable
+          <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/perdins"}
+            fetchUrl={`/api/gap/toners/${branch_code}`}
             refreshUrl={isRefreshed}
             bordered={true}
-            parameters={{summary: "divisi"}}
           />
-          )}
-          {active === "spender" && (
-            <DataTable
-            columns={columnsSpender}
-            fetchUrl={"/api/gap/perdins"}
-            refreshUrl={isRefreshed}
-            bordered={true}
-            parameters={{summary: "spender"}}
-          />
-          )}
+
         </div>
       </div>
       {/* Modal Import */}
