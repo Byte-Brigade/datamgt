@@ -37,6 +37,14 @@ class InfraScoringAssessmentController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_infra_assessments.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *

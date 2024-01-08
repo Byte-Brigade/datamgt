@@ -22,7 +22,7 @@ class StoResource extends JsonResource
             'type_name' => $this->branch_types->type_name,
             'slug' => $this->slug,
             'depre' => $this->gap_assets->where('category','Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Depre')->count(),
-            'non_depre' => $this->gap_assets->where('category','Non-Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Depre')->count(),
+            'non_depre' => $this->gap_assets->where('category','Non-Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Non-Depre')->count(),
             'total_remarked' => $this->gap_assets->whereNotNull('remark')->count(). '/'. $this->gap_assets->count(),
             'remarked' => isset($this->gap_stos) ? $this->gap_stos->remarked : 0,
             'disclaimer' => isset($this->gap_stos) ? $this->gap_stos->disclaimer : null

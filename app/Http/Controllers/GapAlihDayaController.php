@@ -40,6 +40,14 @@ class GapAlihDayaController extends Controller
         }
     }
 
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_alih_daya.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
     public function detail(Request $request, $type)
     {
         return Inertia::render('GA/Procurement/AlihDaya/Detail', ['type' => $type, 'type_item' => $request->type_item]);

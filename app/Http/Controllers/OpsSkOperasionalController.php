@@ -46,6 +46,14 @@ class OpsSkOperasionalController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_sk_operasional.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
     public function export(Request $request)
     {
         $fileName = 'Data_SK_Operasional_' . date('d-m-y') . '.xlsx';

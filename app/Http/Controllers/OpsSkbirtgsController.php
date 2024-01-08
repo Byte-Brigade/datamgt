@@ -46,6 +46,14 @@ class OpsSkbirtgsController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_skbirtgs.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
     public function upload(Request $request, $id)
     {
         try {

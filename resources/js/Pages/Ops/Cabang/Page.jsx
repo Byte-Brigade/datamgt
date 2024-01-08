@@ -198,6 +198,11 @@ export default function Cabang({
     });
   };
 
+  const handleDownloadTemplate = (e) => {
+    e.preventDefault();
+
+  }
+
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
   };
@@ -270,9 +275,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("branch_ops|superadmin", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -330,7 +335,10 @@ export default function Cabang({
               />
             </div>
           </DialogBody>
-          <DialogFooter>
+          <DialogFooter className="w-100 flex justify-between">
+            <SecondaryButton type="button">
+              <a href={route("ops.branches.template")}>Download Template</a>
+            </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan

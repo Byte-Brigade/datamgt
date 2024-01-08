@@ -17,7 +17,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
   const [area, setArea] = useState("none");
   const [active, setActive] = useState("branch");
   const [open, setOpen] = useState(false);
-
+  console.log(auth)
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
   const handleOpen = () => setOpen(!open);

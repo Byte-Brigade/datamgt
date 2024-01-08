@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\GapSto;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,13 +57,15 @@ class GapStoController extends Controller
                     'periode' => Carbon::now()->format('Y-m-d'),
                 ]
             );
-
+            User::find(Auth::user()->id)->revokePermissionTo("can sto");
             return redirect(route('inquery.assets'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan!']);
         } catch (Exception $e) {
             dd($e->getMessage());
             return redirect(route('inquery.assets'))->with(['status' => 'failed', 'message' => 'Data gagal disimpan! ' . $e->getMessage()]);
         }
     }
+
+
 
     /**
      * Display the specified resource.
