@@ -53,7 +53,15 @@ export default function DataTable({
   const [remarks, setRemarks] = useState({});
   const [allMarked, setAllMarked] = useState(false);
 
-  const { form, setInitialData, handleFormSubmit, setUrl, isRefreshed,selected, setSelected} = useFormContext();
+  const {
+    form,
+    setInitialData,
+    handleFormSubmit,
+    setUrl,
+    isRefreshed,
+    selected,
+    setSelected,
+  } = useFormContext();
 
   // filters
   const [filters, setFilters] = useState([]);
@@ -119,7 +127,6 @@ export default function DataTable({
   // const handleRowCheckboxChange = (e, id, url) => {
   //   const newCheckedStatus = e.target.checked;
 
-
   //   // Update the remarks state correctly
   //   setRemarks((prevRemarks) => {
   //     const updatedRemarks = { ...prevRemarks, [id]: newCheckedStatus };
@@ -128,16 +135,9 @@ export default function DataTable({
   //     return updatedRemarks;
   //   });
 
-
   //   form.setData('remark', { ...remarks, [id]: newCheckedStatus });
 
-
   // }
-
-
-
-
-
 
   const handleFilter = () => {
     fetchData(1);
@@ -197,8 +197,7 @@ export default function DataTable({
       search,
 
       ...filterData,
-      ...selectedMonthData
-
+      ...selectedMonthData,
     };
 
     if (fetchUrl) {
@@ -207,16 +206,18 @@ export default function DataTable({
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
       // setSumData(data.data.reduce((total, item) => {
-    //   let value = parseInt(item[agg.name].replace(/\./g, ""));
+      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
 
       //   return total + value;
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-      if(Array.isArray(data.data)) {
-        if(data.data.some(data => data.remark !== undefined && data.remark !== null)) {
-
-
+      if (Array.isArray(data.data)) {
+        if (
+          data.data.some(
+            (data) => data.remark !== undefined && data.remark !== null
+          )
+        ) {
           const remarksData = data.data.reduce((acc, current) => {
             acc[current.id] = current.remark;
             return acc;
@@ -226,8 +227,7 @@ export default function DataTable({
         }
       }
 
-
-      setInitialData({ remark: {} })
+      setInitialData({ remark: {} });
 
       console.log(data.data);
     }
@@ -313,67 +313,70 @@ export default function DataTable({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex flex-col w-72">
-          <div className="inline-block z-50">
-            <span>Periode</span>
-          <MonthPicker onDateChange={setSelectedMonthData}/>
+      <div className="flex flex-col mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col w-72">
+            <div className="flex items-center gap-x-2">
+              Show
+              <select
+                name="perpage"
+                id="perpage"
+                className="rounded-lg form-select"
+                value={perPage}
+                onChange={(e) => handlePerPage(e.target.value)}
+              >
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+                <option value="60">60</option>
+                <option value="All">Show All</option>
+              </select>
+              entries
+            </div>
           </div>
+          <div className="flex flex-col">
+            <div className="flex gap-2">
+              <div className="flex items-center gap-2">
+                <InputLabel htmlFor="search">Search : </InputLabel>
+                <TextInput
+                  type="search"
+                  name="search"
+                  id="search"
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
 
-
-          <div className="flex items-center gap-x-2">
-            Show
-            <select
-              name="perpage"
-              id="perpage"
-              className="rounded-lg form-select"
-              value={perPage}
-              onChange={(e) => handlePerPage(e.target.value)}
-            >
-              <option value="15">15</option>
-              <option value="30">30</option>
-              <option value="45">45</option>
-              <option value="60">60</option>
-              <option value="All">Show All</option>
-            </select>
-            entries
+              <IconButton onClick={toggleOpen}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+                  />
+                </svg>
+              </IconButton>
+              <IconButton onClick={toggleOpenSetting}>
+                <CogIcon className="w-5 h-5" />
+              </IconButton>
+            </div>
+            <form onSubmit={handleFormSubmit}>{children}</form>
           </div>
         </div>
-        <div className="flex flex-col">
-          <div className="flex gap-2">
-            <div className="flex items-center gap-2">
-              <InputLabel htmlFor="search">Search : </InputLabel>
-              <TextInput
-                type="search"
-                name="search"
-                id="search"
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </div>
-
-            <IconButton onClick={toggleOpen}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-                />
-              </svg>
-            </IconButton>
-            <IconButton onClick={toggleOpenSetting}>
-              <CogIcon className="w-5 h-5" />
-            </IconButton>
-          </div>
-          <form onSubmit={handleFormSubmit}>{children}</form>
+        <div>
+        <div className="z-50 flex items-center justify-end gap-x-2">
+          <span>Periode</span>
+          <MonthPicker onDateChange={setSelectedMonthData} />
         </div>
       </div>
+      </div>
+
       {/* <Datepicker value={value} onChange={handleValueChange} /> */}
       <div id="filters">
         <Collapse open={open}>
@@ -457,6 +460,7 @@ export default function DataTable({
           </div>
         </Collapse>
       </div>
+
       <div
         className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
           fixedTable ? "max-h-96" : "h-full"
@@ -599,10 +603,10 @@ export default function DataTable({
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-
-                                ? (column.render(data) && column.render(data) != 0) ? column.render(data) : "-"
-                                : getNestedValue(data, column.field) || "-"}
-
+                              ? column.render(data) && column.render(data) != 0
+                                ? column.render(data)
+                                : "-"
+                              : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (

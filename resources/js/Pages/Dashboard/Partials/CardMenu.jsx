@@ -99,8 +99,8 @@ export default function CardMenu({
       <CardHeader shadow={false} floated={false} className={`m-0 w-2/5 shrink-0 rounded-r-none ${outlineColor}`}>
         <Icon className={`h-full w-full object-cover ${iconColor}`} />
       </CardHeader>
-      <CardBody className="p-4">
-        <Typography variant="h5" color="black" className="mb-2">{label}</Typography>
+      <CardBody className={`p-4 ${setData.length != 0 ? '' : 'flex items-center'}`}>
+        <Typography variant="h5" color="black" className={setData.length ? 'mb-2' : ''}>{label}</Typography>
         <Typography color="black">{setData}</Typography>
       </CardBody>
     </Card>

@@ -13,7 +13,8 @@ import { useState } from "react";
 
 export default function Page({ sessions, auth, data }) {
   const { url } = usePage();
-  const [active, setActive] = useState("asset");
+  const [active, setActive] = useState("assets");
+  console.log(active)
   const {
     handleFormSubmit,
     setInitialData,
@@ -275,10 +276,10 @@ export default function Page({ sessions, auth, data }) {
             <CardMenu
               label="Asset"
               data
-              type="toner"
+              type="assets"
               Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("asset")}
+              active={active}
+              onClick={() => setActive("assets")}
               color="purple"
             />
             <CardMenu
@@ -286,7 +287,7 @@ export default function Page({ sessions, auth, data }) {
               data
               type="toner"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("toner")}
               color="purple"
             />
@@ -295,7 +296,7 @@ export default function Page({ sessions, auth, data }) {
               data
               type="kdo"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("kdo")}
               color="purple"
             />
@@ -304,13 +305,13 @@ export default function Page({ sessions, auth, data }) {
               data
               type="sto"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("sto")}
               color="purple"
             />
           </div>
 
-          {active === "asset" && (
+          {active === "assets" && (
             <DataTable
               fetchUrl={"/api/inquery/assets"}
               columns={columns}
@@ -434,7 +435,7 @@ export default function Page({ sessions, auth, data }) {
                   )}
                 </tbody>
               </table>
-              <h2 className="text-lg font-semibold mb-2">
+              <h2 className="mb-2 text-lg font-semibold">
                 Quantity Per Cabang
               </h2>
               <table className={`text-sm leading-3 bg-white w-full mb-2`}>
@@ -484,7 +485,7 @@ export default function Page({ sessions, auth, data }) {
                   )}
                 </tbody>
               </table>
-              <h2 className="text-lg font-semibold mb-2">Nominal Per Cabang</h2>
+              <h2 className="mb-2 text-lg font-semibold">Nominal Per Cabang</h2>
               <table className={`text-sm leading-3 bg-white w-full`}>
                 <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                   <tr className="[&>th]:p-2 bg-slate-100">
