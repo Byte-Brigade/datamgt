@@ -15,6 +15,17 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+
+        $full_access = [
+            'can view',
+            'can edit',
+            'can delete',
+            'can add',
+            'can export',
+            'can sto'
+        ];
+
+
         $superadmin = User::create([
             'name' => 'admin',
             'password' => Hash::make('rahasia123'),
@@ -22,26 +33,19 @@ class UserSeeder extends Seeder
             'nik' => '01100100'
         ]);
         $superadmin->assignRole('superadmin');
-        $test = User::create([
-            'name' => 'Test Cabang',
-            'password' => Hash::make('rahasia123'),
-            'email' => 'cabang@email.com',
-            'nik' => '15180231'
-        ]);
-        $test->assignRole('cabang');
 
         User::create([
             'name' => 'Siswoyo',
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Siswoyo.Siswoyo@banksampoerna.com',
             'nik' => '00005488'
-        ])->assignRole('procurement');
+        ])->assignRole('procurement')->syncPermissions($full_access);
         User::create([
             'name' => 'Mahardhika',
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Mahardhika@banksampoerna.com',
             'nik' => '00006083'
-        ])->assignRole('procurement');
+        ])->assignRole('procurement')->syncPermissions($full_access);;
         User::create([
             'name' => 'Eep Pathurahman',
             'password' => Hash::make('Sahabat1!'),
@@ -78,13 +82,13 @@ class UserSeeder extends Seeder
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Istava.Hartini@banksampoerna.com',
             'nik' => '00004313'
-        ])->assignRole('ga');
+        ])->assignRole('ga')->syncPermissions($full_access);
         User::create([
             'name' => 'Mita Lestari',
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Mita.Lestari@banksampoerna.com',
             'nik' => '00005538'
-        ])->assignRole('ga');
+        ])->assignRole('ga')->syncPermissions($full_access);
         User::create([
             'name' => 'Budi Purwanto',
             'password' => Hash::make('Sahabat1!'),

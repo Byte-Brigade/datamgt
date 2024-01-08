@@ -6,12 +6,15 @@ use App\Http\Resources\UserResource;
 use App\Models\Branch;
 use App\Models\User;
 use Exception;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Throwable;
+use Illuminate\Support\Str;
 
 class UAMController extends Controller
 {
@@ -52,6 +55,46 @@ class UAMController extends Controller
         return Inertia::render('UAM/Page', ['branches' => $branchesProps, 'positions' => $positionProps, 'permissions' => $permissionProps]);
     }
 
+    public function request_reset_passwrd(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    // public function reset_password(Request $request)
+    // {
+    //     $request->validate([
+    //         'token' => 'required',
+    //         'email' => 'required|email',
+    //         'password' => 'required|min:8|confirmed',
+    //     ]);
+
+    //     $status = Password::reset(
+    //         $request->only('email', 'password', 'password_confirmation', 'token'),
+    //         function ($user, $password) {
+    //             $user->forceFill([
+    //                 'password' => Hash::make($password)
+    //             ])->setRememberToken(Str::random(60));
+
+    //             $user->save();
+
+    //             event(new PasswordReset($user));
+    //         }
+    //     );
+
+    //     return $status === Password::PASSWORD_RESET
+    //         ? redirect()->route('login')->with('status', __($status))
+    //         : back()->withErrors(['email' => [__($status)]]);
+    // }
+
+
     public function create()
     {
         //
@@ -69,6 +112,15 @@ class UAMController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
         try {
+
+            $full_access = [
+                'can view',
+                'can edit',
+                'can delete',
+                'can add',
+                'can export',
+                'can sto'
+            ];
 
             $name = strtolower($request->name);
             $names = explode(' ', $name);
@@ -88,7 +140,12 @@ class UAMController extends Controller
                 'branch_id' => $request->branch_id != 0 ? $request->branch_id : null,
             ]);
             $user->assignRole($request->position);
-            $user->syncPermissions($request->permissions);
+            if($request->position == 'admin') {
+                $user->syncPermissions($full_access);
+            } else {
+
+                $user->syncPermissions($request->permissions);
+            }
 
             return redirect(route('uam'))->with(['status' => 'success', 'message' => 'User berhasil dibuat']);
         } catch (Throwable $th) {

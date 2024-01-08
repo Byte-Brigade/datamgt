@@ -57,6 +57,14 @@ class GapScoringProjectController extends Controller
         $fileName = 'Data_GAP_Scoring_Projects' . date('d-m-y') . '.xlsx';
         return (new ProjectsExport)->download($fileName);
     }
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_gap_project.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

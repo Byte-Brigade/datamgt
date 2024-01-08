@@ -120,6 +120,13 @@ class GapKdoController extends Controller
     }
 
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_kdo.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
     public function import(Request $request)
     {
         try {

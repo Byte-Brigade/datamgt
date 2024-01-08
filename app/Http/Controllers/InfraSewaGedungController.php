@@ -29,5 +29,13 @@ class InfraSewaGedungController extends Controller
             return redirect(route('infra.sewa_gedungs'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_sewa_gedung.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 }
 

@@ -40,4 +40,12 @@ class GapPksController extends Controller
         }
     }
 
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_pks.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 }

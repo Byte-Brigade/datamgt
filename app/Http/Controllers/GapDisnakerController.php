@@ -36,6 +36,13 @@ class GapDisnakerController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_disnaker.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
     public function export()
     {
         $fileName = 'Data_Disnaker_' . date('d-m-y') . '.xlsx';

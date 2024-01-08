@@ -116,4 +116,12 @@ class OpsAparController extends Controller
 
         return redirect(route('ops.apar.detail', $id))->wiith(['status' => 'success', 'message' => 'Data berhasil dihapus']);
     }
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_apar.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 }

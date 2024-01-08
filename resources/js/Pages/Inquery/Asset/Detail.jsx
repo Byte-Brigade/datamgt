@@ -126,7 +126,7 @@ export default function Detail({ auth, branch, sessions }) {
       name: "Ada/Tidak",
       field: 'remark',
       type: 'custom',
-      render: (data) => (
+      render: (data) => auth.permissions.includes("can sto") ?  (
         <Select
           className="bg-white"
           label="Status"
@@ -155,7 +155,7 @@ export default function Detail({ auth, branch, sessions }) {
             Non Asset
           </Option>
         </Select>
-      )
+      ) : data.remark
     }
   ];
 

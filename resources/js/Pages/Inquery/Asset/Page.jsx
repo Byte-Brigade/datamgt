@@ -7,12 +7,13 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { ArchiveBoxIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Head, Link, usePage } from "@inertiajs/react";
 
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 
 
 export default function Page({ sessions, auth, data }) {
   const { url } = usePage();
+
   const [active, setActive] = useState("assets");
   console.log(active)
   const {
@@ -354,6 +355,8 @@ export default function Page({ sessions, auth, data }) {
                 <form onSubmit={handleFormSubmit}>
                   <DialogBody divider>
                     <div className="flex flex-col gap-y-4">
+                      <Typography>BSM dan BSO menyatakan sudah melakukan STO dengan ini bertanggung jawab...</Typography>
+
                       <Input
 
                         variant="standard"
@@ -394,14 +397,13 @@ export default function Page({ sessions, auth, data }) {
                     <th className="text-center">Kategori Kantor</th>
                     {data.months.map((month) => (
                       <th className="text-center">
-                        {`${month} ${
-                          Object.values(data.gap_toners)[0].idecice_date !==
-                          undefined
+                        {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                             ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
                             : new Date().getFullYear()
-                        }`}
+                          }`}
                       </th>
                     ))}
                   </tr>
@@ -444,14 +446,13 @@ export default function Page({ sessions, auth, data }) {
                     <th className="text-center">Kategori Kantor</th>
                     {data.months.map((month) => (
                       <th className="text-center">
-                        {`${month} ${
-                          Object.values(data.gap_toners)[0].idecice_date !==
-                          undefined
+                        {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                             ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
                             : new Date().getFullYear()
-                        }`}
+                          }`}
                       </th>
                     ))}
                   </tr>
@@ -492,14 +493,13 @@ export default function Page({ sessions, auth, data }) {
                     <th className="text-center">Kategori Kantor</th>
                     {data.months.map((month) => (
                       <th className="text-center">
-                        {`${month} ${
-                          Object.values(data.gap_toners)[0].idecice_date !==
-                          undefined
+                        {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                             ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
                             : new Date().getFullYear()
-                        }`}
+                          }`}
                       </th>
                     ))}
                   </tr>

@@ -107,6 +107,15 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
           .join(""),
     },
     {
+      name: "STO",
+      field: "permissions",
+      type: "custom",
+      key: "add",
+      render: (data) =>
+        data.permissions
+          .filter((permission) => permission == "can sto").join("")
+    },
+    {
       name: "Action",
       field: "action",
       className: "text-center",
@@ -272,12 +281,12 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                 onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
-                  <Option key={position.id} value={`${position.id}`}>
+                  <Option key={position.id} value={`${position.name}`}>
                     {position.alt_name}
                   </Option>
                 ))}
               </Select>
-              {data.position === "5" && (
+              {data.position === "cabang" && (
                 <Select
                   label="Branch"
                   value={`${data.branch_id || 0}`}
@@ -320,7 +329,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
               {errors.password && (
                 <div className="text-red-700 error">{errors.password}</div>
               )}
-              <div className="flex flex-col">
+              {data.position !== 'admin' && <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
                 <div className="flex gap-x-4">
                   {permissions.map((permission, index) => (
@@ -342,7 +351,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                     />
                   ))}
                 </div>
-              </div>
+              </div>}
             </div>
           </DialogBody>
           <DialogFooter>

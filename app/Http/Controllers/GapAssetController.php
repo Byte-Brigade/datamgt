@@ -49,6 +49,13 @@ class GapAssetController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_assets.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 
     public function export(Request $request)
     {

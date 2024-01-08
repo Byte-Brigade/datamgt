@@ -151,6 +151,14 @@ class OpsPajakReklameController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_pajak_reklame.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
 
     public function destroy($id)
     {

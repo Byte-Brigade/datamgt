@@ -27,4 +27,13 @@ class InfraBroController extends Controller
             return redirect(route('infra.bros'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_bro.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 }

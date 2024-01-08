@@ -22,16 +22,19 @@ class RoleSeeder extends Seeder
             'can delete',
             'can add',
             'can export',
+            'can sto'
         ];
 
         $default_access = ['can view'];
         $superadmin = Role::create(['name' => 'superadmin']);
+        $admin = Role::create(['name' => 'admin', 'alt_name' => ' Admin']);
         $branch_ops = Role::create(['name' => 'branch_ops', 'alt_name' => 'Branch Ops']);
         $procurement = Role::create(['name' => 'procurement', 'alt_name' => 'Procurement']);
         $ga = Role::create(['name' => 'ga', 'alt_name' => 'GA']);
         $cabang = Role::create(['name' => 'cabang', 'alt_name' => 'Cabang']);
 
         $superadmin->syncPermissions($full_access);
+        $admin->syncPermissions($full_access);
         $branch_ops->syncPermissions($default_access);
         $procurement->syncPermissions($default_access);
         $cabang->syncPermissions($default_access);

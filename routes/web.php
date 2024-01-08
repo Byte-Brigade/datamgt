@@ -89,11 +89,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/disnaker/{slug}', [ReportController::class, 'disnaker'])->name('disnaker');
     });
 
-    Route::middleware('role:superadmin|branch_ops|ga|procurement')->group(function () {
+    Route::middleware('permission:can sto')->group(function() {
+        Route::prefix('gap')->name('gap.')->group(function() {
+            Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
+        });
+    });
+
+    Route::middleware('role:superadmin|branch_ops|ga|procurement|admin')->group(function () {
 
         Route::prefix('gap')->name('gap.')->group(function () {
             /* [START] GA Procurement KDO */
             Route::get('/kdos', [GapKdoController::class, 'index'])->name('kdos');
+            Route::get('/kdos/template', [GapKdoController::class, 'template'])->name('kdos.template');
             Route::post('/kdos/import', [GapKdoController::class, 'import'])->name('kdos.import');
             Route::post('/kdos/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdos.mobil.import');
             Route::post('/kdos', [GapKdoController::class, 'store'])->name('kdos.store');
@@ -109,6 +116,7 @@ Route::middleware(['auth'])->group(function () {
             })->name('maintenance');
 
             Route::get('/assets', [GapAssetController::class, 'index'])->name('assets');
+            Route::get('/assets/template', [GapAssetController::class, 'template'])->name('assets.template');
             Route::post('/assets/import', [GapAssetController::class, 'import'])->name('assets.import');
             Route::post('/assets', [GapAssetController::class, 'store'])->name('assets.store');
             Route::put('/assets/{id}', [GapAssetController::class, 'update'])->name('assets.update');
@@ -116,6 +124,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/assets/{id}', [GapAssetController::class, 'destroy'])->name('assets.delete');
 
             Route::get('/scoring-projects', [GapScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::get('/scoring-projects/template', [GapScoringProjectController::class, 'template'])->name('scoring_projects.template');
             Route::get('/scoring-projects/{scoring_vendor}', [GapScoringProjectController::class, 'detail'])->name('scoring_projects.detail');
             Route::post('/scoring-projects/import', [GapScoringProjectController::class, 'import'])->name('scoring_projects.import');
             Route::post('/scoring-projects', [GapScoringProjectController::class, 'store'])->name('scoring_projects.store');
@@ -124,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/scoring-projects/{id}', [GapScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
 
             Route::get('/scoring-assessments', [GapScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::get('/scoring-assessments/template', [GapScoringAssessmentController::class, 'template'])->name('scoring_assessments.template');
             Route::get('/scoring-assessments/{scoring_vendor}', [GapScoringAssessmentController::class, 'detail'])->name('scoring_assessments.detail');
             Route::post('/scoring-assessments/import', [GapScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
             Route::post('/scoring-assessments', [GapScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
@@ -132,6 +142,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/scoring-assessments/{id}', [GapScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
 
             Route::get('/perdins', [GapPerdinController::class, 'index'])->name('perdins');
+            Route::get('/perdins/template', [GapPerdinController::class, 'template'])->name('perdins.template');
             Route::get('/perdins/{divisi_pembebanan}', [GapPerdinController::class, 'detail'])->name('perdins.detail');
             Route::post('/perdins/import', [GapPerdinController::class, 'import'])->name('perdins.import');
             Route::post('/perdins', [GapPerdinController::class, 'store'])->name('perdins.store');
@@ -140,6 +151,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
 
             Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
+            Route::get('/alihdayas/template', [GapAlihDayaController::class, 'template'])->name('alihdayas.template');
             Route::get('/alihdayas/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
             Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
             Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
@@ -148,6 +160,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
+            Route::get('/toners/template', [GapTonerController::class, 'template'])->name('toners.template');
             Route::get('/toners/{type}', [GapTonerController::class, 'type'])->name('toners.type');
             Route::get('/toners/{branch_code}/detail', [GapTonerController::class, 'detail'])->name('toners.detail');
             Route::post('/toners/import', [GapTonerController::class, 'import'])->name('toners.import');
@@ -157,6 +170,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/toners/{id}', [GapTonerController::class, 'destroy'])->name('toners.delete');
 
             Route::get('/pks', [GapPksController::class, 'index'])->name('pks');
+            Route::get('/pks/template', [GapPksController::class, 'template'])->name('pks.template');
             Route::get('/pks/{type}', [GapPksController::class, 'type'])->name('pks.type');
             Route::get('/pks/{branch_code}/detail', [GapPksController::class, 'detail'])->name('pks.detail');
             Route::post('/pks/import', [GapPksController::class, 'import'])->name('pks.import');
@@ -166,9 +180,10 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/pks/{id}', [GapPksController::class, 'destroy'])->name('pks.delete');
 
             Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
+            Route::get('/stos/template', [GapStoController::class, 'template'])->name('stos.template');
             Route::get('/stos/{type}', [GapStoController::class, 'detail'])->name('stos.type');
             Route::post('/stos/import', [GapStoController::class, 'import'])->name('stos.import');
-            Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
+
             Route::put('/stos/{id}', [GapStoController::class, 'update'])->name('stos.update');
             Route::get('/stos/export', [GapStoController::class, 'export'])->name('stos.export');
             Route::delete('/stos/{id}', [GapStoController::class, 'destroy'])->name('stos.delete');
@@ -176,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('infra')->name('infra.')->group(function () {
             /* [START] GA Procurement Disnaker */
             Route::get('/disnaker', [GapDisnakerController::class, 'index'])->name('disnaker');
+            Route::get('/disnaker/template', [GapDisnakerController::class, 'template'])->name('disnaker.template');
             Route::post('/disnaker/import', [GapDisnakerController::class, 'import'])->name('disnaker.import');
             Route::post('/disnaker', [GapDisnakerController::class, 'store'])->name('disnaker.store');
             Route::post('/disnaker/{id}/upload', [GapDisnakerController::class, 'upload'])->name('disnaker.upload');
@@ -187,6 +203,7 @@ Route::middleware(['auth'])->group(function () {
 
 
             Route::get('/scoring-projects', [InfraScoringProjectController::class, 'index'])->name('scoring_projects');
+            Route::get('/scoring-projects/template', [InfraScoringProjectController::class, 'template'])->name('scoring_projects.template');
             Route::get('/scoring-projects/{scoring_vendor}', [InfraScoringProjectController::class, 'detail'])->name('scoring_projects.detail');
             Route::post('/scoring-projects/import', [InfraScoringProjectController::class, 'import'])->name('scoring_projects.import');
             Route::post('/scoring-projects', [InfraScoringProjectController::class, 'store'])->name('scoring_projects.store');
@@ -195,6 +212,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/scoring-projects/{id}', [InfraScoringProjectController::class, 'destroy'])->name('scoring_projects.delete');
 
             Route::get('/scoring-assessments', [InfraScoringAssessmentController::class, 'index'])->name('scoring_assessments');
+            Route::get('/scoring-assessments/template', [InfraScoringAssessmentController::class, 'template'])->name('scoring_assessments.template');
             Route::get('/scoring-assessments/{scoring_vendor}', [InfraScoringAssessmentController::class, 'detail'])->name('scoring_assessments.detail');
             Route::post('/scoring-assessments/import', [InfraScoringAssessmentController::class, 'import'])->name('scoring_assessments.import');
             Route::post('/scoring-assessments', [InfraScoringAssessmentController::class, 'store'])->name('scoring_assessments.store');
@@ -203,6 +221,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/scoring-assessments/{id}', [InfraScoringAssessmentController::class, 'destroy'])->name('scoring_assessments.delete');
 
             Route::get('/sewa-gedungs', [InfraSewaGedungController::class, 'index'])->name('sewa_gedungs');
+            Route::get('/sewa-gedungs/template', [InfraSewaGedungController::class, 'template'])->name('sewa_gedungs.template');
             Route::post('/sewa-gedungs/import', [InfraSewaGedungController::class, 'import'])->name('sewa_gedungs.import');
             Route::post('/sewa-gedungs', [InfraSewaGedungController::class, 'store'])->name('sewa_gedungs.store');
             Route::put('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'update'])->name('sewa_gedungs.update');
@@ -210,6 +229,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/sewa-gedungs/{id}', [InfraSewaGedungController::class, 'destroy'])->name('sewa_gedungs.delete');
 
             Route::get('/bros', [InfraBroController::class, 'index'])->name('bros');
+            Route::get('/bros/template', [InfraBroController::class, 'template'])->name('bros.template');
             Route::post('/bros/import', [InfraBroController::class, 'import'])->name('bros.import');
             Route::post('/bros', [InfraBroController::class, 'store'])->name('bros.store');
             Route::put('/bros/{id}', [InfraBroController::class, 'update'])->name('bros.update');
@@ -226,6 +246,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Branches */
             Route::get('/branches', [BranchController::class, 'index'])->name('branches');
+            Route::get('/branches/template', [BranchController::class, 'template'])->name('branches.template');
             Route::post('/branches/import', [BranchController::class, 'import'])->name('branches.import');
             Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
             Route::post('/branches/upload/{id}', [BranchController::class, 'upload'])->name('branches.upload');
@@ -237,6 +258,8 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Employees */
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
+            Route::get('/employees/template', [EmployeeController::class, 'template'])->name('employees.template');
+
             Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
             Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
@@ -246,6 +269,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Ops SKBIRTGS */
             Route::get('/skbirtgs', [OpsSkbirtgsController::class, 'index'])->name('skbirtgs');
+            Route::get('/skbirtgs/template', [OpsSkbirtgsController::class, 'template'])->name('skbirtgs.template');
             Route::post('/skbirtgs', [OpsSkbirtgsController::class, 'import'])->name('skbirtgs.import');
             Route::post('/skbirtgs/upload/{id}', [OpsSkbirtgsController::class, 'upload'])->name('skbirtgs.upload');
             Route::get('/skbirtgs/export', [OpsSkbirtgsController::class, 'export'])->name('skbirtgs.export');
@@ -253,6 +277,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Ops SK Operasional Cabang */
             Route::get('/sk-operasional', [OpsSkOperasionalController::class, 'index'])->name('sk-operasional');
+            Route::get('/sk-operasional/template', [OpsSkOperasionalController::class, 'template'])->name('sk-operasional.template');
             Route::post('/sk-operasional', [OpsSkOperasionalController::class, 'import'])->name('sk-operasional.import');
             Route::post('/sk-operasional/upload/{id}', [OpsSkOperasionalController::class, 'upload'])->name('sk-operasional.upload');
             Route::get('/sk-operasional/export', [OpsSkOperasionalController::class, 'export'])->name('sk-operasional.export');
@@ -260,6 +285,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Ops Pajak Reklame */
             Route::get('/pajak-reklame', [OpsPajakReklameController::class, 'index'])->name('pajak-reklame');
+            Route::get('/pajak-reklame/template', [OpsPajakReklameController::class, 'template'])->name('pajak-reklame.template');
             Route::post('/pajak-reklame/import', [OpsPajakReklameController::class, 'import'])->name('pajak-reklame.import');
             Route::post('/pajak-reklame', [OpsPajakReklameController::class, 'store'])->name('pajak-reklame.store');
 
@@ -270,6 +296,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Ops Speciment */
             Route::get('/speciment', [OpsSpecimentController::class, 'index'])->name('speciment');
+            Route::get('/speciment/template', [OpsSpecimentController::class, 'template'])->name('speciment.template');
             Route::post('/speciment/import', [OpsSpecimentController::class, 'import'])->name('speciment.import');
             Route::post('/speciment', [OpsSpecimentController::class, 'store'])->name('speciment.store');
             Route::post('/speciment/upload/{id}', [OpsSpecimentController::class, 'upload'])->name('speciment.upload');
@@ -279,6 +306,7 @@ Route::middleware(['auth'])->group(function () {
 
             /* [START] Ops APAR */
             Route::get('/apar', [OpsAparController::class, 'index'])->name('apar');
+            Route::get('/apar/template', [OpsAparController::class, 'template'])->name('apar.template');
             Route::post('/apar/import', [OpsAparController::class, 'import'])->name('apar.import');
             Route::post('/apar', [OpsAparController::class, 'store'])->name('apar.store');
 

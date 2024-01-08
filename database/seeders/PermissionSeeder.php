@@ -22,5 +22,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'can delete']);
         Permission::create(['name' => 'can add']);
         Permission::create(['name' => 'can export']);
+        Permission::create(['name' => 'can sto']);
     }
 }

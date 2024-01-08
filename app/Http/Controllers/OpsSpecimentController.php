@@ -41,6 +41,15 @@ class OpsSpecimentController extends Controller
         }
     }
 
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_speciment.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
     public function import(Request $request)
     {
         try {

@@ -7,7 +7,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon, ArrowUpTrayIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 
@@ -368,7 +368,10 @@ export default function PajakReklame({ auth, branches, sessions }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter>
+          <DialogFooter className="w-100 flex justify-between">
+            <SecondaryButton type="button">
+              <a href={route("ops.pajak-reklame.template")}>Download Template</a>
+            </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan

@@ -59,6 +59,7 @@ class GapScoringAssessmentController extends Controller
         //
     }
 
+
     /**
      * Store a newly created resource in storage.
      *
@@ -159,6 +160,14 @@ class GapScoringAssessmentController extends Controller
         $fileName = 'Data_GAP_Scoring_Assessments ' . date('d-m-y') . '.xlsx';
         return (new AssessmentsExport)->download($fileName);
     }
+
+    public function template()
+    {
+        $path = 'app\public\templates\template_gap_assessments.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
 
     /**
      * Remove the specified resource from storage.

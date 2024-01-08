@@ -15,6 +15,7 @@ use App\Models\OpsSkbirtgs;
 use App\Models\OpsSkOperasional;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -89,6 +90,7 @@ class InqueryController extends Controller
     }
     public function assets()
     {
+
         $gap_toners = GapToner::orderBy('idecice_date', 'asc')->with('branches')->get()->map(function ($toner) {
             $type_name = $toner->branches->branch_types->type_name;
             $toner->cabang = $toner->branches->branch_name;

@@ -40,6 +40,14 @@ class GapTonerController extends Controller
         }
     }
 
+    public function template()
+    {
+        $path = 'app\public\templates\template_toner.xlsx';
+
+        return response()->download(storage_path($path));
+    }
+
+
     public function detail(Request $request, $branch_code)
     {
         return Inertia::render('GA/Procurement/Toner/Detail', ['branch_code' => $branch_code]);
