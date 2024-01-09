@@ -222,7 +222,7 @@ export default function Page({ auth, branches, sessions }) {
               data
               type="cabang"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("cabang")}
               color="purple"
             />
@@ -231,7 +231,7 @@ export default function Page({ auth, branches, sessions }) {
               data
               type="vendor"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("vendor")}
               color="purple"
             />
