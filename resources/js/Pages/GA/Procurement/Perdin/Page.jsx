@@ -244,7 +244,7 @@ export default function Page({ auth,  sessions }) {
               data
               type="divisi"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("divisi")}
               color="purple"
             />
@@ -253,7 +253,7 @@ export default function Page({ auth,  sessions }) {
               data
               type="spender"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("spender")}
               color="purple"
             />

@@ -629,9 +629,9 @@ export default function DataTable({
                     }`}
                   >
                     <td className="font-bold text-center">Subtotal</td>
-                    {columns.map((column) =>
+                    {columns.map((column, index) =>
                       column.agg === "sum" ? (
-                        <td className={`font-bold ${column.className}`}>
+                        <td key={index} className={`font-bold ${column.className}`}>
                           {column.type === "custom"
                             ? column.format === "currency"
                               ? data
@@ -659,7 +659,7 @@ export default function DataTable({
                               }, 0)}
                         </td>
                       ) : column.agg === "count" ? (
-                        <td className={`font-bold ${column.className}`}>
+                        <td key={index} className={`font-bold ${column.className}`}>
                           {column.type === "custom"
                             ? data.reduce((total, acc) => {
                                 return total + parseInt(column.render(acc));

@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\EmployeesExport;
-use App\Http\Resources\EmployeeResource;
-use App\Imports\EmployeesImport;
+use Inertia\Inertia;
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\EmployeePosition;
 use App\Models\ErrorLog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Exports\EmployeesExport;
+use App\Imports\EmployeesImport;
+use App\Models\EmployeePosition;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\EmployeeResource;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -19,7 +21,6 @@ use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
 {
-
 
     public function index(Request $request)
     {

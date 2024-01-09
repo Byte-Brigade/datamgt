@@ -223,7 +223,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   areaState={area}
                 />
               </div>
-              <div className="cols-span-1">
+              <div className="cols-span-1 overflow-y-auto">
                 <table className={`text-sm leading-3 bg-white w-full`}>
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
