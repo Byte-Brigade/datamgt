@@ -62,7 +62,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
@@ -181,7 +180,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
             Route::get('/stos/template', [GapStoController::class, 'template'])->name('stos.template');
-            Route::get('/stos/{type}', [GapStoController::class, 'detail'])->name('stos.type');
+            Route::get('/stos/disclaimer', [GapStoController::class, 'disclaimer'])->name('stos.disclaimer');
             Route::post('/stos/import', [GapStoController::class, 'import'])->name('stos.import');
 
             Route::put('/stos/{id}', [GapStoController::class, 'update'])->name('stos.update');

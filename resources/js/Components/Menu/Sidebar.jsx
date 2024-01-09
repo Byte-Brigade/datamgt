@@ -127,7 +127,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Hasil STO",
-      path: "gap.maintenance",
+      path: "gap.stos",
     },
   ];
 

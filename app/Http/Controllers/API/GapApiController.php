@@ -11,6 +11,7 @@ use App\Http\Resources\PerdinResource;
 use App\Http\Resources\PksResource;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Http\Resources\ScoringProjectsResource;
+use App\Http\Resources\StoResource;
 use App\Http\Resources\TonerResource;
 use App\Models\Branch;
 use App\Models\BranchType;
@@ -21,6 +22,7 @@ use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
 use App\Models\GapPks;
 use App\Models\GapScoring;
+use App\Models\GapSto;
 use App\Models\GapToner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -594,5 +596,47 @@ class GapApiController extends Controller
 
 
         return PksResource::collection($data);
+    }
+
+    public function stos(GapSto $gap_stos, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_stos->select('gap_stos.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'branches.id', 'gap_stos.branch_id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        $perpage = $request->perpage ?? 15;
+
+
+        $input = $request->all();
+
+
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
+            });
+        }
+
+
+        $data = $query->paginate($perpage);
+
+        return StoResource::collection($data);
     }
 }

@@ -15,8 +15,6 @@ use App\Models\EmployeePosition;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\EmployeeResource;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
