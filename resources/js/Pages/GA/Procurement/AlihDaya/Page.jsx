@@ -344,7 +344,7 @@ export default function Page({ auth, sessions }) {
               data
               type="tenagaKerja"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("tenagaKerja")}
               color="purple"
             />
@@ -353,7 +353,7 @@ export default function Page({ auth, sessions }) {
               data
               type="biaya"
               Icon={ArchiveBoxIcon}
-              active
+              active={active}
               onClick={() => setActive("biaya")}
               color="purple"
             />
