@@ -261,6 +261,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/employees/template', [EmployeeController::class, 'template'])->name('employees.template');
 
             Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+            Route::post('/employees/sync', [EmployeeController::class, 'sync'])->name('employees.sync');
             Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.delete');
             Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');

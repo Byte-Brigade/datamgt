@@ -6,7 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentArrowDownIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon, DocumentPlusIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Karyawan({ auth, branches, positions, sessions }) {
+export default function Karyawan({ auth, branches, positions, sessions, employees }) {
   const initialData = {
     file: null,
     branch: "0",
@@ -57,7 +57,7 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-
+  console.log(employees)
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -74,7 +74,6 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
       className: "w-[300px]",
     },
     { name: "Email (@banksampoerna.com)", field: "email" },
-    { name: "Jenis Kelamin", field: "gender", className: "text-center" },
     {
       name: "Tanggal Lahir",
       field: "birth_date",
@@ -114,6 +113,15 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
         setIsModalImportOpen(!isModalImportOpen);
+      },
+    });
+  };
+  const handleSubmitSync = (e) => {
+    e.preventDefault();
+    post(route("ops.employees.sync"), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
       },
     });
   };
@@ -218,11 +226,11 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                     </PrimaryButton>
                     <PrimaryButton
                       className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
+                      onClick={handleSubmitSync}
                     >
                       <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
+                        <ArrowPathIcon className="w-4 h-4" />
+                        Sync
                       </div>
                     </PrimaryButton>
                   </div>
