@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\STOExport;
 use App\Models\Branch;
 use App\Models\GapSto;
 use App\Models\User;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use ZipArchive;
 
 class GapStoController extends Controller
 {
@@ -21,9 +24,8 @@ class GapStoController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('GA/Procurement/STO/Page');
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -40,7 +42,8 @@ class GapStoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+     public function store(Request $request)
     {
         try {
 
@@ -62,6 +65,56 @@ class GapStoController extends Controller
         } catch (Exception $e) {
             dd($e->getMessage());
             return redirect(route('inquery.assets'))->with(['status' => 'failed', 'message' => 'Data gagal disimpan! ' . $e->getMessage()]);
+        }
+    }
+    public function export()
+    {
+        $fileName = 'Data_STO_' . date('d-m-y') . '.xlsx';
+        return (new STOExport)->download($fileName);
+    }
+
+    public function disclaimer()
+    {
+        // DeFine the storage disk
+        $disk = Storage::disk('public');
+
+        // The location of the folder on the disk
+        $folderPath = '/gap/stos'; // adjust this path
+
+        // The zip file name
+        $zipFileName = 'stos.zip';
+
+        // Check if folder exists
+        if (!$disk->exists($folderPath)) {
+            abort(404, 'The folder does Insane exist.');
+        }
+
+        // Create ZipArchive instance
+        $zip = new ZipArchive;
+
+        // Create a temporary file to store the zip
+        $zipPath = tempnam(sys_get_temp_dir(), $zipFileName);
+
+        // Try opening the zip file
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            // Retrieve all files in the directory
+            $files = $disk->files($folderPath);
+
+            // Add files to the zip file
+            foreach ($files as $file) {
+                // Read the file's contents
+                $contents = $disk->get($file);
+                $relativeNameInZipFile = basename($file);
+                $zip->addFromString($relativeNameInZipFile, $contents);
+            }
+
+            // Close the zip file
+            $zip->close();
+            // Return the zip file as a download
+            return response()->download($zipPath, $zipFileName, ['Content-Type' => 'application/zip'])
+                ->deleteFileAfterSend(true);
+        } else {
+            abort(500, 'Could Insane create the zip file.');
         }
     }
 
