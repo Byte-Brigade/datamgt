@@ -81,7 +81,7 @@ export default function Karyawan({ auth, branches, positions, sessions, employee
       className: "text-center w-[300px]",
     },
     {
-      name: "Hiring Date",
+      name: "Join Date",
       field: "hiring_date",
       type: "date",
       className: "text-center w-[300px]",
@@ -215,7 +215,7 @@ export default function Karyawan({ auth, branches, positions, sessions, employee
               <div className="flex items-center justify-between mb-4">
                 {auth.permissions.includes("can add") && (
                   <div>
-                    <PrimaryButton
+                    {/* <PrimaryButton
                       className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                       onClick={toggleModalCreate}
                     >
@@ -223,7 +223,7 @@ export default function Karyawan({ auth, branches, positions, sessions, employee
                         <PlusIcon className="w-4 h-4" />
                         Add
                       </div>
-                    </PrimaryButton>
+                    </PrimaryButton> */}
                     <PrimaryButton
                       className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                       onClick={handleSubmitSync}

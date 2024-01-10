@@ -273,7 +273,7 @@ export default function Page({ sessions, auth, data }) {
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-          <div className="grid grid-cols-4 gap-4 mb-2">
+          <div className="grid grid-cols-4 gap-4 mb-4">
             <CardMenu
               label="Asset"
               data

@@ -272,6 +272,7 @@ export default function Page({ auth, branches, sessions }) {
             fetchUrl={"/api/gap/assets"}
             refreshUrl={isRefreshed}
             bordered={true}
+            periodic={true}
           />
         </div>
       </div>

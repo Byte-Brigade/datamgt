@@ -215,7 +215,7 @@ export default function Page({ auth, branches, sessions }) {
         <div className="flex flex-col mb-4 rounded">
 
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
+          <div className="grid grid-cols-4 gap-4 mb-4">
 
             <CardMenu
               label="Cabang"

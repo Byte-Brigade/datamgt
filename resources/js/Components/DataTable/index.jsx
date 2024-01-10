@@ -30,6 +30,7 @@ export default function DataTable({
   component = [],
   footCols = { name: "", span: 0 },
   agg,
+  periodic = false,
   parameters = {},
   bordered = false,
   headings,
@@ -370,11 +371,13 @@ export default function DataTable({
           </div>
         </div>
         <div>
-        <div className="z-50 flex items-center justify-end gap-x-2">
-          <span>Periode</span>
-          <MonthPicker onDateChange={setSelectedMonthData} />
+          {periodic && (
+            <div className="z-50 flex items-center justify-end gap-x-2">
+              <span>Periode</span>
+              <MonthPicker onDateChange={setSelectedMonthData} />
+            </div>
+          )}
         </div>
-      </div>
       </div>
 
       {/* <Datepicker value={value} onChange={handleValueChange} /> */}
@@ -631,7 +634,10 @@ export default function DataTable({
                     <td className="font-bold text-center">Subtotal</td>
                     {columns.map((column, index) =>
                       column.agg === "sum" ? (
-                        <td key={index} className={`font-bold ${column.className}`}>
+                        <td
+                          key={index}
+                          className={`font-bold ${column.className}`}
+                        >
                           {column.type === "custom"
                             ? column.format === "currency"
                               ? data
@@ -659,7 +665,10 @@ export default function DataTable({
                               }, 0)}
                         </td>
                       ) : column.agg === "count" ? (
-                        <td key={index} className={`font-bold ${column.className}`}>
+                        <td
+                          key={index}
+                          className={`font-bold ${column.className}`}
+                        >
                           {column.type === "custom"
                             ? data.reduce((total, acc) => {
                                 return total + parseInt(column.render(acc));
