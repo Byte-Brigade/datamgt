@@ -22,7 +22,7 @@ class BranchResource extends JsonResource
             'area' => $this->area,
             'address' => $this->address,
             'type_name' => $this->branch_types->type_name,
-            'bm' => $this->employees->where('position_id', 1)->pluck('name')->first(),
+            'bm' => $this->employees->where('position_id', 5)->pluck('name')->first(),
             'slug' => $this->slug
         ];
     }

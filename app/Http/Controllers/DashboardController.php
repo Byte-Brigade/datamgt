@@ -8,7 +8,6 @@ use App\Models\Employee;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapScoring;
-use App\Models\GapToner;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -25,10 +24,6 @@ class DashboardController extends Controller
         $employees = Employee::with(['employee_positions', 'branches'])->get();
         $gap_asset = GapAsset::with('branches')->get();
         $gap_scorings = GapScoring::with('branches')->get();
-        // dd($branches->groupBy('branch_types.type_name'));
-
-
-
         $months = [
             "January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"

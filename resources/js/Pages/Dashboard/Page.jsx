@@ -213,8 +213,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
           {/* Tabel Karyawan */}
           {active === "employee" && (
-            <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
-              <div className="col-span-1">
+            <div className="pt-4 w-full h-[500px] grid grid-rows-2 gap-4">
+              <div>
                 <BarChart
                   label="Jumlah Karyawan"
                   type="employee"
@@ -223,17 +223,21 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   areaState={area}
                 />
               </div>
-              <div className="col-span-1 overflow-y-auto">
+              <div className="overflow-y-auto">
                 <table className={`text-sm leading-3 bg-white w-full`}>
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
+                      <th className="text-center" wi>No</th>
                       <th className="text-center">Jabatan</th>
                       <th className="text-center">Jumlah</th>
                     </tr>
                   </thead>
                   <tbody className="overflow-y-auto">
-                    {data.employee_positions.map((position) => (
+                    {data.employee_positions.map((position, index) => (
                       <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+                        <td>
+                          {index + 1}
+                        </td>
                         <td>
                           {position.position_name}
                         </td>
@@ -255,7 +259,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       </tr>
                     ))}
                     <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                      <td className="text-center">
+                      <td className="text-center" colSpan="2">
                         <strong>Total</strong>
                       </td>
                       <td className="text-center">

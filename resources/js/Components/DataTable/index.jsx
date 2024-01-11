@@ -314,7 +314,7 @@ export default function DataTable({
 
   return (
     <div>
-      <div className="flex flex-col mb-4">
+      <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div className="flex flex-col w-72">
             <div className="flex items-center gap-x-2">
@@ -367,7 +367,6 @@ export default function DataTable({
                 <CogIcon className="w-5 h-5" />
               </IconButton>
             </div>
-            <form onSubmit={handleFormSubmit}>{children}</form>
           </div>
         </div>
         <div>
@@ -463,7 +462,9 @@ export default function DataTable({
           </div>
         </Collapse>
       </div>
-
+      <div className="flex justify-end mb-2">
+        <form onSubmit={handleFormSubmit}>{children}</form>
+      </div>
       <div
         className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
           fixedTable ? "max-h-96" : "h-full"
