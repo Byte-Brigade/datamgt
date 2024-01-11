@@ -299,7 +299,7 @@ export default function Detail({
       ),
     },
   ];
-  console.log(data.month);
+  console.log(kdo_mobil);
 
   return (
     <AuthenticatedLayout auth={auth}>

@@ -214,7 +214,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           {/* Tabel Karyawan */}
           {active === "employee" && (
             <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
-              <div className="cols-span-1">
+              <div className="col-span-1">
                 <BarChart
                   label="Jumlah Karyawan"
                   type="employee"
@@ -223,7 +223,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   areaState={area}
                 />
               </div>
-              <div className="cols-span-1 overflow-y-auto">
+              <div className="col-span-1 overflow-y-auto">
                 <table className={`text-sm leading-3 bg-white w-full`}>
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
@@ -234,7 +234,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <tbody className="overflow-y-auto">
                     {data.employee_positions.map((position) => (
                       <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                        <td className="text-center">
+                        <td>
                           {position.position_name}
                         </td>
                         <td className="text-center">
