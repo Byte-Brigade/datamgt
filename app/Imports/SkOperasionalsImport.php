@@ -33,7 +33,9 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
             })->pluck('id')->first();
 
             $penerima_kuasa = isset($row['nama_penerima_kuasa']) ? $row['nama_penerima_kuasa'] : null;
-            $penerima_kuasa_id = isset($penerima_kuasa) ? Employee::where('name', 'like', "%$penerima_kuasa%")->where('branch_id', $branch_id)->pluck('id')->first() : null;
+            $penerima_kuasa_id = isset($penerima_kuasa) ? Employee::whereHas('employee_positions', function(Builder $query) {
+                $query->where('position_name', 'Branch Manager')->orWhere('position_name', 'Branch Service Manager');
+            })->where([['name', 'like', "%$penerima_kuasa%"], ['branch_id', $branch_id]])->pluck('id')->first() : null;
 
             if (isset($row['no_surat'])) {
                 $ops_sk_operasional = OpsSkOperasional::updateOrCreate(

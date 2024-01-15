@@ -70,8 +70,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
 
         Route::middleware(['check.slug'])->group(function () {
-          Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-          Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+            Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
+            Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
 
         });
         Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
@@ -90,8 +90,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/disnaker/{slug}', [ReportController::class, 'disnaker'])->name('disnaker');
     });
 
-    Route::middleware('permission:can sto')->group(function() {
-        Route::prefix('gap')->name('gap.')->group(function() {
+    Route::middleware('permission:can sto')->group(function () {
+        Route::prefix('gap')->name('gap.')->group(function () {
             Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
         });
     });

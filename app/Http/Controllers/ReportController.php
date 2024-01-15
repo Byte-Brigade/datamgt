@@ -35,6 +35,10 @@ class ReportController extends Controller
             $query->where('slug', $slug);
         })->with('branches')->first();
 
+        if (!$disnaker) {
+            return back()->with(['status' => 'failed', 'message' => 'Data belum tersedia!']);
+        }
+
         return Inertia::render('GA/Infra/Disnaker/Detail', [
             'disnaker' => $disnaker
         ]);

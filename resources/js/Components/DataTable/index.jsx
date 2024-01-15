@@ -471,7 +471,7 @@ export default function DataTable({
         }`}
       >
         <table className={`${className} text-sm leading-3 bg-white z-0`}>
-          <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+          <thead className="sticky top-0 z-20 border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr
                 className={`[&>th]:p-2 bg-slate-100 ${

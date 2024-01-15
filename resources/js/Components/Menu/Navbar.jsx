@@ -102,7 +102,7 @@ export function ComplexNavbar({ sidebarOpen, setSidebarOpen }) {
     <Navbar
       blurred={false}
       shadow={false}
-      className="fixed top-0 z-10 max-w-full px-2 py-1 border-b border-gray-200 rounded-none h-max"
+      className="fixed top-0 z-50 max-w-full px-2 py-1 border-b border-gray-200 rounded-none h-max"
     >
       <div className="relative flex items-center mx-auto text-blue-gray-900">
         {auth.role !== "cabang" ? (

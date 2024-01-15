@@ -25,7 +25,6 @@ class UserSeeder extends Seeder
             'can sto'
         ];
 
-
         $superadmin = User::create([
             'name' => 'admin',
             'password' => Hash::make('rahasia123'),
@@ -45,30 +44,12 @@ class UserSeeder extends Seeder
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Mahardhika@banksampoerna.com',
             'nik' => '00006083'
-        ])->assignRole('procurement')->syncPermissions($full_access);;
+        ])->assignRole('procurement')->syncPermissions($full_access);
         User::create([
             'name' => 'Eep Pathurahman',
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Eep.Pathurahman@banksampoerna.com',
             'nik' => '00006583'
-        ])->assignRole('procurement');
-        User::create([
-            'name' => 'Nadia Ristanti Afandi',
-            'password' => Hash::make('Sahabat1!'),
-            'email' => 'Nadia.Afandi@banksampoerna.com',
-            'nik' => '00005714'
-        ])->assignRole('procurement');
-        User::create([
-            'name' => 'Risty Adelina',
-            'password' => Hash::make('Sahabat1!'),
-            'email' => 'Risty.Adelina@banksampoerna.com',
-            'nik' => '00006350'
-        ])->assignRole('procurement');
-        User::create([
-            'name' => 'Faisal Ananda',
-            'password' => Hash::make('Sahabat1!'),
-            'email' => 'Faisal.Ananda@sahabat-ukm.co.id',
-            'nik' => '50009981'
         ])->assignRole('procurement');
         User::create([
             'name' => 'Heni Eka',
@@ -106,12 +87,6 @@ class UserSeeder extends Seeder
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Nadim.Hasba@banksampoerna.com',
             'nik' => '00006578'
-        ])->assignRole('ga');
-        User::create([
-            'name' => 'Rendy Fadjar Bakti',
-            'password' => Hash::make('Sahabat1!'),
-            'email' => 'Rendy.Bakti@banksampoerna.com',
-            'nik' => '00006622'
         ])->assignRole('ga');
         User::create([
             'name' => 'Ferdinan Julianto',

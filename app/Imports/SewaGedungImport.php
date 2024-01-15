@@ -79,10 +79,10 @@ class SewaGedungImport implements ToCollection, WithHeadingRow, WithValidation
                         );
                     }
                 } else {
-                    throw new Exception("Error : Nama Branch ".$row['nama_cabang']." tidak ditemukan.")
+                    throw new Exception("Error : Nama Branch ".$row['nama_cabang']." tidak ditemukan.");
                 }
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             throw new Exception("Error : " . $th->getMessage());
         }
     }

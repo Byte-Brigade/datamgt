@@ -12,7 +12,6 @@ use App\Imports\KdoMobilImport;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapKdo;
-use App\Models\GapKdoMobil;
 use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,7 +53,7 @@ class GapKdoController extends Controller
     {
         $branch = Branch::find($id);
         try {
-            GapKdoMobil::create([
+            GapKdo::create([
                 'branch_id' => $request->branch_id,
                 'gap_kdo_id' => $request->gap_kdo_id,
                 'vendor' => $request->vendor,
@@ -73,7 +72,7 @@ class GapKdoController extends Controller
     {
         $branch = Branch::find($request->branch_id);
         try {
-            $gap_kdo_mobil = GapKdoMobil::find($id);
+            $gap_kdo_mobil = GapKdo::find($id);
             $gap_kdo_mobil->update([
                 'branch_id' => $request->branch_id,
                 'gap_kdo_id' => $request->gap_kdo_id,
@@ -110,7 +109,7 @@ class GapKdoController extends Controller
     public function kdo_mobil_destroy($branch_code, $id)
     {
         try {
-            $kdo_mobil = GapKdoMobil::find($id);
+            $kdo_mobil = GapKdo::find($id);
             $kdo_mobil->delete();
 
             return redirect(route('gap.kdos.mobil', $branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);

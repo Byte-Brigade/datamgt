@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\OpsSkbirtgs;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -17,21 +18,26 @@ class SkBirtgsImport implements ToModel, WithHeadingRow, WithValidation
 
     public function model(array $row)
     {
-        $penerima_kuasa = isset($row['penerima_kuasa']) ? explode(' - ', $row['penerima_kuasa']) : [null, null];
-        $penerima_kuasa_1 = isset($penerima_kuasa[0]) ? Employee::where('name', 'like', "%$penerima_kuasa[0]%")->pluck('id')->first() : null;
-        $penerima_kuasa_2 = isset($penerima_kuasa[1]) ? Employee::where('name', 'like', "%$penerima_kuasa[1]%")->pluck('id')->first() : null;
-
         $branch = trim($row['kantor_cabang']);
         $branch_id = Branch::where('branch_name', 'like', "%$branch%")->pluck('id')->first();
+
+        $penerima_kuasa = isset($row['penerima_kuasa']) ? explode(' - ', $row['penerima_kuasa']) : [null, null];
+        $penerima_kuasa_1 = isset($penerima_kuasa[0]) ? Employee::whereHas('employee_positions', function(Builder $query) {
+            $query->where('position_name', 'Branch Manager')->orWhere('position_name', 'Branch Service Manager');
+        })->where([['name', 'like', "%$penerima_kuasa[0]%"], ['branch_id', '=', $branch_id]])->pluck('id')->first() : null;
+        $penerima_kuasa_2 = isset($penerima_kuasa[1]) ? Employee::whereHas('employee_positions', function(Builder $query) {
+            $query->where('position_name', 'Branch Manager')->orWhere('position_name', 'Branch Service Manager');
+        })->where([['name', 'like', "%$penerima_kuasa[1]%"], ['branch_id', '=', $branch_id]])->pluck('id')->first() : null;
 
         $ops_skbirtgs = OpsSkbirtgs::updateOrCreate(
             [
                 'branch_id' => $branch_id
             ],
             [
-            'no_surat' => $row['nomor_surat'],
-            'branch_id' => $branch_id,
-        ]);
+                'no_surat' => $row['nomor_surat'],
+                'branch_id' => $branch_id,
+            ]
+        );
 
         $penerima_kuasa_ids = array_filter([$penerima_kuasa_1, $penerima_kuasa_2], fn($value) => !is_null($value) && $value !== '');
         if (count($penerima_kuasa_ids) > 0) {
