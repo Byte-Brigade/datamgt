@@ -75,6 +75,7 @@ Route::prefix('infra')->name('infra.')->group(function () {
 
     Route::get('sewa-gedungs', [InfraApiController::class, 'sewa_gedungs']);
     Route::get('bros', [InfraApiController::class, 'bros']);
+    Route::get('maintenance-costs', [InfraApiController::class, 'maintenance_costs']);
     Route::get('disnakers', [InfraApiController::class, 'disnakers']);
     Route::get('scoring_projects', [InfraApiController::class, 'scoring_projects']);
     Route::get('scoring_projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);

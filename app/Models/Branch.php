@@ -107,5 +107,10 @@ class Branch extends Model
     {
         return $this->hasOne(GapSto::class, 'branch_id');
     }
+
+    public function infra_maintenance_costs()
+    {
+        return $this->hasMany(InfraMaintenanceCost::class, 'branch_id');
+    }
 }
 

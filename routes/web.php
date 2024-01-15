@@ -16,6 +16,7 @@ use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\GapStoController;
 use App\Http\Controllers\GapTonerController;
 use App\Http\Controllers\InfraBroController;
+use App\Http\Controllers\InfraMaintenanceCostController;
 use App\Http\Controllers\InfraScoringAssessmentController;
 use App\Http\Controllers\InfraScoringProjectController;
 use App\Http\Controllers\InfraSewaGedungController;
@@ -235,9 +236,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/bros/export', [InfraBroController::class, 'export'])->name('bros.export');
             Route::delete('/bros/{id}', [InfraBroController::class, 'destroy'])->name('bros.delete');
 
-            Route::get('/maintenance', function () {
-                abort(404);
-            })->name('maintenance');
+            Route::get('/maintenance-costs', [InfraMaintenanceCostController::class, 'index'])->name('maintenance-costs');
+            Route::get('/maintenance-costs/template', [InfraMaintenanceCostController::class, 'template'])->name('maintenance-costs.template');
+            Route::post('/maintenance-costs/import', [InfraMaintenanceCostController::class, 'import'])->name('maintenance-costs.import');
+            Route::post('/maintenance-costs', [InfraMaintenanceCostController::class, 'store'])->name('maintenance-costs.store');
+            Route::put('/maintenance-costs/{id}', [InfraMaintenanceCostController::class, 'update'])->name('maintenance-costs.update');
+            Route::get('/maintenance-costs/export', [InfraMaintenanceCostController::class, 'export'])->name('maintenance-costs.export');
+            Route::delete('/maintenance-costs/{id}', [InfraMaintenanceCostController::class, 'destroy'])->name('maintenance-costs.delete');
+
         });
 
 
