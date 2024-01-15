@@ -388,7 +388,7 @@ export default function Page({ sessions, auth, data }) {
             </>
           )}
 
-          {/* Tabel ATM */}
+          {/* Toner */}
           {active === "toner" && (
             <div className="mt-4">
               <div className="overflow-x-auto">

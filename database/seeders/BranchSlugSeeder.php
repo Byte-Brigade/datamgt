@@ -20,7 +20,7 @@ class BranchSlugSeeder extends Seeder
         foreach($branch_names as $branch) {
             $name = $branch->branch_name;
             $type = $branch->branch_types->type_name;
-            $branches = Branch::with('branch_types')->where('branch_name', $name)->get();
+            $branches = Branch::with('branch_types')->where([['branch_name', '=' , $name], ['id', '=', $branch->id]])->get();
 
             if ($branches->count() > 1 && (in_array($type, $branches->pluck('branch_types.type_name')->toArray()))) {
                 $type = 'kf';

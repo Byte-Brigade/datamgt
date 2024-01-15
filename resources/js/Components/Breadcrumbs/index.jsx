@@ -37,8 +37,20 @@ export function BreadcrumbsDefault() {
         return "APAR";
       case "sk-operasional":
         return "SK Operasional Cabang";
-      case "kdo":
+      case "assets":
+        return "Asset";
+      case "kdos":
         return "KDO Mobil";
+      case "toners":
+        return "Toner";
+      case "alihdayas":
+        return "Alih Daya";
+      case "pks":
+        return "PKS";
+      case "perdins":
+        return "Biaya Perjalanan Dinas";
+      case "stos":
+        return "Hasil STO";
       case "disnaker":
         return "Izin Disnaker";
       case "reporting":
@@ -53,6 +65,8 @@ export function BreadcrumbsDefault() {
         return "Scoring Assessments";
       case "sewa_gedungs":
         return "Sewa Gedung";
+      case "bros":
+        return "Branch Roll Out";
       default:
         break;
     }

@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -63,56 +64,56 @@ export default function Page({ auth, branches, sessions }) {
       name: "Nilai OE Interior",
       field: "nilai_oe_interior",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.nilai_oe_interior.toLocaleString('id-ID')
+      render: (data) => data.nilai_oe_interior.toLocaleString("id-ID"),
     },
     {
       name: "Nilai OE ME",
       field: "nilai_oe_me",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.nilai_oe_me.toLocaleString('id-ID')
+      render: (data) => data.nilai_oe_me.toLocaleString("id-ID"),
     },
     {
       name: "Total OE",
       field: "total_oe",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.total_oe.toLocaleString('id-ID')
+      render: (data) => data.total_oe.toLocaleString("id-ID"),
     },
     { name: "Nama Vendor", sortable: true, field: "nama_vendor" },
     {
       name: "Nilai Project Memo/Persetujuan",
       field: "nilai_project_memo",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.nilai_project_memo.toLocaleString('id-ID')
+      render: (data) => data.nilai_project_memo.toLocaleString("id-ID"),
     },
     {
       name: "Nilai Project Final Account",
       field: "nilai_project_final",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.nilai_project_final.toLocaleString('id-ID')
+      render: (data) => data.nilai_project_final.toLocaleString("id-ID"),
     },
     {
       name: "Kerja Tambah/Kurang",
       field: "kerja_tambah_kurang",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.kerja_tambah_kurang.toLocaleString('id-ID')
+      render: (data) => data.kerja_tambah_kurang.toLocaleString("id-ID"),
     },
 
     {
@@ -149,7 +150,10 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("infra.maintenance-costs.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("infra.maintenance-costs.export") + `?branch=${branch}`,
+      "_self"
+    );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
@@ -227,31 +231,40 @@ export default function Page({ auth, branches, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("ga|branch_ops", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.include("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
             columns={columns}
             className="w-[1200px]"
@@ -289,9 +302,11 @@ export default function Page({ auth, branches, sessions }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
+          <DialogFooter className="flex justify-between w-100">
             <SecondaryButton type="button">
-              <a href={route("infra.maintenance-costs.template")}>Download Template</a>
+              <a href={route("infra.maintenance-costs.template")}>
+                Download Template
+              </a>
             </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">

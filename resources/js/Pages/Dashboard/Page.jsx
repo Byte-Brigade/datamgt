@@ -152,7 +152,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
             ))}
           </div>
           {active === "branch" && (
-            <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
+            <div className="pt-4 w-full h-[300px] grid grid-cols-2 gap-4">
               <div className="cols-span-1">
                 <BarChart
                   label="Jumlah Cabang"
@@ -213,8 +213,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
           {/* Tabel Karyawan */}
           {active === "employee" && (
-            <div className="pt-4 w-full h-[500px] grid grid-rows-2 gap-4">
-              <div>
+            <div className="w-full pt-4">
+              <div className="relative h-[500px]">
                 <BarChart
                   label="Jumlah Karyawan"
                   type="employee"
@@ -223,7 +223,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   areaState={area}
                 />
               </div>
-              <div className="overflow-y-auto">
+              <div className="h-[300px] overflow-y-auto">
                 <table className={`text-sm leading-3 bg-white w-full`}>
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
@@ -282,7 +282,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
           {/* Tabel ATM */}
           {active === "atm" && (
-            <div className="pt-4 w-full h-[200px] grid grid-cols-2 gap-4">
+            <div className="pt-4 w-full h-[300px] grid grid-cols-2 gap-4">
               <div className="cols-span-1">
                 <BarChart
                   label="Jumlah ATM"

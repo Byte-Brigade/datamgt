@@ -28,7 +28,7 @@ export default function BarChart({
 }) {
   const options = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     plugins: {
       datalabels: {
         anchor: "end",
@@ -114,9 +114,5 @@ export default function BarChart({
 
   const chart = { labels, datasets };
 
-  return (
-    <>
-      <Bar options={options} data={chart} plugins={[ChartDataLabels]} />
-    </>
-  );
+  return <Bar options={options} data={chart} plugins={[ChartDataLabels]} />;
 }

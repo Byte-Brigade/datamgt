@@ -68,7 +68,6 @@ export default function Page({ auth, branches, sessions }) {
       sortable: true,
       freeze: true,
     },
-
     {
       name: "Category",
       field: "category",
@@ -305,7 +304,7 @@ export default function Page({ auth, branches, sessions }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
+          <DialogFooter className="flex justify-between w-100">
             <SecondaryButton type="button">
               <a href={route("gap.assets.template")}>Download Template</a>
             </SecondaryButton>

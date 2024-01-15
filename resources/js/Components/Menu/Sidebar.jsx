@@ -77,7 +77,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "reporting.branches", state: "reporting.*" },
     { name: "Asset", path: "maintenance" },
     { name: "Lisensi", path: "maintenance" },
-
     { name: "Vendor", path: "maintenance" },
     { name: "Branch Roll Out", path: "reporting.bros" },
   ];
@@ -322,7 +321,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   <Link href={route(router.path)}>
                     <ListItem
                       className={`${sidebarOpen && "justify-center"}`}
-                      selected={route().current(router.path)}
+                      selected={route().current(router.path) ||
+                        route().current(`${router.path}.*`)}
                     >
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon

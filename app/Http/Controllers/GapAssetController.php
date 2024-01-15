@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Exports\Assets\AssetsExport;
-use App\Helpers\PartitionManager;
 use App\Imports\AssetsImport;
 use App\Models\Branch;
 use App\Models\GapAsset;
 use Illuminate\Http\Request;
-use App\Http\Resources\AssetsResource;
-use App\Jobs\ProcessPartitioning;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -17,16 +14,13 @@ use Throwable;
 
 class GapAssetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $branches = Branch::get();
+
         return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branches]);
     }
+
     public function import(Request $request)
     {
         try {
@@ -44,7 +38,7 @@ class GapAssetController extends Controller
             $errorString = trim($errorString);
 
             return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
