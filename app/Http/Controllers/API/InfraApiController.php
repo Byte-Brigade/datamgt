@@ -6,11 +6,13 @@ use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BroResource;
 use App\Http\Resources\DisnakerResource;
+use App\Http\Resources\MaintenanceCostResource;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Http\Resources\ScoringProjectsResource;
 use App\Http\Resources\SewaGedungResource;
 use App\Models\GapDisnaker;
 use App\Models\InfraBro;
+use App\Models\InfraMaintenanceCost;
 use App\Models\InfraScoring;
 use App\Models\InfraSewaGedung;
 use Illuminate\Http\Request;
@@ -86,6 +88,27 @@ class InfraApiController extends Controller
 
 
         return BroResource::collection($data);
+    }
+    public function maintenance_costs(InfraMaintenanceCost $infra_maintenance_cost, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order') ?? 'asc';
+        $searchInput = $request->search;
+        $query = $infra_maintenance_cost->select('infra_maintenance_costs.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'infra_maintenance_costs.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+
+        $data = $query->paginate($perpage);
+
+
+
+        return MaintenanceCostResource::collection($data);
     }
 
 

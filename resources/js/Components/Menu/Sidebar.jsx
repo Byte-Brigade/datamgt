@@ -143,7 +143,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
     {
       name: "Maintenance Cost Gedung",
-      path: "infra.maintenance",
+      path: "infra.maintenance-costs",
     },
     {
       name: "Hasil Self Asssessment",
