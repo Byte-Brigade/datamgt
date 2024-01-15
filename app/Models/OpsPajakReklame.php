@@ -13,6 +13,8 @@ class OpsPajakReklame extends Model
 
     protected $fillable = [
         'branch_id',
+        'no_izin',
+        'nilai_pajak',
         'periode_awal',
         'periode_akhir',
         'note',

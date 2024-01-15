@@ -24,12 +24,12 @@ class InfraBro extends Model
         'gedung',
         'layout',
         'kontraktor',
-        'kontraktor',
         'line_telp',
         'tambah_daya',
         'renovation',
         'inventory_non_it',
         'barang_it',
         'asuransi',
+
     ];
 }

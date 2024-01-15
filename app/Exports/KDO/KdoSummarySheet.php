@@ -2,6 +2,7 @@
 
 namespace App\Exports\KDO;
 
+use App\Models\Branch;
 use App\Models\GapKdo;
 use App\Models\OpsSpeciment;
 use Illuminate\Contracts\View\View;
@@ -15,8 +16,12 @@ class KdoSummarySheet implements FromView, ShouldAutoSize, WithTitle
     use Exportable;
     public function view(): View
     {
+
+        $latestPeriode = GapKdo::with(['branches','biaya_sewas'])->max('periode');
         return view('exports.kdo.summary', [
-            'kdos' => GapKdo::all()->sortBy('branches.branch_code')
+            'branches' => Branch::with(['gap_kdo' => function($q) use($latestPeriode) {
+                return $q->where('periode', $latestPeriode);
+            }])->get(),
         ]);
     }
 

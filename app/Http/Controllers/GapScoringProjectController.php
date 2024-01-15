@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\Scoring\ProjectsExport;
-use App\Http\Resources\ScoringProjectsResource;
+use App\Exports\GapScoring\GapScoringExport;
 use App\Imports\GapScoringProjectsImport;
-use App\Imports\GapScoringsImport;
 use App\Models\Branch;
 use App\Models\GapScoring;
-use App\Models\GapScoringProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -54,8 +51,8 @@ class GapScoringProjectController extends Controller
 
     public function export()
     {
-        $fileName = 'Data_GAP_Scoring_Projects' . date('d-m-y') . '.xlsx';
-        return (new ProjectsExport)->download($fileName);
+        $fileName = 'Data_GAP_Scoring_Project_' . date('d-m-y') . '.xlsx';
+        return (new GapScoringExport('Project'))->download($fileName);
     }
 
     public function template()

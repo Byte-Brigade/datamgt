@@ -36,7 +36,7 @@
                 <td>{{ $branch->status == 'Milik' ? number_format($branch->total_biaya_sewa, 0, ',', '.') : '-' }}</td>
                 <td>{{ $branch->status != 'Milik' ? number_format($branch->total_biaya_sewa, 0, ',', '.') : '-' }}</td>
                 <td>-</td>
-                <td>{{ $branch->gap_kdo_mobil->count() }}</td>
+                <td>{{ $branch->gap_kdo->count() }}</td>
                 <td>-</td>
                 <td>-</td>
                 <td>{{ $branch->izin }}</td>

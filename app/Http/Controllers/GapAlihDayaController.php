@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AlihDaya\AlihDayaExport;
 use App\Imports\AlihDayaImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,11 @@ class GapAlihDayaController extends Controller
         }
     }
 
+    public function export()
+    {
+        $fileName = 'Data_AlihDaya_' . date('d-m-y') . '.xlsx';
+        return (new AlihDayaExport)->download($fileName);
+    }
 
     public function template()
     {

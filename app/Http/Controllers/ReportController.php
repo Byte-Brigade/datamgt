@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\BranchesExport;
+use App\Exports\Report\BRO\BROExport;
 use App\Http\Resources\DisnakerResource;
 use App\Models\Branch;
 use App\Models\BranchType;
@@ -91,4 +92,11 @@ class ReportController extends Controller
             'category' => $category,
         ]);
     }
+
+    public function bro_export()
+    {
+        $fileName = 'Data_BRO_' . date('d-m-y') . '.xlsx';
+        return (new BROExport)->download($fileName);
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InfraScoring\InfraScoringExport;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Imports\InfraScoringAssessmentsImport;
 use App\Models\Branch;
@@ -22,6 +23,12 @@ class InfraScoringAssessmentController extends Controller
     {
         $branches = Branch::get();
         return Inertia::render('GA/Infra/Scoring/Assessment/Page', ['branches' => $branches]);
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_Infra_Scoring_Assessment_' . date('d-m-y') . '.xlsx';
+        return (new InfraScoringExport('Assessment'))->download($fileName);
     }
 
 
@@ -128,11 +135,7 @@ class InfraScoringAssessmentController extends Controller
         }
     }
 
-    public function export()
-    {
-        $fileName = 'Data_Infra_Scoring_Assessments ' . date('d-m-y') . '.xlsx';
-        return (new AssessmentsExport)->download($fileName);
-    }
+
 
     /**
      * Remove the specified resource from storage.

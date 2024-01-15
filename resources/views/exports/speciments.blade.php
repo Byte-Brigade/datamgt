@@ -14,7 +14,7 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $speciment->branches->branch_name }}</td>
 
-                <td>{{ $speciment->tgl_speciment }}</td>
+                <td>{{ \Carbon\Carbon::parse($speciment->tgl_speciment)->format('d/m/Y') }}</td>
                 <td>{{ $speciment->hasil_konfirmasi_cabang }}</td>
                 <td>{{ $speciment->keterangan }}</td>
             </tr>

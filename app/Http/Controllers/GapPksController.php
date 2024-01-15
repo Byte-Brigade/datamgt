@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PKS\PKSExport;
 use App\Imports\PksImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,12 @@ class GapPksController extends Controller
         } catch (\Throwable $th) {
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_PKS_' . date('d-m-y') . '.xlsx';
+        return (new PKSExport)->download($fileName);
     }
 
 

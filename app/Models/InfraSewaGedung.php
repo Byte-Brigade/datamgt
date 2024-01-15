@@ -19,6 +19,7 @@ class InfraSewaGedung extends Model
         'owner',
         'biaya_per_tahun',
         'total_biaya',
+        'periode',
     ];
 
     public function branches()

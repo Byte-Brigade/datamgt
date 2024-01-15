@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Perdin\PerdinExport;
 use App\Helpers\PaginationHelper;
 use App\Http\Resources\PerdinResource;
 use App\Imports\PerdinImport;
@@ -48,6 +49,12 @@ class GapPerdinController extends Controller
         } catch (\Throwable $th) {
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
+    }
+
+    public function export()
+    {
+        $fileName = 'Data_Perdin_' . date('d-m-y') . '.xlsx';
+        return (new PerdinExport)->download($fileName);
     }
 
     public function template()

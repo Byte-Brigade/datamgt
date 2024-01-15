@@ -135,6 +135,7 @@ export default function Speciment({ auth, sessions, branches }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     window.open(route("ops.speciment.export"), "_self");
+    setIsModalExportOpen(!isModalExportOpen)
   };
 
   const handleSubmitUpload = (e) => {
