@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\STOExport;
+use App\Exports\STO\STOExport;
 use App\Models\Branch;
 use App\Models\GapSto;
 use App\Models\User;

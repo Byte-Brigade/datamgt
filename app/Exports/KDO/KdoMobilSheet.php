@@ -3,7 +3,9 @@
 namespace App\Exports\KDO;
 
 use App\Http\Resources\KdoMobilResource;
+use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
+use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -29,9 +31,11 @@ class KdoMobilSheet implements FromView, ShouldAutoSize, WithTitle, WithColumnFo
     ];
     public function view(): View
     {
-        $kdo_mobil = isset($this->gap_kdo_id) ? GapKdoMobil::where('gap_kdo_id', $this->gap_kdo_id)->get() : GapKdoMobil::all();
+        $kdo_mobil = GapKdo::with(['branches','biaya_sewas'])->get();
+        $latestPeriode = $kdo_mobil->max('periode');
+        $kdo_mobil = $kdo_mobil->where('periode', $latestPeriode);
         return view('exports.kdo.mobils', [
-            'kdo_mobils' => KdoMobilResource::collection($kdo_mobil->sortBy('branches.branch_code')),
+            'kdo_mobils' => $kdo_mobil->sortBy('branches.branch_code'),
             'months' => $this->months,
             'periode' => Carbon::now()->year
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Toners\TonerExport;
 use App\Imports\TonerImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,13 @@ class GapTonerController extends Controller
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }
     }
+
+    public function export()
+    {
+        $fileName = 'Data_Toner_' . date('d-m-y') . '.xlsx';
+        return (new TonerExport)->download($fileName);
+    }
+
 
     public function template()
     {

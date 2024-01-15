@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InfraScoring\InfraScoringExport;
 use App\Http\Resources\ScoringProjectsResource;
 use App\Imports\InfraScoringProjectsImport;
 use App\Models\Branch;
@@ -57,8 +58,8 @@ class InfraScoringProjectController extends Controller
 
     public function export()
     {
-        $fileName = 'Data_GAP_Scoring_Projects' . date('d-m-y') . '.xlsx';
-        return (new ProjectsExport)->download($fileName);
+        $fileName = 'Data_Infra_Scoring_Project_' . date('d-m-y') . '.xlsx';
+        return (new InfraScoringExport('Post Project'))->download($fileName);
     }
 
     /**

@@ -2,10 +2,12 @@
 
 namespace App\Exports;
 
+use App\Models\Branch;
 use App\Models\OpsApar;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithDefaultStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -15,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 
-class AparExport implements FromView, WithDefaultStyles, WithColumnFormatting
+class AparExport implements FromView, WithDefaultStyles, WithColumnFormatting, ShouldAutoSize
 {
     use Exportable;
 
@@ -28,18 +30,18 @@ class AparExport implements FromView, WithDefaultStyles, WithColumnFormatting
 
     public function view(): View
     {
-        $branch_id = $this->branch_id;
-        $data = OpsApar::with(['branches','detail'])->newQuery();
-        if (isset($branch_id) && $branch_id != '0') {
-            $data = $data->whereHas('branches', function ($query) use ($branch_id) {
-                $query->where('id', $branch_id);
-            });
-        }
+        // $branch_id = $this->branch_id;
+        $data = Branch::with(['ops_apar'])->newQuery();
+        // if (isset($branch_id) && $branch_id != '0') {
+        //     $data = $data->whereHas('branches', function ($query) use ($branch_id) {
+        //         $query->where('id', $branch_id);
+        //     });
+        // }
 
         $data = $data->get();
 
         return view('exports.apar', [
-            'apars' => $data
+            'branches' => $data
         ]);
     }
 

@@ -192,6 +192,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       route("ops.pajak-reklame.export") + `?branch=${branch}`,
       "_self"
     );
+    setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitUpload = (e) => {

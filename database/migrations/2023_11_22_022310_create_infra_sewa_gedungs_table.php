@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('owner')->nullable();
             $table->bigInteger('biaya_per_tahun')->nullable();
             $table->bigInteger('total_biaya')->nullable();
+            $table->date('periode');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
-            $table->unique(['branch_id']);
             $table->timestamps();
         });
     }

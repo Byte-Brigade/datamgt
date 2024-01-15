@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BRO\BROExport;
 use App\Imports\BroImport;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -28,6 +29,11 @@ class InfraBroController extends Controller
         }
     }
 
+    public function export()
+    {
+        $fileName = 'Data_BRO_' . date('d-m-y') . '.xlsx';
+        return (new BROExport)->download($fileName);
+    }
 
     public function template()
     {

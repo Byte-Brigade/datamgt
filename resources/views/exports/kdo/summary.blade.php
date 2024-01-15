@@ -12,25 +12,29 @@
         @php
             $number = 0;
         @endphp
-        @foreach ($kdos as $index => $kdo)
-            <tr>
-                <td>{{ $number = $number + 1 }}</td>
-                <td>{{ $kdo->branches->branch_name }}</td>
+        @foreach ($branches as $index => $branch)
+            @if ($branch->gap_kdo->count() > 0)
+                @php
 
-                <td>{{ $kdo->gap_kdo_mobil->unique('nopol')->count() }}</td>
-                <td>{{ number_format(
-                    $kdo->gap_kdo_mobil->flatMap(function ($mobil) {
-                            $mobil->biaya_sewa = collect($mobil->biaya_sewa);
-                            return $mobil->biaya_sewa;
-                        })->groupBy('periode')->sortKeysDesc()->first()->sum('value'),
-                    0,
-                    ',',
-                    '.',
-                ) }}
-                </td>
-                <td>{{ \Carbon\Carbon::parse($kdo->gap_kdo_mobil()->orderBy('akhir_sewa', 'asc')->first()->akhir_sewa)->format('d M Y') }}
-                </td>
-            </tr>
+                    $biaya_sewa = $branch->gap_kdo
+                        ->flatMap(function ($mobil) {
+                            return $mobil->biaya_sewas;
+                        })
+                        ->groupBy('periode')
+                        ->sortKeysDesc()
+                        ->first();
+                @endphp
+                <tr>
+                    <td>{{ $number = $number + 1 }}</td>
+                    <td>{{ $branch->branch_name }}</td>
+
+                    <td>{{ $branch->gap_kdo->count() }}</td>
+                    <td>{{ isset($biaya_sewa) ? $biaya_sewa->sum('value') : 0 }}
+                    </td>
+                    <td>{{ isset($branch->gap_kdo) ? \Carbon\Carbon::parse($branch->gap_kdo->first()->akhir_sewa)->format('d/m/Y') : '' }}
+                    </td>
+                </tr>
+            @endif
         @endforeach
     </tbody>
 </table>

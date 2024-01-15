@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GapScoring\GapScoringExport;
 use App\Exports\Scoring\AssessmentsExport;
 use App\Http\Resources\ScoringAssessmentsResource;
 use App\Imports\GapScoringAssessmentsImport;
@@ -157,8 +158,8 @@ class GapScoringAssessmentController extends Controller
 
     public function export()
     {
-        $fileName = 'Data_GAP_Scoring_Assessments ' . date('d-m-y') . '.xlsx';
-        return (new AssessmentsExport)->download($fileName);
+        $fileName = 'Data_GAP_Scoring_Assessment_' . date('d-m-y') . '.xlsx';
+        return (new GapScoringExport('Assessment'))->download($fileName);
     }
 
     public function template()

@@ -252,7 +252,7 @@ export default function Page({ auth,  sessions }) {
         onToggle={toggleModalExport}
         onSubmit={handleSubmitExport}
       >
-        Export data
+        Export Data Toner
       </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">

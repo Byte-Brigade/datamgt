@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\DisnakersExport;
-use App\Http\Resources\DisnakerResource;
+use App\Exports\Disnaker\DisnakerExport;
 use App\Imports\DisnakerImport;
 use App\Models\Branch;
 use App\Models\GapDisnaker;
@@ -46,7 +45,7 @@ class GapDisnakerController extends Controller
     public function export()
     {
         $fileName = 'Data_Disnaker_' . date('d-m-y') . '.xlsx';
-        return (new DisnakersExport)->download($fileName);
+        return (new DisnakerExport)->download($fileName);
     }
 
     public function store(Request $request)

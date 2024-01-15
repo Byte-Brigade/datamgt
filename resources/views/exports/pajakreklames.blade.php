@@ -4,6 +4,8 @@
             <th>No</th>
             <th>Kode Cabang</th>
             <th>Nama Cabang</th>
+            <th>No Izin</th>
+            <th>Nilai Pajak</th>
             <th>Periode Awal</th>
             <th>Periode Akhir</th>
             <th>Note</th>
@@ -16,8 +18,10 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $pajakreklame->getBranchCode() }}</td>
                 <td>{{ $pajakreklame->getBranchName() }}</td>
-                <td>{{ $pajakreklame->periode_awal }}</td>
-                <td>{{ $pajakreklame->periode_akhir }}</td>
+                <td>{{ $pajakreklame->no_izin }}</td>
+                <td>{{ $pajakreklame->nilai_pajak }}</td>
+                <td>{{ \Carbon\Carbon::parse($pajakreklame->periode_awal)->format('d/m/Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($pajakreklame->periode_akhir)->format('d/m/Y') }}</td>
                 <td>{{ $pajakreklame->note }}</td>
             </tr>
         @endforeach

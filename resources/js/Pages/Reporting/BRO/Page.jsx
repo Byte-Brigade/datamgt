@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Branch({ auth, sessions, branch_types, branches }) {
+export default function Branch({ auth, sessions, branch_types }) {
   const { url } = usePage();
   const initialData = {
     file: null,
@@ -83,7 +83,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("branches.import"), {
+    post(route("bros.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -95,12 +95,12 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    window.open(route("reporting.branches.export"), "_self");
+    window.open(route("reporting.bros.export"), "_self");
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("branches.update", data.id), {
+    put(route("bros.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -112,7 +112,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("branches.store", data.id), {
+    post(route("bros.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -124,7 +124,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("branches.delete", data.id), {
+    destroy(route("bros.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -230,7 +230,7 @@ export default function Branch({ auth, sessions, branch_types, branches }) {
         </DialogHeader>
         <DialogBody divider>
           <div className="flex flex-col gap-y-4">
-            <Typography>Buat Report Data Cabang?</Typography>
+            <Typography>Export data</Typography>
           </div>
         </DialogBody>
         <DialogFooter>
