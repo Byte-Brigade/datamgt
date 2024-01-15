@@ -7,9 +7,7 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 
-import {
-  Button, Option, Select
-} from "@material-tailwind/react";
+import { Button, Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 export default function Detail({ auth, branch, sessions }) {
   const { form, selected, setSelected } = useFormContext();
@@ -18,13 +16,13 @@ export default function Detail({ auth, branch, sessions }) {
   const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
       const updatedSelected = { ...prevSelected, [id]: value };
-      console.log('Updated Selected:', value); // Add this line for debugging
-      console.log('Updated Selected:', selected); // Add this line for debugging
+      console.log("Updated Selected:", value); // Add this line for debugging
+      console.log("Updated Selected:", selected); // Add this line for debugging
       return updatedSelected;
     });
 
-    form.setData('remark', { ...selected, [id]: value });
-  }
+    form.setData("remark", { ...selected, [id]: value });
+  };
 
   const headings = [
     {
@@ -66,9 +64,8 @@ export default function Detail({ auth, branch, sessions }) {
       type: "custom",
       sortable: true,
       render: (data) => {
-
-        return data.asset_cost ? data.asset_cost.toLocaleString('id-ID') : '-'
-      }
+        return data.asset_cost ? data.asset_cost.toLocaleString("id-ID") : "-";
+      },
     },
     {
       name: "Depre Exp",
@@ -77,9 +74,8 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
       type: "custom",
       render: (data) => {
-
-        return data.depre_exp ? data.depre_exp.toLocaleString('id-ID') : '-'
-      }
+        return data.depre_exp ? data.depre_exp.toLocaleString("id-ID") : "-";
+      },
     },
     {
       name: "Accum Depre",
@@ -88,17 +84,19 @@ export default function Detail({ auth, branch, sessions }) {
       type: "custom",
       sortable: true,
       render: (data) => {
-
-        return data.accum_depre ? data.accum_depre.toLocaleString('id-ID') : '-'
-      }
+        return data.accum_depre
+          ? data.accum_depre.toLocaleString("id-ID")
+          : "-";
+      },
     },
     {
       name: "Net Book Value",
       field: "net_book_value",
       className: "text-right",
       sortable: true,
-      type: 'custom',
-      render: (data) => data.net_book_value  ?data.net_book_value.toLocaleString('id-ID') : '-'
+      type: "custom",
+      render: (data) =>
+        data.net_book_value ? data.net_book_value.toLocaleString("id-ID") : "-",
     },
     {
       name: "Asset Location",
@@ -122,41 +120,29 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
     },
     {
-
       name: "Ada/Tidak",
-      field: 'remark',
-      type: 'custom',
-      render: (data) => auth.permissions.includes("can sto") ?  (
-        <Select
-          className="bg-white"
-          label="Status"
-          value={`${data.remark || ""}`}
-          onChange={(e) => handleChanged(data.id, e)}
-        >
-          <Option value={`Ada`}>
-            Ada
-          </Option>
-          <Option value={`Tidak Ada`}>
-            Tidak Ada
-          </Option>
-          <Option value={`Ada Rusak`}>
-            Ada Rusak
-          </Option>
-          <Option value={`Sudah dihapus buku`}>
-            Sudah dihapus buku
-          </Option>
-          <Option value={`Mutasi`}>
-            Mutasi
-          </Option>
-          <Option value={`Lelang`}>
-            Lelang
-          </Option>
-          <Option value={`Non Asset`}>
-            Non Asset
-          </Option>
-        </Select>
-      ) : data.remark
-    }
+      field: "remark",
+      type: "custom",
+      render: (data) =>
+        auth.permissions.includes("can sto") ? (
+          <Select
+            className="bg-white"
+            label="Status"
+            value={`${data.remark || ""}`}
+            onChange={(e) => handleChanged(data.id, e)}
+          >
+            <Option value={`Ada`}>Ada</Option>
+            <Option value={`Tidak Ada`}>Tidak Ada</Option>
+            <Option value={`Ada Rusak`}>Ada Rusak</Option>
+            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
+            <Option value={`Mutasi`}>Mutasi</Option>
+            <Option value={`Lelang`}>Lelang</Option>
+            <Option value={`Non Asset`}>Non Asset</Option>
+          </Select>
+        ) : (
+          data.remark
+        ),
+    },
   ];
 
   return (
@@ -185,22 +171,22 @@ export default function Detail({ auth, branch, sessions }) {
               onClick={() => setActive("nonDepre")}
               color="purple"
             />
-
           </div>
-
-
           {active == "depre" && (
             <DataTable
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
               submitUrl={`inquery.assets.remark`}
-              parameters={{ branch_code: branch.branch_code, category: 'Depre' }}
+              parameters={{
+                branch_code: branch.branch_code,
+                category: "Depre",
+              }}
             >
-
-              <Button type="submit"
+              <Button
+                size="sm"
+                type="submit"
                 className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-
               >
                 Submit
               </Button>
@@ -213,18 +199,19 @@ export default function Detail({ auth, branch, sessions }) {
               fetchUrl={`/api/gap/assets`}
               bordered={true}
               submitUrl={`inquery.assets.remark`}
-              parameters={{ branch_code: branch.branch_code, category: 'Non-Depre' }}
+              parameters={{
+                branch_code: branch.branch_code,
+                category: "Non-Depre",
+              }}
             >
-
-              <Button type="submit"
+              <Button
+                type="submit"
                 className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-
               >
                 Submit
               </Button>
             </DataTable>
           )}
-
         </div>
       </div>
     </AuthenticatedLayout>

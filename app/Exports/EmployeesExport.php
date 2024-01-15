@@ -24,7 +24,7 @@ class EmployeesExport implements FromView
     {
         $branch_id = $this->branch_id;
         $position_id = $this->position_id;
-        $employees = Employee::with(['branches', 'positions'])->newQuery();
+        $employees = Employee::with(['branches', 'employee_positions'])->newQuery();
         if (isset($branch_id)) {
             $employees = $employees->whereHas('branches', function ($query) use ($branch_id) {
                 $query->where('id', $branch_id);
@@ -32,7 +32,7 @@ class EmployeesExport implements FromView
         }
 
         if (isset($position_id)) {
-            $employees = $employees->whereHas('positions', function ($query) use ($position_id) {
+            $employees = $employees->whereHas('employee_positions', function ($query) use ($position_id) {
                 $query->where('id', $position_id);
             });
         }
