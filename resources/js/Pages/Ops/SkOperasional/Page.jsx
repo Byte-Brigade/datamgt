@@ -199,7 +199,7 @@ export default function SkOperasional({ auth, branches, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {["can add", "can export"].some((permission) =>
+          {hasRoles("superadmin|branch_ops", auth) && ["can add", "can export"].some((permission) =>
             auth.permissions.includes(permission)
           ) && (
             <div className="flex items-center justify-between mb-4">

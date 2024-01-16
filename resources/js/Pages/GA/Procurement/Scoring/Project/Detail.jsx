@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -92,10 +93,12 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
     {
       name: "Nilai Project",
       field: "nilai_project",
-      type: 'custom',
+      type: "custom",
       render: (data) => {
-        return data.nilai_project ? data.nilai_project.toLocaleString("id-ID") : 0
-      }
+        return data.nilai_project
+          ? data.nilai_project.toLocaleString("id-ID")
+          : 0;
+      },
     },
     {
       name: "Tanggal Selesai Pekerjaan",
@@ -173,7 +176,10 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.scoring_projects.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("gap.scoring_projects.export") + `?branch=${branch}`,
+      "_self"
+    );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
@@ -223,30 +229,33 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
 
   const calculateDifference = (startDate, endDate) => {
     let days = 0;
-    const tgl_bast = new Date(startDate)
-    const tgl_scoring = new Date(endDate)
+    const tgl_bast = new Date(startDate);
+    const tgl_scoring = new Date(endDate);
     if (isNaN(tgl_bast) || isNaN(tgl_bast)) {
-      console.log("tgl tidak valid")
+      console.log("tgl tidak valid");
       return;
     }
     const difference = Math.abs(tgl_scoring - tgl_bast); // Menggunakan nilai mutlak
     days = difference / (1000 * 60 * 60 * 24); // Convert milliseconds to days
-    console.log(days)
-    setData({ ...data, tgl_bast: startDate, tgl_scoring: endDate, actual: days })
+    console.log(days);
+    setData({
+      ...data,
+      tgl_bast: startDate,
+      tgl_scoring: endDate,
+      actual: days,
+    });
   };
 
-
   const handleTglBast = (e) => {
-    setData('tgl_bast', e.target.value)
-    calculateDifference(e.target.value, data.tgl_scoring)
-    console.log(e.target.value)
-  }
+    setData("tgl_bast", e.target.value);
+    calculateDifference(e.target.value, data.tgl_scoring);
+    console.log(e.target.value);
+  };
   const handleTglScoring = (e) => {
-    setData('tgl_scoring', e.target.value)
-    calculateDifference(data.tgl_bast, e.target.value)
-    console.log(e.target.value)
-
-  }
+    setData("tgl_scoring", e.target.value);
+    calculateDifference(data.tgl_bast, e.target.value);
+    console.log(e.target.value);
+  };
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -274,38 +283,54 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | Assets" />
+      <Head title="GA Procurement | Scoring Projects" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("superadmin|procurement", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             className="w-[1500px]"
             fetchUrl={`/api/gap/scoring_projects/${scoring_vendor}`}
             refreshUrl={isRefreshed}
@@ -433,7 +458,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider className="overflow-y-auto max-h-96" >
+          <DialogBody divider className="overflow-y-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -443,9 +468,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
               >
                 {branches.map((branch) =>
                   branch.branch_name.includes("Pusat") ? (
-                    <Option value={`${branch.id}`}>
-                      {branch.branch_name}
-                    </Option>
+                    <Option value={`${branch.id}`}>{branch.branch_name}</Option>
                   ) : (
                     <Option key={branch.id} value={`${branch.id}`}>
                       {branch.branch_code} - {branch.branch_name}
@@ -453,7 +476,6 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                   )
                 )}
               </Select>
-
 
               <Input
                 label="Deskripsi"
@@ -473,18 +495,16 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 disabled={processing}
                 onChange={(e) => setData("status_pekerjaan", e)}
               >
-                <Option value="Done">
-                  Done
-                </Option>
-                <Option value="On Progress">
-                  On Progress
-                </Option>
+                <Option value="Done">Done</Option>
+                <Option value="On Progress">On Progress</Option>
               </Select>
               <Input
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+                onChange={(e) =>
+                  setData("dokumen_perintah_kerja", e.target.value)
+                }
               />
               <Input
                 label="Vendor"
@@ -520,9 +540,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 value={data.tgl_request_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) =>
-                  setData("tgl_request_scoring", e.target.value)
-                }
+                onChange={(e) => setData("tgl_request_scoring", e.target.value)}
               />
               <Input
                 label="Tanggal Scoring"
@@ -536,7 +554,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 type="number"
                 value={data.sla || ""}
                 disabled={processing}
-                onChange={(e) => setData('sla', e.target.value)}
+                onChange={(e) => setData("sla", e.target.value)}
               />
               <Input
                 label="Actual"
@@ -556,18 +574,10 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 disabled={processing}
                 onChange={(e) => setData("schedule_scoring", e)}
               >
-                <Option value="Q1">
-                  Q1
-                </Option>
-                <Option value="Q2">
-                  Q2
-                </Option>
-                <Option value="Q3">
-                  Q3
-                </Option>
-                <Option value="Q4">
-                  Q4
-                </Option>
+                <Option value="Q1">Q1</Option>
+                <Option value="Q2">Q2</Option>
+                <Option value="Q3">Q3</Option>
+                <Option value="Q4">Q4</Option>
               </Select>
               <Input
                 label="Keterangan"
@@ -604,7 +614,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider className="overflow-y-auto max-h-96" >
+          <DialogBody divider className="overflow-y-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -625,7 +635,6 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 )}
               </Select>
 
-
               <Input
                 label="Deskripsi"
                 value={data.description || ""}
@@ -644,18 +653,16 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 disabled={processing}
                 onChange={(e) => setData("status_pekerjaan", e)}
               >
-                <Option value="Done">
-                  Done
-                </Option>
-                <Option value="On Progress">
-                  On Progress
-                </Option>
+                <Option value="Done">Done</Option>
+                <Option value="On Progress">On Progress</Option>
               </Select>
               <Input
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+                onChange={(e) =>
+                  setData("dokumen_perintah_kerja", e.target.value)
+                }
               />
               <Input
                 label="Vendor"
@@ -691,9 +698,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 value={data.tgl_request_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) =>
-                  setData("tgl_request_scoring", e.target.value)
-                }
+                onChange={(e) => setData("tgl_request_scoring", e.target.value)}
               />
               <Input
                 label="Tanggal Scoring"
@@ -707,7 +712,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 type="number"
                 value={data.sla || ""}
                 disabled={processing}
-                onChange={(e) => setData('sla', e.target.value)}
+                onChange={(e) => setData("sla", e.target.value)}
               />
               <Input
                 label="Actual"
@@ -728,18 +733,10 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 disabled={processing}
                 onChange={(e) => setData("schedule_scoring", e)}
               >
-                <Option value="Q1">
-                  Q1
-                </Option>
-                <Option value="Q2">
-                  Q2
-                </Option>
-                <Option value="Q3">
-                  Q3
-                </Option>
-                <Option value="Q4">
-                  Q4
-                </Option>
+                <Option value="Q1">Q1</Option>
+                <Option value="Q2">Q2</Option>
+                <Option value="Q3">Q3</Option>
+                <Option value="Q4">Q4</Option>
               </Select>
               <Input
                 label="Keterangan"

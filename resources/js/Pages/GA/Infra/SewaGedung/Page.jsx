@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -23,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions}) {
+export default function Page({ auth, branches, sessions }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -54,13 +55,13 @@ export default function Page({ auth, branches, sessions}) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", sortable:true, field: "branches.branch_name" },
+    { name: "Cabang", sortable: true, field: "branches.branch_name" },
     { name: "Tipe Cabang", field: "branch_types.type_name" },
 
     {
       name: "Status Kepemilikan",
       field: "status_kepemilikan",
-      sortable:true,
+      sortable: true,
     },
     {
       name: "Pemilik",
@@ -90,19 +91,21 @@ export default function Page({ auth, branches, sessions}) {
       name: "Biaya Per Tahun",
       field: "biaya_per_tahun",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       render: (data) => {
-        return data.biaya_per_tahun ? data.biaya_per_tahun.toLocaleString('id-ID') : ''
-      }
+        return data.biaya_per_tahun
+          ? data.biaya_per_tahun.toLocaleString("id-ID")
+          : "";
+      },
     },
     {
       name: "Total Biaya",
       field: "total_biaya",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       render: (data) => {
-        return data.total_biaya ? data.total_biaya.toLocaleString('id-ID') : ''
-      }
+        return data.total_biaya ? data.total_biaya.toLocaleString("id-ID") : "";
+      },
     },
 
     {
@@ -139,7 +142,10 @@ export default function Page({ auth, branches, sessions}) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("infra.sewa_gedungs.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("infra.sewa_gedungs.export") + `?branch=${branch}`,
+      "_self"
+    );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
@@ -217,33 +223,49 @@ export default function Page({ auth, branches, sessions}) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|ga", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("superadmin|ga", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             className="w-[1200px]"
             fetchUrl={"/api/infra/sewa-gedungs"}
             refreshUrl={isRefreshed}
@@ -281,7 +303,9 @@ export default function Page({ auth, branches, sessions}) {
           </DialogBody>
           <DialogFooter className="w-100 flex justify-between">
             <SecondaryButton type="button">
-              <a href={route("infra.sewa_gedungs.template")}>Download Template</a>
+              <a href={route("infra.sewa_gedungs.template")}>
+                Download Template
+              </a>
             </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">

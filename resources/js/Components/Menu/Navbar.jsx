@@ -52,7 +52,7 @@ function ProfileMenu({ auth }) {
         >
           <UserCircleIcon className="w-8 h-8" />
           <span className="text-sm capitalize text-slate-700">
-            {auth.user.name} | {auth.role.split("_").join(" ")}
+            {auth.user.name} | {auth.user.roles[0].alt_name}
           </span>
           <ChevronDownIcon
             strokeWidth={2.5}

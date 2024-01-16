@@ -132,7 +132,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const infraRouter = [
     {
-      name: "Data Gedung",
+      name: "Sewa Gedung",
       path: "infra.sewa_gedungs",
     },
     {

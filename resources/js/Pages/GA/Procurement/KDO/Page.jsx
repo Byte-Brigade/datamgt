@@ -6,6 +6,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { hasRoles } from "@/Utils/HasRoles";
 import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -61,8 +62,10 @@ export default function Page({ auth, branches, sessions }) {
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
     {
-      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
-      agg: 'sum'
+      name: "Jumlah",
+      field: "jumlah_kendaraan",
+      className: "text-center",
+      agg: "sum",
     },
     {
       name: "Tipe Cabang",
@@ -71,18 +74,18 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
-      agg: 'sum',
-      type: 'custom',
-      format: 'currency',
-      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
-      className: "text-right"
+      agg: "sum",
+      type: "custom",
+      format: "currency",
+      render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
+      className: "text-right",
     },
     {
       name: "Jatuh Tempo",
       field: "akhir_sewa",
       type: "date",
       sortable: true,
-      className: "justify-center text-center"
+      className: "justify-center text-center",
     },
 
     {
@@ -90,10 +93,12 @@ export default function Page({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", {
-          branch_code: data.branches.branch_code,
-          periode: data.periode,
-        })}>
+        <Link
+          href={route("gap.kdos.mobil", {
+            branch_code: data.branches.branch_code,
+            periode: data.periode,
+          })}
+        >
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -102,24 +107,26 @@ export default function Page({ auth, branches, sessions }) {
   const columnsVendor = [
     { name: "Vendor", field: "vendor" },
     {
-      name: "Jumlah", field: "jumlah_kendaraan", className: "text-center",
-      agg: 'sum'
+      name: "Jumlah",
+      field: "jumlah_kendaraan",
+      className: "text-center",
+      agg: "sum",
     },
     {
       name: "Sewa Perbulan",
       field: "sewa_perbulan",
-      agg: 'sum',
-      type: 'custom',
-      format: 'currency',
-      render: (data) => data.sewa_perbulan.toLocaleString('id-ID'),
-      className: "text-right"
+      agg: "sum",
+      type: "custom",
+      format: "currency",
+      render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
+      className: "text-right",
     },
     {
       name: "Jatuh Tempo",
       field: "akhir_sewa",
       type: "date",
       sortable: true,
-      className: "justify-center text-center"
+      className: "justify-center text-center",
     },
 
     // {
@@ -213,10 +220,8 @@ export default function Page({ auth, branches, sessions }) {
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
-
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="grid grid-cols-4 gap-4 mb-4">
-
             <CardMenu
               label="Cabang"
               data
@@ -235,37 +240,45 @@ export default function Page({ auth, branches, sessions }) {
               onClick={() => setActive("vendor")}
               color="purple"
             />
-
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           {active === "cabang" && (
             <DataTable
-            columns={columns}
-            fetchUrl={"/api/gap/kdos/cabang"}
-            refreshUrl={isRefreshed}
-          />
+              columns={columns}
+              fetchUrl={"/api/gap/kdos/cabang"}
+              refreshUrl={isRefreshed}
+            />
           )}
           {active === "vendor" && (
             <DataTable
-            columns={columnsVendor}
-            fetchUrl={"/api/gap/kdos/vendor"}
-            refreshUrl={isRefreshed}
-          />
+              columns={columnsVendor}
+              fetchUrl={"/api/gap/kdos/vendor"}
+              refreshUrl={isRefreshed}
+            />
           )}
         </div>
       </div>

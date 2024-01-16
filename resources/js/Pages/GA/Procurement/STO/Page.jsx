@@ -4,6 +4,7 @@ import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -15,7 +16,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -48,7 +49,6 @@ export default function Page({ auth, sessions }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
-
   const columns = [
     {
       name: "Cabang",
@@ -62,19 +62,24 @@ export default function Page({ auth, sessions }) {
       ),
     },
     {
-
-      name: "Tipe Cabang", field: "type_name", className: "text-center",
-
+      name: "Tipe Cabang",
+      field: "type_name",
+      className: "text-center",
     },
     {
-      name: "Depre", field: "depre", className: "text-center",
+      name: "Depre",
+      field: "depre",
+      className: "text-center",
     },
     {
-      name: "Non-Depre", field: "non_depre", className: "text-center",
+      name: "Non-Depre",
+      field: "non_depre",
+      className: "text-center",
     },
     {
-      name: "Total Remark", field: "total_remarked", className: "text-center",
-
+      name: "Total Remark",
+      field: "total_remarked",
+      className: "text-center",
     },
     {
       name: "Sudah STO",
@@ -84,13 +89,11 @@ export default function Page({ auth, sessions }) {
       render: (data) => (data.remarked === 1 ? "Sudah" : "Belum"),
     },
 
-
     {
       name: "Disclaimer",
       field: "detail",
       className: "text-center",
-      render: (data) => (
-
+      render: (data) =>
         data.disclaimer ? (
           <a
             className="text-blue-500 hover:underline text-ellipsis"
@@ -100,12 +103,11 @@ export default function Page({ auth, sessions }) {
             {" "}
             {data.disclaimer}
           </a>
-        ) : '-'
-
-      ),
+        ) : (
+          "-"
+        ),
     },
   ];
-
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
@@ -187,30 +189,33 @@ export default function Page({ auth, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  <a href={route("gap.stos.disclaimer")}>Download Disclaimer</a>
-
+          {hasRoles("superadmin|procurement", auth) &&
+            auth.permissions.includes("can export") && (
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <PrimaryButton
+                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                    onClick={toggleModalImport}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <DocumentPlusIcon className="w-4 h-4" />
+                      <a href={route("gap.stos.disclaimer")}>
+                        Download Disclaimer
+                      </a>
+                    </div>
+                  </PrimaryButton>
                 </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+                <PrimaryButton onClick={toggleModalExport}>
+                  Create Report
+                </PrimaryButton>
+              </div>
+            )}
           <DataTable
             columns={columns}
             fetchUrl={"/api/gap/stos"}
             refreshUrl={isRefreshed}
             bordered={true}
           />
-
         </div>
       </div>
       {/* Modal Import */}
@@ -352,8 +357,6 @@ export default function Page({ auth, sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
-
-
               <Input
                 label="Divisi Pembebanan"
                 value={data.divisi_pembebanan || ""}
@@ -452,10 +455,7 @@ export default function Page({ auth, sessions }) {
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold">
-
-            </span>{" "}
-            ?
+            <span className="text-lg font-bold"></span> ?
           </Typography>
         </DialogBody>
         <DialogFooter>
