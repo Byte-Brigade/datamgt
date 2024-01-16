@@ -69,6 +69,8 @@ export function BreadcrumbsDefault() {
         return "Branch Roll Out";
       case "licenses":
         return "Lisensi";
+      case "maintenance-costs":
+        return "Maintenance and Project Cost";
       default:
         break;
     }

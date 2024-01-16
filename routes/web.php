@@ -171,7 +171,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/pks', [GapPksController::class, 'index'])->name('pks');
             Route::get('/pks/template', [GapPksController::class, 'template'])->name('pks.template');
-            Route::get('/pks/detail/{type}', [GapPksController::class, 'type'])->name('pks.type');
+            Route::get('/pks/detail/{status}', [GapPksController::class, 'detail'])->name('pks.detail');
             Route::get('/pks/{branch_code}/detail', [GapPksController::class, 'detail'])->name('pks.detail');
             Route::post('/pks/import', [GapPksController::class, 'import'])->name('pks.import');
             Route::post('/pks', [GapPksController::class, 'store'])->name('pks.store');
@@ -237,6 +237,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/bros/{id}', [InfraBroController::class, 'destroy'])->name('bros.delete');
 
             Route::get('/maintenance-costs', [InfraMaintenanceCostController::class, 'index'])->name('maintenance-costs');
+            Route::get('/maintenance-costs/detail/{jenis_pekerjaan}', [InfraMaintenanceCostController::class, 'detail'])->name('maintenance-costs.detail');
             Route::get('/maintenance-costs/template', [InfraMaintenanceCostController::class, 'template'])->name('maintenance-costs.template');
             Route::post('/maintenance-costs/import', [InfraMaintenanceCostController::class, 'import'])->name('maintenance-costs.import');
             Route::post('/maintenance-costs', [InfraMaintenanceCostController::class, 'store'])->name('maintenance-costs.store');

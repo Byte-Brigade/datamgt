@@ -108,7 +108,7 @@ export default function Page({ auth, sessions }) {
 
   const columnsSpender = [
     {
-      name: "Spender",
+      name: "Nama Karyawan",
       field: "user",
     },
     {

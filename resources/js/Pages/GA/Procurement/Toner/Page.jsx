@@ -69,13 +69,14 @@ export default function Page({ auth, sessions }) {
       agg: "sum",
     },
     {
-      name: "Unit Price",
+      name: "Total",
       type: "custom",
-      field: "price",
-      format: "currency",
+      field: "total",
+      format: 'currency',
+      agg: 'sum',
       className: "text-right",
-      render: (data) => data.price.toLocaleString("id-ID"),
-      agg: "sum",
+      render: (data) => (data.price * data.quantity).toLocaleString('ID-id'),
+
     },
 
     // {

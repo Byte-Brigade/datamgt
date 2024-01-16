@@ -41,4 +41,9 @@ class InfraMaintenanceCostController extends Controller
 
         return response()->download(storage_path($path));
     }
+
+    public function detail($jenis_pekerjaan)
+    {
+        return Inertia::render('GA/Infra/MaintenanceCost/Detail', ['jenis_pekerjaan' => $jenis_pekerjaan]);
+    }
 }

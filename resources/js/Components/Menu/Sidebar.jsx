@@ -141,7 +141,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
 
     {
-      name: "Maintenance Cost Gedung",
+      name: "Maintenance and Project Cost",
       path: "infra.maintenance-costs",
     },
     {

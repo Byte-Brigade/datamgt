@@ -1,10 +1,10 @@
 import Alert from "@/Components/Alert";
-import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
@@ -16,21 +16,22 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth,  sessions, branch_code }) {
+export default function Detail({ auth, sessions, status }) {
   const initialData = {
-    jumlah_kendaraan: null,
-    jumlah_driver: null,
-    sewa_kendaraan: null,
-    biaya_driver: null,
-    ot: null,
-    rfid: null,
-    non_rfid: null,
-    grab: null,
-    periode: null,
+    vendor: null,
+    entity: null,
+    description: null,
+    contract_date: null,
+    contract_no: null,
+    durasi_kontrak: null,
+    awal: null,
+    akhir: null,
+    tahun_akhir: null,
+    status: null,
   };
   const {
     data,
@@ -49,73 +50,69 @@ export default function Page({ auth,  sessions, branch_code }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
-
   const columns = [
-
     {
-      name: "Invoice No",
-      field: "invoice",
-
+      name: "Vendor",
+      field: "vendor",
     },
     {
-      name: "Cabang",
-      field: "branches.branch_name",
-
+      name: "Type",
+      field: "type",
     },
     {
-      name: 'Tipe Cabang',
-      field: 'branch_types.type_name'
-    },
-
-    {
-      name: 'Cartridge Order',
-      field : 'cartridge_order',
+      name: "Description",
+      field: "description",
     },
     {
-      name: 'Quantity',
-      field : 'quantity',
-      agg: 'sum',
+      name: "Contract Date",
+      field: "contract_date",
+      type: "date",
     },
     {
-      name: 'Unit Price',
-      type: 'custom',
-      field : 'price',
-      format:'currency',
-      className: 'text-right',
-      render: (data) => data.price.toLocaleString('id-ID'),
-      agg: 'sum',
+      name: "Contract No.",
+      field: "contract_no",
     },
     {
-      name: 'Total Price',
-      field : 'total',
-      className: 'text-right',
-      type: 'custom',
-      format:'currency',
-      agg: 'sum',
-      render: (data) => data.total.toLocaleString('id-ID'),
+      name: "Durasi Kontrak",
+      field: "durasi_kontrak",
+    },
+    {
+      name: "Awal",
+      field: "awal",
+      type: "date",
+    },
+    {
+      name: "Akhir",
+      field: "akhir",
+      type: "date",
     },
 
+    {
+      name: "Tahun Akhir",
+      field: "tahun_akhir",
+    },
+    {
+      name: "Status",
+      field: "status",
+    },
 
     // {
     //   name: "Detail",
     //   field: "detail",
     //   className: "text-center",
     //   render: (data) => (
-    //     <Link href={route("gap.toners.detail", data.vendor)}>
+    //     <Link href={route("gap.pks.detail", data.vendor)}>
     //       <Button variant="outlined">Detail</Button>
     //     </Link>
     //   ),
     // },
-
-
   ];
-
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.toners.import"), {
+    post(route("gap.pks.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -127,13 +124,13 @@ export default function Page({ auth,  sessions, branch_code }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
+    window.open(route("gap.pks.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.toners.update", data.id), {
+    put(route("gap.pks.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -144,7 +141,7 @@ export default function Page({ auth,  sessions, branch_code }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.toners.store"), {
+    post(route("gap.pks.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -156,7 +153,7 @@ export default function Page({ auth,  sessions, branch_code }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.toners.delete", data.id), {
+    destroy(route("gap.pks.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -186,34 +183,49 @@ export default function Page({ auth,  sessions, branch_code }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
-      <BreadcrumbsDefault />
+      <Head title="GA Procurement | PKS" />
+      {/* <BreadcrumbsDefault /> */}
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|admin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
-            columns={columns}
-            fetchUrl={`/api/gap/toners/${branch_code}`}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("superadmin|admin|procurement", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
+            fetchUrl={`/api/gap/pks/${status}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
-
         </div>
       </div>
       {/* Modal Import */}
@@ -245,7 +257,10 @@ export default function Page({ auth,  sessions, branch_code }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter>
+          <DialogFooter className="w-100 flex justify-between">
+            <SecondaryButton type="button">
+              <a href={route("gap.pks.template")}>Download Template</a>
+            </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan
@@ -328,8 +343,6 @@ export default function Page({ auth,  sessions, branch_code }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
-
-
               <Input
                 label="Divisi Pembebanan"
                 value={data.divisi_pembebanan || ""}
@@ -428,10 +441,7 @@ export default function Page({ auth,  sessions, branch_code }) {
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold">
-
-            </span>{" "}
-            ?
+            <span className="text-lg font-bold"></span> ?
           </Typography>
         </DialogBody>
         <DialogFooter>
