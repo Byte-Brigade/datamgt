@@ -113,7 +113,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
               column.field === "action"
                 ? ["can edit", "can delete"].some(
                     (permission) =>
-                      hasRoles("branch_ops|superadmin", auth) &&
+                      hasRoles("superadmin|admin|branch_ops", auth) &&
                       auth.permissions.includes(permission)
                   )
                 : true

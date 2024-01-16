@@ -189,7 +189,7 @@ export default function Page({ auth, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("superadmin|procurement", auth) &&
+          {hasRoles("superadmin|admin|procurement", auth) &&
             auth.permissions.includes("can export") && (
               <div className="flex items-center justify-between mb-4">
                 <div>

@@ -288,7 +288,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("superadmin|procurement", auth) &&
+          {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
@@ -325,7 +325,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("superadmin|procurement", auth) &&
+                ? hasRoles("superadmin|admin|procurement", auth) &&
                   ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )

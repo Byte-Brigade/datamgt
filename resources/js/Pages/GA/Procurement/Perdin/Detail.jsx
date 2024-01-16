@@ -236,7 +236,7 @@ export default function Detail({
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("superadmin|procurement", auth) &&
+                ? hasRoles("superadmin|admin|procurement", auth) &&
                   ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )

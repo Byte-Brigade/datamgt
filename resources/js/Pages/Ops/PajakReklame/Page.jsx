@@ -84,7 +84,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
+        hasRoles("superadmin|admin|branch_ops", auth) &&
         auth.permissions.includes("can add") ? (
           data.file_izin_reklame ? (
             <a
@@ -122,7 +122,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
+        hasRoles("superadmin|admin|branch_ops", auth) &&
         auth.permissions.includes("can add") ? (
           data.file_skpd ? (
             <a
@@ -288,7 +288,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("branch_ops|superadmin", auth) &&
+          {hasRoles("superadmin|admin|branch_ops", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
@@ -328,7 +328,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) &&
+                ? hasRoles("superadmin|admin|branch_ops", auth) &&
                   ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )

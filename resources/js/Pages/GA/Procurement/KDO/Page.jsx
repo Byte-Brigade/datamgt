@@ -241,7 +241,7 @@ export default function Page({ auth, branches, sessions }) {
               color="purple"
             />
           </div>
-          {hasRoles("superadmin|procurement", auth) &&
+          {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (

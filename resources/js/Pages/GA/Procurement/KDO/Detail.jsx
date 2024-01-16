@@ -259,7 +259,7 @@ export default function Detail({
           <h2 className="text-xl font-semibold text-center mb-4">
             {kdo_mobil.branches.branch_name}
           </h2>
-          {hasRoles("superadmin|procurement", auth) &&
+          {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
@@ -291,7 +291,7 @@ export default function Detail({
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("superadmin|procurement", auth) &&
+                ? hasRoles("superadmin|admin|procurement", auth) &&
                   ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )

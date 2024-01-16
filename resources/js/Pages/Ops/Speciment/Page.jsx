@@ -66,7 +66,7 @@ export default function Speciment({ auth, sessions, branches }) {
       type: "custom",
       className: "text-center",
       render: (data) =>
-        hasRoles("branch_ops|superadmin", auth) &&
+        hasRoles("superadmin|admin|branch_ops", auth) &&
         auth.permissions.includes("can add") ? (
           data.no_surat !== "-" ? (
             data.file ? (
@@ -229,7 +229,7 @@ export default function Speciment({ auth, sessions, branches }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("branch_ops|superadmin", auth) &&
+          {hasRoles("superadmin|admin|branch_ops", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
@@ -269,7 +269,7 @@ export default function Speciment({ auth, sessions, branches }) {
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
-                ? hasRoles("branch_ops|superadmin", auth) && ["can edit", "can delete"].some((permission) =>
+                ? hasRoles("superadmin|admin|branch_ops", auth) && ["can edit", "can delete"].some((permission) =>
                     auth.permissions.includes(permission)
                   )
                 : true

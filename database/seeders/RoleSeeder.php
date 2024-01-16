@@ -26,7 +26,7 @@ class RoleSeeder extends Seeder
         ];
 
         $default_access = ['can view'];
-        $superadmin = Role::create(['name' => 'superadmin']);
+        $superadmin = Role::create(['name' => 'superadmin', 'alt_name' => "Superadmin"]);
         $admin = Role::create(['name' => 'admin', 'alt_name' => ' Admin']);
         $branch_ops = Role::create(['name' => 'branch_ops', 'alt_name' => 'Branch Ops']);
         $procurement = Role::create(['name' => 'procurement', 'alt_name' => 'Procurement']);
