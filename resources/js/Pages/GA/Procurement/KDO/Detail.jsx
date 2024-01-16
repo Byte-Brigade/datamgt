@@ -206,69 +206,14 @@ export default function Detail({
       className: "",
     },
     {
-      name: "January 2023",
-      field: "periode.january",
+      name: "Biaya Sewa",
+      field: "biaya_sewa",
+      type: "custom",
+
       className: "text-center ",
-    },
-    {
-      name: "February 2023",
-      field: "periode.february",
-      className: "text-center ",
-    },
-    {
-      name: "March 2023",
-      field: "periode.march",
-      className: "text-center ",
-    },
-    {
-      name: "April 2023",
-      field: "periode.april",
-      className: "text-center ",
-    },
-    {
-      name: "May 2023",
-      field: "periode.may",
-      className: "text-center ",
-    },
-    {
-      name: "June 2023",
-      field: "periode.june",
-      className: "text-center ",
-    },
-    {
-      name: "July 2023",
-      field: "periode.july",
-      className: "text-center ",
-    },
-    {
-      name: "August 2023",
-      field: "periode.august",
-      className: "text-center ",
-    },
-    {
-      name: "September 2023",
-      field: "periode.september",
-      className: "text-center ",
-    },
-    {
-      name: "October 2023",
-      field: "periode.october",
-      className: "text-center ",
-    },
-    {
-      name: "November 2023",
-      field: "periode.november",
-      className: "text-center ",
-    },
-    {
-      name: "December 2023",
-      field: "periode.december",
-      className: "text-center ",
-    },
-    {
-      name: "Total Sewa",
-      field: "total_sewa",
-      className: "text-center ",
+      render: (data) => {
+        return data.biaya_sewa ? data.biaya_sewa.value.toLocaleString('ID-id') : '-';
+      }
     },
     {
       name: "Action",
@@ -337,7 +282,7 @@ export default function Detail({
             columns={columns}
             fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}/detail`}
             refreshUrl={isRefreshed}
-            className="w-[2200px]"
+            periodic={true}
             parameters={{ periode }}
           />
         </div>

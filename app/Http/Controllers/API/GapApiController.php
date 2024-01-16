@@ -162,6 +162,8 @@ class GapApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
+
+
         $data = $query->paginate($perpage);
         return KdoMobilResource::collection($data);
     }
