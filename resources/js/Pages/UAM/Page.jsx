@@ -45,7 +45,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
     register,
   } = useForm(initialData);
 
-  const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -110,7 +109,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
       name: "STO",
       field: "permissions",
       type: "custom",
-      key: "add",
+      key: "sto",
       render: (data) =>
         data.permissions
           .filter((permission) => permission == "can sto").join("")
@@ -134,12 +133,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
       ),
     },
   ];
-
-  const handleSubmitExport = (e) => {
-    const { branch } = data;
-    e.preventDefault();
-    window.open(route("uam.export") + `?branch=${branch}`, "_self");
-  };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
@@ -179,26 +172,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
         setIsModalDeleteOpen(!isModalDeleteOpen);
       },
     });
-  };
-
-  // const exportData = (e) => {
-  //   e.preventDefault();
-  //   const { branch, position } = data;
-  //   const query =
-  //     branch !== 0 && position !== 0
-  //       ? `?branch=${branch}&position=${position}`
-  //       : branch !== 0
-  //       ? `?branch=${brancsh}`
-  //       : position !== 0
-  //       ? `?position=${position}`
-  //       : "";
-
-  //   window.open(route("pajak-reklame.export") + query, "_self");
-  //   setData({ branch: 0, position: 0 });
-  // };
-
-  const toggleModalExport = () => {
-    setIsModalExportOpen(!isModalExportOpen);
   };
 
   const toggleModalCreate = () => {
@@ -331,7 +304,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
               )}
               {data.position !== 'admin' && <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 overflow-x-auto">
                   {permissions.map((permission, index) => (
                     <Checkbox
                       key={index}

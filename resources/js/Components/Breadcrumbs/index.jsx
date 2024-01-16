@@ -67,6 +67,8 @@ export function BreadcrumbsDefault() {
         return "Sewa Gedung";
       case "bros":
         return "Branch Roll Out";
+      case "licenses":
+        return "Lisensi";
       default:
         break;
     }

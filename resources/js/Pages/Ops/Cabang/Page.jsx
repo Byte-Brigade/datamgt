@@ -98,7 +98,7 @@ export default function Cabang({
             {" "}
             {data.file_ojk}
           </a>
-        ) : (
+        ) : hasRoles("branch_ops|superadmin", auth) ? (
           <Button
             variant="outlined"
             size="sm"
@@ -113,6 +113,8 @@ export default function Cabang({
               Upload Lampiran
             </div>
           </Button>
+        ) : (
+          <p>Belum ada lampiran</p>
         ),
     },
     {
@@ -200,8 +202,7 @@ export default function Cabang({
 
   const handleDownloadTemplate = (e) => {
     e.preventDefault();
-
-  }
+  };
 
   const toggleModalImport = () => {
     setIsModalImportOpen(!isModalImportOpen);
@@ -275,9 +276,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("branch_ops|superadmin", auth) &&
-                ["can edit", "can delete"].some((permission) =>
-                  auth.permissions.includes(permission)
-                )
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -529,7 +530,8 @@ export default function Cabang({
                     name="layanan_atm"
                     label="Tidak Ada"
                     checked={
-                      data.layanan_atm === null || data.layanan_atm === "Tidak Ada"
+                      data.layanan_atm === null ||
+                      data.layanan_atm === "Tidak Ada"
                     }
                     value=""
                     onChange={(e) => setData("layanan_atm", e.target.value)}

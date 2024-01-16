@@ -226,17 +226,17 @@ export default function Page({ auth, branches, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA | Sewa Gedung" />
+      <Head title="GA | Maintenance Cost" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("ga|branch_ops", auth) &&
+          {hasRoles("superadmin|ga", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
               <div className="flex items-center justify-between mb-4">
-                {auth.permissions.include("can add") && (
+                {auth.permissions.includes("can add") && (
                   <div>
                     <PrimaryButton
                       className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
@@ -266,7 +266,14 @@ export default function Page({ auth, branches, sessions }) {
               </div>
             )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("superadmin|ga", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             className="w-[1200px]"
             fetchUrl={"/api/infra/maintenance-costs"}
             refreshUrl={isRefreshed}

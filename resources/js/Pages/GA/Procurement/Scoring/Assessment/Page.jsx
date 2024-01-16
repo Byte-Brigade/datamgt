@@ -5,6 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -87,8 +88,10 @@ export default function Page({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route('gap.scoring_assessments.detail',data.scoring_vendor)}>
-          <Button  variant="outlined">Detail</Button>
+        <Link
+          href={route("gap.scoring_assessments.detail", data.scoring_vendor)}
+        >
+          <Button variant="outlined">Detail</Button>
         </Link>
       ),
     },
@@ -108,7 +111,10 @@ export default function Page({ auth, branches, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.scoring_assessments.export") + `?branch=${branch}`, "_self");
+    window.open(
+      route("gap.scoring_assessments.export") + `?branch=${branch}`,
+      "_self"
+    );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
@@ -172,7 +178,7 @@ export default function Page({ auth, branches, sessions }) {
     setIsModalEditOpen(!isModalEditOpen);
   };
   const toggleModalCreate = () => {
-    setData(initialData)
+    setData(initialData);
     setIsModalCreateOpen(!isModalCreateOpen);
   };
 
@@ -182,36 +188,45 @@ export default function Page({ auth, branches, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | Assets" />
+      <Head title="GA Procurement | Scoring Assessment" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalCreate}
-              >
-                <div className="flex items-center gap-x-2">
-                  <PlusIcon className="w-4 h-4" />
-                  Add
-                </div>
-              </PrimaryButton>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalCreate}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <PlusIcon className="w-4 h-4" />
+                        Add
+                      </div>
+                    </PrimaryButton>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
             columns={columns}
             fetchUrl={"/api/gap/scoring_assessments"}
@@ -251,7 +266,9 @@ export default function Page({ auth, branches, sessions }) {
           </DialogBody>
           <DialogFooter className="w-100 flex justify-between">
             <SecondaryButton type="button">
-              <a href={route("gap.scoring_assessments.template")}>Download Template</a>
+              <a href={route("gap.scoring_assessments.template")}>
+                Download Template
+              </a>
             </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
@@ -344,7 +361,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit}>
-          <DialogBody divider className="overflow-y-auto max-h-96" >
+          <DialogBody divider className="overflow-y-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -365,7 +382,6 @@ export default function Page({ auth, branches, sessions }) {
                 )}
               </Select>
 
-
               <Input
                 label="Deskripsi"
                 value={data.description || ""}
@@ -382,7 +398,9 @@ export default function Page({ auth, branches, sessions }) {
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+                onChange={(e) =>
+                  setData("dokumen_perintah_kerja", e.target.value)
+                }
               />
               <Input
                 label="Vendor"
@@ -395,7 +413,7 @@ export default function Page({ auth, branches, sessions }) {
                 value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData('tgl_scoring', e.target.value)}
+                onChange={(e) => setData("tgl_scoring", e.target.value)}
               />
               <Input
                 label="Scoring Vendor"
@@ -409,18 +427,10 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("schedule_scoring", e)}
               >
-                <Option value="Q1">
-                  Q1
-                </Option>
-                <Option value="Q2">
-                  Q2
-                </Option>
-                <Option value="Q3">
-                  Q3
-                </Option>
-                <Option value="Q4">
-                  Q4
-                </Option>
+                <Option value="Q1">Q1</Option>
+                <Option value="Q2">Q2</Option>
+                <Option value="Q3">Q3</Option>
+                <Option value="Q4">Q4</Option>
               </Select>
               <Input
                 label="Keterangan"
@@ -457,7 +467,7 @@ export default function Page({ auth, branches, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody divider className="overflow-y-auto max-h-96" >
+          <DialogBody divider className="overflow-y-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Branch"
@@ -478,7 +488,6 @@ export default function Page({ auth, branches, sessions }) {
                 )}
               </Select>
 
-
               <Input
                 label="Deskripsi"
                 value={data.description || ""}
@@ -495,7 +504,9 @@ export default function Page({ auth, branches, sessions }) {
                 label="Dokumen Perintah Kerja"
                 value={data.dokumen_perintah_kerja || ""}
                 disabled={processing}
-                onChange={(e) => setData("dokumen_perintah_kerja", e.target.value)}
+                onChange={(e) =>
+                  setData("dokumen_perintah_kerja", e.target.value)
+                }
               />
               <Input
                 label="Vendor"
@@ -508,7 +519,7 @@ export default function Page({ auth, branches, sessions }) {
                 value={data.tgl_scoring || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData('tgl_scoring', e.target.value)}
+                onChange={(e) => setData("tgl_scoring", e.target.value)}
               />
               <Input
                 label="Scoring Vendor"
@@ -522,18 +533,10 @@ export default function Page({ auth, branches, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("schedule_scoring", e)}
               >
-                <Option value="Q1">
-                  Q1
-                </Option>
-                <Option value="Q2">
-                  Q2
-                </Option>
-                <Option value="Q3">
-                  Q3
-                </Option>
-                <Option value="Q4">
-                  Q4
-                </Option>
+                <Option value="Q1">Q1</Option>
+                <Option value="Q2">Q2</Option>
+                <Option value="Q3">Q3</Option>
+                <Option value="Q4">Q4</Option>
               </Select>
               <Input
                 label="Keterangan"

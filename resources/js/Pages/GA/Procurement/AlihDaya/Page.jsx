@@ -6,6 +6,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { hasRoles } from "@/Utils/HasRoles";
 import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -17,7 +18,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -53,31 +54,30 @@ export default function Page({ auth, sessions }) {
 
   const heading1 = [
     {
-      name: 'Jenis Pekerjaan',
+      name: "Jenis Pekerjaan",
       colSpan: 2,
     },
     {
-      name: 'Jumlah Tenaga Kerja',
+      name: "Jumlah Tenaga Kerja",
       colSpan: 7,
     },
-  ]
+  ];
 
   const heading2 = [
-
-
     {
-      name: 'Jumlah Biaya Tenaga Kerja',
+      name: "Jumlah Biaya Tenaga Kerja",
       colSpan: 9,
     },
-  ]
+  ];
   const columnItems = [
-
     {
       name: "Nama",
       field: "jenis_pekerjaan",
-      type: 'custom',
+      type: "custom",
       render: (data) => (
-        <Link href={`/gap/alihdayas/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}>
+        <Link
+          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+        >
           {data.jenis_pekerjaan}
         </Link>
       ),
@@ -86,58 +86,64 @@ export default function Page({ auth, sessions }) {
     {
       name: "Permata",
       field: "permata",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Permata').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Permata").length,
     },
     {
       name: "Sigap",
       field: "sigap",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "SIGAP").length,
     },
     {
       name: "Pusaka",
       field: "pusaka",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Pusaka').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Pusaka").length,
     },
     {
       name: "Assa",
       field: "assa",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Assa').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Assa").length,
     },
     {
       name: "Indorent",
       field: "indorent",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Indorent').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Indorent").length,
     },
     {
       name: "Salawati",
       field: "salawati",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Salawati').length
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Salawati").length,
     },
     {
       name: "Total",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "count",
-      className: 'text-center',
-      render: (data) => data.vendor.length
+      className: "text-center",
+      render: (data) => data.vendor.length,
     },
 
     // {
@@ -150,18 +156,17 @@ export default function Page({ auth, sessions }) {
     //     </Link>
     //   ),
     // },
-
-
   ];
 
   const columnCosts = [
-
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
-      type: 'custom',
+      type: "custom",
       render: (data) => (
-        <Link href={`/gap/alihdayas/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}>
+        <Link
+          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+        >
           {data.jenis_pekerjaan}
         </Link>
       ),
@@ -170,77 +175,101 @@ export default function Page({ auth, sessions }) {
     {
       name: "Permata",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Permata').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "Permata")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Sigap",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'SIGAP').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "SIGAP")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Pusaka",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Pusaka').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "Pusaka")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Assa",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Assa').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "Assa")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Indorent",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Indorent').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "Indorent")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Salawati",
       field: "vendor",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      className: 'text-right',
-      render: (data) => data.vendor.filter(item => item.vendor === 'Salawati').reduce((total, acc) => {
-        return total + acc.cost
-      }, 0).toLocaleString('id-ID')
+      className: "text-right",
+      render: (data) =>
+        data.vendor
+          .filter((item) => item.vendor === "Salawati")
+          .reduce((total, acc) => {
+            return total + acc.cost;
+          }, 0)
+          .toLocaleString("id-ID"),
     },
     {
       name: "Total",
       field: "total_biaya",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
-      format: 'currency',
-      className: 'text-right',
-      render: (data) => data.total_biaya.toLocaleString('id-ID')
+      format: "currency",
+      className: "text-right",
+      render: (data) => data.total_biaya.toLocaleString("id-ID"),
     },
 
     // {
@@ -253,8 +282,6 @@ export default function Page({ auth, sessions }) {
     //     </Link>
     //   ),
     // },
-
-
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -332,13 +359,12 @@ export default function Page({ auth, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA Procurement | Alih Daya" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="grid grid-cols-4 gap-4 mb-4">
-
             <CardMenu
               label="Jumlah Tenaga Kerja"
               data
@@ -357,24 +383,32 @@ export default function Page({ auth, sessions }) {
               onClick={() => setActive("biaya")}
               color="purple"
             />
-
           </div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           {active === "tenagaKerja" && (
             <DataTable
               columns={columnItems}
@@ -511,8 +545,6 @@ export default function Page({ auth, sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
-
-
               <Input
                 label="Divisi Pembebanan"
                 value={data.divisi_pembebanan || ""}
@@ -611,10 +643,7 @@ export default function Page({ auth, sessions }) {
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold">
-
-            </span>{" "}
-            ?
+            <span className="text-lg font-bold"></span> ?
           </Typography>
         </DialogBody>
         <DialogFooter>

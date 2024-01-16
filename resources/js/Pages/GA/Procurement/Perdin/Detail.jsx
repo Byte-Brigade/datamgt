@@ -3,9 +3,7 @@ import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import {
-  DocumentArrowDownIcon
-} from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -16,12 +14,17 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, divisi_pembebanan, years, months }) {
-
+export default function Detail({
+  auth,
+  sessions,
+  divisi_pembebanan,
+  years,
+  months,
+}) {
   const currentDate = new Date();
   const initialData = {
     id: null,
@@ -34,7 +37,7 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
     year: null,
     month: null,
     biaya_sewas: null,
-    biaya_sewa: null
+    biaya_sewa: null,
   };
 
   const {
@@ -80,8 +83,7 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
     const { gap_kdo_id } = data;
     e.preventDefault();
     window.open(
-      route("gap.kdo.mobil.export") +
-      `?gap_kdo_id=${gap_kdo_id}`,
+      route("gap.kdo.mobil.export") + `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
@@ -119,44 +121,46 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
 
     // Format the date to get the ISO string for the 1st day of the month
     return date.toISOString().slice(0, 10);
-  }
+  };
 
   const handlePeriode = (month, year) => {
-    let biaya_sewas = data.biaya_sewas
+    let biaya_sewas = data.biaya_sewas;
 
     if (!Array.isArray(biaya_sewas)) {
-      setData('biaya_sewa', 0)
+      setData("biaya_sewa", 0);
       return;
-
     }
-    let biaya_sewa = biaya_sewas.find(item => item.periode === getPeriode(month, year));
-    setData({ ...data, month: month, year: year, biaya_sewa: biaya_sewa ? biaya_sewa : 0 })
-    console.log(data.month)
-    console.log(data.year)
-  }
+    let biaya_sewa = biaya_sewas.find(
+      (item) => item.periode === getPeriode(month, year)
+    );
+    setData({
+      ...data,
+      month: month,
+      year: year,
+      biaya_sewa: biaya_sewa ? biaya_sewa : 0,
+    });
+    console.log(data.month);
+    console.log(data.year);
+  };
   const handleMonth = (e) => {
-    ;
-    handlePeriode(e, data.year)
-  }
+    handlePeriode(e, data.year);
+  };
   const handleYear = (e) => {
-    setData('year', e);
-    handlePeriode(data.month, e)
-  }
+    setData("year", e);
+    handlePeriode(data.month, e);
+  };
   const handleBiayaSewa = (val) => {
-    if (typeof data.biaya_sewa === 'object' && data.biaya_sewa !== null) {
-
-      let biaya_sewa = { ...data.biaya_sewa, value: val }
-      console.log("handle")
-      console.log(biaya_sewa)
-      setData('biaya_sewa', biaya_sewa)
+    if (typeof data.biaya_sewa === "object" && data.biaya_sewa !== null) {
+      let biaya_sewa = { ...data.biaya_sewa, value: val };
+      console.log("handle");
+      console.log(biaya_sewa);
+      setData("biaya_sewa", biaya_sewa);
       return;
     }
-    setData('biaya_sewa', Number(val))
+    setData("biaya_sewa", Number(val));
 
-    console.log(data.biaya_sewa)
-  }
-
-
+    console.log(data.biaya_sewa);
+  };
 
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
@@ -173,7 +177,6 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
   };
 
   const columns = [
-
     {
       name: "Periode",
       field: "periode",
@@ -182,60 +185,63 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
       name: "Airline",
       field: "airline",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
 
-      render: (data) => data.airline.toLocaleString('id-ID')
+      render: (data) => data.airline.toLocaleString("id-ID"),
     },
     {
       name: "KA",
       field: "ka",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.ka.toLocaleString('id-ID')
+      render: (data) => data.ka.toLocaleString("id-ID"),
     },
     {
       name: "Hotel",
       field: "hotel",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.hotel.toLocaleString('id-ID')
+      render: (data) => data.hotel.toLocaleString("id-ID"),
     },
     {
       name: "Total",
       field: "total",
       className: "text-right",
-      type: 'custom',
+      type: "custom",
       agg: "sum",
       format: "currency",
-      render: (data) => data.total.toLocaleString('id-ID')
+      render: (data) => data.total.toLocaleString("id-ID"),
     },
-
-
   ];
-  console.log(data.month)
-
+  console.log(data.month);
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO Mobil" />
+      <Head title="GA Procurement | Biaya Perjalanan Dinas" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-
             <h2 className="text-xl font-semibold text-center">
               {divisi_pembebanan}
             </h2>
           </div>
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) =>
+              column.field === "action"
+                ? hasRoles("superadmin|procurement", auth) &&
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
+                : true
+            )}
             fetchUrl={`/api/gap/perdin/${divisi_pembebanan}`}
             refreshUrl={isRefreshed}
           />
@@ -411,7 +417,7 @@ export default function Detail({ auth, sessions, divisi_pembebanan, years, month
 
               <Input
                 label="Biaya Sewa"
-                value={data.biaya_sewa ? data.biaya_sewa.value : ''}
+                value={data.biaya_sewa ? data.biaya_sewa.value : ""}
                 type="number"
                 disabled={processing}
                 onChange={(e) => handleBiayaSewa(e.target.value)}

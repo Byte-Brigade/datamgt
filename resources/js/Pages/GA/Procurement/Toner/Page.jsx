@@ -5,6 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -16,11 +17,11 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth,  sessions }) {
+export default function Page({ auth, sessions }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -49,7 +50,6 @@ export default function Page({ auth,  sessions }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
-
   const columns = [
     {
       name: "Cabang",
@@ -64,21 +64,19 @@ export default function Page({ auth,  sessions }) {
     },
 
     {
-      name: 'Quantity',
-      field : 'quantity',
-      agg: 'sum',
+      name: "Quantity",
+      field: "quantity",
+      agg: "sum",
     },
     {
-      name: 'Unit Price',
-      type: 'custom',
-      field : 'price',
-      format:'currency',
-      className: 'text-right',
-      render: (data) => data.price.toLocaleString('id-ID'),
-      agg: 'sum',
+      name: "Unit Price",
+      type: "custom",
+      field: "price",
+      format: "currency",
+      className: "text-right",
+      render: (data) => data.price.toLocaleString("id-ID"),
+      agg: "sum",
     },
-
-
 
     // {
     //   name: "Detail",
@@ -90,10 +88,7 @@ export default function Page({ auth,  sessions }) {
     //     </Link>
     //   ),
     // },
-
-
   ];
-
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
@@ -170,34 +165,42 @@ export default function Page({ auth,  sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA Procurement | Toner" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <PrimaryButton
-                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                onClick={toggleModalImport}
-              >
-                <div className="flex items-center gap-x-2">
-                  <DocumentPlusIcon className="w-4 h-4" />
-                  Import Excel
-                </div>
-              </PrimaryButton>
-            </div>
-            <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton>
-          </div>
+          {hasRoles("superadmin|procurement", auth) &&
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
+              <div className="flex items-center justify-between mb-4">
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
+                  </PrimaryButton>
+                )}
+              </div>
+            )}
           <DataTable
             columns={columns}
             fetchUrl={"/api/gap/toners"}
             refreshUrl={isRefreshed}
             bordered={true}
           />
-
         </div>
       </div>
       {/* Modal Import */}
@@ -315,8 +318,6 @@ export default function Page({ auth,  sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
-
-
               <Input
                 label="Divisi Pembebanan"
                 value={data.divisi_pembebanan || ""}
@@ -415,10 +416,7 @@ export default function Page({ auth,  sessions }) {
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold">
-
-            </span>{" "}
-            ?
+            <span className="text-lg font-bold"></span> ?
           </Typography>
         </DialogBody>
         <DialogFooter>

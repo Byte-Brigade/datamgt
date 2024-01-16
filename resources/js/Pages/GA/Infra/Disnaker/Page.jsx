@@ -110,7 +110,9 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
               Upload Lampiran
             </div>
           </Button>
-        ) : <p>Belum ada lampiran</p>,
+        ) : (
+          <p>Belum ada lampiran</p>
+        ),
     },
 
     {
