@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\KdoMobilBiayaSewa;
+use Exception;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -51,23 +52,28 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
             );
             foreach ($filteredData as $key => $value) {
                 if (!is_null($value)) {
-                    $value = preg_replace('/[^0-9]/', '', $value);
-                    $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
-                    $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
-                    $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
+                    if(is_int($value)) {
+                        $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
+                        $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
+                        $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
-                    KdoMobilBiayaSewa::updateOrCreate(
-                        [
-                            'gap_kdo_id' => $gap_kdo_mobil->id,
-                            'periode' => $tanggal_periode,
-                        ],
+                        KdoMobilBiayaSewa::updateOrCreate(
+                            [
+                                'gap_kdo_id' => $gap_kdo_mobil->id,
+                                'periode' => $tanggal_periode,
+                            ],
 
-                        [
-                            'gap_kdo_id' => $gap_kdo_mobil->id,
-                            'periode' => $tanggal_periode,
-                            'value' => (int) $value
-                        ]
-                    );
+                            [
+                                'gap_kdo_id' => $gap_kdo_mobil->id,
+                                'periode' => $tanggal_periode,
+                                'value' => (int) $value
+                            ]
+                        );
+                    } else {
+                        throw new Exception('Error : Nilai '.$value.' harus berupa angka yang terletak di nopol '.$gap_kdo_mobil->nopol);
+                    }
+
+
                 }
             }
         }
