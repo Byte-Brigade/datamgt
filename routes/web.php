@@ -342,7 +342,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::middleware('role:superadmin')->group(function () {
+    Route::middleware('role:superadmin|admin')->group(function () {
         /* [START] User Access Management */
         Route::get('/uam', [UAMController::class, 'index'])->name('uam');
         Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');

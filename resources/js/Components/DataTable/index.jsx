@@ -38,7 +38,6 @@ export default function DataTable({
   submitUrl = "",
 }) {
   const [data, setData] = useState([]);
-  const [sumData, setSumData] = useState(0);
   const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState();
   const [sortOrder, setSortOrder] = useState("asc");
@@ -71,17 +70,11 @@ export default function DataTable({
 
   const toggleOpen = () => setOpen((cur) => !cur);
 
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1; // Add 1 since getMonth() returns a 0-indexed value.
-  const currentYear = currentDate.getFullYear();
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
-
   const [selectedMonthData, setSelectedMonthData] = useState({
     month: null,
     year: null,
   });
-  const { auth } = usePage().props;
-  const initialPermission = ["can edit", "can delete"];
+
   const handleSort = (column) => {
     if (columns === sortColumn) {
       sortOrder === SORT_ASC ? setSortOrder(SORT_DESC) : setSortOrder(SORT_ASC);
@@ -124,21 +117,6 @@ export default function DataTable({
     setSelectedRows(newSelectedRows);
     setLastSelectedRowIndex(clickedRowIndex);
   };
-
-  // const handleRowCheckboxChange = (e, id, url) => {
-  //   const newCheckedStatus = e.target.checked;
-
-  //   // Update the remarks state correctly
-  //   setRemarks((prevRemarks) => {
-  //     const updatedRemarks = { ...prevRemarks, [id]: newCheckedStatus };
-  //     console.log('Updated Remarks:', newCheckedStatus); // Add this line for debugging
-  //     console.log('Updated Remarks:', remarks); // Add this line for debugging
-  //     return updatedRemarks;
-  //   });
-
-  //   form.setData('remark', { ...remarks, [id]: newCheckedStatus });
-
-  // }
 
   const handleFilter = () => {
     fetchData(1);
@@ -598,7 +576,7 @@ export default function DataTable({
                           </td>
                         ) : (
                           <td
-                            key={column.field}
+                            key={column.type === 'custom' ? column.key : column.field}
                             colSpan={column.colSpan}
                             className={`${column.className} ${
                               column.freeze && "sticky left-0 bg-white"

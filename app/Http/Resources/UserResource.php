@@ -14,11 +14,17 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $position = $this->roles->flatMap(function($role) {
+            return [
+                'name' => $role->name,
+                'alt_name' => $role->alt_name,
+            ];
+        });
         return [
             'id' => $this->id,
             'name' => $this->name,
             'nik' => $this->nik,
-            'position' => $this->roles->first()->alt_name,
+            'position' => isset($position) ? $position : '-',
             'permissions' => $this->getAllPermissions()->map(function($permission) {
                 return $permission->name;
             })->toArray(),

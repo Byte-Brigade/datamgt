@@ -36,7 +36,7 @@ class UAMController extends Controller
         $query = $this->user->whereHas('roles', function ($q) {
             return $q->where('name', '!=', 'superadmin');
         })->orderBy($sortField, $sortOrder);
-        $perpage = $request->perpage ?? 10;
+        $perpage = $request->perpage ?? 15;
 
         //  if (!is_null($searchInput)) {
         //      $searchQuery = "%$searchInput%";
@@ -140,10 +140,9 @@ class UAMController extends Controller
                 'branch_id' => $request->branch_id != 0 ? $request->branch_id : null,
             ]);
             $user->assignRole($request->position);
-            if($request->position == 'admin') {
+            if ($request->position == 'admin') {
                 $user->syncPermissions($full_access);
             } else {
-
                 $user->syncPermissions($request->permissions);
             }
 
@@ -153,24 +152,19 @@ class UAMController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'password' => 'min:8|confirmed',
+        ]);
+
         try {
             $user = User::find($id);
-            $role = Role::where('alt_name', $request->position)->get();
+            $role = Role::where('name', $request->position)->pluck('name')->first();
             $user->update([
                 'name' => $request->name,
                 'nik' => $request->nik,
+                'password' => Hash::make($request->password)
             ]);
             $user->syncRoles($role);
             $user->syncPermissions($request->permissions);
