@@ -95,7 +95,7 @@ export default function Page({ auth, branches, sessions }) {
       render: (data) => (
         <Link
           href={route("gap.kdos.mobil", {
-            branch_code: data.branches.branch_code,
+            slug: data.branches.slug,
             periode: data.periode,
           })}
         >
@@ -122,16 +122,20 @@ export default function Page({ auth, branches, sessions }) {
       className: "text-right",
     },
 
-    // {
-    //   name: "Detail KDO",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.kdos.mobil", data.branches.branch_code)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
+    {
+      name: "Detail KDO",
+      field: "detail",
+      className: "text-center",
+      render: (data) => (
+        <Link
+          href={route("gap.kdos.vendor", {
+            vendor: data.vendor,
+          })}
+        >
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
+    },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];

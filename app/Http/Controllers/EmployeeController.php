@@ -22,14 +22,20 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $employees = DB::connection('sqlsrv')->table('dbo.opsstaging')->get();
+        $status = "";
+        try {
+            $employees = DB::connection('sqlsrv')->table('dbo.opsstaging')->get();
+            $status = "Online";
+        } catch (\Throwable $th) {
+            $status = "Offline";
+        }
         $branches = Branch::all();
         $positionsProps = EmployeePosition::all();
 
         return Inertia::render('Ops/Karyawan/Page', [
             'branches' => $branches,
             'positions' => $positionsProps,
-            'employees' => $employees
+            'status' => $status,
         ]);
     }
 

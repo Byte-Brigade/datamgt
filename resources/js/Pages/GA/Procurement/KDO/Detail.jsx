@@ -33,6 +33,7 @@ export default function Detail({
   years,
   months,
   periode,
+  vendor
 }) {
   console.log(kdo_mobil);
   const currentDate = new Date();
@@ -297,10 +298,10 @@ export default function Detail({
                   )
                 : true
             )}
-            fetchUrl={`/api/gap/kdos/${kdo_mobil.branch_id}/detail`}
+            fetchUrl={`/api/gap/kdos/detail/${kdo_mobil.branch_id}`}
             refreshUrl={isRefreshed}
             periodic={true}
-            parameters={{ periode }}
+            parameters={{ periode, vendor }}
           />
         </div>
       </div>

@@ -68,7 +68,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const inqueryRouter = [
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
-    { name: "Staff", path: "maintenance" },
+    { name: "Staff", path: "inquery.staff" },
     { name: "Asset", path: "inquery.assets" },
     { name: "Lisensi", path: "inquery.licenses" },
   ];
