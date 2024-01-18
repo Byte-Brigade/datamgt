@@ -121,13 +121,6 @@ export default function Page({ auth, branches, sessions }) {
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
       className: "text-right",
     },
-    {
-      name: "Jatuh Tempo",
-      field: "akhir_sewa",
-      type: "date",
-      sortable: true,
-      className: "justify-center text-center",
-    },
 
     // {
     //   name: "Detail KDO",
