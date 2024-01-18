@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\GapAlihDayaController;
 use App\Http\Controllers\GapAssetController;
 use App\Http\Controllers\GapDisnakerController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\GapScoringController;
 use App\Http\Controllers\GapScoringProjectController;
 use App\Http\Controllers\GapStoController;
 use App\Http\Controllers\GapTonerController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\InfraBroController;
 use App\Http\Controllers\InfraMaintenanceCostController;
 use App\Http\Controllers\InfraScoringAssessmentController;
@@ -62,6 +64,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/files', [FileController::class, 'index'])->name('files.index');
+    Route::get('/files/{table_name}', [FileController::class, 'detail'])->name('files.detail');
+    Route::get('/files/download/{id}', [FileController::class, 'download'])->name('files.download');
+    Route::delete('/files/delete/{id}', [FileController::class, 'delete'])->name('files.delete');
 
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
@@ -243,7 +249,6 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/maintenance-costs/{id}', [InfraMaintenanceCostController::class, 'update'])->name('maintenance-costs.update');
             Route::get('/maintenance-costs/export', [InfraMaintenanceCostController::class, 'export'])->name('maintenance-costs.export');
             Route::delete('/maintenance-costs/{id}', [InfraMaintenanceCostController::class, 'destroy'])->name('maintenance-costs.delete');
-
         });
 
 

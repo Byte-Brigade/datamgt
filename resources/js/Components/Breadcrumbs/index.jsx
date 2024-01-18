@@ -71,6 +71,8 @@ export function BreadcrumbsDefault() {
         return "Lisensi";
       case "maintenance-costs":
         return "Maintenance and Project Cost";
+      case "Histories":
+        return "Histories";
       default:
         break;
     }

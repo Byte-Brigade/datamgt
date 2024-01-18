@@ -9,7 +9,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -268,20 +268,30 @@ export default function Page({ auth, branches, sessions }) {
                     </PrimaryButton>
                   </div>
                 )}
-                {auth.permissions.includes("can export") && (
-                  <PrimaryButton onClick={toggleModalExport}>
-                    Create Report
-                  </PrimaryButton>
-                )}
+                <div className="flex gap-x-2">
+                  {auth.permissions.includes("can export") && (
+                    <PrimaryButton onClick={toggleModalExport}>
+                      Create Report
+                    </PrimaryButton>
+                  )}
+                  <Link
+                    href={route("files.detail", 'Asset')}
+                  >
+                    <PrimaryButton>
+                      Files
+                    </PrimaryButton>
+                  </Link>
+
+                </div>
               </div>
             )}
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/gap/assets"}
