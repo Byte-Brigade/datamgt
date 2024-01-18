@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Exports\Assets\AssetsExport;
 use App\Imports\AssetsImport;
 use App\Models\Branch;
+use App\Models\File;
 use App\Models\GapAsset;
+use App\Models\History;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -24,8 +27,19 @@ class GapAssetController extends Controller
     public function import(Request $request)
     {
         try {
-            (new AssetsImport)->import($request->file('file'));
-            // ProcessPartitioning::dispatch('September 2023', 'gap_assets');
+            $tableName = 'Asset';
+            $timestamp = Carbon::now()->format('YmdHis');
+            $uploadedFile = $request->file('file');
+            $originalFilename = $uploadedFile->getClientOriginalName();
+            $newFilename = "{$timestamp}_{$originalFilename}";
+            (new AssetsImport)->import($uploadedFile);
+
+            $path = $uploadedFile->storeAs("files/{$tableName}", $newFilename, 'local'); // 'local' is the disk name
+            File::create([
+                'table_name' => $tableName,
+                'filename' => $newFilename,
+                'path' => $path,
+            ]);
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

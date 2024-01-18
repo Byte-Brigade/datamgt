@@ -5,9 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DisnakerResource;
+use App\Http\Resources\FileResource;
+use App\Http\Resources\HistoryResource;
 use App\Http\Resources\Report\BranchResource;
 use App\Models\Branch;
+use App\Models\File;
 use App\Models\GapDisnaker;
+use App\Models\History;
 use App\Models\InfraBro;
 use Illuminate\Http\Request;
 
@@ -113,5 +117,20 @@ class ReportApiController extends Controller
         $data = $query->paginate($perpage);
         return DisnakerResource::collection($data);
     }
+
+    public function files(File $file, Request $request)
+    {
+        $sortField = 'id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $file->orderBy('created_at', 'desc');
+
+        $perpage = $request->perpage ?? 10;
+
+
+        $data = $query->paginate($perpage);
+        return FileResource::collection($data);
+    }
+
 
 }
