@@ -53,6 +53,7 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('toners', [GapApiController::class, 'toners']);
     Route::get('stos', [GapApiController::class, 'stos']);
     Route::get('pks', [GapApiController::class, 'pks']);
+    Route::get('pks/{status}', [GapApiController::class, 'pks_details']);
     Route::get('toners/{branch_id}', [GapApiController::class, 'toner_details']);
     Route::get('alihdayas', [GapApiController::class, 'alihdayas']);
     Route::get('alihdaya/{type}', [GapApiController::class, 'alihdaya_details']);
@@ -76,6 +77,7 @@ Route::prefix('infra')->name('infra.')->group(function () {
     Route::get('sewa-gedungs', [InfraApiController::class, 'sewa_gedungs']);
     Route::get('bros', [InfraApiController::class, 'bros']);
     Route::get('maintenance-costs', [InfraApiController::class, 'maintenance_costs']);
+    Route::get('maintenance-costs/{jenis_pekerjaan}', [InfraApiController::class, 'maintenance_cost_details']);
     Route::get('disnakers', [InfraApiController::class, 'disnakers']);
     Route::get('scoring_projects', [InfraApiController::class, 'scoring_projects']);
     Route::get('scoring_projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);

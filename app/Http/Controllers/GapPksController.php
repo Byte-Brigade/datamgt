@@ -55,4 +55,9 @@ class GapPksController extends Controller
         return response()->download(storage_path($path));
     }
 
+    public function detail($status)
+    {
+        return Inertia::render('GA/Procurement/PKS/Detail', ['status' => $status]);
+    }
+
 }

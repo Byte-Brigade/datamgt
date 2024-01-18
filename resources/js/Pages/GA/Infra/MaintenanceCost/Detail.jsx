@@ -1,6 +1,7 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -8,7 +9,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -17,13 +18,11 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, jenis_pekerjaan }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -54,26 +53,85 @@ export default function Page({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Nama Cabang",className:"w-[100px]", field: "branch_name" },
+    { name: "Tipe Cabang", field: "branch_type" },
+    { name: "Nama Project", className:"w-[300px]", field: "nama_project" },
+    { name: "Category", field: "category" },
+    { name: "Nama Vendor", sortable: true, field: "nama_vendor" },
+    { name: "Jenis Pekerjaan", field: "jenis_pekerjaan" },
     {
-      name: "Jenis Pekerjaan",
-      field: "jenis_pekerjaan",
-
+      name: "Nilai OE Interior",
+      field: "nilai_oe_interior",
+      className: "text-right",
       type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.nilai_oe_interior.toLocaleString("id-ID"),
+    },
+    {
+      name: "Nilai OE ME",
+      field: "nilai_oe_me",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.nilai_oe_me.toLocaleString("id-ID"),
+    },
+    {
+      name: "Total OE",
+      field: "total_oe",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.total_oe.toLocaleString("id-ID"),
+    },
+    {
+      name: "Nilai Project Memo/Persetujuan",
+      field: "nilai_project_memo",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.nilai_project_memo.toLocaleString("id-ID"),
+    },
+    {
+      name: "Nilai Project Final Account",
+      field: "nilai_project_final",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.nilai_project_final.toLocaleString("id-ID"),
+    },
+    {
+      name: "Kerja Tambah/Kurang",
+      field: "kerja_tambah_kurang",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.kerja_tambah_kurang.toLocaleString("id-ID"),
+    },
+
+    {
+      name: "Action",
+      field: "action",
+      className: "text-center",
       render: (data) => (
-        <Link
-          href={`/infra/maintenance-costs/detail/${data.jenis_pekerjaan}`}
-        >
-          {data.jenis_pekerjaan}
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
-    { name: "Jumlah Project", field: "jumlah_project", className: "text-center", },
-    // { name: "BAU", field: "bau", className: "text-center", },
-    // { name: "Project", field: "project", className: "text-center", },
-    { name: "Total OE", agg: 'sum', className: "text-right", format: 'currency', field: "total_oe", type: "custom", render: (data) => data.total_oe.toLocaleString('ID-id') },
-    { name: "Nilai Project Memo/Persetujuan", className: "text-right", agg: 'sum', format: 'currency', field: "nilai_project_memo", type: "custom", render: (data) => data.nilai_project_memo.toLocaleString('ID-id') },
-    { name: "Nilai Project Final Account", className: "text-right", agg: 'sum', format: 'currency', field: "nilai_project_final", type: "custom", render: (data) => data.nilai_project_final.toLocaleString('ID-id') },
-
   ];
 
   const handleSubmitImport = (e) => {
@@ -166,7 +224,7 @@ export default function Page({ auth, branches, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA | Maintenance and Project Cost" />
+      <Head title="GA | Maintenance Cost" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -209,12 +267,13 @@ export default function Page({ auth, branches, sessions }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|ga", auth) &&
-                ["can edit", "can delete"].some((permission) =>
-                  auth.permissions.includes(permission)
-                )
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
                 : true
             )}
-            fetchUrl={"/api/infra/maintenance-costs"}
+            className="w-[1500px]"
+            fetchUrl={`/api/infra/maintenance-costs/${jenis_pekerjaan}`}
             refreshUrl={isRefreshed}
           />
         </div>
@@ -315,19 +374,7 @@ export default function Page({ auth, branches, sessions }) {
         onSubmit={handleSubmitExport}
       >
         <div className="flex flex-col gap-y-4">
-          <select
-            label="Branch"
-            disabled={processing}
-            value={data.branch_id}
-            onChange={(e) => setData("branch", e.target.value)}
-          >
-            <option value="0">All</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={`${branch.id}`}>
-                {branch.branch_code} - {branch.branch_name}
-              </option>
-            ))}
-          </select>
+         Export data
         </div>
       </Modal>
       {/* Modal Edit */}
@@ -347,18 +394,7 @@ export default function Page({ auth, branches, sessions }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
-              <Select
-                label="Branch"
-                value={`${data.branch_id}`}
-                disabled={processing}
-                onChange={(e) => setData("branch_id", e)}
-              >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
+
               <Input
                 label="Tanggal Pengesahan"
                 value={data.tgl_pengesahan || ""}
@@ -423,18 +459,7 @@ export default function Page({ auth, branches, sessions }) {
         <form onSubmit={handleSubmitCreate}>
           <DialogBody className="overflow-y-scroll " divider>
             <div className="flex flex-col gap-y-4">
-              <Select
-                label="Branch"
-                value={`${data.branch_id}`}
-                disabled={processing}
-                onChange={(e) => setData("branch_id", e)}
-              >
-                {branches.map((branch) => (
-                  <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
-                  </Option>
-                ))}
-              </Select>
+
 
               <Input
                 label="Tanggal Pengesahan"

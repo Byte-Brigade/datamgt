@@ -8,7 +8,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -53,49 +53,29 @@ export default function Page({ auth, sessions }) {
 
   const columns = [
     {
-      name: "Vendor",
-      field: "vendor",
-    },
-    {
-      name: "Type",
-      field: "type",
-    },
-    {
-      name: "Description",
-      field: "description",
-    },
-    {
-      name: "Contract Date",
-      field: "contract_date",
-      type: "date",
-    },
-    {
-      name: "Contract No.",
-      field: "contract_no",
-    },
-    {
-      name: "Durasi Kontrak",
-      field: "durasi_kontrak",
-    },
-    {
-      name: "Awal",
-      field: "awal",
-      type: "date",
-    },
-    {
-      name: "Akhir",
-      field: "akhir",
-      type: "date",
-    },
-
-    {
-      name: "Tahun Akhir",
-      field: "tahun_akhir",
-    },
-    {
       name: "Status",
       field: "status",
+
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={`/gap/pks/detail/${data.status}`}
+        >
+          {data.status}
+        </Link>
+      ),
     },
+    {
+      name: "Jumlah PKS",
+      field: "jumlah_pks",
+      agg: "sum",
+    },
+    {
+      name: "Jumlah Vendor",
+      field: "jumlah_vendor",
+      agg: "sum",
+    },
+
 
     // {
     //   name: "Detail",

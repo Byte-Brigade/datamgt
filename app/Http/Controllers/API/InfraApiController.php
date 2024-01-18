@@ -78,7 +78,7 @@ class InfraApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
-        if(!is_null($request->category)) {
+        if (!is_null($request->category)) {
             $query = $query->where('category', $request->category);
         }
 
@@ -103,6 +103,40 @@ class InfraApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
+
+        $data = $query->get();
+
+        $collections = $data->groupBy('jenis_pekerjaan')->map(function ($maintenance_costs, $jenis_pekerjaan) {
+            return [
+                'jenis_pekerjaan' => $jenis_pekerjaan,
+                'jumlah_project' => $maintenance_costs->count(),
+                'bau' => $maintenance_costs->where('category', 'BAU')->count(),
+                'project' => $maintenance_costs->where('category', 'Project')->count(),
+                'total_oe' => $maintenance_costs->sum('total_oe'),
+                'nilai_project_memo' => $maintenance_costs->sum('nilai_project_memo'),
+                'nilai_project_final' => $maintenance_costs->sum('nilai_project_final'),
+            ];
+        });
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+
+    public function maintenance_cost_details(InfraMaintenanceCost $infra_maintenance_cost, Request $request, $jenis_pekerjaan)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order') ?? 'asc';
+        $searchInput = $request->search;
+        $query = $infra_maintenance_cost->select('infra_maintenance_costs.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'infra_maintenance_costs.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where('id', 'like', $searchQuery);
+        }
+
+        $query->where('jenis_pekerjaan', $jenis_pekerjaan);
 
         $data = $query->paginate($perpage);
 
@@ -251,5 +285,4 @@ class InfraApiController extends Controller
         $data = $query->paginate($perpage);
         return ScoringAssessmentsResource::collection($data);
     }
-
 }

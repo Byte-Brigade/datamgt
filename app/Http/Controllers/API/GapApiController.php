@@ -594,6 +594,42 @@ class GapApiController extends Controller
         }
 
 
+        $data = $query->get();
+
+        $collections = $data->groupBy('status')->map(function($pks, $status) {
+            return [
+                'status' => $status,
+                'jumlah_pks' => $pks->count(),
+                'jumlah_vendor' => $pks->unique('vendor')->count(),
+            ];
+        });
+
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+    public function pks_details(GapPks $gap_pks, Request $request, $status)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'vendor';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+        $query->where('status',$status);
+
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
         $data = $query->paginate($perpage);
 
 
