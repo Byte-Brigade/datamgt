@@ -23,12 +23,21 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function UAM({ positions, sessions, branches, permissions, auth }) {
+export default function UAM({
+  positions,
+  sessions,
+  branches,
+  permissions,
+  auth,
+}) {
   const initialData = {
     name: null,
     branch_id: 0,
     nik: null,
-    position: null,
+    position: {
+      alt_name: '',
+      name: '',
+    },
     entity: null,
     permissions: ["can view"],
     password: null,
@@ -51,8 +60,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [fileType, setFileType] = useState("file");
   const columns = [
-    // { name: "Branch ID", field: "branches.branch_code", sortable: true },
-    // { name: "Branch Name", field: "branches.branch_name", sortable: true },
     {
       name: "Nama",
       field: "name",
@@ -63,8 +70,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
       field: "nik",
       sortable: true,
     },
-    { name: "Posisi", field: "position" },
-
+    { name: "Posisi", field: "position.alt_name" },
     {
       name: "View",
       field: "permissions",
@@ -112,7 +118,8 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
       key: "sto",
       render: (data) =>
         data.permissions
-          .filter((permission) => permission == "can sto").join("")
+          .filter((permission) => permission == "can sto")
+          .join(""),
     },
     {
       name: "Action",
@@ -186,7 +193,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
-  console.log(data);
+  console.log(data)
 
   return (
     <AuthenticatedLayout auth={auth}>
@@ -206,9 +213,6 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                 </div>
               </PrimaryButton>
             </div>
-            {/* <PrimaryButton onClick={toggleModalExport}>
-              Create Report
-            </PrimaryButton> */}
           </div>
           <DataTable
             columns={columns}
@@ -249,7 +253,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
               />
               <Select
                 label="Posisi"
-                value={`${data.position || ""}`}
+                value={`${data.position.name || ""}`}
                 disabled={processing}
                 onChange={(e) => setData("position", e)}
               >
@@ -267,18 +271,17 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                   onChange={(e) => setData("branch_id", e)}
                   className="bg-white"
                 >
-                  {branches
-                    .map((branch, index) => {
-                      return branch.branch_code === "none" ? (
-                        <Option key={index} value="0">
-                          {branch.branch_name}
-                        </Option>
-                      ) : (
-                        <Option key={index} value={`${branch.id} `}>
-                          {branch.branch_code} - {branch.branch_name}
-                        </Option>
-                      );
-                    })}
+                  {branches.map((branch, index) => {
+                    return branch.branch_code === "none" ? (
+                      <Option key={index} value="0">
+                        {branch.branch_name}
+                      </Option>
+                    ) : (
+                      <Option key={index} value={`${branch.id} `}>
+                        {branch.branch_code} - {branch.branch_name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               )}
               <Input
@@ -302,29 +305,31 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
               {errors.password && (
                 <div className="text-red-700 error">{errors.password}</div>
               )}
-              {data.position !== 'admin' && <div className="flex flex-col">
-                <span className="text-sm font-light">Hak Akses</span>
-                <div className="flex gap-x-4 overflow-x-auto">
-                  {permissions.map((permission, index) => (
-                    <Checkbox
-                      key={index}
-                      label={permission.name}
-                      checked={data.permissions.includes(permission.name)}
-                      onChange={(e) =>
-                        setData(
-                          "permissions",
-                          data.permissions.includes(permission.name)
-                            ? data.permissions.filter(
-                              (p) => p != e.target.value
-                            )
-                            : [...data.permissions, e.target.value]
-                        )
-                      }
-                      value={permission.name}
-                    />
-                  ))}
+              {data.position !== "admin" && (
+                <div className="flex flex-col">
+                  <span className="text-sm font-light">Hak Akses</span>
+                  <div className="flex gap-x-4 overflow-x-auto">
+                    {permissions.map((permission, index) => (
+                      <Checkbox
+                        key={index}
+                        label={permission.name}
+                        checked={data.permissions.includes(permission.name)}
+                        onChange={(e) =>
+                          setData(
+                            "permissions",
+                            data.permissions.includes(permission.name)
+                              ? data.permissions.filter(
+                                  (p) => p != e.target.value
+                                )
+                              : [...data.permissions, e.target.value]
+                          )
+                        }
+                        value={permission.name}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>}
+              )}
             </div>
           </DialogBody>
           <DialogFooter>
@@ -370,20 +375,17 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
               />
               <Select
                 label="Posisi"
-                value={`${data.position || ""}`}
+                value={`${data.position.name || ""}`}
                 disabled={processing}
                 onChange={(e) => setData("position", e)}
               >
                 {positions.map((position) => (
-                  <Option
-                    key={position.alt_name}
-                    value={`${position.alt_name}`}
-                  >
+                  <Option key={position.id} value={`${position.name}`}>
                     {position.alt_name}
                   </Option>
                 ))}
               </Select>
-              {/* <Input
+              <Input
                 type="password"
                 label="Password"
                 value={data.password}
@@ -396,7 +398,7 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                 value={data.password_confirmation}
                 disabled={processing}
                 onChange={(e) => setData("password_confirmation", e.target.value)}
-              /> */}
+              />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
                 <div className="flex gap-x-4">
@@ -410,8 +412,8 @@ export default function UAM({ positions, sessions, branches, permissions, auth }
                           "permissions",
                           data.permissions.includes(permission.name)
                             ? data.permissions.filter(
-                              (p) => p != e.target.value
-                            )
+                                (p) => p != e.target.value
+                              )
                             : [...data.permissions, e.target.value]
                         )
                       }
