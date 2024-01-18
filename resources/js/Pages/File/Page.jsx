@@ -5,7 +5,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -41,11 +41,11 @@ export default function Branch({ sessions, auth }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link
+        <a
           href={route("files.download", data.id)}
         >
           <Button variant="outlined">Download</Button>
-        </Link>
+        </a>
       ),
     },
     {
