@@ -1,3 +1,4 @@
+import { hasRoles } from "@/Utils/HasRoles";
 import {
   ChartBarSquareIcon,
   ChevronDownIcon,
@@ -321,8 +322,10 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   <Link href={route(router.path)}>
                     <ListItem
                       className={`${sidebarOpen && "justify-center"}`}
-                      selected={route().current(router.path) ||
-                        route().current(`${router.path}.*`)}
+                      selected={
+                        route().current(router.path) ||
+                        route().current(`${router.path}.*`)
+                      }
                     >
                       <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
                         <ChevronRightIcon
@@ -627,7 +630,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 </Accordion>
               </AccordionBody>
             </Accordion>
-            {auth.role === "superadmin" && (
+            {hasRoles("superadmin|admin", auth) && (
               <>
                 {!sidebarOpen && (
                   <h2 className="text-lg font-semibold">Admin</h2>

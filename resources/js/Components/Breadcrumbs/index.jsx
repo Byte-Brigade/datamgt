@@ -46,7 +46,7 @@ export function BreadcrumbsDefault() {
       case "alihdayas":
         return "Alih Daya";
       case "pks":
-        return "PKS";
+        return "Perjanjian Kerjasama";
       case "perdins":
         return "Biaya Perjalanan Dinas";
       case "stos":

@@ -172,7 +172,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/pks', [GapPksController::class, 'index'])->name('pks');
             Route::get('/pks/template', [GapPksController::class, 'template'])->name('pks.template');
             Route::get('/pks/detail/{status}', [GapPksController::class, 'detail'])->name('pks.detail');
-            Route::get('/pks/{branch_code}/detail', [GapPksController::class, 'detail'])->name('pks.detail');
             Route::post('/pks/import', [GapPksController::class, 'import'])->name('pks.import');
             Route::post('/pks', [GapPksController::class, 'store'])->name('pks.store');
             Route::put('/pks/{id}', [GapPksController::class, 'update'])->name('pks.update');
@@ -343,7 +342,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::middleware('role:superadmin')->group(function () {
+    Route::middleware('role:superadmin|admin')->group(function () {
         /* [START] User Access Management */
         Route::get('/uam', [UAMController::class, 'index'])->name('uam');
         Route::post('/uam', [UAMController::class, 'store'])->name('uam.store');
