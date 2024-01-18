@@ -28,6 +28,20 @@ class InqueryController extends Controller
     {
         return Inertia::render('Inquery/Branch/Page');
     }
+    public function staff()
+    {
+        return Inertia::render('Inquery/Staff/Page');
+    }
+    public function staff_detail($slug)
+    {
+        $branches = Branch::all();
+        $positionsProps = EmployeePosition::all();
+        return Inertia::render('Inquery/Staff/Detail', [
+            'slug' => $slug,
+            'branches' => $branches,
+            'positions' => $positionsProps,
+        ]);
+    }
 
     public function branchDetail($slug)
     {

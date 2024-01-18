@@ -27,9 +27,11 @@ export default function BarChart({
   type,
 }) {
   const options = {
+    indexAxis: type === 'employee' ? 'y' : 'x',
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
+
       datalabels: {
         anchor: "end",
         align: "end",
@@ -38,12 +40,12 @@ export default function BarChart({
         },
       },
       legend: {
-        position: "top",
+        position: type === "employee" ? "right" : "top",
       },
     },
     scales: {
       y: {
-        display: false,
+        display: type === "employee" ?  true : false,
         grid: {
           display: false,
         },

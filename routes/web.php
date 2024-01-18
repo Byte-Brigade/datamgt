@@ -66,15 +66,14 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/inquery')->group(function () {
         Route::redirect('/', '/inquery/branch');
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-        Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
+        Route::get('/staff', [InqueryController::class, 'staff'])->name('inquery.staff');
 
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
             Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
-
+            Route::get('/staff/detail/{slug}', [InqueryController::class, 'staff_detail'])->name('inquery.staff.detail');
         });
-        Route::get('/staff', [InqueryController::class, 'branch'])->name('inquery.staff');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
@@ -101,11 +100,12 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('gap')->name('gap.')->group(function () {
             /* [START] GA Procurement KDO */
             Route::get('/kdos', [GapKdoController::class, 'index'])->name('kdos');
+            Route::get('/kdos/vendor/{vendor}', [GapKdoController::class, 'vendor'])->name('kdos.vendor');
             Route::get('/kdos/template', [GapKdoController::class, 'template'])->name('kdos.template');
             Route::post('/kdos/import', [GapKdoController::class, 'import'])->name('kdos.import');
             Route::post('/kdos/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdos.mobil.import');
             Route::post('/kdos', [GapKdoController::class, 'store'])->name('kdos.store');
-            Route::get('/kdos/mobil/{branch_code}', [GapKdoController::class, 'kdo_mobil'])->name('kdos.mobil');
+            Route::get('/kdos/mobil/{slug}', [GapKdoController::class, 'kdo_mobil'])->name('kdos.mobil');
             Route::post('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdos.mobil.store');
             Route::put('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdos.mobil.update');
             Route::delete('/kdos/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdos.mobil.destroy');
@@ -162,7 +162,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
             Route::get('/toners/template', [GapTonerController::class, 'template'])->name('toners.template');
-            Route::get('/toners/{branch_code}/detail', [GapTonerController::class, 'detail'])->name('toners.detail');
+            Route::get('/toners/detail/{slug}', [GapTonerController::class, 'detail'])->name('toners.detail');
             Route::post('/toners/import', [GapTonerController::class, 'import'])->name('toners.import');
             Route::post('/toners', [GapTonerController::class, 'store'])->name('toners.store');
             Route::put('/toners/{id}', [GapTonerController::class, 'update'])->name('toners.update');
@@ -172,7 +172,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/pks', [GapPksController::class, 'index'])->name('pks');
             Route::get('/pks/template', [GapPksController::class, 'template'])->name('pks.template');
             Route::get('/pks/detail/{status}', [GapPksController::class, 'detail'])->name('pks.detail');
-            Route::get('/pks/{branch_code}/detail', [GapPksController::class, 'detail'])->name('pks.detail');
             Route::post('/pks/import', [GapPksController::class, 'import'])->name('pks.import');
             Route::post('/pks', [GapPksController::class, 'store'])->name('pks.store');
             Route::put('/pks/{id}', [GapPksController::class, 'update'])->name('pks.update');

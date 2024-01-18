@@ -28,11 +28,17 @@ class GapKdoController extends Controller
         $branches = Branch::get();
         return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branches]);
     }
-
-    public function kdo_mobil(Request $request, $branch_code)
+    public function vendor($vendor)
     {
-        $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($branch_code) {
-            $query->where('branch_code', $branch_code);
+
+        $branches = Branch::get();
+        return Inertia::render('GA/Procurement/KDO/Vendor', ['branches' => $branches, 'vendor' => $vendor]);
+    }
+
+    public function kdo_mobil(Request $request, $slug)
+    {
+        $kdo_mobil = GapKdo::whereHas('branches', function ($query) use ($slug) {
+            $query->where('slug', $slug);
         })->with(['branches', 'biaya_sewas'])->first();
 
         $currentYear = date('Y');
@@ -46,6 +52,7 @@ class GapKdoController extends Controller
             'years' => $futureYears,
             'months' => $months,
             'periode' => $request->periode,
+            'vendor' => !is_null($request->vendor) ? $request->vendor : null,
         ]);
     }
 

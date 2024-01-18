@@ -86,6 +86,10 @@ class GapApiController extends Controller
 
         $perpage = $request->perpage ?? 15;
 
+        if (!is_null($request->vendor)) {
+            $query = $query->where('vendor', $request->vendor);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
@@ -156,6 +160,9 @@ class GapApiController extends Controller
 
         $query = $query->where('periode', $request->periode);
 
+        if (!is_null($request->vendor)) {
+            $query = $query->where('vendor', $request->vendor);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
@@ -410,7 +417,7 @@ class GapApiController extends Controller
         $data = $query->get();
         $collections = $data->flatMap(function ($perdin) {
             return $perdin->gap_perdin_details;
-        })->groupBy('periode')->map(function($spenders, $periode) {
+        })->groupBy('periode')->map(function ($spenders, $periode) {
             return [
                 'periode' => Carbon::parse($periode)->format('F Y'),
                 'airline' => $spenders->where('category', 'Airline')->sum('value'),
@@ -523,6 +530,7 @@ class GapApiController extends Controller
                 'branch_id' => $id,
                 'branch_name' => $branch->branch_name,
                 'branch_code' => $branch->branch_code,
+                'slug' => $branch->slug,
                 'quantity' => $toners->sum('quantity'),
                 'price' => $toners->sum('price'),
             ];
@@ -531,12 +539,12 @@ class GapApiController extends Controller
         return PaginationHelper::paginate($collections, $perpage);
     }
 
-    public function toner_details(GapToner $gap_toner, Request $request, $branch_code)
+    public function toner_details(GapToner $gap_toner, Request $request, $slug)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $branch = Branch::where('branch_code', $branch_code)->first();
+        $branch = Branch::where('slug', $slug)->first();
         $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
@@ -596,7 +604,7 @@ class GapApiController extends Controller
 
         $data = $query->get();
 
-        $collections = $data->groupBy('status')->map(function($pks, $status) {
+        $collections = $data->groupBy('status')->map(function ($pks, $status) {
             return [
                 'status' => $status,
                 'jumlah_pks' => $pks->count(),
@@ -615,7 +623,7 @@ class GapApiController extends Controller
         $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-        $query->where('status',$status);
+        $query->where('status', $status);
 
 
         if (!is_null($request->month) && !is_null($request->year)) {

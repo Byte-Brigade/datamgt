@@ -1,12 +1,11 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowPathIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -24,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Karyawan({ auth, branches, positions, sessions, status }) {
+export default function Detail({ auth, branches, positions, sessions, slug}) {
   const initialData = {
     file: null,
     branch: "0",
@@ -57,7 +56,7 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  console.log(status)
+
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -85,24 +84,6 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
       field: "hiring_date",
       type: "date",
       className: "text-center w-[300px]",
-    },
-    {
-      name: "Action",
-      field: "action",
-      className: "text-center",
-      render: (data) => (
-        <DropdownMenu
-          placement="left-start"
-          onEditClick={() => {
-            toggleModalEdit();
-            setData(data);
-          }}
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-      ),
     },
   ];
 
@@ -213,28 +194,7 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
               auth.permissions.includes(permission)
             ) && (
               <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
-                  <div>
-                    {/* <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton> */}
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={handleSubmitSync}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <ArrowPathIcon className="w-4 h-4" />
-                        Sync
-                      </div>
-                    </PrimaryButton>
-                  </div>
-                )}
+
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
                   <div className="flex items-center gap-x-2">
@@ -254,16 +214,8 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
                   )
                 : true
             )}
-            fetchUrl={"/api/ops/employees"}
+            fetchUrl={`/api/inquery/staff/${slug}`}
             refreshUrl={isRefreshed}
-            component={[
-              {
-                data: Array.from(
-                  new Set(positions.map((position) => position.position_name))
-                ),
-                field: "employee_positions.position_name",
-              },
-            ]}
           />
         </div>
       </div>

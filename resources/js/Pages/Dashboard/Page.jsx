@@ -214,7 +214,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           {/* Tabel Karyawan */}
           {active === "employee" && (
             <div className="w-full pt-4">
-              <div className="relative h-[500px]">
+              <div className="relative">
                 <BarChart
                   label="Jumlah Karyawan"
                   type="employee"
