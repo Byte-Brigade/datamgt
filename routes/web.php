@@ -108,13 +108,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/kdos', [GapKdoController::class, 'index'])->name('kdos');
             Route::get('/kdos/vendor/{vendor}', [GapKdoController::class, 'vendor'])->name('kdos.vendor');
             Route::get('/kdos/template', [GapKdoController::class, 'template'])->name('kdos.template');
+            Route::get('/kdos/mobil/template', [GapKdoController::class, 'kdo_mobil_template'])->name('kdos.mobil.template');
             Route::post('/kdos/import', [GapKdoController::class, 'import'])->name('kdos.import');
             Route::post('/kdos/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdos.mobil.import');
             Route::post('/kdos', [GapKdoController::class, 'store'])->name('kdos.store');
             Route::get('/kdos/mobil/{slug}', [GapKdoController::class, 'kdo_mobil'])->name('kdos.mobil');
             Route::post('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdos.mobil.store');
             Route::put('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdos.mobil.update');
-            Route::delete('/kdos/mobil/{branch_code}/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdos.mobil.destroy');
+            Route::delete('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdos.mobil.destroy');
             Route::get('/kdos/export', [GapKdoController::class, 'export'])->name('kdos.export');
             Route::get('/kdos/mobil/{branch_code}/export', [GapKdoController::class, 'kdo_mobil_export'])->name('kdos.mobil.export');
             /* [END] GA Procurement KDO */
@@ -157,14 +158,17 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/perdins/export', [GapPerdinController::class, 'export'])->name('perdins.export');
             Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
 
-            Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
-            Route::get('/alihdayas/template', [GapAlihDayaController::class, 'template'])->name('alihdayas.template');
-            Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
-            Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
-            Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
-            Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
-            Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
-            Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
+
+            Route::group(['middleware' => ['permission:can alih daya']], function () {
+                Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
+                Route::get('/alihdayas/template', [GapAlihDayaController::class, 'template'])->name('alihdayas.template');
+                Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
+                Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
+                Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
+                Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
+                Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
+                Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
+            });
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
             Route::get('/toners/template', [GapTonerController::class, 'template'])->name('toners.template');

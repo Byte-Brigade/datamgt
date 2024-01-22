@@ -11,6 +11,7 @@
                 <th>{{ $month }}</th>
             @endforeach
             <th>Total Sewa</th>
+            <th>Periode</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +37,7 @@
 
 
                 <td>{{ number_format(collect($kdo_mobil->biaya_sewa)->sum('value'), 0, ',', '.') }}</td>
+                <td>{{ Carbon\Carbon::now()->format('m-d-Y') }}</td>
             </tr>
         @endforeach
     </tbody>

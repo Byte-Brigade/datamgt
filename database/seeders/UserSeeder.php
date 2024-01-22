@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
             'can delete',
             'can add',
             'can export',
-            'can sto'
+            'can sto',
+            'can alih daya'
         ];
 
         $superadmin = User::create([

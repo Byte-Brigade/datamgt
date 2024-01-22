@@ -14,6 +14,7 @@ use App\Models\BranchType;
 use App\Models\GapKdo;
 use App\Models\KdoMobilBiayaSewa;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -79,6 +80,7 @@ class GapKdoController extends Controller
     {
         $branch = Branch::find($request->branch_id);
         try {
+            // dd($request->all());
             $gap_kdo_mobil = GapKdo::find($id);
             $gap_kdo_mobil->update([
                 'branch_id' => $request->branch_id,
@@ -88,40 +90,42 @@ class GapKdoController extends Controller
                 'awal_sewa' => $request->awal_sewa,
                 'akhir_sewa' => $request->akhir_sewa,
             ]);
-            $periode = Carbon::createFromDate($request->year, $request->month, 1)->startOfDay();
-            if (is_int($request->biaya_sewa)) {
+            $periode = Carbon::createFromFormat('Y-m', $request->periode)->startOfMonth()->format('Y-m-d');
 
-                KdoMobilBiayaSewa::create([
-                    'gap_kdo_mobil_id' => $gap_kdo_mobil->id,
-                    'periode' => $periode->format('Y-m-d'),
-                    'value' => $request->biaya_sewa
-                ]);
-            } else {
-                $biaya_sewa = KdoMobilBiayaSewa::find($request->biaya_sewa['id']);
-                if ($request->biaya_sewa['value'] > 0) {
+            KdoMobilBiayaSewa::updateOrCreate(
+                [
+                    'gap_kdo_id' => $gap_kdo_mobil->id,
+                    'periode' => $periode
+                ],
+                [
+                    'gap_kdo_id' => $gap_kdo_mobil->id,
+                    'periode' => $periode,
+                    'value' => (int) $request->biaya_sewa
+                ]
+            );
 
-                    $biaya_sewa->update(['value' => $request->biaya_sewa['value']]);
-                } else {
-                    $biaya_sewa->delete();
-                }
-            }
 
-            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {
-            return redirect(route('gap.kdos.mobil', $branch->branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
 
-    public function kdo_mobil_destroy($branch_code, $id)
+    public function kdo_mobil_destroy(Request $request, $id)
     {
         try {
-            $kdo_mobil = GapKdo::find($id);
-            $kdo_mobil->delete();
+            $periode = Carbon::createFromFormat('Y-m', $request->periode)->startOfMonth()->format('Y-m-d');
+            $biaya_sewa = KdoMobilBiayaSewa::where('gap_kdo_id', $id)->where('periode', $periode)->first();
+            if (isset($biaya_sewa)) {
 
-            return redirect(route('gap.kdos.mobil', $branch_code))->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);
+                $biaya_sewa->delete();
+            } else {
+                throw new Exception("Biaya sewa pada bulan ".$periode. ' belum ada');
+            }
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil dihapus']);
         } catch (Throwable $e) {
-            return redirect(route('gap.kdos.mobil', $branch_code))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -184,7 +188,7 @@ class GapKdoController extends Controller
         return (new KdosExport)->download($fileName);
     }
 
-    public function kdo_mobil_export(Request $request)
+    public function kdo_mobil_template(Request $request)
     {
 
         $fileName = 'Template_Import_KDO_Mobil' . date('d-m-y') . '.xlsx';

@@ -31,12 +31,13 @@ export default function Page({ auth, branches, sessions }) {
     asset_number: null,
     asset_description: null,
     date_in_place_service: null,
-    asset_cost: null,
+    asset_cost: 0,
     asset_location: null,
     major_category: null,
     minor_category: null,
-    depre_exp: null,
-    net_book_value: null,
+    depre_exp: 0,
+    accum_depre: 0,
+    net_book_value: 0,
 
     branches: {
       branch_code: null,
@@ -483,12 +484,24 @@ export default function Page({ auth, branches, sessions }) {
                   setData("date_in_place_service", e.target.value)
                 }
               />
-              <Input
+               <Select
                 label="Major Category"
-                value={data.major_category || ""}
+                value={`${data.major_category}`}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
-              />
+                onChange={(e) => setData("major_category", e)}
+              >
+                <Option value="Gedung">Gedung</Option>
+                <Option value="GENERAL">GENERAL</Option>
+                <Option value="Instalasi">Instalasi</Option>
+                <Option value="Inventaris Lainnya">Inventaris Lainnya</Option>
+                <Option value="IT Equipment">IT Equipment</Option>
+                <Option value="Lease Hold Improvement">Lease Hold Improvement</Option>
+                <Option value="Mesin-mesin">Mesin-mesin</Option>
+                <Option value="Mobil">Mobil</Option>
+                <Option value="Motor">Motor</Option>
+                <Option value="Software Komputer">Software Komputer</Option>
+                <Option value="Tanah">Tanah</Option>
+              </Select>
               <Input
                 label="Minor Category"
                 value={data.minor_category || ""}
@@ -603,12 +616,25 @@ export default function Page({ auth, branches, sessions }) {
                   setData("date_in_place_service", e.target.value)
                 }
               />
-              <Input
+
+              <Select
                 label="Major Category"
-                value={data.major_category || ""}
+                value={`${data.category}`}
                 disabled={processing}
-                onChange={(e) => setData("major_category", e.target.value)}
-              />
+                onChange={(e) => setData("major_category", e)}
+              >
+                <Option value="Gedung">Gedung</Option>
+                <Option value="GENERAL">GENERAL</Option>
+                <Option value="Instalasi">Instalasi</Option>
+                <Option value="Inventaris Lainnya">Inventaris Lainnya</Option>
+                <Option value="IT Equipment">IT Equipment</Option>
+                <Option value="Lease Hold Improvement">Lease Hold Improvement</Option>
+                <Option value="Mesin-mesin">Mesin-mesin</Option>
+                <Option value="Mobil">Mobil</Option>
+                <Option value="Motor">Motor</Option>
+                <Option value="Software Komputer">Software Komputer</Option>
+                <Option value="Tanah">Tanah</Option>
+              </Select>
               <Input
                 label="Minor Category"
                 value={data.minor_category || ""}
@@ -662,7 +688,7 @@ export default function Page({ auth, branches, sessions }) {
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.asset_number}
             </span>{" "}
             ?
           </Typography>

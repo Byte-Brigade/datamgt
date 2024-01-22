@@ -7,10 +7,9 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import {
-  DocumentArrowDownIcon,
-  DocumentPlusIcon,
+  DocumentPlusIcon
 } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -38,17 +37,15 @@ export default function Detail({
   console.log(kdo_mobil);
   const currentDate = new Date();
   const initialData = {
-    id: null,
+    id: 0,
     branch_id: 0,
     gap_kdo_id: 0,
     vendor: null,
     nopol: null,
     awal_sewa: null,
     akhir_sewa: null,
-    year: null,
-    month: null,
-    biaya_sewas: null,
-    biaya_sewa: null,
+    periode: null,
+    biaya_sewa: 0,
   };
 
   const {
@@ -67,6 +64,9 @@ export default function Detail({
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [periodeVal, setPeriodeVal] = useState(0);
 
+
+
+
   const handleSubmitCreate = (e) => {
     e.preventDefault();
     post(route("gap.kdos.mobil.store", data.branch_id), {
@@ -81,7 +81,7 @@ export default function Detail({
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.kdos.mobil.import"), {
+    post(route("gap.kdos.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -95,7 +95,7 @@ export default function Detail({
     e.preventDefault();
     window.open(
       route("gap.kdos.mobil.export", kdo_mobil.branches.branch_code) +
-        `?gap_kdo_id=${gap_kdo_id}`,
+      `?gap_kdo_id=${gap_kdo_id}`,
       "_self"
     );
   };
@@ -115,8 +115,8 @@ export default function Detail({
     e.preventDefault();
     destroy(
       route("gap.kdos.mobil.destroy", {
-        branch_code: kdo_mobil.branches.branch_code,
         id: data.id,
+        periode: data.periode,
       }),
       {
         replace: true,
@@ -134,45 +134,6 @@ export default function Detail({
 
     // Format the date to get the ISO string for the 1st day of the month
     return date.toISOString().slice(0, 10);
-  };
-
-  const handlePeriode = (month, year) => {
-    let biaya_sewas = data.biaya_sewas;
-
-    if (!Array.isArray(biaya_sewas)) {
-      setData("biaya_sewa", 0);
-      return;
-    }
-    let biaya_sewa = biaya_sewas.find(
-      (item) => item.periode === getPeriode(month, year)
-    );
-    setData({
-      ...data,
-      month: month,
-      year: year,
-      biaya_sewa: biaya_sewa ? biaya_sewa : 0,
-    });
-    console.log(data.month);
-    console.log(data.year);
-  };
-  const handleMonth = (e) => {
-    handlePeriode(e, data.year);
-  };
-  const handleYear = (e) => {
-    setData("year", e);
-    handlePeriode(data.month, e);
-  };
-  const handleBiayaSewa = (val) => {
-    if (typeof data.biaya_sewa === "object" && data.biaya_sewa !== null) {
-      let biaya_sewa = { ...data.biaya_sewa, value: val };
-      console.log("handle");
-      console.log(biaya_sewa);
-      setData("biaya_sewa", biaya_sewa);
-      return;
-    }
-    setData("biaya_sewa", Number(val));
-
-    console.log(data.biaya_sewa);
   };
 
   const toggleModalCreate = () => {
@@ -215,7 +176,7 @@ export default function Detail({
       className: "text-center ",
       render: (data) => {
         return data.biaya_sewa
-          ? data.biaya_sewa.value.toLocaleString("ID-id")
+          ? data.biaya_sewa.toLocaleString("ID-id")
           : "-";
       },
     },
@@ -228,17 +189,7 @@ export default function Detail({
           placement="left-start"
           onEditClick={() => {
             toggleModalEdit();
-            const dateObject = data.biaya_sewa
-              ? new Date(data.biaya_sewa.periode)
-              : new Date();
-
-            const year = dateObject.getFullYear(); // Mendapatkan tahun (contoh: 2023)
-            const month = dateObject.getMonth() + 1;
-
-            setData({ ...data, month: month.toString(), year: year });
-            console.log(month);
-            console.log();
-            // setPeriodeVal(Array.isArray(biaya_sewas) ? biaya_sewas.find(item => item.periode === getPeriode(data.month, data.year)).value : 0)
+            setData(data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -266,26 +217,17 @@ export default function Detail({
             ) && (
               <div className="flex items-center justify-between mb-4">
                 {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
+
+                  <PrimaryButton
+                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                    onClick={toggleModalImport}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <DocumentPlusIcon className="w-4 h-4" />
+                      Import Excel
+                    </div>
+                  </PrimaryButton>
+
                 )}
               </div>
             )}
@@ -293,9 +235,9 @@ export default function Detail({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={`/api/gap/kdos/detail/${kdo_mobil.branch_id}`}
@@ -391,8 +333,8 @@ export default function Detail({
           </DialogFooter>
         </form>
       </Dialog>
-      {/* Modal Import */}
-      <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
+       {/* Modal Import */}
+       <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
         <DialogHeader className="flex items-center justify-between">
           Import Data
           <IconButton
@@ -408,15 +350,8 @@ export default function Detail({
         <form onSubmit={handleSubmitImport} encType="multipart/form-data">
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
-              <Button
-                className="flex items-center gap-x-2 max-w-fit"
-                size="sm"
-                onClick={handleExport}
-              >
-                <DocumentArrowDownIcon className="w-5 h-5" />
-                Download Template
-              </Button>
               <Input
+                variant="standard"
                 label="Import Excel (.xlsx)"
                 disabled={processing}
                 type="file"
@@ -427,7 +362,10 @@ export default function Detail({
               />
             </div>
           </DialogBody>
-          <DialogFooter>
+          <DialogFooter className="w-100 flex justify-between">
+            <SecondaryButton type="button">
+              <a href={route("gap.kdos.mobil.template")}>Download Template</a>
+            </SecondaryButton>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan
@@ -482,34 +420,19 @@ export default function Detail({
                 disabled={processing}
                 onChange={(e) => setData("akhir_sewa", e.target.value)}
               />
-              <Select
-                label="Tahun"
-                value={data.year ? `${data.year}` : ""}
-                onChange={handleYear}
-              >
-                {years.map((year, index) => (
-                  <Option key={index} value={`${year}`}>
-                    {year}
-                  </Option>
-                ))}
-              </Select>
-              <Select
-                label="Bulan"
-                value={data.month || ""}
-                onChange={handleMonth}
-              >
-                {months.map((month, index) => (
-                  <Option key={index} value={`${index + 1}`}>
-                    {month}
-                  </Option>
-                ))}
-              </Select>
+              <Input
+                label="Periode"
+                value={data.periode || ""}
+                type="month"
+                disabled={processing}
+                onChange={(e) => setData("periode", e.target.value)}
+              />
               <Input
                 label="Biaya Sewa"
-                value={data.biaya_sewa ? data.biaya_sewa.value : ""}
+                value={data.biaya_sewa || ""}
                 type="number"
                 disabled={processing}
-                onChange={(e) => handleBiayaSewa(e.target.value)}
+                onChange={(e) => setData("biaya_sewa", e.target.value)}
               />
             </div>
           </DialogBody>
