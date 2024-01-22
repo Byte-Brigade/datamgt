@@ -30,7 +30,15 @@ export default function Login({ status, canResetPassword }) {
   const submit = (e) => {
     e.preventDefault();
 
-    post(route("login"));
+    axios
+      .post(route("api/login"), { email: data.email, password: data.password })
+      .then((res) => {
+        const token = res.data.token;
+
+        localStorage.setItem("auth", token);
+        post(route("login"));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -46,7 +54,7 @@ export default function Login({ status, canResetPassword }) {
       )}
 
       <form
-        className="p-8 mt-8 border border-black rounded-xl"
+        className="p-8 mt-8 border border-slate-800 rounded-xl"
         onSubmit={submit}
       >
         <div>
@@ -80,6 +88,10 @@ export default function Login({ status, canResetPassword }) {
           />
 
           <InputError message={errors.password} className="mt-2" />
+        </div>
+
+        <div className="mt-2">
+          <InputError message={errors.user} className="mt-2" />
         </div>
 
         <div className="flex flex-col items-center justify-end mt-4 gap-y-4">

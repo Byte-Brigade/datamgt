@@ -24,6 +24,7 @@ class OpsApiController extends Controller
 {
     public function branches(Branch $branch, Request $request)
     {
+
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
@@ -137,7 +138,7 @@ class OpsApiController extends Controller
         $searchInput = $request->search;
         $query = $ops_apar->orderBy($sortFieldInput, $sortOrder);
 
-        $query = $query->whereHas('branches', function($q) use($id) {
+        $query = $query->whereHas('branches', function ($q) use ($id) {
             return $q->where('id', $id);
         });
 

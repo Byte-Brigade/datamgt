@@ -10,6 +10,7 @@ export default function Detail({
   positions,
   licenses,
 }) {
+  console.log(branch)
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`Inquery Data | Branch | ${branch.branch_name}`} />
@@ -24,7 +25,6 @@ export default function Detail({
                   <th>{branch.branch_name}</th>
                   <th>Status Gedung</th>
                   <th>{branch.status}</th>
-
                 </tr>
               </thead>
               <tbody>
@@ -33,9 +33,7 @@ export default function Detail({
                   <td>{ConvertDate(branch.open_date)}</td>
                   <td className="font-bold">Jatuh Tempo Sewa / Sertifikat</td>
                   <td>{ConvertDate(branch.expired_date)}</td>
-
                 </tr>
-
 
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
                   <td className="font-bold">Alamat</td>
@@ -59,28 +57,36 @@ export default function Detail({
           <div className="grid grid-cols-2 gap-2 mt-4">
             <div className="flex flex-col">
               <span className="mb-2">Staff Cabang</span>
-              <table className="w-full text-left">
-                <thead className="border-b-2 border-slate-200">
-                  <tr className="[&>th]:p-2 bg-slate-100">
-                    <th>Jabatan</th>
-                    <th>Jumlah</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {positions.map((position) => (
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                      <td>{position.position_name}</td>
-                      <td>
-                        {
-                          branch.employees.filter(
-                            (employee) => employee.position_id === position.id
-                          ).length
-                        }
-                      </td>
+              <div className="overflow-auto max-h-96">
+                <table className="relative w-full text-left max-h-96">
+                  <thead className="sticky top-0 z-20 border-b-2 table-fixed border-slate-200">
+                    <tr className="[&>th]:p-2 bg-slate-100">
+                      <th>Jabatan</th>
+                      <th>Jumlah</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="overflow-auto">
+                    {positions.map((position) => (
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                        <td>{position.position_name}</td>
+                        <td>
+                          {
+                            branch.employees.filter(
+                              (employee) => employee.position_id === position.id
+                            ).length
+                          }
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="">
+                    <tr>
+                      <th>Total Staff</th>
+                      <th>123</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
             </div>
             <div className="flex flex-col">
               <span className="mb-2">Lisensi</span>
@@ -101,13 +107,15 @@ export default function Detail({
                         <td>{license.remark}</td>
                         <td>{ConvertDate(license.jatuh_tempo)}</td>
                         {license.url && (
-                          <td><a
-                            className="text-blue-500 hover:underline text-ellipsis"
-                            href={`/storage/${license.url}`}
-                            target="__blank"
-                          >
-                            Lihat
-                          </a></td>
+                          <td>
+                            <a
+                              className="text-blue-500 hover:underline text-ellipsis"
+                              href={`/storage/${license.url}`}
+                              target="__blank"
+                            >
+                              Lihat
+                            </a>
+                          </td>
                         )}
                       </tr>
                     ))}

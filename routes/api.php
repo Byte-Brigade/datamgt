@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\GapApiController;
 use App\Http\Controllers\API\InfraApiController;
 use App\Http\Controllers\API\InqueryApiController;
@@ -21,6 +22,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth:sanctum')->get('/token', function (Request $request) {
+    $token = $request->user()->currentAccessToken();
+    $response = [
+        'success' => true,
+        'token' => $token,
+        'user' => $token->tokenable,
+    ];
+    return response($response, 201);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -32,7 +46,7 @@ Route::prefix('report')->name('report.')->group(function () {
     Route::get('disnaker/{id}', [ReportApiController::class, 'disnaker_details']);
 });
 Route::prefix('ops')->name('ops.')->group(function () {
-    Route::get('/branches', [OpsApiController::class, 'branches']);
+    Route::middleware(['auth:sanctum', 'api.unauthorized'])->get('/branches', [OpsApiController::class, 'branches']);
     Route::get('/employees', [OpsApiController::class, 'employees']);
     Route::get('/apars', [OpsApiController::class, 'apars']);
     Route::get('/apar/details/{id}', [OpsApiController::class, 'apar_details']);

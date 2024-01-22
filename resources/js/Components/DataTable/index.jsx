@@ -52,6 +52,7 @@ export default function DataTable({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
   const [remarks, setRemarks] = useState({});
   const [allMarked, setAllMarked] = useState(false);
+  const [auth, setAuth] = useState(false);
 
   const {
     form,
@@ -180,36 +181,49 @@ export default function DataTable({
     };
 
     if (fetchUrl) {
-      const { data } = await axios.get(fetchUrl, { params });
-      setData(
-        data.data instanceof Object ? Object.values(data.data) : data.data
-      );
-      // setSumData(data.data.reduce((total, item) => {
-      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
+      axios
+        .get(fetchUrl, {
+          params,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        })
+        .then(({ data }) => {
+          setAuth(true);
+          setData(
+            data.data instanceof Object ? Object.values(data.data) : data.data
+          );
 
-      //   return total + value;
-      // }, 0));
-      setPagination(data.meta ? data.meta : data);
-      setLoading(false);
-      if (Array.isArray(data.data)) {
-        if (
-          data.data.some(
-            (data) => data.remark !== undefined && data.remark !== null
-          )
-        ) {
-          const remarksData = data.data.reduce((acc, current) => {
-            acc[current.id] = current.remark;
-            return acc;
-          }, {});
+          setPagination(data.meta ? data.meta : data);
+          setLoading(false);
+          if (Array.isArray(data.data)) {
+            if (
+              data.data.some(
+                (data) => data.remark !== undefined && data.remark !== null
+              )
+            ) {
+              const remarksData = data.data.reduce((acc, current) => {
+                acc[current.id] = current.remark;
+                return acc;
+              }, {});
 
-          setSelected(remarksData);
-        }
-      }
+              setSelected(remarksData);
+            }
+          }
 
-      setInitialData({ remark: {} });
+          setInitialData({ remark: {} });
 
-      console.log(data.data);
+          console.log(data.data);
+        })
+        .catch((err) => {
+          console.log(
+            `${err.code} ${err.response.status} : ${err.response.statusText}`
+          );
+          setAuth(false);
+          setLoading(false);
+        });
     }
+
     if (dataArr) {
       console.log(dataArr);
       setData(dataArr);
@@ -470,7 +484,7 @@ export default function DataTable({
                 bordered && "divide-x-2 divide-slate-200"
               }`}
             >
-              <th className={"text-center"}>No</th>
+              <th className="text-center">No</th>
               {columns.map((column, i) => (
                 <th
                   className={
@@ -532,6 +546,15 @@ export default function DataTable({
                   Tidak ada data tersedia
                 </td>
               </tr>
+            ) : !auth ? (
+              <tr>
+                <td
+                  colSpan={columns.length + 1}
+                  className="p-2 text-lg font-semibold text-center bg-slate-200"
+                >
+                  Unauthorized.
+                </td>
+              </tr>
             ) : (
               <>
                 {data.map((data, index) => (
@@ -576,7 +599,11 @@ export default function DataTable({
                           </td>
                         ) : (
                           <td
-                            key={column.type === 'custom' ? column.key : column.field}
+                            key={
+                              column.type === "custom"
+                                ? column.key
+                                : column.field
+                            }
                             colSpan={column.colSpan}
                             className={`${column.className} ${
                               column.freeze && "sticky left-0 bg-white"

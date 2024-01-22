@@ -2,7 +2,7 @@ import { DateTime } from "@/Utils/DateTime";
 import {
   Bars3Icon,
   ChevronDownIcon,
-  UserCircleIcon
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import { Link, usePage } from "@inertiajs/react";
@@ -16,7 +16,24 @@ import {
   Navbar,
   Typography,
 } from "@material-tailwind/react";
+import axios from "axios";
 import { createElement, useState } from "react";
+
+const logout = () => {
+  const token = localStorage.getItem("auth");
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  axios
+    .post(
+      route("api/logout"),
+      {},
+      {
+        headers: headers,
+      }
+    )
+    .then(() => localStorage.removeItem("auth"));
+};
 
 // profile menu component
 const profileMenuItems = [
@@ -31,7 +48,7 @@ const profileMenuItems = [
   },
   {
     label: (
-      <Link href={route("logout")} method="post" as="div">
+      <Link href={route("logout")} method="post" as="ul" onClick={logout}>
         <Typography>Keluar</Typography>
       </Link>
     ),

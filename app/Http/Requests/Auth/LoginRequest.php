@@ -49,7 +49,7 @@ class LoginRequest extends FormRequest
 
         if ($user == null) {
             throw ValidationException::withMessages([
-                'email' => 'Email atau Password salah!',
+                'user' => 'Email atau Password salah!',
             ]);
         }
 
@@ -59,7 +59,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => 'Email atau Password salah!',
+                'user' => 'Email atau Password salah!',
             ]);
         }
 
