@@ -11,6 +11,8 @@ class GapAsset extends Model
     use HasFactory;
 
 
+
+
     protected $fillable = [
         'branch_id',
         'category',
@@ -26,9 +28,19 @@ class GapAsset extends Model
         'net_book_value',
         'periode',
         'remark',
+
+    ];
+
+    protected $attributes = [
+        'net_book_value' => 0,
+        'asset_cost' => 0,
+        'accum_depre' => 0,
+        'depre_exp' => 0,
     ];
 
     public function branches() {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
+
+
 }

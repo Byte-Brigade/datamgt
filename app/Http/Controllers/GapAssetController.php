@@ -104,6 +104,7 @@ class GapAssetController extends Controller
                 'minor_category' => $request->minor_category,
                 'depre_exp' => $request->depre_exp,
                 'net_book_value' => $request->net_book_value,
+                'periode' => Carbon::now()->format('Y-m-d'),
             ]);
             return redirect(route('gap.assets'))->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (Throwable $e) {

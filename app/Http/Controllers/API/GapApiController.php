@@ -114,7 +114,7 @@ class GapApiController extends Controller
                 return [
                     'branches' => Branch::find($branch),
                     'branch_types' => $kdos->first()->branches->branch_types,
-                    'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
+                    'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
                     'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,

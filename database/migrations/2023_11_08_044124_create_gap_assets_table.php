@@ -20,13 +20,13 @@ return new class extends Migration
             $table->integer('asset_number');
             $table->text('asset_description')->nullable();
             $table->date('date_in_place_service')->nullable();
-            $table->unsignedBigInteger('asset_cost')->nullable();
-            $table->unsignedBigInteger('accum_depre')->nullable();
+            $table->unsignedBigInteger('asset_cost');
+            $table->unsignedBigInteger('accum_depre');
             $table->string('asset_location')->nullable();
             $table->string('major_category');
             $table->string('minor_category')->nullable();
-            $table->unsignedBigInteger('depre_exp')->nullable();
-            $table->unsignedBigInteger('net_book_value')->nullable();
+            $table->unsignedBigInteger('depre_exp');
+            $table->unsignedBigInteger('net_book_value');
             $table->date('periode');
             $table->string('remark')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
