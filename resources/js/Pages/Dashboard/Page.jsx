@@ -11,13 +11,18 @@ import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
+import { tabState } from "@/Utils/TabState";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
   const [area, setArea] = useState("none");
-  const [active, setActive] = useState("branch");
+  const { active, params, handleTabChange } = tabState([
+    "branch",
+    "atm",
+    "employee",
+    "asset",
+  ]);
   const [open, setOpen] = useState(false);
-  console.log(auth)
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
   const handleOpen = () => setOpen(!open);
@@ -44,7 +49,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       type: "branch",
       Icon: BuildingOffice2Icon,
       active,
-      onClick: () => setActive("branch"),
+      onClick: () => handleTabChange("branch"),
       branchState: branchId,
       areaState: area,
       color: "blue",
@@ -55,7 +60,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       type: "atm",
       Icon: CreditCardIcon,
       active,
-      onClick: () => setActive("atm"),
+      onClick: () => handleTabChange("atm"),
       branchState: branchId,
       areaState: area,
       color: "green",
@@ -66,7 +71,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       type: "employee",
       Icon: UserGroupIcon,
       active,
-      onClick: () => setActive("employee"),
+      onClick: () => handleTabChange("employee"),
       branchState: branchId,
       areaState: area,
       color: "orange",
@@ -77,14 +82,13 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       type: "asset",
       Icon: ArchiveBoxIcon,
       active,
-      onClick: () => setActive("asset"),
+      onClick: () => handleTabChange("asset"),
       branchState: branchId,
       areaState: area,
       color: "purple",
     },
-
   ];
-  console.log(data)
+  console.log(data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
@@ -182,9 +186,27 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200"
                         >
                           <td>{cabang}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Milik').length}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Sewa').length}</td>
-                          <td>{data.jumlah_cabang[cabang].filter(data => data.status === 'Pinjam Pakai').length}</td>
+                          <td>
+                            {
+                              data.jumlah_cabang[cabang].filter(
+                                (data) => data.status === "Milik"
+                              ).length
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.jumlah_cabang[cabang].filter(
+                                (data) => data.status === "Sewa"
+                              ).length
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.jumlah_cabang[cabang].filter(
+                                (data) => data.status === "Pinjam Pakai"
+                              ).length
+                            }
+                          </td>
 
                           <td>{data.jumlah_cabang[cabang].length}</td>
                         </tr>
@@ -227,7 +249,9 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 <table className={`text-sm leading-3 bg-white w-full`}>
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
-                      <th className="text-center" wi>No</th>
+                      <th className="text-center" wi>
+                        No
+                      </th>
                       <th className="text-center">Jabatan</th>
                       <th className="text-center">Jumlah</th>
                     </tr>
@@ -235,12 +259,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <tbody className="overflow-y-auto">
                     {data.employee_positions.map((position, index) => (
                       <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                        <td>
-                          {index + 1}
-                        </td>
-                        <td>
-                          {position.position_name}
-                        </td>
+                        <td>{index + 1}</td>
+                        <td>{position.position_name}</td>
                         <td className="text-center">
                           {
                             data.employees
@@ -853,8 +873,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </tbody>
             </table>
           )}
-
-
         </div>
       </div>
     </AuthenticatedLayout>
