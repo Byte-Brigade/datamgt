@@ -4,14 +4,15 @@ import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-
 import { Button, Option, Select } from "@material-tailwind/react";
-import { useState } from "react";
+
 export default function Detail({ auth, branch, sessions }) {
   const { form, selected, setSelected } = useFormContext();
-  const [active, setActive] = useState("depre");
+
+  const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
   const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
@@ -24,22 +25,6 @@ export default function Detail({ auth, branch, sessions }) {
     form.setData("remark", { ...selected, [id]: value });
   };
 
-  const headings = [
-    {
-      name: "Scoring Schedule",
-      rowsSpan: 3,
-      colsSpan: 2,
-    },
-    {
-      name: "Jumlah Vendor",
-      rowsSpan: 3,
-      colsSpan: 2,
-    },
-    {
-      name: "Type Scoring",
-      colsSpan: 7,
-    },
-  ];
   const columns = [
     {
       name: "Asset Number",
@@ -152,30 +137,29 @@ export default function Detail({ auth, branch, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex justify-between w-100">
-            <div className="grid grid-cols-4 gap-4 mb-2">
-              <CardMenu
-                label="Depre"
-                data
-                type="depre"
-                Icon={ArchiveBoxIcon}
-                active
-                onClick={() => setActive("depre")}
-                color="purple"
-              />
-              <CardMenu
-                label="Non-Depre"
-                data
-                type="nonDepre"
-                Icon={ArchiveBoxIcon}
-                active
-                onClick={() => setActive("nonDepre")}
-                color="purple"
-              />
-            </div>
-            <h2 className="text-xl font-semibold text-center">
-              {branch.branch_name}
-            </h2>
+
+          <h2 className="text-xl font-semibold text-center mb-4">
+            {branch.branch_name}
+          </h2>
+          <div className="grid grid-cols-4 gap-4 mb-2">
+            <CardMenu
+              label="Depre"
+              data
+              type="depre"
+              Icon={ArchiveBoxIcon}
+              active={params.value}
+              onClick={() => handleTabChange("depre")}
+              color="purple"
+            />
+            <CardMenu
+              label="Non-Depre"
+              data
+              type="nonDepre"
+              Icon={ArchiveBoxIcon}
+              active={params.value}
+              onClick={() => handleTabChange("nonDepre")}
+              color="purple"
+            />
           </div>
           {active == "depre" && (
             <DataTable

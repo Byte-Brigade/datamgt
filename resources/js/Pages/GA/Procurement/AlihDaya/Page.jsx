@@ -7,6 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { hasRoles } from "@/Utils/HasRoles";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -50,7 +51,10 @@ export default function Page({ auth, sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [active, setActive] = useState("tenagaKerja");
+  const { active, params, handleTabChange } = tabState([
+    "tenaga-kerja",
+    "biaya",
+  ]);
 
   const heading1 = [
     {
@@ -145,17 +149,6 @@ export default function Page({ auth, sessions }) {
       className: "text-center",
       render: (data) => data.vendor.length,
     },
-
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.alihdayas.detail", data.vendor)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
 
   const columnCosts = [
@@ -284,8 +277,6 @@ export default function Page({ auth, sessions }) {
     // },
   ];
 
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
-
   const handleSubmitImport = (e) => {
     e.preventDefault();
     post(route("gap.alihdayas.import"), {
@@ -368,10 +359,10 @@ export default function Page({ auth, sessions }) {
             <CardMenu
               label="Jumlah Tenaga Kerja"
               data
-              type="tenagaKerja"
+              type="tenaga-kerja"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("tenagaKerja")}
+              active={params.value}
+              onClick={() => handleTabChange("tenaga-kerja")}
               color="purple"
             />
             <CardMenu
@@ -379,8 +370,8 @@ export default function Page({ auth, sessions }) {
               data
               type="biaya"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("biaya")}
+              active={params.value}
+              onClick={() => handleTabChange("biaya")}
               color="purple"
             />
           </div>
@@ -409,7 +400,7 @@ export default function Page({ auth, sessions }) {
                 )}
               </div>
             )}
-          {active === "tenagaKerja" && (
+          {active === "tenaga-kerja" && (
             <DataTable
               columns={columnItems}
               headings={heading1}

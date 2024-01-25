@@ -34,11 +34,11 @@ class InqueryController extends Controller
     }
     public function staff_detail($slug)
     {
-        $branches = Branch::all();
+        $branch = Branch::where('slug', $slug)->first();
         $positionsProps = EmployeePosition::all();
         return Inertia::render('Inquery/Staff/Detail', [
             'slug' => $slug,
-            'branches' => $branches,
+            'branch' => $branch,
             'positions' => $positionsProps,
         ]);
     }
