@@ -6,7 +6,10 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowPathIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -23,8 +26,15 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
+import CheckStatus from "./CheckStatus";
 
-export default function Karyawan({ auth, branches, positions, sessions, status }) {
+export default function Karyawan({
+  auth,
+  branches,
+  positions,
+  sessions,
+  status,
+}) {
   const initialData = {
     file: null,
     branch: "0",
@@ -57,7 +67,7 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  console.log(status)
+  console.log(status);
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -215,33 +225,26 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
               <div className="flex items-center justify-between mb-4">
                 {auth.permissions.includes("can add") && (
                   <div>
-                    {/* <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton> */}
                     <PrimaryButton
                       className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
                       onClick={handleSubmitSync}
+                      disabled={status === "Offline"}
                     >
                       <div className="flex items-center gap-x-2">
                         <ArrowPathIcon className="w-4 h-4" />
                         Sync
                       </div>
                     </PrimaryButton>
+                    <CheckStatus status={status} />
                   </div>
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
-                  <div className="flex items-center gap-x-2">
-                    <DocumentArrowDownIcon className="w-4 h-4" />
-                    Create Report
-                  </div>
-                </PrimaryButton>
+                    <div className="flex items-center gap-x-2">
+                      <DocumentArrowDownIcon className="w-4 h-4" />
+                      Create Report
+                    </div>
+                  </PrimaryButton>
                 )}
               </div>
             )}
@@ -296,7 +299,7 @@ export default function Karyawan({ auth, branches, positions, sessions, status }
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
+          <DialogFooter className="flex justify-between w-100">
             <SecondaryButton type="button">
               <a href={route("ops.employees.template")}>Download Template</a>
             </SecondaryButton>

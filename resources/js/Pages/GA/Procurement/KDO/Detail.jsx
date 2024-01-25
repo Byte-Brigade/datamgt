@@ -208,7 +208,7 @@ export default function Detail({
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="text-xl font-semibold text-center mb-4">
+          <h2 className="text-xl font-semibold text-end mb-4">
             {kdo_mobil.branches.branch_name}
           </h2>
           {hasRoles("superadmin|admin|procurement", auth) &&

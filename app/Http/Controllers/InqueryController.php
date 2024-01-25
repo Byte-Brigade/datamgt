@@ -34,11 +34,11 @@ class InqueryController extends Controller
     }
     public function staff_detail($slug)
     {
-        $branches = Branch::all();
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
         $positionsProps = EmployeePosition::all();
         return Inertia::render('Inquery/Staff/Detail', [
             'slug' => $slug,
-            'branches' => $branches,
+            'branch' => $branch,
             'positions' => $positionsProps,
         ]);
     }
@@ -161,7 +161,7 @@ class InqueryController extends Controller
 
     public function asset_detail($slug)
     {
-        $branch = Branch::where('slug', $slug)->firstOrFail();
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
         return Inertia::render('Inquery/Asset/Detail', [
             'branch' => $branch,
         ]);

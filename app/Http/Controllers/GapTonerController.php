@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\Toners\TonerExport;
 use App\Imports\TonerImport;
+use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -56,9 +57,10 @@ class GapTonerController extends Controller
     }
 
 
-    public function detail(Request $request, $branch_code)
+    public function detail(Request $request, $slug)
     {
-        return Inertia::render('GA/Procurement/Toner/Detail', ['branch_code' => $branch_code]);
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+        return Inertia::render('GA/Procurement/Toner/Detail', ['branch' => $branch]);
     }
 
 }

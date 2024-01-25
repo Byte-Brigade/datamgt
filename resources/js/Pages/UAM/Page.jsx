@@ -401,7 +401,7 @@ export default function UAM({
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Hak Akses</span>
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 overflow-x-auto">
                   {permissions.map((permission, index) => (
                     <Checkbox
                       key={index}

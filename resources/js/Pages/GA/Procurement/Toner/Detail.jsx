@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions, branch_code }) {
+export default function Page({ auth, sessions, branch }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -102,8 +102,6 @@ export default function Page({ auth, sessions, branch_code }) {
     // },
   ];
 
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
-
   const handleSubmitImport = (e) => {
     e.preventDefault();
     post(route("gap.toners.import"), {
@@ -182,6 +180,9 @@ export default function Page({ auth, sessions, branch_code }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <h2 className="text-xl text-end font-semibold">
+              {branch.branch_types.type_name} {branch.branch_name}
+            </h2>
           {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
@@ -209,7 +210,7 @@ export default function Page({ auth, sessions, branch_code }) {
             )}
           <DataTable
             columns={columns}
-            fetchUrl={`/api/gap/toners/${branch_code}`}
+            fetchUrl={`/api/gap/toners/${branch.slug}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
