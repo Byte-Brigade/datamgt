@@ -4,18 +4,28 @@ import DataTable from "@/Components/DataTable";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Head, Link, usePage } from "@inertiajs/react";
-
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Typography } from "@material-tailwind/react";
-import { useState } from "react";
-
+import { Head, Link } from "@inertiajs/react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  IconButton,
+  Input,
+  Typography,
+} from "@material-tailwind/react";
 
 export default function Page({ sessions, auth, data }) {
-  const { url } = usePage();
+  const { active, params, handleTabChange } = tabState([
+    "assets",
+    "toner",
+    "kdo",
+    "sto",
+  ]);
 
-  const [active, setActive] = useState("assets");
-  console.log(active)
   const {
     handleFormSubmit,
     setInitialData,
@@ -223,19 +233,24 @@ export default function Page({ sessions, auth, data }) {
       ),
     },
     {
-
-      name: "Tipe Cabang", field: "type_name", className: "text-center",
-
+      name: "Tipe Cabang",
+      field: "type_name",
+      className: "text-center",
     },
     {
-      name: "Depre", field: "depre", className: "text-center",
+      name: "Depre",
+      field: "depre",
+      className: "text-center",
     },
     {
-      name: "Non-Depre", field: "non_depre", className: "text-center",
+      name: "Non-Depre",
+      field: "non_depre",
+      className: "text-center",
     },
     {
-      name: "Total Remark", field: "total_remarked", className: "text-center",
-
+      name: "Total Remark",
+      field: "total_remarked",
+      className: "text-center",
     },
     {
       name: "Sudah STO",
@@ -245,13 +260,11 @@ export default function Page({ sessions, auth, data }) {
       render: (data) => (data.remarked === 1 ? "Sudah" : "Belum"),
     },
 
-
     {
       name: "Submit",
       field: "detail",
       className: "text-center",
-      render: (data) => (
-
+      render: (data) =>
         data.disclaimer ? (
           <a
             className="text-blue-500 hover:underline text-ellipsis"
@@ -261,9 +274,14 @@ export default function Page({ sessions, auth, data }) {
             {" "}
             {data.disclaimer}
           </a>
-        ) : (<Button onClick={(e) => toggleModalCreate(data.branch_code)} variant="outlined">Submit</Button>)
-
-      ),
+        ) : (
+          <Button
+            onClick={(e) => toggleModalCreate(data.branch_code)}
+            variant="outlined"
+          >
+            Submit
+          </Button>
+        ),
     },
   ];
 
@@ -279,8 +297,8 @@ export default function Page({ sessions, auth, data }) {
               data
               type="assets"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("assets")}
+              active={params.value}
+              onClick={() => handleTabChange("assets")}
               color="purple"
             />
             <CardMenu
@@ -288,8 +306,8 @@ export default function Page({ sessions, auth, data }) {
               data
               type="toner"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("toner")}
+              active={params.value}
+              onClick={() => handleTabChange("toner")}
               color="purple"
             />
             <CardMenu
@@ -297,8 +315,8 @@ export default function Page({ sessions, auth, data }) {
               data
               type="kdo"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("kdo")}
+              active={params.value}
+              onClick={() => handleTabChange("kdo")}
               color="purple"
             />
             <CardMenu
@@ -306,8 +324,8 @@ export default function Page({ sessions, auth, data }) {
               data
               type="sto"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("sto")}
+              active={params.value}
+              onClick={() => handleTabChange("sto")}
               color="purple"
             />
           </div>
@@ -316,9 +334,7 @@ export default function Page({ sessions, auth, data }) {
             <DataTable
               fetchUrl={"/api/inquery/assets"}
               columns={columns}
-
               parameters={{ branch_id: auth.user.branch_id }}
-
               headings={headings}
               bordered={true}
             />
@@ -328,12 +344,9 @@ export default function Page({ sessions, auth, data }) {
               <DataTable
                 fetchUrl={"/api/inquery/stos"}
                 columns={columnsSTO}
-
                 parameters={{ branch_id: auth.user.branch_id }}
-
                 isRefreshed={isRefreshed}
                 bordered={true}
-
               />
               <Dialog
                 open={modalOpen.create}
@@ -355,18 +368,21 @@ export default function Page({ sessions, auth, data }) {
                 <form onSubmit={handleFormSubmit}>
                   <DialogBody divider>
                     <div className="flex flex-col gap-y-4">
-                      <Typography>BSM dan BSO menyatakan sudah melakukan STO dengan ini bertanggung jawab...</Typography>
+                      <Typography>
+                        BSM dan BSO menyatakan sudah melakukan STO dengan ini
+                        bertanggung jawab...
+                      </Typography>
 
                       <Input
-
                         variant="standard"
                         label="Upload Lampiran (.pdf)"
                         type="file"
                         name="upload"
                         id="upload"
                         accept=".pdf"
-                        onChange={(e) => form.setData("file", e.target.files[0])}
-
+                        onChange={(e) =>
+                          form.setData("file", e.target.files[0])
+                        }
                       />
                     </div>
                   </DialogBody>
@@ -398,13 +414,14 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                              undefined
+                          {`${month} ${
+                            Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                               ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                                  Object.values(data.gap_toners)[0].idecice_date
+                                ).getFullYear()
                               : new Date().getFullYear()
-                            }`}
+                          }`}
                         </th>
                       ))}
                     </tr>
@@ -421,10 +438,11 @@ export default function Page({ sessions, auth, data }) {
                                 {values
                                   .filter(
                                     (value) =>
-                                      new Date(value.idecice_date).toLocaleString(
-                                        "en-US",
-                                        { month: "long" }
-                                      ) === month
+                                      new Date(
+                                        value.idecice_date
+                                      ).toLocaleString("en-US", {
+                                        month: "long",
+                                      }) === month
                                   )
                                   .reduce((acc, toner) => {
                                     return acc + toner.total;
@@ -449,13 +467,14 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                              undefined
+                          {`${month} ${
+                            Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                               ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                                  Object.values(data.gap_toners)[0].idecice_date
+                                ).getFullYear()
                               : new Date().getFullYear()
-                            }`}
+                          }`}
                         </th>
                       ))}
                     </tr>
@@ -472,10 +491,11 @@ export default function Page({ sessions, auth, data }) {
                                 {values
                                   .filter(
                                     (value) =>
-                                      new Date(value.idecice_date).toLocaleString(
-                                        "en-US",
-                                        { month: "long" }
-                                      ) === month
+                                      new Date(
+                                        value.idecice_date
+                                      ).toLocaleString("en-US", {
+                                        month: "long",
+                                      }) === month
                                   )
                                   .reduce((acc, toner) => {
                                     return acc + toner.quantity;
@@ -498,13 +518,14 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                              undefined
+                          {`${month} ${
+                            Object.values(data.gap_toners)[0].idecice_date !==
+                            undefined
                               ? new Date(
-                                Object.values(data.gap_toners)[0].idecice_date
-                              ).getFullYear()
+                                  Object.values(data.gap_toners)[0].idecice_date
+                                ).getFullYear()
                               : new Date().getFullYear()
-                            }`}
+                          }`}
                         </th>
                       ))}
                     </tr>
@@ -521,10 +542,11 @@ export default function Page({ sessions, auth, data }) {
                                 {values
                                   .filter(
                                     (value) =>
-                                      new Date(value.idecice_date).toLocaleString(
-                                        "en-US",
-                                        { month: "long" }
-                                      ) === month
+                                      new Date(
+                                        value.idecice_date
+                                      ).toLocaleString("en-US", {
+                                        month: "long",
+                                      }) === month
                                   )
                                   .reduce((acc, toner) => {
                                     return acc + toner.total;

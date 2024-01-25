@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 
 export default function Detail({ auth, branch, sessions, slug }) {
+
   const initialData = {
     file: null,
     branch: "0",
@@ -109,6 +110,7 @@ export default function Detail({ auth, branch, sessions, slug }) {
               {branch.branch_name}
             </h2>
           </div>
+
           {hasRoles("superadmin|admin|branch_ops", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
@@ -155,6 +157,7 @@ export default function Detail({ auth, branch, sessions, slug }) {
         <form onSubmit={handleSubmitExport} encType="multipart/form-data">
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">Export</div>
+
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">

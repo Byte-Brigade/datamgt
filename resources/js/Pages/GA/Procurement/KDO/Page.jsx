@@ -7,6 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { hasRoles } from "@/Utils/HasRoles";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -57,7 +58,7 @@ export default function Page({ auth, branches, sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [active, setActive] = useState("cabang");
+  const { active, params, handleTabChange } = tabState(["cabang", "vendor"]);
 
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
@@ -224,8 +225,8 @@ export default function Page({ auth, branches, sessions }) {
               data
               type="cabang"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("cabang")}
+              active={params.value}
+              onClick={() => handleTabChange("cabang")}
               color="purple"
             />
             <CardMenu
@@ -233,8 +234,8 @@ export default function Page({ auth, branches, sessions }) {
               data
               type="vendor"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("vendor")}
+              active={params.value}
+              onClick={() => handleTabChange("vendor")}
               color="purple"
             />
           </div>

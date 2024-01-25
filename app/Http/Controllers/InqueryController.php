@@ -35,6 +35,7 @@ class InqueryController extends Controller
     public function staff_detail($slug)
     {
         $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+
         $positionsProps = EmployeePosition::all();
         return Inertia::render('Inquery/Staff/Detail', [
             'slug' => $slug,

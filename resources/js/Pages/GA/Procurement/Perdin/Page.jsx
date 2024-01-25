@@ -7,6 +7,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { hasRoles } from "@/Utils/HasRoles";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -50,7 +51,7 @@ export default function Page({ auth, sessions }) {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  const [active, setActive] = useState("divisi");
+  const { active, params, handleTabChange } = tabState(["divisi", "spender"]);
   const columns = [
     {
       name: "Divisi Pembebanan",
@@ -236,8 +237,8 @@ export default function Page({ auth, sessions }) {
               data
               type="divisi"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("divisi")}
+              active={params.value}
+              onClick={() => handleTabChange("divisi")}
               color="purple"
             />
             <CardMenu
@@ -245,8 +246,8 @@ export default function Page({ auth, sessions }) {
               data
               type="spender"
               Icon={ArchiveBoxIcon}
-              active={active}
-              onClick={() => setActive("spender")}
+              active={params.value}
+              onClick={() => handleTabChange("spender")}
               color="purple"
             />
           </div>

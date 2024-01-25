@@ -4,14 +4,15 @@ import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-
 import { Button, Option, Select } from "@material-tailwind/react";
-import { useState } from "react";
+
 export default function Detail({ auth, branch, sessions }) {
   const { form, selected, setSelected } = useFormContext();
-  const [active, setActive] = useState("depre");
+
+  const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
   const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
@@ -24,22 +25,6 @@ export default function Detail({ auth, branch, sessions }) {
     form.setData("remark", { ...selected, [id]: value });
   };
 
-  const headings = [
-    {
-      name: "Scoring Schedule",
-      rowsSpan: 3,
-      colsSpan: 2,
-    },
-    {
-      name: "Jumlah Vendor",
-      rowsSpan: 3,
-      colsSpan: 2,
-    },
-    {
-      name: "Type Scoring",
-      colsSpan: 7,
-    },
-  ];
   const columns = [
     {
       name: "Asset Number",
