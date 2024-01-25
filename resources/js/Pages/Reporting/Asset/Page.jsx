@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -55,7 +55,13 @@ export default function Branch({ auth, sessions }) {
 
     {
       name: "Nama", field: "type_name", sortable: false,
-
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("reporting.assets.detail", data.type_name)}>
+          {data.type_name}
+        </Link>
+      ),
     },
     {
       name: "Depre", field: "depre", sortable: false,

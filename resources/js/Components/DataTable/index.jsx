@@ -2,7 +2,6 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import { CogIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
-import { usePage } from "@inertiajs/react";
 import {
   Button,
   Checkbox,
@@ -33,6 +32,7 @@ export default function DataTable({
   periodic = false,
   parameters = {},
   bordered = false,
+  configuration = true,
   headings,
   children,
   submitUrl = "",
@@ -255,6 +255,7 @@ export default function DataTable({
     clearFilter,
     selectedMonthData,
     isRefreshed,
+    configuration,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -292,7 +293,8 @@ export default function DataTable({
 
   return (
     <div>
-      <div className="flex flex-col">
+      {configuration && (
+        <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div className="flex flex-col w-72">
             <div className="flex items-center gap-x-2">
@@ -356,6 +358,8 @@ export default function DataTable({
           )}
         </div>
       </div>
+      )}
+
 
       {/* <Datepicker value={value} onChange={handleValueChange} /> */}
       <div id="filters">

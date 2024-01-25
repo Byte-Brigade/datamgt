@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FileResource extends JsonResource
+class EmployeePositionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,8 @@ class FileResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'uploaded_by' => $this->user->name,
-            'table_name' => $this->table_name,
-            'filename' => $this->filename,
-            'path' => $this->path,
-            'status' => $this->status,
+            'position_name' => $this->position_name,
+            'jumlah_employee' => $this->employees->count(),
         ];
     }
 }

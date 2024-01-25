@@ -37,6 +37,18 @@ export default function Branch({ sessions, auth }) {
       field: "filename",
     },
     {
+      name: "Path",
+      field: "path",
+    },
+    {
+      name: "Uploaded By",
+      field: "uploaded_by",
+    },
+    {
+      name: "Status",
+      field: "status",
+    },
+    {
       name: "Download",
       field: "detail",
       className: "text-center",

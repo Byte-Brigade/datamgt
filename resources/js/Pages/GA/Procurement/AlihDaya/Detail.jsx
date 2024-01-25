@@ -1,7 +1,6 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -9,7 +8,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -18,9 +17,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import { useState } from "react";
 
@@ -199,7 +196,7 @@ export default function Detail({ auth, sessions, type, type_item }) {
               </div>
             )}
           <DataTable
-            columns={columns}
+            columns={columns.filter((column) => column.field === "cost" ? auth.permissions.includes('can alih daya') : true)}
             fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
             refreshUrl={isRefreshed}
           />

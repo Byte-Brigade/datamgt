@@ -1,5 +1,7 @@
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { tabState } from "@/Utils/TabState";
 import {
   ArchiveBoxIcon,
   BuildingOffice2Icon,
@@ -11,7 +13,6 @@ import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
-import { tabState } from "@/Utils/TabState";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
@@ -41,6 +42,16 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
       return result;
     }, {});
+  const positionColumns = [
+    {
+      name: "Jabatan",
+      field: "position_name",
+    },
+    {
+      name: "Jumlah",
+      field: "jumlah_employee",
+    },
+  ];
 
   const cardMenus = [
     {
@@ -247,56 +258,11 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 />
               </div>
               <div className="h-[300px] overflow-y-auto">
-                <table className={`text-sm leading-3 bg-white w-full`}>
-                  <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                    <tr className="[&>th]:p-2 bg-slate-100">
-                      <th className="text-center" wi>
-                        No
-                      </th>
-                      <th className="text-center">Jabatan</th>
-                      <th className="text-center">Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody className="overflow-y-auto">
-                    {data.employee_positions.map((position, index) => (
-                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                        <td>{index + 1}</td>
-                        <td>{position.position_name}</td>
-                        <td className="text-center">
-                          {
-                            data.employees
-                              .filter(
-                                (employee) =>
-                                  employee.employee_positions.position_name ===
-                                  position.position_name
-                              )
-                              .filter(
-                                (employee) =>
-                                  area === "none" ||
-                                  employee.branches.area === area
-                              ).length
-                          }
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                      <td className="text-center" colSpan="2">
-                        <strong>Total</strong>
-                      </td>
-                      <td className="text-center">
-                        <strong>
-                          {
-                            data.employees.filter(
-                              (employee) =>
-                                area === "none" ||
-                                employee.branches.area === area
-                            ).length
-                          }
-                        </strong>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <DataTable
+                  configuration={false}
+                  fetchUrl={"/api/dashboard/employee-positions"}
+                  columns={positionColumns}
+                />
               </div>
             </div>
           )}

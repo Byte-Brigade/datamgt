@@ -10,6 +10,7 @@ use App\Models\GapAsset;
 use App\Models\History;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -36,9 +37,11 @@ class GapAssetController extends Controller
 
             $path = $uploadedFile->storeAs("files/{$tableName}", $newFilename, 'local'); // 'local' is the disk name
             File::create([
+                'user_id' => Auth::user()->id,
                 'table_name' => $tableName,
                 'filename' => $newFilename,
                 'path' => $path,
+                'status' => 'Success'
             ]);
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {

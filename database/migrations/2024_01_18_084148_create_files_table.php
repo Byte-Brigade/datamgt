@@ -15,9 +15,12 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('table_name');
             $table->string('filename');
             $table->string('path');
+            $table->enum('status',['Success', 'Failed']);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
