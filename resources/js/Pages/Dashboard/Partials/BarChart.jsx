@@ -66,7 +66,7 @@ export default function BarChart({
   const branchLabels = Object.keys(data.jumlah_cabang_alt);
   const employeeLabels = data.employee_positions.map(
     (position) => position.position_name
-  );
+  ).sort();
   const truncatedEmployeeLabels = employeeLabels.map((label) =>
     label.length > 25 ? label.substring(0, 25) + "..." : label
   );
@@ -92,7 +92,7 @@ export default function BarChart({
         ).length;
       case "employee":
         return branchState
-          ? data.employees.filter(
+          ? data.employees.sort().filter(
               (employee) =>
                 employee.employee_positions.position_name === label &&
                 employee.branch_id === branchState &&

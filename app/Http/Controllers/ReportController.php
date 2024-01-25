@@ -25,6 +25,10 @@ class ReportController extends Controller
     {
         return Inertia::render('Reporting/Asset/Page');
     }
+    public function asset_detail($type_name)
+    {
+        return Inertia::render('Reporting/Asset/Detail', ['type_name' => $type_name]);
+    }
     public function licenses()
     {
         return Inertia::render('Reporting/Lisensi/Page');

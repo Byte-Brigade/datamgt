@@ -48,7 +48,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     public function branches() {
-
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(User::class, 'user_id');
     }
 }

@@ -116,6 +116,58 @@ class ReportApiController extends Controller
 
         return PaginationHelper::paginate($collections, $perpage);
     }
+    public function asset_detail(Branch $branch, Request $request, $type_name)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        // ->join('gap_assets', 'gap_assets.branch_id', 'branches.id');
+        $perpage = $request->perpage ?? 15;
+        $query = $query->where('branch_types.alt_name', $type_name);
+
+        $input = $request->all();
+        if (isset($input['branch_types_type_name'])) {
+            $type_name = $input['branch_types_type_name'];
+            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
+                if (in_array('KF', $type_name)) {
+                    return $q->whereIn('type_name', ['KF', 'KFNO']);
+                }
+                return $q->whereIn('type_name', $type_name);
+            });
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+        if (isset($request->layanan_atm)) {
+            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
+            });
+        }
+
+
+        $data = $query->get();
+
+        $collections = $data->map(function ($branch) {
+            return [
+                'branch_name' => $branch->branch_name,
+                'depre'     => $branch->gap_assets->where('category', 'Depre')->count(),
+                'non_depre'     => $branch->gap_assets->where('category', 'Non-Depre')->count(),
+            ];
+        });
+
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
 
     public function licenses(Branch $branch, Request $request)
     {
@@ -195,7 +247,7 @@ class ReportApiController extends Controller
             ],
             [
                 'group_name' => 'Perjanjian Kerja Sama (PKS)',
-                'jumlah_vendor' => GapPks::whereNot('status','TIDAK AKTIF')->get()->unique('vendor')->count(),
+                'jumlah_vendor' => GapPks::whereNot('status', 'TIDAK AKTIF')->get()->unique('vendor')->count(),
             ],
         ]);
 

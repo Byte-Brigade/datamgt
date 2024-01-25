@@ -89,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/assets', [ReportController::class, 'assets'])->name('assets');
+        Route::get('/assets/{type_name}', [ReportController::class, 'asset_detail'])->name('assets.detail');
         Route::get('/licenses', [ReportController::class, 'licenses'])->name('licenses');
         Route::get('/vendor', [ReportController::class, 'vendor'])->name('vendor');
         Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
@@ -161,17 +162,15 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/perdins/export', [GapPerdinController::class, 'export'])->name('perdins.export');
             Route::delete('/perdins/{id}', [GapPerdinController::class, 'destroy'])->name('perdins.delete');
 
+            Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
+            Route::get('/alihdayas/template', [GapAlihDayaController::class, 'template'])->name('alihdayas.template');
+            Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
+            Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
+            Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
+            Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
+            Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
+            Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
 
-            Route::group(['middleware' => ['permission:can alih daya']], function () {
-                Route::get('/alihdayas', [GapAlihDayaController::class, 'index'])->name('alihdayas');
-                Route::get('/alihdayas/template', [GapAlihDayaController::class, 'template'])->name('alihdayas.template');
-                Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
-                Route::post('/alihdayas/import', [GapAlihDayaController::class, 'import'])->name('alihdayas.import');
-                Route::post('/alihdayas', [GapAlihDayaController::class, 'store'])->name('alihdayas.store');
-                Route::put('/alihdayas/{id}', [GapAlihDayaController::class, 'update'])->name('alihdayas.update');
-                Route::get('/alihdayas/export', [GapAlihDayaController::class, 'export'])->name('alihdayas.export');
-                Route::delete('/alihdayas/{id}', [GapAlihDayaController::class, 'destroy'])->name('alihdayas.delete');
-            });
 
             Route::get('/toners', [GapTonerController::class, 'index'])->name('toners');
             Route::get('/toners/template', [GapTonerController::class, 'template'])->name('toners.template');
