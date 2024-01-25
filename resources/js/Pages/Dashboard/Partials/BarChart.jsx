@@ -25,13 +25,13 @@ export default function BarChart({
   branchState,
   areaState,
   type,
+  height,
 }) {
   const options = {
-    indexAxis: type === 'employee' ? 'y' : 'x',
+    indexAxis: type === "employee" ? "y" : "x",
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: type === "employee" ? false : true,
     plugins: {
-
       datalabels: {
         anchor: "end",
         align: "end",
@@ -40,14 +40,19 @@ export default function BarChart({
         },
       },
       legend: {
-        position: type === "employee" ? "right" : "top",
+        position: type === "employee" ? "none" : "top",
       },
     },
     scales: {
       y: {
-        display: type === "employee" ?  true : false,
+        display: type === "employee" ? true : false,
         grid: {
           display: false,
+        },
+        ticks: {
+          callback: (value, index, values) => {
+            return truncatedEmployeeLabels[index];
+          },
         },
       },
       x: {
@@ -61,6 +66,9 @@ export default function BarChart({
   const branchLabels = Object.keys(data.jumlah_cabang_alt);
   const employeeLabels = data.employee_positions.map(
     (position) => position.position_name
+  );
+  const truncatedEmployeeLabels = employeeLabels.map((label) =>
+    label.length > 25 ? label.substring(0, 25) + "..." : label
   );
   const atmLabels = Object.keys(data.jumlah_atm);
 
@@ -88,12 +96,20 @@ export default function BarChart({
               (employee) =>
                 employee.employee_positions.position_name === label &&
                 employee.branch_id === branchState &&
-                (areaState === "none" || employee.branches.area === areaState)
+                (areaState === "none" ||
+                  employee.branches.area === areaState) &&
+                !["BM", "BSM", "BSO"].includes(
+                  employee.employee_positions.position_name
+                )
             ).length
           : data.employees.filter(
               (employee) =>
                 employee.employee_positions.position_name === label &&
-                (areaState === "none" || employee.branches.area === areaState)
+                (areaState === "none" ||
+                  employee.branches.area === areaState) &&
+                !["BM", "BSM", "BSO"].includes(
+                  employee.employee_positions.position_name
+                )
             ).length;
       case "atm":
         return data.jumlah_atm[label].filter(
@@ -116,5 +132,12 @@ export default function BarChart({
 
   const chart = { labels, datasets };
 
-  return <Bar options={options} data={chart} plugins={[ChartDataLabels]} />;
+  return (
+    <Bar
+      options={options}
+      data={chart}
+      plugins={[ChartDataLabels]}
+      height={height}
+    />
+  );
 }

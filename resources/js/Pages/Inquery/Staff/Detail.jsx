@@ -15,12 +15,11 @@ import {
   DialogFooter,
   DialogHeader,
   IconButton,
-  Option,
-  Select
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, branch, positions, sessions, slug }) {
+export default function Detail({ auth, branch, sessions, slug }) {
+
   const initialData = {
     file: null,
     branch: "0",
@@ -106,9 +105,12 @@ export default function Detail({ auth, branch, positions, sessions, slug }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="text-xl font-semibold text-center mb-4">
-            {branch.branch_name}
-          </h2>
+          <div className="flex justify-end">
+            <h2 className="text-xl font-semibold text-end">
+              {branch.branch_name}
+            </h2>
+          </div>
+
           {hasRoles("superadmin|admin|branch_ops", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
@@ -154,21 +156,8 @@ export default function Detail({ auth, branch, positions, sessions, slug }) {
         </DialogHeader>
         <form onSubmit={handleSubmitExport} encType="multipart/form-data">
           <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-              <Select
-                label="Position"
-                value={data.position}
-                disabled={processing}
-                onChange={(e) => setData("position", e)}
-              >
-                <Option value="0">All</Option>
-                {positions.map((position) => (
-                  <Option key={position.id} value={`${position.id}`}>
-                    {position.position_name}
-                  </Option>
-                ))}
-              </Select>
-            </div>
+            <div className="flex flex-col gap-y-4">Export</div>
+
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">

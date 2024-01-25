@@ -67,11 +67,11 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('scoring_assessments/{scoring_vendor}', [GapApiController::class, 'scoring_assessment_details']);
 });
 
-Route::prefix('inquery')->name('inquery.')->group(function () {
+Route::prefix('inquery')->name('iqry.')->group(function () {
     Route::get('assets', [InqueryApiController::class, 'assets']);
     Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
     Route::get('staff', [InqueryApiController::class, 'staff'])->name('staff');
-    Route::get('staff/{slug}', [InqueryApiController::class, 'staff_detail'])->name('staff');
+    Route::get('staff/{slug}', [InqueryApiController::class, 'staff_detail'])->name('staff.detail');
     Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
     Route::get('kdos', [InqueryApiController::class, 'kdos']);
     Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');

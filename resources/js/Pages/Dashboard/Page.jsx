@@ -243,6 +243,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   data={data}
                   branchState={branchId}
                   areaState={area}
+                  height={1000}
                 />
               </div>
               <div className="h-[300px] overflow-y-auto">
