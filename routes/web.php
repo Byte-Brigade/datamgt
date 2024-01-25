@@ -88,6 +88,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
+        Route::get('/assets', [ReportController::class, 'assets'])->name('assets');
+        Route::get('/licenses', [ReportController::class, 'licenses'])->name('licenses');
+        Route::get('/vendor', [ReportController::class, 'vendor'])->name('vendor');
         Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
         Route::get('/bros/export', [ReportController::class, 'bro_export'])->name('bros.export');
         Route::get('/bros/{category}', [ReportController::class, 'bro_category'])->name('bros.category');

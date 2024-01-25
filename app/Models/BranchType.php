@@ -19,4 +19,10 @@ class BranchType extends Model
     {
         return $this->hasMany(Branch::class);
     }
+
+
+    public function gap_assets()
+    {
+        return $this->hasManyThrough(GapAsset::class, Branch::class, 'branch_id', 'id', 'branch_type_id', 'id');
+    }
 }

@@ -1,14 +1,14 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -17,21 +17,23 @@ import {
   DialogHeader,
   IconButton,
   Input,
+  Option,
+  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions }) {
+export default function Detail({ auth, branches, category, sessions }) {
   const initialData = {
-    jumlah_kendaraan: null,
-    jumlah_driver: null,
-    sewa_kendaraan: null,
-    biaya_driver: null,
-    ot: null,
-    rfid: null,
-    non_rfid: null,
-    grab: null,
-    periode: null,
+    branch_id: 0,
+    jenis_perizinan_id: 0,
+    tgl_pengesahan: null,
+    tgl_masa_berlaku: null,
+    branches: {
+      branch_code: null,
+      branch_name: null,
+    },
+    expired_date: null,
   };
   const {
     data,
@@ -45,57 +47,48 @@ export default function Page({ auth, sessions }) {
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalUploadOpen, setIsModalUploadOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
+    { name: "Branch Name", sortable: true, field: "branch_name" },
+    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Kategori", sortable: true, field: "category" },
+    { name: "Status", sortable: true, field: "status" },
+    { name: "Target", sortable: true, field: "target" },
+    { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
     {
-      name: "Cabang",
-      field: "branch_name",
-      className: "cursor-pointer hover:text-blue-500",
+      name: "All Progress", sortable: true, field: "all_progress",
       type: "custom",
+      render: (data) => (data.all_progress * 100).toFixed(2) + "%"
+    },
+
+    {
+      name: "Action",
+      field: "action",
+      className: "text-center",
       render: (data) => (
-        <Link href={route("gap.toners.detail", data.slug)}>
-          {data.branch_name}
-        </Link>
+        <DropdownMenu
+          placement="left-start"
+          onEditClick={() => {
+            toggleModalEdit();
+            setData(data);
+          }}
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
       ),
     },
-
-    {
-      name: "Quantity",
-      field: "quantity",
-      agg: "sum",
-    },
-    {
-      name: "Total",
-      type: "custom",
-      field: "total",
-      format: 'currency',
-      agg: 'sum',
-      className: "text-right",
-      render: (data) => (data.total).toLocaleString('ID-id'),
-
-    },
-
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.toners.detail", data.vendor)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
-
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.toners.import"), {
+    post(route("infra.bros.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -107,14 +100,24 @@ export default function Page({ auth, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
+    window.open(route("infra.bros.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
+  };
+  const handleSubmitUpload = (e) => {
+    e.preventDefault();
+    post(route("infra.bros.upload", data.id), {
+      replace: true,
+      onFinish: () => {
+        setIsRefreshed(!isRefreshed);
+        setIsModalUploadOpen(!isModalUploadOpen);
+      },
+    });
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.toners.update", data.id), {
-      method: "put",
+    post(route("infra.bros.update", data.id), {
+      method: "post",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -124,7 +127,7 @@ export default function Page({ auth, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.toners.store"), {
+    post(route("infra.bros.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -136,7 +139,7 @@ export default function Page({ auth, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.toners.delete", data.id), {
+    destroy(route("infra.bros.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -153,6 +156,10 @@ export default function Page({ auth, sessions }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
+  const toggleModalUpload = () => {
+    setIsModalUploadOpen(!isModalUploadOpen);
+  };
+
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -166,41 +173,42 @@ export default function Page({ auth, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | Toner" />
+      <Head title="GA | Sewa Gedung" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("superadmin|admin|procurement", auth) &&
-            ["can add", "can export"].some((permission) =>
-              auth.permissions.includes(permission)
-            ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
-                )}
-                {auth.permissions.includes("can export") && (
-                  <PrimaryButton onClick={toggleModalExport}>
-                    Create Report
-                  </PrimaryButton>
-                )}
-              </div>
-            )}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <PrimaryButton
+                className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalCreate}
+              >
+                <div className="flex items-center gap-x-2">
+                  <PlusIcon className="w-4 h-4" />
+                  Add
+                </div>
+              </PrimaryButton>
+              <PrimaryButton
+                className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                onClick={toggleModalImport}
+              >
+                <div className="flex items-center gap-x-2">
+                  <DocumentPlusIcon className="w-4 h-4" />
+                  Import Excel
+                </div>
+              </PrimaryButton>
+            </div>
+            <PrimaryButton onClick={toggleModalExport}>
+              Create Report
+            </PrimaryButton>
+          </div>
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/toners"}
+            className="w-[1200px]"
+            fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
-            bordered={true}
+            parameters={{category: category}}
           />
         </div>
       </div>
@@ -233,15 +241,53 @@ export default function Page({ auth, sessions }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
-            <SecondaryButton type="button">
-              <a href={route("gap.toners.template")}>Download Template</a>
-            </SecondaryButton>
+          <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan
               </Button>
               <SecondaryButton type="button" onClick={toggleModalImport}>
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      {/* Modal Upload */}
+      <Dialog open={isModalUploadOpen} handler={toggleModalUpload} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Upload Lampiran
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalUpload}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleSubmitUpload} encType="multipart/form-data">
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) => setData("file", e.target.files[0])}
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={processing} type="submit">
+                Simpan
+              </Button>
+              <SecondaryButton type="button" onClick={toggleModalUpload}>
                 Tutup
               </SecondaryButton>
             </div>
@@ -256,7 +302,21 @@ export default function Page({ auth, sessions }) {
         onToggle={toggleModalExport}
         onSubmit={handleSubmitExport}
       >
-        Export Data Toner
+        <div className="flex flex-col gap-y-4">
+          <select
+            label="Branch"
+            disabled={processing}
+            value={data.branch_id}
+            onChange={(e) => setData("branch", e.target.value)}
+          >
+            <option value="0">All</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={`${branch.id}`}>
+                {branch.branch_code} - {branch.branch_name}
+              </option>
+            ))}
+          </select>
+        </div>
       </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
@@ -275,18 +335,50 @@ export default function Page({ auth, sessions }) {
         <form onSubmit={handleSubmitEdit}>
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
+                disabled={processing}
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
               <Input
-                label="Jangka Waktu (Expired Date)"
-                value={data.expired_date || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("expired_date", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
               />
               <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
                 disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
+              />
+              <Input
+                label="Upload Lampiran"
+                type="file"
+                disabled={processing}
+                name="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  console.log(e.target.files[0]);
+                  return setData("file", e.target.files[0]);
+                }}
               />
             </div>
           </DialogBody>
@@ -317,74 +409,42 @@ export default function Page({ auth, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll max-h-96" divider>
+          <DialogBody className="overflow-y-scroll " divider>
             <div className="flex flex-col gap-y-4">
-              <Input
-                label="Divisi Pembebanan"
-                value={data.divisi_pembebanan || ""}
+              <Select
+                label="Branch"
+                value={`${data.branch_id}`}
                 disabled={processing}
-                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
-              />
+                onChange={(e) => setData("branch_id", e)}
+              >
+                {branches.map((branch) => (
+                  <Option key={branch.id} value={`${branch.id}`}>
+                    {branch.branch_code} - {branch.branch_name}
+                  </Option>
+                ))}
+              </Select>
+
               <Input
-                label="Category"
-                value={data.category || ""}
-                disabled={processing}
-                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
-              />
-              <Input
-                label="Tipe"
-                value={data.category || ""}
-                disabled={processing}
-                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
-              />
-              <Input
-                label="Jumlah Driver"
-                value={data.jumlah_driver || ""}
-                disabled={processing}
-                onChange={(e) => setData("jumlah_driver", e.target.value)}
-              />
-              <Input
-                label="Sewa Kendaraan"
-                value={data.sewa_kendaraan || ""}
-                disabled={processing}
-                onChange={(e) => setData("sewa_kendaraan", e.target.value)}
-              />
-              <Input
-                label="Biaya Driver"
-                value={data.biaya_driver || ""}
-                disabled={processing}
-                onChange={(e) => setData("biaya_driver", e.target.value)}
-              />
-              <Input
-                label="OT"
-                value={data.ot || ""}
-                disabled={processing}
-                onChange={(e) => setData("ot", e.target.value)}
-              />
-              <Input
-                label="RFID"
-                value={data.rfid || ""}
-                disabled={processing}
-                onChange={(e) => setData("rfid", e.target.value)}
-              />
-              <Input
-                label="NON RFID"
-                value={data.non_rfid || ""}
-                disabled={processing}
-                onChange={(e) => setData("non_rfid", e.target.value)}
-              />
-              <Input
-                label="GRAB"
-                value={data.grab || ""}
-                disabled={processing}
-                onChange={(e) => setData("grab", e.target.value)}
-              />
-              <Input
-                label="Periode"
-                value={data.expired_date || ""}
+                label="Tanggal Pengesahan"
+                value={data.tgl_pengesahan || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("periode", e.target.value)}
+                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+              />
+              <Input
+                label="Tanggal Masa Berlaku"
+                value={data.tgl_masa_berlaku || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+              />
+              <Input
+                label="Progress Resertifikasi"
+                value={data.progress_resertifikasi || ""}
+                disabled={processing}
+                onChange={(e) =>
+                  setData("progress_resertifikasi", e.target.value)
+                }
               />
             </div>
           </DialogBody>
@@ -417,7 +477,10 @@ export default function Page({ auth, sessions }) {
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold"></span> ?
+            <span className="text-lg font-bold">
+              {data.branches.branch_code} - {data.branches.branch_name}
+            </span>{" "}
+            ?
           </Typography>
         </DialogBody>
         <DialogFooter>

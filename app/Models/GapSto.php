@@ -18,10 +18,7 @@ class GapSto extends Model
 
 
 
-    public function gap_assets()
-    {
-        return $this->hasManyThrough(GapAsset::class,Branch::class, 'id', 'branch_id','branch_id');
-    }
+
     public function branches()
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
