@@ -29,6 +29,9 @@ Route::prefix('report')->name('report.')->group(function () {
     Route::get('branches', [ReportApiController::class, 'branches'])->name('branches');
     Route::get('files', [ReportApiController::class, 'files'])->name('files');
     Route::get('bros', [ReportApiController::class, 'bros'])->name('bros');
+    Route::get('assets', [ReportApiController::class, 'assets'])->name('assets');
+    Route::get('licenses', [ReportApiController::class, 'licenses'])->name('licenses');
+    Route::get('vendor', [ReportApiController::class, 'vendor'])->name('vendor');
     Route::get('disnaker/{id}', [ReportApiController::class, 'disnaker_details']);
 });
 Route::prefix('ops')->name('ops.')->group(function () {

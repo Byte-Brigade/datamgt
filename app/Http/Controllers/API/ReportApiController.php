@@ -9,8 +9,13 @@ use App\Http\Resources\FileResource;
 use App\Http\Resources\HistoryResource;
 use App\Http\Resources\Report\BranchResource;
 use App\Models\Branch;
+use App\Models\BranchType;
 use App\Models\File;
+use App\Models\GapAlihDaya;
+use App\Models\GapAsset;
 use App\Models\GapDisnaker;
+use App\Models\GapKdo;
+use App\Models\GapPks;
 use App\Models\History;
 use App\Models\InfraBro;
 use Illuminate\Http\Request;
@@ -47,9 +52,154 @@ class ReportApiController extends Controller
                     ->orWhere('address', 'like', $searchQuery);
             });
         }
-        $branches = $query->paginate($perpage);
+        $branches = $query->get($perpage);
 
         return BranchResource::collection($branches);
+    }
+
+    public function assets(Branch $branch, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        // ->join('gap_assets', 'gap_assets.branch_id', 'branches.id');
+        $perpage = $request->perpage ?? 15;
+
+
+        $input = $request->all();
+        if (isset($input['branch_types_type_name'])) {
+            $type_name = $input['branch_types_type_name'];
+            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
+                if (in_array('KF', $type_name)) {
+                    return $q->whereIn('type_name', ['KF', 'KFNO']);
+                }
+                return $q->whereIn('type_name', $type_name);
+            });
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+        if (isset($request->layanan_atm)) {
+            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
+            });
+        }
+
+
+        $data = $query->get();
+
+        $collections = $data->map(function ($branch) {
+            $branch->alt_name = $branch->branch_types->alt_name;
+            return $branch;
+        })->groupBy('alt_name')->map(function ($branches, $alt_name) {
+            return [
+                'type_name' => $alt_name,
+                'depre'     => $branches->flatMap(function ($branch) {
+                    return $branch->gap_assets->where('category', 'Depre');
+                })->count(),
+                'non_depre'     => $branches->flatMap(function ($branch) {
+                    return $branch->gap_assets->where('category', 'Non-Depre');
+                })->count(),
+            ];
+        });
+
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+
+    public function licenses(Branch $branch, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        // ->join('gap_assets', 'gap_assets.branch_id', 'branches.id');
+        $perpage = $request->perpage ?? 15;
+
+
+        $input = $request->all();
+        if (isset($input['branch_types_type_name'])) {
+            $type_name = $input['branch_types_type_name'];
+            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
+                if (in_array('KF', $type_name)) {
+                    return $q->whereIn('type_name', ['KF', 'KFNO']);
+                }
+                return $q->whereIn('type_name', $type_name);
+            });
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+        if (isset($request->layanan_atm)) {
+            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
+            });
+        }
+
+
+        $data = $query->get();
+
+        $collections = $data->map(function ($branch) {
+            $branch->alt_name = $branch->branch_types->alt_name;
+            return $branch;
+        })->groupBy('alt_name')->map(function ($branches, $alt_name) {
+            return [
+                'type_name' => $alt_name,
+                'disnaker'     => $branches->flatMap(function ($branch) {
+                    return $branch->gap_disnaker;
+                })->count(),
+                'pajak_reklame'     => $branches->map(function ($branch) {
+                    return $branch->ops_pajak_reklames;
+                })->count(),
+                'skbirtgs'     => $branches->map(function ($branch) {
+                    return $branch->ops_skbirtgs;
+                })->count(),
+                'skoperational'     => $branches->map(function ($branch) {
+                    return $branch->ops_skoperational;
+                })->count(),
+            ];
+        });
+
+
+        return PaginationHelper::paginate($collections, $perpage);
+    }
+    public function vendor(Request $request)
+    {
+        $collections = collect([
+            [
+                'group_name' => 'KDO',
+                'jumlah_vendor' => GapKdo::get()->unique('vendor')->count(),
+            ],
+            [
+                'group_name' => 'Alih Daya',
+                'jumlah_vendor' => GapAlihDaya::get()->unique('vendor')->count(),
+            ],
+            [
+                'group_name' => 'Perjanjian Kerja Sama (PKS)',
+                'jumlah_vendor' => GapPks::whereNot('status','TIDAK AKTIF')->get()->unique('vendor')->count(),
+            ],
+        ]);
+
+        return PaginationHelper::paginate($collections, 15);
     }
 
     public function bros(InfraBro $infra_bro, Request $request)
@@ -89,15 +239,14 @@ class ReportApiController extends Controller
                 'target' => $bros->count(),
                 'done' => $bros->where('status', 'Done')->count(),
                 'on_progress' => $bros->where('status', 'On Progress')->count(),
-                'not_start' => $bros->where('all_progress', 0)->whereNotIn('status',['Done','On Progress','Drop'])->count(),
+                'not_start' => $bros->where('all_progress', 0)->whereNotIn('status', ['Done', 'On Progress', 'Drop'])->count(),
                 'drop' => $bros->where('status', 'Drop')->count(),
             ];
-
         });
 
 
 
-        return PaginationHelper::paginate($collections,$perpage);
+        return PaginationHelper::paginate($collections, $perpage);
     }
 
 
@@ -131,6 +280,4 @@ class ReportApiController extends Controller
         $data = $query->paginate($perpage);
         return FileResource::collection($data);
     }
-
-
 }

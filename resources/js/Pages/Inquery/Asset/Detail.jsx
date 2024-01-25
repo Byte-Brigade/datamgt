@@ -152,25 +152,30 @@ export default function Detail({ auth, branch, sessions }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
-            <CardMenu
-              label="Depre"
-              data
-              type="depre"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("depre")}
-              color="purple"
-            />
-            <CardMenu
-              label="Non-Depre"
-              data
-              type="nonDepre"
-              Icon={ArchiveBoxIcon}
-              active
-              onClick={() => setActive("nonDepre")}
-              color="purple"
-            />
+          <div className="flex justify-between w-100">
+            <div className="grid grid-cols-4 gap-4 mb-2">
+              <CardMenu
+                label="Depre"
+                data
+                type="depre"
+                Icon={ArchiveBoxIcon}
+                active
+                onClick={() => setActive("depre")}
+                color="purple"
+              />
+              <CardMenu
+                label="Non-Depre"
+                data
+                type="nonDepre"
+                Icon={ArchiveBoxIcon}
+                active
+                onClick={() => setActive("nonDepre")}
+                color="purple"
+              />
+            </div>
+            <h2 className="text-xl font-semibold text-center">
+              {branch.branch_name}
+            </h2>
           </div>
           {active == "depre" && (
             <DataTable
