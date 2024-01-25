@@ -532,7 +532,7 @@ class GapApiController extends Controller
                 'branch_code' => $branch->branch_code,
                 'slug' => $branch->slug,
                 'quantity' => $toners->sum('quantity'),
-                'price' => $toners->sum('price'),
+                'total' => $toners->sum('total'),
             ];
         });
 

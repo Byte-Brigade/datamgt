@@ -21,6 +21,18 @@ class ReportController extends Controller
             'branch_types' => BranchType::get(),
         ]);
     }
+    public function assets()
+    {
+        return Inertia::render('Reporting/Asset/Page');
+    }
+    public function licenses()
+    {
+        return Inertia::render('Reporting/Lisensi/Page');
+    }
+    public function vendor()
+    {
+        return Inertia::render('Reporting/Vendor/Page');
+    }
 
     public function export_branches()
     {

@@ -77,10 +77,8 @@ export default function Page({ auth, sessions, branch_code }) {
       name: "Unit Price",
       type: "custom",
       field: "price",
-      format: "currency",
       className: "text-right",
       render: (data) => data.price.toLocaleString("id-ID"),
-      agg: "sum",
     },
     {
       name: "Total Price",

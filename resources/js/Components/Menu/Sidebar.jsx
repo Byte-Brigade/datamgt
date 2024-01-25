@@ -76,9 +76,9 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   const reportRouter = [
     { name: "Branch", path: "reporting.branches", state: "reporting.*" },
-    { name: "Asset", path: "maintenance" },
-    { name: "Lisensi", path: "maintenance" },
-    { name: "Vendor", path: "maintenance" },
+    { name: "Asset", path: "reporting.assets" },
+    { name: "Lisensi", path: "reporting.licenses" },
+    { name: "Vendor", path: "reporting.vendor" },
     { name: "Branch Roll Out", path: "reporting.bros" },
   ];
 
