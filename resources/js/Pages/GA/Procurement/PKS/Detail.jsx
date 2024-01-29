@@ -63,6 +63,7 @@ export default function Detail({ auth, sessions, status }) {
     {
       name: "Description",
       field: "description",
+      className: "w-[500px]"
     },
     {
       name: "Contract Date",
@@ -223,6 +224,7 @@ export default function Detail({ auth, sessions, status }) {
                   )
                 : true
             )}
+            className="w-[1500px]"
             fetchUrl={`/api/gap/pks/${status}`}
             refreshUrl={isRefreshed}
             bordered={true}

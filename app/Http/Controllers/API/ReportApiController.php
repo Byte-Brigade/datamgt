@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AssetsResource;
 use App\Http\Resources\DisnakerResource;
 use App\Http\Resources\FileResource;
 use App\Http\Resources\HistoryResource;
@@ -29,7 +30,7 @@ class ReportApiController extends Controller
         $searchInput = $request->search;
         $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
-        $perpage = $request->perpage ?? 10;
+        $perpage = $request->perpage ?? 15;
 
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
@@ -52,9 +53,14 @@ class ReportApiController extends Controller
                     ->orWhere('address', 'like', $searchQuery);
             });
         }
-        $branches = $query->get($perpage);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        return BranchResource::collection($branches);
+        $query = $query->paginate($perpage);
+
+
+        return BranchResource::collection($query);
     }
 
     public function assets(Branch $branch, Request $request)
@@ -114,6 +120,9 @@ class ReportApiController extends Controller
         });
 
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
         return PaginationHelper::paginate($collections, $perpage);
     }
     public function asset_detail(Branch $branch, Request $request, $type_name)
@@ -160,14 +169,21 @@ class ReportApiController extends Controller
         $collections = $data->map(function ($branch) {
             return [
                 'branch_name' => $branch->branch_name,
+                'slug' => $branch->slug,
                 'depre'     => $branch->gap_assets->where('category', 'Depre')->count(),
                 'non_depre'     => $branch->gap_assets->where('category', 'Non-Depre')->count(),
             ];
         });
 
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+
         return PaginationHelper::paginate($collections, $perpage);
     }
+
 
     public function licenses(Branch $branch, Request $request)
     {
@@ -231,6 +247,10 @@ class ReportApiController extends Controller
             ];
         });
 
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
 
         return PaginationHelper::paginate($collections, $perpage);
     }
@@ -297,6 +317,10 @@ class ReportApiController extends Controller
         });
 
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
 
         return PaginationHelper::paginate($collections, $perpage);
     }
@@ -315,8 +339,13 @@ class ReportApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
-        $data = $query->paginate($perpage);
-        return DisnakerResource::collection($data);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return DisnakerResource::collection($query);
     }
 
     public function files(File $file, Request $request)
@@ -329,7 +358,12 @@ class ReportApiController extends Controller
         $perpage = $request->perpage ?? 10;
 
 
-        $data = $query->paginate($perpage);
-        return FileResource::collection($data);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return FileResource::collection($query);
     }
 }
