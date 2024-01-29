@@ -51,6 +51,7 @@ Route::prefix('ops')->name('ops.')->group(function () {
     Route::get('/sk-operasionals', [OpsApiController::class, 'sk_operasionals']);
     Route::get('/speciments', [OpsApiController::class, 'speciments']);
 });
+Route::get('/checkdbhcs', [OpsApiController::class, 'check_db_status']);
 
 Route::get('uam', [UAMController::class, 'api']);
 Route::get('/dashboard/branch', [DashboardController::class, 'api']);
