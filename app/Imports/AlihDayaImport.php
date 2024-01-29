@@ -35,7 +35,6 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
                         'user' => $row['user'],
                         'lokasi' => $row['lokasi'],
                         'vendor' => $row['vendor'],
-                        'cost' => $row['cost'],
                         'periode' => $periode
                     ],
                     [

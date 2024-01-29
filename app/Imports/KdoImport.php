@@ -31,15 +31,15 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
             $periode = Date::excelToDateTimeObject($row['periode']);
 
-
+            if (!isset($branch)) {
+                throw new Exception("Branch " . $row['unit'] . " tidak ditemukan.");
+            }
+            // dd($rows);
             $gap_kdo_mobil = GapKdo::updateOrCreate(
                 [
                     'branch_id' => $branch->id,
                     'vendor' => $row['vendor'],
                     'nopol' => $row['nopol'],
-                    'awal_sewa' => is_int($row['awal_sewa']) ? Date::excelToDateTimeObject($row['awal_sewa']) : null,
-                    'akhir_sewa' => is_int($row['akhir_sewa']) ? Date::excelToDateTimeObject($row['akhir_sewa']) : null,
-                    'periode' => $periode,
                 ],
                 [
                     'branch_id' => $branch->id,
@@ -51,30 +51,23 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
                 ]
             );
             foreach ($filteredData as $key => $value) {
-                if (!is_null($value)) {
-                    if(is_int($value)) {
-                        $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
-                        $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
-                        $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
-                        KdoMobilBiayaSewa::updateOrCreate(
-                            [
-                                'gap_kdo_id' => $gap_kdo_mobil->id,
-                                'periode' => $tanggal_periode,
-                            ],
+                $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
+                $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
+                $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
-                            [
-                                'gap_kdo_id' => $gap_kdo_mobil->id,
-                                'periode' => $tanggal_periode,
-                                'value' => (int) $value
-                            ]
-                        );
-                    } else {
-                        throw new Exception('Error : Nilai '.$value.' harus berupa angka yang terletak di nopol '.$gap_kdo_mobil->nopol);
-                    }
+                KdoMobilBiayaSewa::updateOrCreate(
+                    [
+                        'gap_kdo_id' => $gap_kdo_mobil->id,
+                        'periode' => $tanggal_periode,
+                    ],
 
-
-                }
+                    [
+                        'gap_kdo_id' => $gap_kdo_mobil->id,
+                        'periode' => $tanggal_periode,
+                        'value' => is_int($value) ? $value : 0
+                    ]
+                );
             }
         }
     }
