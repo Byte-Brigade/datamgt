@@ -138,7 +138,9 @@ export default function Detail({ auth, branch, sessions }) {
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex justify-end">
-            <h2 className="text-xl font-semibold text-end">{branch.branch_name}</h2>
+            <h2 className="text-xl font-semibold text-end">
+              {branch.branch_name}
+            </h2>
           </div>
           <div className="flex justify-between">
             <div className="grid grid-cols-4 gap-4 mb-2">
@@ -147,7 +149,7 @@ export default function Detail({ auth, branch, sessions }) {
                 data
                 type="depre"
                 Icon={ArchiveBoxIcon}
-                active
+                active={params.value}
                 onClick={() => handleTabChange("depre")}
                 color="purple"
               />
@@ -156,7 +158,9 @@ export default function Detail({ auth, branch, sessions }) {
                 data
                 type="nonDepre"
                 Icon={ArchiveBoxIcon}
-                active
+
+                active={params.value}
+
                 onClick={() => handleTabChange("nonDepre")}
                 color="purple"
               />

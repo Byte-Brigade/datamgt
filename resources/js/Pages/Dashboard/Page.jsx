@@ -257,11 +257,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   height={1000}
                 />
               </div>
-              <div className="h-[300px] overflow-y-auto">
+              <div className="overflow-y-auto h-[450px]">
                 <DataTable
                   configuration={false}
                   fetchUrl={"/api/dashboard/employee-positions"}
                   columns={positionColumns}
+                  fixed={true}
                 />
               </div>
             </div>

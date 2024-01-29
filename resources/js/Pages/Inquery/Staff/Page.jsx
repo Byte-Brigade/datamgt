@@ -9,10 +9,10 @@ export default function Page({ sessions, auth }) {
     {
       name: "Nama",
       field: "branch_name",
-      className: "cursor-pointer hover:text-blue-500",
+      // className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.staff.detail", data.slug)}>
+        <Link className="p-4 cursor-pointer hover:text-blue-500" href={route("inquery.staff.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),

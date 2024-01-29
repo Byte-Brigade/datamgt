@@ -27,14 +27,10 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 import CheckStatus from "./CheckStatus";
+import { useEffect } from "react";
+import axios from "axios";
 
-export default function Karyawan({
-  auth,
-  branches,
-  positions,
-  sessions,
-  status,
-}) {
+export default function Karyawan({ auth, branches, positions, sessions }) {
   const initialData = {
     file: null,
     branch: "0",
@@ -67,7 +63,21 @@ export default function Karyawan({
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
-  console.log(status);
+
+  const [status, setStatus] = useState("Offline");
+  const [loading, setLoading] = useState(false);
+
+  const fetchStatus = async () => {
+    setLoading(true);
+    const { data } = await axios.get("/api/checkdbhcs");
+    setStatus(data.status);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchStatus();
+  }, []);
+
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -235,7 +245,7 @@ export default function Karyawan({
                         Sync
                       </div>
                     </PrimaryButton>
-                    <CheckStatus status={status} />
+                    <CheckStatus status={status} loading={loading} />
                   </div>
                 )}
                 {auth.permissions.includes("can export") && (

@@ -19,6 +19,7 @@ use App\Models\OpsSkbirtgs;
 use App\Models\OpsSkOperasional;
 use App\Models\OpsSpeciment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OpsApiController extends Controller
 {
@@ -65,6 +66,21 @@ class OpsApiController extends Controller
         return BranchResource::collection($query);
     }
 
+
+    public function check_db_status()
+    {
+        $status = "";
+        try {
+            DB::connection('sqlsrv')->table('dbo.opsstaging')->get();
+            $status = "Online";
+        } catch (\Throwable $th) {
+            $status = "Offline";
+        }
+
+        return response()->json([
+            'status' => $status,
+        ]);
+    }
 
     public function employees(Employee $employees, Request $request)
     {
@@ -150,7 +166,7 @@ class OpsApiController extends Controller
         $searchInput = $request->search;
         $query = $ops_apar->orderBy($sortFieldInput, $sortOrder);
 
-        $query = $query->whereHas('branches', function($q) use($id) {
+        $query = $query->whereHas('branches', function ($q) use ($id) {
             return $q->where('id', $id);
         });
 
