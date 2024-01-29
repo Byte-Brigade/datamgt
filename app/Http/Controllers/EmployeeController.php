@@ -22,21 +22,28 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $status = "";
-        try {
-            $employees = DB::connection('sqlsrv')->table('dbo.opsstaging')->get();
-            $status = "Online";
-        } catch (\Throwable $th) {
-            $status = "Offline";
-        }
+        // $status = $this->check_status();
         $branches = Branch::all();
         $positionsProps = EmployeePosition::all();
 
         return Inertia::render('Ops/Karyawan/Page', [
             'branches' => $branches,
             'positions' => $positionsProps,
-            'status' => $status,
+            // 'status' => $status,
         ]);
+    }
+
+    public function check_status()
+    {
+        $status = "";
+        try {
+            DB::connection('sqlsrv')->table('dbo.opsstaging')->get();
+            $status = "Online";
+        } catch (\Throwable $th) {
+            $status = "Offline";
+        }
+
+        return $status;
     }
 
     public function import(Request $request)
