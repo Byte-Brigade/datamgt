@@ -69,10 +69,11 @@ class GapApiController extends Controller
             $query->where('periode', $latestPeriode);
         }
         if ($perpage == "All") {
-            $query = $query->get();
-        } else {
-            $query = $query->paginate($perpage);
+            $perpage = $query->count();
         }
+
+        $query = $query->paginate($perpage);
+
         return AssetsResource::collection($query);
     }
 
@@ -144,6 +145,10 @@ class GapApiController extends Controller
             $collections = $collections->sortBy($sortFieldInput);
         }
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -169,10 +174,13 @@ class GapApiController extends Controller
             $query = $query->where('id', 'like', $searchQuery);
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
+        $query = $query->paginate($perpage);
 
-        $data = $query->paginate($perpage);
-        return KdoMobilResource::collection($data);
+        return KdoMobilResource::collection($query);
     }
 
 
@@ -216,6 +224,11 @@ class GapApiController extends Controller
             ];
         })->sortBy('scoring_vendor');
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
@@ -244,10 +257,14 @@ class GapApiController extends Controller
                     });
             });
         }
-        $data = $query->paginate($perpage);
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        return ScoringProjectsResource::collection($data);
+        $query = $query->paginate($perpage);
+
+        return ScoringProjectsResource::collection($query);
     }
 
 
@@ -289,6 +306,10 @@ class GapApiController extends Controller
         })->sortBy('scoring_vendor');
 
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -316,8 +337,14 @@ class GapApiController extends Controller
                     });
             });
         }
-        $data = $query->paginate($perpage);
-        return ScoringAssessmentsResource::collection($data);
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return ScoringAssessmentsResource::collection($query);
     }
 
     public function perdins(GapPerdin $gap_perdin, Request $request)
@@ -388,6 +415,9 @@ class GapApiController extends Controller
             });
         }
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -426,6 +456,11 @@ class GapApiController extends Controller
                 'total' => $spenders->sum('value'),
             ];
         });
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return PaginationHelper::paginate($collections, $perpage);
     }
 
@@ -471,6 +506,10 @@ class GapApiController extends Controller
             ];
         });
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
     public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $type)
@@ -488,10 +527,14 @@ class GapApiController extends Controller
         }
 
 
-        $data = $query->paginate($perpage);
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        return AlihDayaResource::collection($data);
+        $query = $query->paginate($perpage);
+
+        return AlihDayaResource::collection($query);
     }
     public function toners(GapToner $gap_toner, Request $request)
     {
@@ -536,6 +579,10 @@ class GapApiController extends Controller
             ];
         });
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return PaginationHelper::paginate($collections, $perpage);
     }
 
@@ -574,10 +621,13 @@ class GapApiController extends Controller
         }
 
 
-        $data = $query->paginate($perpage);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
+        $query = $query->paginate($perpage);
 
-        return TonerResource::collection($data);
+        return TonerResource::collection($query);
     }
     public function pks(GapPks $gap_pks, Request $request)
     {
@@ -613,6 +663,10 @@ class GapApiController extends Controller
         });
 
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return PaginationHelper::paginate($collections, $perpage);
     }
     public function pks_details(GapPks $gap_pks, Request $request, $status)
@@ -637,11 +691,12 @@ class GapApiController extends Controller
             $query->where('periode', $latestPeriode);
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        $data = $query->paginate($perpage);
-
-
-        return PksResource::collection($data);
+        $query = $query->paginate($perpage);
+        return PksResource::collection($query);
     }
 
     public function stos(GapSto $gap_stos, Request $request)
@@ -681,8 +736,13 @@ class GapApiController extends Controller
         }
 
 
-        $data = $query->paginate($perpage);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        return StoResource::collection($data);
+        $query = $query->paginate($perpage);
+
+
+        return StoResource::collection($query);
     }
 }

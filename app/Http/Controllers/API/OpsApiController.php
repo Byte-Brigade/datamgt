@@ -56,10 +56,13 @@ class OpsApiController extends Controller
             });
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        $branches = $query->paginate($perpage);
+        $query = $query->paginate($perpage);
 
-        return BranchResource::collection($branches);
+        return BranchResource::collection($query);
     }
 
 
@@ -93,8 +96,13 @@ class OpsApiController extends Controller
                 $q->whereIn('position_name', $request->get('employee_positions_position_name'));
             });
         }
-        $employees = $query->paginate($perpage);
-        return EmployeeResource::collection($employees);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return EmployeeResource::collection($query);
     }
 
     public function apars(OpsApar $ops_apar, Request $request)
@@ -127,6 +135,11 @@ class OpsApiController extends Controller
             ];
         });
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+
         return PaginationHelper::paginate($collections, $perpage);
     }
 
@@ -147,8 +160,13 @@ class OpsApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
-        $data = $query->paginate($perpage);
-        return AparDetailResource::collection($data);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return AparDetailResource::collection($query);
     }
 
 
@@ -170,8 +188,13 @@ class OpsApiController extends Controller
                 ->orWhere('branch_code', 'like', $searchQuery)
                 ->orWhere('branch_name', 'like', $searchQuery);
         }
-        $data = $query->paginate($perpage);
-        return PajakReklameResource::collection($data);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return PajakReklameResource::collection($query);
     }
 
 
@@ -261,6 +284,12 @@ class OpsApiController extends Controller
                 $collections->push($defaultValues);
             }
         }
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -349,6 +378,11 @@ class OpsApiController extends Controller
                 $collections->push($defaultValues);
             }
         }
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -366,7 +400,12 @@ class OpsApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('tgl_speciment', 'like', $searchQuery);
         }
-        $employees = $query->paginate($perpage);
-        return SpecimentResource::collection($employees);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return SpecimentResource::collection($query);
     }
 }

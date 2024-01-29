@@ -35,7 +35,13 @@ class InfraApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
         }
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
         $data = $query->paginate($perpage);
+
+
         return DisnakerResource::collection($data);
     }
 
@@ -57,6 +63,11 @@ class InfraApiController extends Controller
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
+        }
+
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
         }
 
         $data = $query->paginate($perpage);
@@ -82,6 +93,9 @@ class InfraApiController extends Controller
             $query = $query->where('category', $request->category);
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
         $data = $query->paginate($perpage);
 
@@ -118,6 +132,10 @@ class InfraApiController extends Controller
             ];
         });
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return PaginationHelper::paginate($collections, $perpage);
     }
 
@@ -137,6 +155,11 @@ class InfraApiController extends Controller
         }
 
         $query->where('jenis_pekerjaan', $jenis_pekerjaan);
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
 
         $data = $query->paginate($perpage);
 
@@ -184,7 +207,9 @@ class InfraApiController extends Controller
             ];
         })->sortBy('scoring_vendor');
 
-
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
@@ -211,6 +236,10 @@ class InfraApiController extends Controller
                         $q->where('branch_name', 'like', $searchQuery);
                     });
             });
+        }
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
         }
         $data = $query->paginate($perpage);
         return ScoringProjectsResource::collection($data);
@@ -254,6 +283,9 @@ class InfraApiController extends Controller
             ];
         })->sortBy('scoring_vendor');
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
@@ -280,6 +312,9 @@ class InfraApiController extends Controller
                         $q->where('branch_name', 'like', $searchQuery);
                     });
             });
+        }
+        if ($perpage == "All") {
+            $perpage = $query->count();
         }
 
         $data = $query->paginate($perpage);

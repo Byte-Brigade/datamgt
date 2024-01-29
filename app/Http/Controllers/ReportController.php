@@ -29,6 +29,13 @@ class ReportController extends Controller
     {
         return Inertia::render('Reporting/Asset/Detail', ['type_name' => $type_name]);
     }
+    public function asset_detail_branch($slug)
+    {
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+        return Inertia::render('Reporting/Asset/Branch', ['branch' => $branch]);
+    }
+
+
     public function licenses()
     {
         return Inertia::render('Reporting/Lisensi/Page');

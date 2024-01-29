@@ -7,23 +7,13 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Option, Select } from "@material-tailwind/react";
 
-export default function Detail({ auth, branch, sessions }) {
+export default function Branch({ auth, branch, sessions }) {
   const { form, selected, setSelected } = useFormContext();
 
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
-  const handleChanged = (id, value) => {
-    setSelected((prevSelected) => {
-      const updatedSelected = { ...prevSelected, [id]: value };
-      console.log("Updated Selected:", value); // Add this line for debugging
-      console.log("Updated Selected:", selected); // Add this line for debugging
-      return updatedSelected;
-    });
 
-    form.setData("remark", { ...selected, [id]: value });
-  };
 
   const columns = [
     {
@@ -107,32 +97,12 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Ada/Tidak",
       field: "remark",
-      type: "custom",
-      render: (data) =>
-        auth.permissions.includes("can sto") ? (
-          <Select
-            className="bg-white"
-            label="Status"
-            value={`${data.remark || ""}`}
-            onChange={(e) => handleChanged(data.id, e)}
-          >
-            <Option value={`Ada`}>Ada</Option>
-            <Option value={`Tidak Ada`}>Tidak Ada</Option>
-            <Option value={`Ada Rusak`}>Ada Rusak</Option>
-            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
-            <Option value={`Mutasi`}>Mutasi</Option>
-            <Option value={`Lelang`}>Lelang</Option>
-            <Option value={`Non Asset`}>Non Asset</Option>
-          </Select>
-        ) : (
-          data.remark
-        ),
     },
   ];
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | Assets" />
+      <Head title="Report | Assets" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -167,40 +137,22 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
-              submitUrl={`inquery.assets.remark`}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
-            >
-              <Button
-                size="sm"
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>
-            </DataTable>
-          )}
+            />)}
 
           {active == "nonDepre" && (
             <DataTable
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
-              submitUrl={`inquery.assets.remark`}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Non-Depre",
               }}
-            >
-              <Button
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>
-            </DataTable>
+            />
           )}
         </div>
       </div>

@@ -56,10 +56,14 @@ class InqueryApiController extends Controller
             });
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        $branches = $query->paginate($perpage);
+        $query = $query->paginate($perpage);
 
-        return BranchResource::collection($branches);
+
+        return BranchResource::collection($query);
     }
 
     public function staff_detail(Employee $employees, Request $request, $slug)
@@ -96,8 +100,13 @@ class InqueryApiController extends Controller
                 $q->whereIn('position_name', $request->get('employee_positions_position_name'));
             });
         }
-        $employees = $query->paginate($perpage);
-        return EmployeeResource::collection($employees);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return EmployeeResource::collection($query);
     }
     public function staff(Branch $branch, Request $request)
     {
@@ -143,6 +152,10 @@ class InqueryApiController extends Controller
             ];
         });
 
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
         return PaginationHelper::paginate($collections, $perpage);
     }
 
@@ -183,10 +196,14 @@ class InqueryApiController extends Controller
             });
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        $branches = $query->paginate($perpage);
+        $query = $query->paginate($perpage);
 
-        return AssetsResource::collection($branches);
+
+        return AssetsResource::collection($query);
     }
     public function stos(Branch $branch, Request $request)
     {
@@ -225,10 +242,13 @@ class InqueryApiController extends Controller
             });
         }
 
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
 
-        $branches = $query->paginate($perpage);
+        $query = $query->paginate($perpage);
 
-        return StoResource::collection($branches);
+        return StoResource::collection($query);
     }
 
     public function licenses(Branch $branch, Request $request)
@@ -266,9 +286,13 @@ class InqueryApiController extends Controller
             });
         }
 
-        $branches = $query->paginate($perpage);
-        // dd($branches);
-        return LicensesResource::collection($branches);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return LicensesResource::collection($query);
     }
 
     public function kdos(GapKdo $gap_kdo, Request $request)
@@ -313,6 +337,10 @@ class InqueryApiController extends Controller
             $collections = $collections->sortByDesc($sortFieldInput);
         } else {
             $collections = $collections->sortBy($sortFieldInput);
+        }
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
         }
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));

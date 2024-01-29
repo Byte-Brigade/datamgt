@@ -90,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/assets', [ReportController::class, 'assets'])->name('assets');
         Route::get('/assets/{type_name}', [ReportController::class, 'asset_detail'])->name('assets.detail');
+        Route::get('/assets/detail/{slug}', [ReportController::class, 'asset_detail_branch'])->name('assets.detail.branch');
         Route::get('/licenses', [ReportController::class, 'licenses'])->name('licenses');
         Route::get('/vendor', [ReportController::class, 'vendor'])->name('vendor');
         Route::get('/bros', [ReportController::class, 'bros'])->name('bros');

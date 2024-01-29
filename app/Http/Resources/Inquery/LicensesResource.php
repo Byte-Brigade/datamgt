@@ -25,7 +25,7 @@ class LicensesResource extends JsonResource
             'disnaker' => isset($this->gap_disnaker) ? 'Ada' : 'Tidak Ada',
             'file_disnaker' => isset($this->gap_disnaker->file) ? $this->gap_disnaker->file : '-',
             'skbirtgs' => isset($this->ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
-            'file_skbirtgs' => isset($this->ops_skbirtgs->file) ? $this->ops_skbirtgs->file : '-',
+            'file_skbirtgs' => isset($this->ops_skbirtgs->file) ? $this->ops_skbirtgs->file : null,
             'apar' => isset($this->ops_apar) ? 'Ada' : 'Tidak Ada',
             'skoperasional' => isset($this->ops_skoperasional) ? 'Ada' : 'Tidak Ada',
             'file_skoperasional' => isset($this->ops_skoperasional->file) ? $this->ops_skoperasional->file : '-',

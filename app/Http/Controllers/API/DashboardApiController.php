@@ -18,9 +18,13 @@ class DashboardApiController extends Controller
         $perpage = $request->perpage ?? 15;
 
 
-        $data = $query->paginate($perpage);
+        if ($perpage == "All") {
+            $perpage = $query->count();
+            $query = $query->paginate($perpage);
+        } else {
+            $query = $query->paginate($perpage);
+        }
 
-
-        return EmployeePositionResource::collection($data);
+        return EmployeePositionResource::collection($query);
     }
 }
