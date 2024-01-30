@@ -117,8 +117,9 @@ class GapKdoController extends Controller
         try {
             $periode = Carbon::createFromFormat('Y-m', $request->periode)->startOfMonth()->format('Y-m-d');
             $biaya_sewa = KdoMobilBiayaSewa::where('gap_kdo_id', $id)->where('periode', $periode)->first();
-            if (isset($biaya_sewa)) {
 
+            if (isset($biaya_sewa)) {
+                GapKdo::find($id)->delete();
                 $biaya_sewa->delete();
             } else {
                 throw new Exception("Biaya sewa pada bulan ".$periode. ' belum ada');

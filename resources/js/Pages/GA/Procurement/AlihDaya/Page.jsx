@@ -406,6 +406,7 @@ export default function Page({ auth, sessions }) {
               headings={heading1}
               fetchUrl={"/api/gap/alihdayas"}
               refreshUrl={isRefreshed}
+              periodic={true}
               bordered={true}
             />
           )}

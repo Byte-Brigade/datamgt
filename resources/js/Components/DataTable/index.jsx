@@ -11,8 +11,8 @@ import {
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
+import Datepicker from "react-tailwindcss-datepicker";
 import { useFormContext } from "../Context/FormProvider";
-import MonthPicker from "./MonthPicker";
 import Paginator from "./Paginator";
 import TableRow from "./Partials/TableRow";
 const SORT_ASC = "asc";
@@ -78,10 +78,15 @@ export default function DataTable({
 
   const toggleOpen = () => setOpen((cur) => !cur);
 
-  const [selectedMonthData, setSelectedMonthData] = useState({
-    month: null,
-    year: null,
-  });
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null
+    });
+
+    const handleDateChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setDateRange(newValue);
+    }
 
   const handleSort = (column) => {
     if (columns === sortColumn) {
@@ -182,9 +187,8 @@ export default function DataTable({
       sort_field: sortColumn,
       sort_order: sortOrder,
       search,
-
+      ...dateRange,
       ...filterData,
-      ...selectedMonthData,
     };
 
     if (fetchUrl) {
@@ -240,15 +244,9 @@ export default function DataTable({
     return formattedDate;
   };
 
-  const [dateRange, setDateRange] = useState({
-    startDate: getFormattedDate(new Date()),
-    endDate: getFormattedDate(new Date(), 11),
-  });
 
-  const handleValueChange = (newDateRange) => {
-    console.log("dateRange:", newDateRange);
-    setDateRange(newDateRange);
-  };
+
+
 
   useEffect(() => {
     fetchData();
@@ -261,9 +259,9 @@ export default function DataTable({
     currentPage,
     refreshUrl,
     clearFilter,
-    selectedMonthData,
     isRefreshed,
     configuration,
+    dateRange
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -318,7 +316,7 @@ export default function DataTable({
                   <option value="30">30</option>
                   <option value="45">45</option>
                   <option value="60">60</option>
-                  <option value="All">Show All</option>
+                  <option value="All">All</option>
                 </select>
                 entries
               </div>
@@ -361,7 +359,11 @@ export default function DataTable({
             {periodic && (
               <div className="z-50 flex items-center justify-end gap-x-2">
                 <span>Periode</span>
-                <MonthPicker onDateChange={setSelectedMonthData} />
+                <Datepicker
+                  value={dateRange}
+                  popoverDirection="down"
+                  onChange={handleDateChange}
+                />
               </div>
             )}
           </div>
@@ -404,21 +406,21 @@ export default function DataTable({
                     return component.map(({ data, field }, i) =>
                       column.field == field
                         ? data.map((item, index) => (
-                            <Checkbox
-                              onChange={(e) =>
-                                handleCheckboxData(e.target.value, field)
-                              }
-                              checked={
-                                filterData[field]
-                                  ? filterData[field].includes(item)
-                                  : false
-                              }
-                              label={item}
-                              key={index}
-                              className={column.className}
-                              value={item}
-                            />
-                          ))
+                          <Checkbox
+                            onChange={(e) =>
+                              handleCheckboxData(e.target.value, field)
+                            }
+                            checked={
+                              filterData[field]
+                                ? filterData[field].includes(item)
+                                : false
+                            }
+                            label={item}
+                            key={index}
+                            className={column.className}
+                            value={item}
+                          />
+                        ))
                         : ""
                     );
                   }
@@ -455,18 +457,16 @@ export default function DataTable({
         <form onSubmit={handleFormSubmit}>{children}</form>
       </div>
       <div
-        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
-          fixedTable ? "max-h-96" : "h-full"
-        }`}
+        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${fixedTable ? "max-h-96" : "h-full"
+          }`}
       >
         <table className={`${className} text-sm leading-3 bg-white z-0`}>
-          <thead className="sticky top-0 z-20 border-b-2 table-fixed border-slate-200">
+          <thead className="sticky top-0  border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr
-                className={`[&>th]:p-2 bg-slate-100 ${
-                  bordered &&
+                className={`[&>th]:p-2 bg-slate-100 ${bordered &&
                   "divide-x-2 divide-slate-200 border-b-2 border-slate-200"
-                }`}
+                  }`}
               >
                 {headings.map((column, i) => (
                   <th key={i} rowSpan={column.rowSpan} colSpan={column.colSpan}>
@@ -477,9 +477,8 @@ export default function DataTable({
             )}
 
             <tr
-              className={`[&>th]:p-2 bg-slate-100 ${
-                bordered && "divide-x-2 divide-slate-200"
-              }`}
+              className={`[&>th]:p-2 bg-slate-100 ${bordered && "divide-x-2 divide-slate-200"
+                }`}
             >
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
@@ -499,20 +498,18 @@ export default function DataTable({
                         {column.name}
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
-                              column.field === sortColumn
+                            className={`${sortOrder === SORT_ASC &&
+                                column.field === sortColumn
                                 ? "text-slate-900"
                                 : "text-gray-400"
-                            } w-3 h-3`}
+                              } w-3 h-3`}
                           />
                           <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
-                              column.field === sortColumn
+                            className={`${sortOrder === SORT_DESC &&
+                                column.field === sortColumn
                                 ? "text-slate-900"
                                 : "text-gray-400"
-                            } w-3 h-3`}
+                              } w-3 h-3`}
                           />
                         </span>
                       </div>
@@ -548,9 +545,8 @@ export default function DataTable({
                 {data.map((data, index) => (
                   <TableRow
                     key={index}
-                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${
-                      bordered && "divide-x-2 divide-slate-200"
-                    }`}
+                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
+                      }`}
                     isSelected={selectedRows.includes(index)}
                     onClick={(event) => handleRowClick(event, index)}
                   >
@@ -564,13 +560,12 @@ export default function DataTable({
                     {columns.map((column, id) =>
                       column.field ? (
                         column.field === "action" ||
-                        column.field === "detail" ? (
+                          column.field === "detail" ? (
                           <td
                             key={column.field}
                             colSpan={column.colSpan}
-                            className={`${column.className} ${
-                              column.freeze && "sticky left-0 bg-white"
-                            }`}
+                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
+                              }`}
                           >
                             {column.render(data)}
                           </td>
@@ -593,17 +588,16 @@ export default function DataTable({
                                 : column.field
                             }
                             colSpan={column.colSpan}
-                            className={`${column.className} ${
-                              column.freeze && "sticky left-0 bg-white"
-                            }`}
+                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
+                              }`}
                           >
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                              ? column.render(data) && column.render(data) != 0
-                                ? column.render(data)
-                                : "-"
-                              : getNestedValue(data, column.field) || "-"}
+                                ? column.render(data) && column.render(data) != 0
+                                  ? column.render(data)
+                                  : "-"
+                                : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (
@@ -620,21 +614,20 @@ export default function DataTable({
                 ))}
                 {columns.filter((column) => column.agg !== undefined).length >
                   0 && (
-                  <tr
-                    className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${
-                      bordered && "divide-x-2 divide-slate-200"
-                    }`}
-                  >
-                    <td className="font-bold text-center">Subtotal</td>
-                    {columns.map((column, index) =>
-                      column.agg === "sum" ? (
-                        <td
-                          key={index}
-                          className={`font-bold ${column.className}`}
-                        >
-                          {column.type === "custom"
-                            ? column.format === "currency"
-                              ? data
+                    <tr
+                      className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
+                        }`}
+                    >
+                      <td className="font-bold text-center">Subtotal</td>
+                      {columns.map((column, index) =>
+                        column.agg === "sum" ? (
+                          <td
+                            key={index}
+                            className={`font-bold ${column.className}`}
+                          >
+                            {column.type === "custom"
+                              ? column.format === "currency"
+                                ? data
                                   .reduce((total, acc) => {
                                     return (
                                       total +
@@ -645,7 +638,7 @@ export default function DataTable({
                                     );
                                   }, 0)
                                   .toLocaleString("id-ID")
-                              : data.reduce((total, acc) => {
+                                : data.reduce((total, acc) => {
                                   return (
                                     total +
                                     parseInt(
@@ -654,29 +647,29 @@ export default function DataTable({
                                     )
                                   );
                                 }, 0)
-                            : data.reduce((total, acc) => {
+                              : data.reduce((total, acc) => {
                                 return total + acc[column.field];
                               }, 0)}
-                        </td>
-                      ) : column.agg === "count" ? (
-                        <td
-                          key={index}
-                          className={`font-bold ${column.className}`}
-                        >
-                          {column.type === "custom"
-                            ? data.reduce((total, acc) => {
+                          </td>
+                        ) : column.agg === "count" ? (
+                          <td
+                            key={index}
+                            className={`font-bold ${column.className}`}
+                          >
+                            {column.type === "custom"
+                              ? data.reduce((total, acc) => {
                                 return total + parseInt(column.render(acc));
                               }, 0)
-                            : data.reduce((total, acc) => {
+                              : data.reduce((total, acc) => {
                                 return total + acc[column.field].length;
                               }, 0)}
-                        </td>
-                      ) : (
-                        <td></td>
-                      )
-                    )}
-                  </tr>
-                )}
+                          </td>
+                        ) : (
+                          <td></td>
+                        )
+                      )}
+                    </tr>
+                  )}
               </>
             )}
           </tbody>

@@ -484,19 +484,35 @@ class GapApiController extends Controller
                     ->orWhere('category', 'like', $searchQuery);
             });
         }
+        $yearToDate = false;
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
-
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $sameMonth = true;
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $yearToDate = true;
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
         } else {
             $latestPeriode = $query->max('periode');
             $query->where('periode', $latestPeriode);
         }
 
+        if ($yearToDate) {
+            $query = $query->select([
+                'jenis_pekerjaan',
+                'nama_pegawai',
+                'user',
+                'lokasi',
+                'vendor',
+                'cost',
+            ])->distinct();
+        }
         $query = $query->get();
+
         $collections = $query->groupBy('jenis_pekerjaan')->map(function ($alihdayas, $jenis_pekerjaan) {
             return [
                 'jenis_pekerjaan' => $jenis_pekerjaan,
@@ -573,6 +589,7 @@ class GapApiController extends Controller
                 'branch_id' => $id,
                 'branch_name' => $branch->branch_name,
                 'branch_code' => $branch->branch_code,
+                'branch_type' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'quantity' => $toners->sum('quantity'),
                 'total' => $toners->sum('total'),

@@ -38,43 +38,16 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithV
 
 
                     $tgl_scoring = is_int($row['tgl_scoring']) ? Date::excelToDateTimeObject($row['tgl_scoring'])->format('Y-m-d') : null;
-                    if ($exist_periode) {
-                        GapScoring::updateOrCreate(
-                            [
-                                'branch_id' => $branch->id,
-                                'entity' => $row['entity'],
-                                'description' => $row['deskripsi'],
-                                'pic' => $row['pic'],
-                                'status_pekerjaan' => !is_null($row['scoring_vendor']) ? 'Done' : 'On Progress',
-                                'schedule_scoring' => $row['schedule_scoring'],
-                                'dokumen_perintah_kerja' => $row['dokumen_perintah_kerja'],
-                                'vendor' => $row['nama_vendor'],
-                                'tgl_scoring' => $tgl_scoring,
-                                'scoring_vendor' => $row['scoring_vendor'],
-                                'schedule_scoring' => $row['schedule_scoring'],
-                                'type' => $row['type'],
-                                'keterangan' => $row['ket'],
-                                'periode' => $periode,
-                            ],
-                            [
-                                'branch_id' => $branch->id,
-                                'entity' => $row['entity'],
-                                'description' => $row['deskripsi'],
-                                'pic' => $row['pic'],
-                                'status_pekerjaan' => !is_null($row['scoring_vendor']) ? 'Done' : 'On Progress',
-                                'schedule_scoring' => $row['schedule_scoring'],
-                                'dokumen_perintah_kerja' => $row['dokumen_perintah_kerja'],
-                                'vendor' => $row['nama_vendor'],
-                                'tgl_scoring' => $tgl_scoring,
-                                'scoring_vendor' => $row['scoring_vendor'],
-                                'schedule_scoring' => $row['schedule_scoring'],
-                                'type' => $row['type'],
-                                'keterangan' => $row['ket'],
-                                'periode' => $periode,
-                            ]
-                        );
-                    } else {
-                        GapScoring::create([
+
+                    GapScoring::updateOrCreate(
+                        [
+                            'branch_id' => $branch->id,
+                            'entity' => $row['entity'],
+                            'description' => $row['deskripsi'],
+                            'vendor' => $row['nama_vendor'],
+                            'type' => $row['type'],
+                        ],
+                        [
                             'branch_id' => $branch->id,
                             'entity' => $row['entity'],
                             'description' => $row['deskripsi'],
@@ -89,8 +62,8 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithV
                             'type' => $row['type'],
                             'keterangan' => $row['ket'],
                             'periode' => $periode,
-                        ]);
-                    }
+                        ]
+                    );
                 }
             }
             DB::commit();

@@ -51,21 +51,14 @@ class PerdinImport implements ToCollection, WithHeadingRow, WithEvents, WithVali
                 $exist_periode = GapPerdin::where('periode', $periode)->first();
 
 
-                $gap_perdin = $exist_periode ? GapPerdin::updateOrCreate(
+                $gap_perdin = GapPerdin::updateOrCreate(
                     [
                         'divisi_pembebanan' => $row['divisi_pembebanan'],
-                        'periode' => $periode,
                         'user' => $row['user'],
                     ],
                     [
                         'divisi_pembebanan' => $row['divisi_pembebanan'],
 
-                        'periode' => $periode,
-                        'user' => $row['user'],
-                    ]
-                ) : GapPerdin::create(
-                    [
-                        'divisi_pembebanan' => $row['divisi_pembebanan'],
                         'periode' => $periode,
                         'user' => $row['user'],
                     ]
@@ -81,7 +74,6 @@ class PerdinImport implements ToCollection, WithHeadingRow, WithEvents, WithVali
                             [
                                 'gap_perdin_id' => $gap_perdin->id,
                                 'periode' => $tanggal_periode,
-                                'value' => round($value),
                                 'category' => $row['kategori'],
                                 'tipe' => $this->sheetName,
                             ],

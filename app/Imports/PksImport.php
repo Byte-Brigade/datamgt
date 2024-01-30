@@ -39,7 +39,6 @@ class PksImport implements ToCollection, WithHeadingRow, WithValidation
                             'akhir' => $akhir,
                             'tahun_akhir' => $tahun_akhir,
                             'status' => $row['status'],
-                            'periode' => $periode,
 
                         ],
                         [

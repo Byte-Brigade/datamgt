@@ -64,6 +64,10 @@ export default function Page({ auth, sessions }) {
     },
 
     {
+      name: "Tipe Cabang",
+      field: "branch_type",
+    },
+    {
       name: "Quantity",
       field: "quantity",
       agg: "sum",

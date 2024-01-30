@@ -26,9 +26,6 @@ class TonerImport implements ToCollection, WithHeadingRow, WithValidation
     {
         foreach ($rows as $row) {
             $periode = Date::excelToDateTimeObject($row['periode']);
-            $periode_exist = GapToner::where('periode', $periode)->exists();
-
-
 
             $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
             $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
@@ -39,89 +36,52 @@ class TonerImport implements ToCollection, WithHeadingRow, WithValidation
                         return $q->where('type_name', $branch_type == 'KF' ? 'KFO' : 'KFNO');
                     })->first();
                 if (isset($branch)) {
-                    if ($periode_exist) {
-                        GapToner::updateOrCreate(
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
-                            ],
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
-                            ]
-                        );
-                    } else {
-                        GapToner::create(
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
-                            ]
-                        );
-                    }
+                    GapToner::updateOrCreate(
+                        [
+                            'branch_id' => $branch->id,
+                            'invoice' => $row['invoice'],
+                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            'cartridge_order' => $row['cartridge_order'],
+                        ],
+                        [
+                            'branch_id' => $branch->id,
+                            'invoice' => $row['invoice'],
+                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            'cartridge_order' => $row['cartridge_order'],
+                            'quantity' => $row['quantity'],
+                            'price' => round($row['price']),
+                            'total' => round($row['total']),
+                            'periode' => $periode,
+                        ]
+                    );
                 }
             } else {
                 $cabang = trim(preg_replace("/\b(KF|SFI)\b/i", "", $row['cabang']));
                 $branch = Branch::where('branch_name', 'like', '%' .  ($cabang == 'Head Office' ? 'Kantor Pusat' : $cabang) . '%')->first();
 
                 if (isset($branch)) {
-                    if ($periode_exist) {
-                        GapToner::updateOrCreate(
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
 
-                            ],
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
+                    GapToner::updateOrCreate(
+                        [
+                            'branch_id' => $branch->id,
+                            'invoice' => $row['invoice'],
+                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            'cartridge_order' => $row['cartridge_order'],
+                            'periode' => $periode,
 
-                            ]
-                        );
-                    } else {
-                        GapToner::create(
-                            [
-                                'branch_id' => $branch->id,
-                                'invoice' => $row['invoice'],
-                                'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                                'cartridge_order' => $row['cartridge_order'],
-                                'quantity' => $row['quantity'],
-                                'price' => round($row['price']),
-                                'total' => round($row['total']),
-                                'periode' => $periode,
+                        ],
+                        [
+                            'branch_id' => $branch->id,
+                            'invoice' => $row['invoice'],
+                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
+                            'cartridge_order' => $row['cartridge_order'],
+                            'quantity' => $row['quantity'],
+                            'price' => round($row['price']),
+                            'total' => round($row['total']),
+                            'periode' => $periode,
 
-                            ]
-                        );
-                    }
+                        ]
+                    );
                 }
             }
         }
