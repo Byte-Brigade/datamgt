@@ -25,7 +25,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function PajakReklame({ auth, branches, sessions }) {
+export default function PajakReklame({ auth, branches, sessions, branch_types }) {
   const initialData = {
     file: null,
     branch_id: 0,
@@ -62,6 +62,7 @@ export default function PajakReklame({ auth, branches, sessions }) {
   const columns = [
     { name: "Kode Cabang", field: "branch_code", sortable: true },
     { name: "Nama Cabang", field: "branch_name", sortable: true },
+    { name: "Tipe Cabang", field: "type_name", sortable: true, filterable: true },
     {
       name: "Periode Awal",
       field: "periode_awal",
@@ -326,6 +327,20 @@ export default function PajakReklame({ auth, branches, sessions }) {
               </div>
             )}
           <DataTable
+          component={[
+            {
+              data: Array.from(
+                new Set(
+                  branch_types
+                    .filter((type) =>
+                      !["SFI", "KF", "KP"].includes(type.type_name)
+                    )
+                    .map((type) => type.type_name)
+                )
+              ),
+              field: "type_name",
+            },
+          ]}
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|branch_ops", auth) &&

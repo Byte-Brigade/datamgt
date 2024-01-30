@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions }) {
+export default function Page({ auth, sessions, type_names }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -65,12 +65,15 @@ export default function Page({ auth, sessions }) {
 
     {
       name: "Tipe Cabang",
-      field: "branch_type",
+      field: "type_name",
+      filterable: true,
+      sortable: true,
     },
     {
       name: "Quantity",
       field: "quantity",
       agg: "sum",
+      sortable: true,
     },
     {
       name: "Total",
@@ -205,6 +208,12 @@ export default function Page({ auth, sessions }) {
             fetchUrl={"/api/gap/toners"}
             refreshUrl={isRefreshed}
             bordered={true}
+            component={[
+              {
+                data: type_names,
+                field: 'type_name'
+              }
+            ]}
           />
         </div>
       </div>

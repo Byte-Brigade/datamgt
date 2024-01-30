@@ -30,20 +30,24 @@ class OpsApiController extends Controller
         $searchInput = $request->search;
         $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
-        $perpage = $request->perpage ?? 10;
+        $perpage = $request->perpage ?? 15;
+
+
 
 
         $input = $request->all();
-        if (isset($input['branch_types_type_name'])) {
-            $type_name = $input['branch_types_type_name'];
+        if (isset($input['type_name'])) {
+            $type_name = $input['type_name'];
             $query = $query->whereHas('branch_types', function ($q) use ($type_name) {
-                if (in_array('KF', $type_name)) {
-                    return $q->whereIn('type_name', ['KF', 'KFNO']);
-                }
+
                 return $q->whereIn('type_name', $type_name);
             });
         }
 
+
+        if (isset($request->area)) {
+            $query = $query->whereIn('area', $request->area);
+        }
         if (isset($request->layanan_atm)) {
             $query = $query->whereIn('layanan_atm', $request->layanan_atm);
         }
@@ -62,6 +66,7 @@ class OpsApiController extends Controller
         }
 
         $query = $query->paginate($perpage);
+
 
         return BranchResource::collection($query);
     }
@@ -126,25 +131,32 @@ class OpsApiController extends Controller
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $ops_apar->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'ops_apars.branch_id', 'branches.id');
+        $query = $ops_apar
+            ->join('branches', 'ops_apars.branch_id', 'branches.id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
 
-        $perpage = $request->perpage ?? 10;
+        $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('branch_name', 'like', $searchQuery)
+                    ->orWhere('branch_code', 'like', $searchQuery)
+                    ->orWhere('type_name', 'like', $searchQuery);
+            });
         }
         $query = $query->get();
 
         $collections = $query->map(function ($apar) {
             $apar->branch_name = $apar->branches->branch_name;
             $apar->branch_code = $apar->branches->branch_code;
+            $apar->type_name = $apar->branches->branch_types->type_name;
             return $apar;
         })->groupBy('branch_name')->map(function ($apar, $branch_name) {
             return [
                 'branch_name' => $branch_name,
                 'branch_code' => $apar->first()->branch_code,
+                'type_name' => $apar->first()->type_name,
                 'branch_id' => $apar->first()->branch_id,
                 'jumlah_tabung' => $apar->count(),
                 'slug' => $apar->first()->slug
@@ -155,6 +167,11 @@ class OpsApiController extends Controller
             $perpage = $collections->count();
         }
 
+        if ($sortOrder == "desc") {
+            $collections = $collections->sortByDesc($sortFieldInput);
+        } else {
+            $collections = $collections->sortBy($sortFieldInput);
+        }
 
         return PaginationHelper::paginate($collections, $perpage);
     }
@@ -190,19 +207,28 @@ class OpsApiController extends Controller
 
     public function pajak_reklames(OpsPajakReklame $ops_pajak_reklame, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $ops_pajak_reklame->select('ops_pajak_reklames.*')->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'ops_pajak_reklames.branch_id', 'branches.id');
+            ->join('branches', 'ops_pajak_reklames.branch_id', 'branches.id')
+            ->join('branch_types', 'branch_types.id', 'branches.branch_type_id');
         $perpage = $request->perpage ?? 10;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('periode_awal', 'like', $searchQuery)
-                ->orWhere('periode_akhir', 'like', $searchQuery)
-                ->orWhere('branch_code', 'like', $searchQuery)
-                ->orWhere('branch_name', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('periode_awal', 'like', $searchQuery)
+                    ->orWhere('periode_akhir', 'like', $searchQuery)
+                    ->orWhere('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('type_name', 'like', $searchQuery);
+            });
+        }
+
+        $input = $request->all();
+        if (isset($input['type_name'])) {
+            $query = $query->whereIn('type_name', $input['type_name']);
         }
         if ($perpage == "All") {
             $perpage = $query->count();
@@ -216,23 +242,23 @@ class OpsApiController extends Controller
 
     public function skbirtgs(OpsSkbirtgs $ops_skbirtgs, Request $request)
     {
-        $sortField = 'ops_skbirtgs.id';
+        $sortFieldInput = $request->input('sort_field') ?? 'no_surat';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $filters = $request->filters;
 
-        $query = $ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortField, $sortOrder)
+        $query = $ops_skbirtgs->select('ops_skbirtgs.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'ops_skbirtgs.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
 
-        if (isset($filters)) {
-            $query->selectRaw(implode(', ', $filters));
-        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('no_surat', 'like', $searchQuery)
-                ->orWhere('branch_name', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('no_surat', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('name', 'like', $searchQuery);
+            });
         }
 
         $query = $query->get();
@@ -283,6 +309,7 @@ class OpsApiController extends Controller
                     }
                 }
 
+
                 // Menukar posisi item pada $tempCollections (mulai dari item ke-9)
                 $count = count($tempCollections);
                 for ($i = 8; $i < $count; $i += 2) {
@@ -300,6 +327,7 @@ class OpsApiController extends Controller
                 $collections->push($defaultValues);
             }
         }
+
 
         if ($perpage == "All") {
             $perpage = $collections->count();

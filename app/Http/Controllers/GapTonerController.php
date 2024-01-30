@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\Toners\TonerExport;
 use App\Imports\TonerImport;
 use App\Models\Branch;
+use App\Models\BranchType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,9 @@ class GapTonerController extends Controller
 {
     public function index()
     {
-        return Inertia::render('GA/Procurement/Toner/Page');
+        return Inertia::render('GA/Procurement/Toner/Page',[
+            'type_names' => BranchType::whereNotIn('type_name',['KF','SFI'])->pluck('type_name')->toArray()
+        ]);
     }
 
     public function import(Request $request)

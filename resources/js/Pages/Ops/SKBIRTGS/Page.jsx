@@ -55,7 +55,7 @@ export default function SKBIRTGS({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Nomor Surat", field: "no_surat" },
-    { name: "Kantor Cabang", field: "branch_name" },
+    { name: "Kantor Cabang", field: "branch_name", sortable: true },
     {
       name: "Penerima Kuasa",
       field: "penerima_kuasa",

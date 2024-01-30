@@ -27,7 +27,7 @@ class GapKdoController extends Controller
     {
 
         $branches = Branch::get();
-        return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branches]);
+        return Inertia::render('GA/Procurement/KDO/Page', ['branches' => $branches, 'type_names' => BranchType::whereNotIn('type_name',['KF','SFI'])->pluck('type_name')->toArray()]);
     }
     public function vendor($vendor)
     {

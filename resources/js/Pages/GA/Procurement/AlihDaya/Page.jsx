@@ -1,5 +1,6 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
@@ -44,7 +45,7 @@ export default function Page({ auth, sessions }) {
     processing,
     errors,
   } = useForm(initialData);
-
+  const { periode} = useFormContext();
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
@@ -80,7 +81,11 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       render: (data) => (
         <Link
-          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+          href={route('gap.alihdayas.type', {
+            type: "jenis_pekerjaan",
+            type_item: data.jenis_pekerjaan,
+            ...periode
+          })}
         >
           {data.jenis_pekerjaan}
         </Link>

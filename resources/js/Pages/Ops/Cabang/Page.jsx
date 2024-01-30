@@ -69,12 +69,12 @@ export default function Cabang({
     {
       name: "Tipe Cabang",
       field: "type_name",
-      sortable: false,
+      sortable: true,
       filterable: true,
     },
     { name: "Nama Cabang", field: "branch_name" },
     { name: "NPWP", field: "npwp" },
-    { name: "Area", field: "area", className: "text-center" },
+    { name: "Area", field: "area", className: "text-center", filterable: true},
     { name: "Alamat", field: "address", className: "w-[300px]" },
     { name: "No. Telpon", field: "telp" },
     { name: "Fasilitas ATM", field: "fasilitas_atm" },
@@ -276,9 +276,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|branch_ops", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -296,12 +296,21 @@ export default function Cabang({
                   new Set(
                     branch_types
                       .filter((type) =>
-                        ["KC", "KCP", "KF"].includes(type.type_name)
+                        !["SFI", "KF", "KP"].includes(type.type_name)
                       )
                       .map((type) => type.type_name)
                   )
                 ),
-                field: "branch_types.type_name",
+                field: "type_name",
+              },
+              {
+                data: Array.from(
+                  new Set(
+                    branches.filter((branch) => branch.area !== null)
+                      .map((branch) => branch.area)
+                  )
+                ),
+                field: "area",
               },
             ]}
           />

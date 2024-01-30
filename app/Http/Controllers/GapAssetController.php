@@ -22,7 +22,7 @@ class GapAssetController extends Controller
     {
         $branches = Branch::get();
 
-        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branches]);
+        return Inertia::render('GA/Procurement/Asset/Page', ['branches' => $branches, 'major_categories' => GapAsset::pluck('major_category')->unique()->toArray()]);
     }
 
     public function import(Request $request)

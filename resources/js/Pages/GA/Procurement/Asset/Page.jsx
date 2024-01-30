@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, major_categories }) {
   const initialData = {
     branch_id: 0,
     category: null,
@@ -75,7 +75,7 @@ export default function Page({ auth, branches, sessions }) {
       field: "category",
       className: "text-center",
       sortable: true,
-      freeze: true,
+      filterable: true,
     },
     {
       name: "Asset Number",
@@ -114,6 +114,7 @@ export default function Page({ auth, branches, sessions }) {
       name: "Major Category",
       field: "major_category",
       className: "text-center",
+      filterable: true,
     },
     {
       name: "Minor Category",
@@ -149,7 +150,6 @@ export default function Page({ auth, branches, sessions }) {
       ),
     },
   ];
-
   const handleSubmitImport = (e) => {
     e.preventDefault();
     post(route("gap.assets.import"), {
@@ -298,7 +298,18 @@ export default function Page({ auth, branches, sessions }) {
             fetchUrl={"/api/gap/assets"}
             refreshUrl={isRefreshed}
             bordered={true}
-            periodic={true}
+            component={
+              [
+                {
+                  data: ["Depre", "Non-Depre"],
+                  field: "category",
+                },
+                {
+                  data: Object.values(major_categories),
+                  field: "major_category",
+                }
+              ]
+            }
           />
         </div>
       </div>
@@ -484,7 +495,7 @@ export default function Page({ auth, branches, sessions }) {
                   setData("date_in_place_service", e.target.value)
                 }
               />
-               <Select
+              <Select
                 label="Major Category"
                 value={`${data.major_category}`}
                 disabled={processing}
