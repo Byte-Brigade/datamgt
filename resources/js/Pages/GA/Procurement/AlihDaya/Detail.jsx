@@ -33,6 +33,8 @@ export default function Detail({ auth, sessions, type, type_item }) {
     grab: null,
     periode: null,
   };
+
+
   const {
     data,
     setData,

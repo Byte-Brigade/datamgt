@@ -25,7 +25,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, type_names }) {
   const initialData = {
     branch_id: 0,
     branches: {
@@ -70,7 +70,8 @@ export default function Page({ auth, branches, sessions }) {
     },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
+      filterable: true,
     },
     {
       name: "Sewa Perbulan",
@@ -269,6 +270,12 @@ export default function Page({ auth, branches, sessions }) {
               columns={columns}
               fetchUrl={"/api/gap/kdos/cabang"}
               refreshUrl={isRefreshed}
+              component={[
+                {
+                  data: type_names,
+                  field: 'type_name',
+                }
+              ]}
             />
           )}
           {active === "vendor" && (

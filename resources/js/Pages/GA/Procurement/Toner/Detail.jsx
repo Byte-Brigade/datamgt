@@ -61,7 +61,7 @@ export default function Page({ auth, sessions, branch }) {
     },
     {
       name: "Tipe Cabang",
-      field: "branch_types.type_name",
+      field: "type_name",
     },
 
     {

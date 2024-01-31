@@ -47,14 +47,20 @@ class GapApiController extends Controller
             $query = $query->where('category', $request->category);
         }
 
+        if (isset($request->category)) {
+            $query = $query->whereIn('category', $request->category);
+        }
+        if (isset($request->major_category)) {
+            $query = $query->whereIn('major_category', $request->major_category);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('asset_number', 'like', $searchQuery)
                     ->orWhere('category', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    ->orWhere('asset_description', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery);
             });
         }
 
@@ -83,7 +89,8 @@ class GapApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $gap_kdo->select('gap_kdos.*')->orderBy('branches.branch_code', 'asc')
-            ->join('branches', 'gap_kdos.branch_id', 'branches.id');
+            ->join('branches', 'gap_kdos.branch_id', 'branches.id')
+            ->join('branch_types', 'branch_types.id', 'branches.branch_type_id');
 
         $perpage = $request->perpage ?? 15;
 
@@ -93,7 +100,15 @@ class GapApiController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('type_name', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery);
+            });
+        }
+
+        if (isset($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
         }
 
         if (!is_null($request->month) && !is_null($request->year)) {
@@ -114,7 +129,7 @@ class GapApiController extends Controller
                 })->groupBy('periode')->sortKeysDesc()->first();
                 return [
                     'branches' => Branch::find($branch),
-                    'branch_types' => $kdos->first()->branches->branch_types,
+                    'type_name' => $kdos->first()->branches->branch_types->type_name,
                     'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
                     'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
                         : 0,
@@ -171,7 +186,10 @@ class GapApiController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('vendor', 'like', $searchQuery)
+                    ->orWhere('nopol', 'like', $searchQuery);
+            });
         }
 
         if ($perpage == "All") {
@@ -480,8 +498,7 @@ class GapApiController extends Controller
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
-                $query->where('divisi_pembebanan', 'like', $searchQuery)
-                    ->orWhere('category', 'like', $searchQuery);
+                $query->where('jenis_pekerjaan', 'like', $searchQuery);
             });
         }
         $yearToDate = false;
@@ -542,6 +559,27 @@ class GapApiController extends Controller
             $query = $query->where('vendor', $request->type_item);
         }
 
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                return $query->where('nama_pegawai', 'like', $searchQuery)
+                    ->orWhere('user', 'like', $searchQuery);
+            });
+        }
+
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
 
 
         if ($perpage == "All") {
@@ -557,7 +595,9 @@ class GapApiController extends Controller
         $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder);
+        $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'gap_toners.branch_id', 'branches.id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');;
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
@@ -579,6 +619,10 @@ class GapApiController extends Controller
             $query->where('periode', $latestPeriode);
         }
 
+        if (isset($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
+        }
+
 
 
         $data = $query->get();
@@ -589,7 +633,7 @@ class GapApiController extends Controller
                 'branch_id' => $id,
                 'branch_name' => $branch->branch_name,
                 'branch_code' => $branch->branch_code,
-                'branch_type' => $branch->branch_types->type_name,
+                'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'quantity' => $toners->sum('quantity'),
                 'total' => $toners->sum('total'),
@@ -615,10 +659,9 @@ class GapApiController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where(function ($query) use ($searchQuery) {
-                $query->whereHas('branches', function ($q) use ($searchQuery) {
-                    $q->where('branch_name', 'like', $searchQuery);
-                });
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('cartridge_order', 'like', $searchQuery)
+                    ->orWhere('invoice', 'like', $searchQuery);
             });
         }
         if (!is_null($request->startDate)) {

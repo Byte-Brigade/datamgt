@@ -6,6 +6,7 @@ use App\Exports\PajakReklameExport;
 use App\Http\Resources\PajakReklameResource;
 use App\Imports\PajakReklameImport;
 use App\Models\Branch;
+use App\Models\BranchType;
 use App\Models\OpsPajakReklame;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class OpsPajakReklameController extends Controller
     {
 
         $branchesProps = Branch::with('branch_types')->get();
-        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branchesProps]);
+        return Inertia::render('Ops/PajakReklame/Page', ['branches' => $branchesProps, 'branch_types' => BranchType::get()]);
     }
 
     public function import(Request $request)

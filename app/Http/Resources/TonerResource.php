@@ -24,6 +24,7 @@ class TonerResource extends JsonResource
             'quantity' => $this->quantity,
             'price' => $this->price,
             'total' => $this->total,
+            'type_name' => $this->branches->branch_types->type_name,
             'branches' => $this->branches,
         ];
     }

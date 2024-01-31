@@ -9,6 +9,10 @@ export const FormProvider = ({ children }) => {
   const [initialData, setInitialData] = useState({});
   const [url, setUrl] = useState([]);
   const [id, setId] = useState([]);
+  const [periode, setPeriode] = useState({
+    startDate: null,
+    endDate: null
+  });
   const [selected, setSelected] = useState({})
   const [modalOpen, setModalOpen] = useState({
     create: false,
@@ -54,7 +58,8 @@ export const FormProvider = ({ children }) => {
       modalOpen,
       setModalOpen,
       setId,
-      selected, setSelected
+      selected, setSelected,
+      periode, setPeriode
     }}>
       {children}
     </FormContext.Provider>

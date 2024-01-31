@@ -7,6 +7,10 @@ import {
   Checkbox,
   Collapse,
   IconButton,
+  List,
+  ListItem,
+  ListItemPrefix,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
@@ -69,6 +73,7 @@ export default function DataTable({
     isRefreshed,
     selected,
     setSelected,
+    setPeriode
   } = useFormContext();
 
   // filters
@@ -81,15 +86,18 @@ export default function DataTable({
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null
-    });
+  });
 
-    const handleDateChange = (newValue) => {
+  const handleDateChange = (newValue) => {
     console.log("newValue:", newValue);
     setDateRange(newValue);
-    }
+    setPeriode(newValue)
+  }
 
   const handleSort = (column) => {
-    if (columns === sortColumn) {
+
+    console.log(sortColumn)
+    if (column === sortColumn) {
       sortOrder === SORT_ASC ? setSortOrder(SORT_DESC) : setSortOrder(SORT_ASC);
     } else {
       setSortColumn(column);
@@ -135,7 +143,7 @@ export default function DataTable({
     fetchData(1);
   };
 
-  const handleCheckbox = async (filter, field) => {
+  const handleCategory = async (filter, field) => {
     setFilters((prevFilter) =>
       prevFilter.includes(filter)
         ? prevFilter.filter((c) => c !== filter)
@@ -376,55 +384,88 @@ export default function DataTable({
           <div className="flex justify-between w-full mx-auto my-2">
             <div className="flex flex-col flex-wrap">
               <span className="ml-3">Category</span>
-              {columns
-                .filter((column, index) => column.filterable)
-                .map((column, id) => {
-                  if (column.name !== "Action") {
-                    return (
-                      <Checkbox
-                        label={column.name}
-                        key={id}
-                        checked={filters.includes(column.field)}
-                        value={column.field}
-                        onChange={(e) =>
-                          handleCheckbox(
-                            e.target.value,
-                            column.component,
-                            column.field
-                          )
-                        }
-                      />
-                    );
-                  }
-                })}
-            </div>
-            <div className="flex flex-wrap">
-              {columns
-                .filter((column) => column.filterable)
-                .map((column, i) => {
-                  if (component.length > 0 && filters.includes(column.field)) {
-                    return component.map(({ data, field }, i) =>
-                      column.field == field
-                        ? data.map((item, index) => (
-                          <Checkbox
-                            onChange={(e) =>
-                              handleCheckboxData(e.target.value, field)
-                            }
-                            checked={
-                              filterData[field]
-                                ? filterData[field].includes(item)
-                                : false
-                            }
-                            label={item}
-                            key={index}
-                            className={column.className}
-                            value={item}
-                          />
-                        ))
-                        : ""
-                    );
-                  }
-                })}
+              <List>
+                {columns
+                  .filter((column, index) => column.filterable)
+                  .map((column, id) => {
+                    if (column.name !== "Action") {
+                      return (
+                        <ListItem className="p-0 flex flex-col">
+                          <label
+                            htmlFor="vertical-list-react"
+                            className="flex w-full cursor-pointer items-center px-3 py-2"
+                          >
+                            <ListItemPrefix className="mr-3">
+                              <Checkbox
+                                key={id}
+                                checked={filters.includes(column.field)}
+                                value={column.field}
+                                onChange={(e) =>
+                                  handleCategory(
+                                    e.target.value,
+                                    column.component,
+                                    column.field
+                                  )
+                                }
+                              />
+
+                            </ListItemPrefix>
+                            <Typography color="blue-gray" className="font-medium">
+                              {column.name}
+                            </Typography>
+                          </label>
+
+                          {component.length > 0 && filters.includes(column.field) &&
+                            component.map(({ data, field }, i) =>
+                              column.field == field
+                                ? (
+                                  <List>
+                                    {data.map((item, index) => (
+                                      <ListItem className="p-0">
+                                        <label
+                                          htmlFor="vertical-list-react"
+                                          className="flex w-full cursor-pointer items-center px-3 py-2"
+                                        >
+                                          <ListItemPrefix className="mr-3">
+
+                                            <Checkbox
+                                              onChange={(e) =>
+                                                handleCheckboxData(e.target.value, field)
+                                              }
+                                              checked={
+                                                filterData[field]
+                                                  ? filterData[field].includes(item)
+                                                  : false
+                                              }
+                                              key={index}
+                                              className={`${column.className} hover:before:opacity-0`}
+                                              value={item}
+                                              id="vertical-list-react"
+                                              ripple={false}
+                                              containerProps={{
+                                                className: "p-0",
+                                              }}
+                                            />
+                                          </ListItemPrefix>
+                                          <Typography color="blue-gray" className="font-normal">
+                                            {item}
+                                          </Typography>
+                                        </label>
+                                      </ListItem>
+
+                                    ))}
+                                  </List>
+                                )
+                                : ""
+                            )}
+
+
+                        </ListItem>
+                      );
+                    }
+                  })}
+              </List>
+
             </div>
             <div className="flex flex-col justify-center gap-y-2">
               <Button size="sm" onClick={handleClearFilter}>
@@ -499,16 +540,16 @@ export default function DataTable({
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
                             className={`${sortOrder === SORT_ASC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                           <ChevronDownIcon
                             className={`${sortOrder === SORT_DESC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                         </span>

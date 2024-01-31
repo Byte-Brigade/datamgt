@@ -52,10 +52,11 @@ export default function Apar({ auth, branches, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    { name: "Cabang", field: "branch_name" },
+    { name: "Cabang", field: "branch_name", sortable: true },
+    { name: "Tipe Cabang", field: "type_name", sortable: true },
 
     {
-      name: "Jumlah Tabung", field: "jumlah_tabung", type: 'custom',
+      name: "Jumlah Tabung", field: "jumlah_tabung", sortable: true, type: 'custom',
       render: (data) => `${data.jumlah_tabung} Tabung`
     },
     {
