@@ -494,16 +494,16 @@
         },
         {
             "name": "doctrine/deprecations",
-            "version": "1.1.2",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "4f2d4f2836e7ec4e7a8625e75c6aa916004db931"
+                "reference": "dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/4f2d4f2836e7ec4e7a8625e75c6aa916004db931",
-                "reference": "4f2d4f2836e7ec4e7a8625e75c6aa916004db931",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab",
+                "reference": "dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab",
                 "shasum": ""
             },
             "require": {
@@ -535,9 +535,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/1.1.2"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.3"
             },
-            "time": "2023-09-27T20:04:15+00:00"
+            "time": "2024-01-30T19:34:25+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -1871,16 +1871,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v10.8.1",
+            "version": "v10.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "2f670f5b927b21c5f7e9d25f61a9bf727e16e9c0"
+                "reference": "4b5766ac110ef116c6571f4b3a29193bfd01c27c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/2f670f5b927b21c5f7e9d25f61a9bf727e16e9c0",
-                "reference": "2f670f5b927b21c5f7e9d25f61a9bf727e16e9c0",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/4b5766ac110ef116c6571f4b3a29193bfd01c27c",
+                "reference": "4b5766ac110ef116c6571f4b3a29193bfd01c27c",
                 "shasum": ""
             },
             "require": {
@@ -1944,7 +1944,7 @@
                 "issues": "https://github.com/laravel/scout/issues",
                 "source": "https://github.com/laravel/scout"
             },
-            "time": "2024-01-23T16:27:01+00:00"
+            "time": "2024-01-30T18:52:49+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -7445,22 +7445,22 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.27.2",
+            "version": "v1.27.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "2276a8d9d6cfdcaad98bf67a34331d100149d5b6"
+                "reference": "7e01b345072c9604ead9d7aed175bf7ac1d80289"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/2276a8d9d6cfdcaad98bf67a34331d100149d5b6",
-                "reference": "2276a8d9d6cfdcaad98bf67a34331d100149d5b6",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/7e01b345072c9604ead9d7aed175bf7ac1d80289",
+                "reference": "7e01b345072c9604ead9d7aed175bf7ac1d80289",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^9.0|^10.0|^11.0",
-                "illuminate/contracts": "^9.0|^10.0|^11.0",
-                "illuminate/support": "^9.0|^10.0|^11.0",
+                "illuminate/console": "^9.52.16|^10.0|^11.0",
+                "illuminate/contracts": "^9.52.16|^10.0|^11.0",
+                "illuminate/support": "^9.52.16|^10.0|^11.0",
                 "php": "^8.0",
                 "symfony/yaml": "^6.0|^7.0"
             },
@@ -7506,7 +7506,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2024-01-21T17:13:42+00:00"
+            "time": "2024-01-30T03:03:59+00:00"
         },
         {
             "name": "maximebf/debugbar",
