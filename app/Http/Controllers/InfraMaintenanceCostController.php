@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\MaintenanceCost\MaintenanceCostExport;
 use App\Imports\MaintenanceCostImport;
 use App\Models\Branch;
+use App\Models\BranchType;
+use App\Models\InfraMaintenanceCost;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
@@ -14,7 +16,10 @@ class InfraMaintenanceCostController extends Controller
     public function index()
     {
         $branches = Branch::get();
-        return Inertia::render('GA/Infra/MaintenanceCost/Page', ['branches' => $branches]);
+        return Inertia::render('GA/Infra/MaintenanceCost/Page', [
+            'branches' => $branches,
+
+        ]);
     }
 
     public function import(Request $request)
@@ -44,6 +49,10 @@ class InfraMaintenanceCostController extends Controller
 
     public function detail($jenis_pekerjaan)
     {
-        return Inertia::render('GA/Infra/MaintenanceCost/Detail', ['jenis_pekerjaan' => $jenis_pekerjaan]);
+        return Inertia::render('GA/Infra/MaintenanceCost/Detail', [
+            'jenis_pekerjaan' => $jenis_pekerjaan,
+            "type_names" => BranchType::whereNotIn('type_name', ['KF', 'SFI'])->pluck('type_name')->toArray(),
+            "categories" => ["BAU", "Project"],
+        ]);
     }
 }

@@ -22,7 +22,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions, jenis_pekerjaan }) {
+export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_names, categories}) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -54,9 +54,9 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan }) {
 
   const columns = [
     { name: "Nama Cabang",className:"w-[100px]", field: "branch_name" },
-    { name: "Tipe Cabang", field: "branch_type" },
+    { name: "Tipe Cabang", field: "type_name", filterable: true },
     { name: "Nama Project", className:"w-[300px]", field: "nama_project" },
-    { name: "Category", field: "category" },
+    { name: "Category", field: "category" , filterable: true},
     { name: "Nama Vendor", sortable: true, field: "nama_vendor" },
     { name: "Jenis Pekerjaan", field: "jenis_pekerjaan" },
     {
@@ -275,6 +275,16 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan }) {
             className="w-[1500px]"
             fetchUrl={`/api/infra/maintenance-costs/${jenis_pekerjaan}`}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: categories,
+                field: 'category'
+              },
+              {
+                data: type_names,
+                field: 'type_name'
+              }
+            ]}
           />
         </div>
       </div>

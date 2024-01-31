@@ -270,9 +270,10 @@ class GapApiController extends Controller
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('pic', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('description', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery);
+
             });
         }
 
@@ -350,9 +351,10 @@ class GapApiController extends Controller
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('pic', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('description', 'like', $searchQuery)
+                    ->orWhere('vendor', 'like', $searchQuery);
+
             });
         }
 
@@ -383,7 +385,7 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('divisi_pembebanan', 'like', $searchQuery)
-                    ->orWhere('category', 'like', $searchQuery);
+                ->orWhere('user', 'like', $searchQuery);
             });
         }
 
@@ -397,6 +399,8 @@ class GapApiController extends Controller
             $latestPeriode = $query->max('periode');
             $query->where('periode', $latestPeriode);
         }
+
+
 
 
         $query = $query->get();
@@ -739,6 +743,14 @@ class GapApiController extends Controller
 
         $query->where('status', $status);
 
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('vendor', 'like', $searchQuery)
+                    ->orWhere('description', 'like', $searchQuery)
+                    ->orWhere('contract_no', 'like', $searchQuery);
+            });
+        }
 
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);

@@ -25,7 +25,7 @@ class SewaGedungResource extends JsonResource
             'biaya_per_tahun' => $this->biaya_per_tahun,
             'total_biaya' => $this->total_biaya,
             'branches' => $this->branches,
-            'branch_types' => $this->branches->branch_types,
+            'type_name' => $this->branches->branch_types->type_name,
 
         ];
     }

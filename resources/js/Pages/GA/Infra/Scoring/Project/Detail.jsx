@@ -7,7 +7,7 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { ArrowUpTrayIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, branches, sessions, scoring_vendor }) {
+export default function Detail({ auth, branches, sessions, scoring_vendor, status_pekerjaan }) {
   const initialData = {
     branch_id: 0,
     description: null,
@@ -81,6 +81,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor }) {
     {
       name: "Status Pekerjaan",
       field: "status_pekerjaan",
+      filterable: true,
     },
     {
       name: "Dokumen Perintah Kerja",
@@ -316,26 +317,32 @@ export default function Detail({ auth, branches, sessions, scoring_vendor }) {
                   </div>
                 )}
                 {auth.permissions.includes("can export") &
-                (
-                  <PrimaryButton onClick={toggleModalExport}>
-                    Create Report
-                  </PrimaryButton>
-                )}
+                  (
+                    <PrimaryButton onClick={toggleModalExport}>
+                      Create Report
+                    </PrimaryButton>
+                  )}
               </div>
             )}
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|ga", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             className="w-[1500px]"
             fetchUrl={`/api/infra/scoring_projects/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
+            component={[
+              {
+                data: Object.values(status_pekerjaan),
+                field: 'status_pekerjaan'
+              }
+            ]}
           />
         </div>
       </div>

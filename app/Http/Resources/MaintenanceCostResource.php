@@ -16,7 +16,7 @@ class MaintenanceCostResource extends JsonResource
     {
         return [
             'branch_name' => $this->branches->branch_name,
-            'branch_type' => $this->branches->branch_types->type_name,
+            'type_name' => $this->branches->branch_types->type_name,
             'nama_project' => $this->nama_project,
             'category' => $this->category,
             'jenis_pekerjaan' => $this->jenis_pekerjaan,
