@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InqueryAssetsResource;
 use App\Models\Branch;
+use App\Models\BranchType;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapDisnaker;
@@ -120,8 +121,8 @@ class InqueryController extends Controller
         ];
         return Inertia::render('Inquery/Asset/Page', ['data' => [
             'gap_toners' => $gap_toners,
-            'months' => $months
-        ]]);
+            'months' => $months,
+        ], 'type_names' =>  BranchType::whereNotIn('type_name',['KF', 'SFI'])->pluck('type_name')->toArray()]);
     }
     public function scorings()
     {

@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-export default function Page({ sessions, auth, data }) {
+export default function Page({ sessions, auth, data, type_names }) {
   const { active, params, handleTabChange } = tabState([
     "assets",
     "toner",
@@ -97,71 +97,49 @@ export default function Page({ sessions, auth, data }) {
     {
       name: "Tipe Cabang",
       field: "type_name",
+      filterable: true
     },
     {
       name: "Item",
-      field: "item_depre",
+      field: "item.depre",
       className: "text-center",
-      type: "custom",
-      render: (data) => {
-        return data.assets.filter((asset) => asset.category === "Depre").length;
-      },
     },
     {
       name: "Nilai Perolehan",
-      field: "nilai_perolehan_depre",
+      field: "nilai_perolehan.depre",
       className: "text-right",
       agg: "sum",
       format: "currency",
       type: "custom",
       render: (data) => {
-        return data.assets
-          .filter((asset) => asset.category === "Depre")
-          .reduce((acc, item) => {
-            return acc + item.asset_cost;
-          }, 0)
-          .toLocaleString("id-ID");
+        return data.nilai_perolehan.depre.toLocaleString("id-ID");
       },
     },
     {
       name: "Penyusutan",
-      field: "penyusutan",
+      field: "penyusutan.depre",
       className: "text-right",
       format: "currency",
       type: "custom",
       render: (data) => {
-        return data.assets
-          .filter((asset) => asset.category === "Depre")
-          .reduce((acc, item) => {
-            return acc + item.accum_depre;
-          }, 0)
-          .toLocaleString("id-ID");
+        return data.penyusutan.depre.toLocaleString("id-ID");
       },
     },
     {
       name: "Net Book Value",
-      field: "net_book_value",
+      field: "net_book_value.depre",
       className: "text-right",
       format: "currency",
       type: "custom",
       render: (data) => {
-        return data.assets
-          .filter((asset) => asset.category === "Depre")
-          .reduce((acc, item) => {
-            return acc + item.net_book_value;
-          }, 0)
-          .toLocaleString("id-ID");
+        return data.net_book_value.depre.toLocaleString("id-ID");
       },
     },
     {
       name: "Item",
-      field: "item_non_depre",
+      field: "item.non_depre",
       className: "text-center",
-      type: "custom",
-      render: (data) => {
-        return data.assets.filter((asset) => asset.category === "Non-Depre")
-          .length;
-      },
+
     },
     {
       name: "Nilai Perolehan",
@@ -171,12 +149,7 @@ export default function Page({ sessions, auth, data }) {
       format: "currency",
       type: "custom",
       render: (data) => {
-        return data.assets
-          .filter((asset) => asset.category === "Non-Depre")
-          .reduce((acc, item) => {
-            return acc + item.asset_cost;
-          }, 0)
-          .toLocaleString("id-ID");
+        return data.nilai_perolehan.non_depre.toLocaleString("id-ID");
       },
     },
   ];
@@ -337,6 +310,12 @@ export default function Page({ sessions, auth, data }) {
               parameters={{ branch_id: auth.user.branch_id }}
               headings={headings}
               bordered={true}
+              component={[
+                {
+                  data: type_names,
+                  field: 'type_name'
+                }
+              ]}
             />
           )}
           {active === "sto" && (
@@ -414,14 +393,13 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${
-                            Object.values(data.gap_toners)[0].idecice_date !==
+                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
                             undefined
-                              ? new Date(
-                                  Object.values(data.gap_toners)[0].idecice_date
-                                ).getFullYear()
-                              : new Date().getFullYear()
-                          }`}
+                            ? new Date(
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
+                            : new Date().getFullYear()
+                            }`}
                         </th>
                       ))}
                     </tr>
@@ -467,14 +445,13 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${
-                            Object.values(data.gap_toners)[0].idecice_date !==
+                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
                             undefined
-                              ? new Date(
-                                  Object.values(data.gap_toners)[0].idecice_date
-                                ).getFullYear()
-                              : new Date().getFullYear()
-                          }`}
+                            ? new Date(
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
+                            : new Date().getFullYear()
+                            }`}
                         </th>
                       ))}
                     </tr>
@@ -518,14 +495,13 @@ export default function Page({ sessions, auth, data }) {
                       <th className="text-center">Kategori Kantor</th>
                       {data.months.map((month) => (
                         <th className="text-center">
-                          {`${month} ${
-                            Object.values(data.gap_toners)[0].idecice_date !==
+                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
                             undefined
-                              ? new Date(
-                                  Object.values(data.gap_toners)[0].idecice_date
-                                ).getFullYear()
-                              : new Date().getFullYear()
-                          }`}
+                            ? new Date(
+                              Object.values(data.gap_toners)[0].idecice_date
+                            ).getFullYear()
+                            : new Date().getFullYear()
+                            }`}
                         </th>
                       ))}
                     </tr>

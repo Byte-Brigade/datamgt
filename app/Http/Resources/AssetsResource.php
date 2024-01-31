@@ -28,8 +28,7 @@ class AssetsResource extends JsonResource
             'depre_exp' => $this->depre_exp,
             'accum_depre' => $this->accum_depre,
             'net_book_value' => $this->net_book_value,
-            'branches' => isset($this->branches) ? $this->branches : [],
-
+            'branch_name' => $this->branches->branch_name,
             'periode' => $this->periode,
 
             'slug' => $this->slug,

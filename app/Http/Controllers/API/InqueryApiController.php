@@ -164,7 +164,7 @@ class InqueryApiController extends Controller
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+        $query = $branch->select('branches.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 15;
 
@@ -200,10 +200,42 @@ class InqueryApiController extends Controller
             $perpage = $query->count();
         }
 
-        $query = $query->paginate($perpage);
+        if (isset($request->type_name) && !is_null($request->type_name)) {
+            $query = $query->where('type_name', $request->type_name);
+        }
 
 
-        return AssetsResource::collection($query);
+        $query = $query->get();
+        // $query = $query->paginate($perpage);
+
+        $collections = $query->map(function ($branch) {
+            return [
+                'branch_name' => $branch->branch_name,
+                'type_name' => $branch->branch_types->type_name,
+                'slug' => $branch->slug,
+                'item' => [
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->count(),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->count(),
+
+                ],
+                'nilai_perolehan' => [
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('asset_cost'),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('asset_cost'),
+
+                ],
+                'penyusutan' => [
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('accum_depre'),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('accum_depre'),
+                ],
+                'net_book_value' => [
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('net_book_value'),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('net_book_value'),
+                ],
+            ];
+        });
+
+
+        return PaginationHelper::paginate($collections, $perpage);
     }
     public function stos(Branch $branch, Request $request)
     {
