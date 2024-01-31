@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, type_names, status_bro }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -56,9 +56,9 @@ export default function Page({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Branch Name", sortable: true, field: "branch_name" },
-    { name: "Branch Type", sortable: true, field: "branch_type" },
+    { name: "Branch Type", sortable: true, field: "branch_type", filterable: true, },
     { name: "Kategori", sortable: true, field: "category" },
-    { name: "Status", sortable: true, field: "status" },
+    { name: "Status", sortable: true, field: "status", filterable: true },
     { name: "Target", sortable: true, field: "target", type: "date" },
     { name: "Jatuh Tempo Sewa", sortable: true, field: "jatuh_tempo_sewa" },
     {
@@ -219,14 +219,24 @@ export default function Page({ auth, branches, sessions }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|ga", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             className="w-[1200px]"
             fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: Object.values(status_bro),
+                field: "status",
+              },
+              {
+                data: type_names,
+                field: 'branch_type'
+              }
+            ]}
           />
         </div>
       </div>

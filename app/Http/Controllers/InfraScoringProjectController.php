@@ -82,7 +82,7 @@ class InfraScoringProjectController extends Controller
     public function detail($scoring_vendor)
     {
         $branches = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches]);
+        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches, 'status_pekerjaan' => InfraScoring::whereNot('type','Assessment')->pluck('status_pekerjaan')->unique()->toArray()]);
     }
     /**
      * Show the form for editing the specified resource.

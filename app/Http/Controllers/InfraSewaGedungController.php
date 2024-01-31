@@ -6,6 +6,7 @@ use App\Exports\SewaGedung\SewaGedungExport;
 use App\Http\Resources\SewaGedungResource;
 use App\Imports\SewaGedungImport;
 use App\Models\Branch;
+use App\Models\BranchType;
 use App\Models\InfraSewaGedung;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,11 @@ class InfraSewaGedungController extends Controller
     public function index()
     {
         $branches = Branch::get();
-        return Inertia::render('GA/Infra/SewaGedung/Page', ['branches' => $branches]);
+        return Inertia::render('GA/Infra/SewaGedung/Page', [
+            'branches' => $branches,
+            'status_gedung' => ["Milik", "Sewa", "Pinjam Pakai"],
+            'type_names' => BranchType::whereNotIn('type_name', ['KF', 'SFI','KP'])->pluck('type_name')->toArray()
+        ]);
     }
 
     public function import(Request $request)
@@ -56,6 +61,4 @@ class InfraSewaGedungController extends Controller
 
         return response()->download(storage_path($path));
     }
-
 }
-

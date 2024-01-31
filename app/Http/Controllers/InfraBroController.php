@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\BRO\BROExport;
 use App\Imports\BroImport;
 use App\Models\Branch;
+use App\Models\BranchType;
+use App\Models\InfraBro;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
@@ -14,7 +16,11 @@ class InfraBroController extends Controller
     public function index()
     {
         $branches = Branch::get();
-        return Inertia::render('GA/Infra/BRO/Page', ['branches' => $branches]);
+        return Inertia::render('GA/Infra/BRO/Page', [
+            'branches' => $branches,
+            'type_names' => BranchType::whereNotIn('type_name', ['SFI'])->pluck('type_name')->toArray(),
+            'status_bro' => InfraBro::pluck('status')->unique()->toArray(),
+        ]);
     }
 
     public function import(Request $request)
@@ -41,5 +47,4 @@ class InfraBroController extends Controller
 
         return response()->download(storage_path($path));
     }
-
 }

@@ -25,7 +25,7 @@ class DisnakerResource extends JsonResource
             'progress_resertifikasi' => $this->progress_resertifikasi,
             'file' => $this->file,
             'branches' => $this->branches,
-            'jenis_perizinan' => $this->jenis_perizinan,
+            'jenis_perizinan' => $this->jenis_perizinan->name,
             'slug' => $this->slug,
         ];
     }

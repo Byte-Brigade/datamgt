@@ -59,7 +59,8 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
 
     {
       name: "Jenis Perizinan",
-      field: "jenis_perizinan.name",
+      field: "jenis_perizinan",
+      filterable: true,
       className: "text-center",
     },
     {
@@ -265,13 +266,19 @@ export default function Page({ auth, branches, sessions, jenis_perizinan }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|ga", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/infra/disnakers"}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: jenis_perizinan.map(perizinan => perizinan.name),
+                field: "jenis_perizinan"
+              }
+            ]}
           />
         </div>
       </div>

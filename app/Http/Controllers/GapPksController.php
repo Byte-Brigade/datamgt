@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PKS\PKSExport;
 use App\Imports\PksImport;
+use App\Models\GapPks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;

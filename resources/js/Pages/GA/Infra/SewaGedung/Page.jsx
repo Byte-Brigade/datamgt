@@ -24,7 +24,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, branches, sessions }) {
+export default function Page({ auth, branches, sessions, status_gedung, type_names }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -56,11 +56,12 @@ export default function Page({ auth, branches, sessions }) {
 
   const columns = [
     { name: "Cabang", sortable: true, field: "branches.branch_name" },
-    { name: "Tipe Cabang", field: "branch_types.type_name" },
+    { name: "Tipe Cabang", field: "type_name", filterable: true},
 
     {
       name: "Status Kepemilikan",
       field: "status_kepemilikan",
+      filterable: true,
       sortable: true,
     },
     {
@@ -269,6 +270,16 @@ export default function Page({ auth, branches, sessions }) {
             className="w-[1200px]"
             fetchUrl={"/api/infra/sewa-gedungs"}
             refreshUrl={isRefreshed}
+            component={[
+              {
+                data: type_names,
+                field: "type_name",
+              },
+              {
+                data: status_gedung,
+                field: "status_kepemilikan",
+              },
+            ]}
           />
         </div>
       </div>

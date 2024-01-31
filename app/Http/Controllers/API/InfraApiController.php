@@ -27,17 +27,26 @@ class InfraApiController extends Controller
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $gap_disnaker->select('gap_disnakers.*')->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'gap_disnakers.branch_id', 'branches.id');
+            ->join('branches', 'gap_disnakers.branch_id', 'branches.id')
+            ->join('jenis_perizinans', 'gap_disnakers.jenis_perizinan_id', 'jenis_perizinans.id');
 
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('branch_name', 'like', $searchQuery)
+                    ->orWhere('name', 'like', $searchQuery);
+            });
         }
         if ($perpage == "All") {
             $perpage = $query->count();
         }
+
+        if (isset($request->jenis_perizinan) && !is_null($request->jenis_perizinan)) {
+            $query = $query->whereIn('name', $request->jenis_perizinan);
+        }
+
 
         $data = $query->paginate($perpage);
 
@@ -51,7 +60,8 @@ class InfraApiController extends Controller
         $sortOrder = $request->input('sort_order') ?? 'asc';
         $searchInput = $request->search;
         $query = $infra_sewa_gedung
-            ->join('branches', 'infra_sewa_gedungs.branch_id', 'branches.id');
+            ->join('branches', 'infra_sewa_gedungs.branch_id', 'branches.id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
 
         if ($sortFieldInput == 'status_kepemilikan') {
             $query = $query->orderByRaw("SUBSTRING(status, 1, 1) " . $sortOrder);
@@ -63,6 +73,14 @@ class InfraApiController extends Controller
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where('id', 'like', $searchQuery);
+        }
+
+        if (isset($request->type_name) && !is_null($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
+        }
+
+        if (isset($request->status_kepemilikan) && !is_null($request->status_kepemilikan)) {
+            $query = $query->whereIn('status_kepemilikan', $request->status_kepemilikan);
         }
 
 
@@ -77,7 +95,7 @@ class InfraApiController extends Controller
 
     public function bros(InfraBro $infra_bro, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_name';
         $sortOrder = $request->input('sort_order') ?? 'asc';
         $searchInput = $request->search;
         $query = $infra_bro;
@@ -86,12 +104,22 @@ class InfraApiController extends Controller
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('branch_name', 'like', $searchQuery);
+            });
         }
 
         if (!is_null($request->category)) {
             $query = $query->where('category', $request->category);
         }
+
+        if (isset($request->branch_type) && !is_null($request->branch_type)) {
+            $query = $query->whereIn('branch_type', $request->branch_type);
+        }
+        if (isset($request->status) && !is_null($request->status)) {
+            $query = $query->whereIn('status', $request->status);
+        }
+
 
         if ($perpage == "All") {
             $perpage = $query->count();
@@ -145,15 +173,27 @@ class InfraApiController extends Controller
         $sortOrder = $request->input('sort_order') ?? 'asc';
         $searchInput = $request->search;
         $query = $infra_maintenance_cost->select('infra_maintenance_costs.*')->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'infra_maintenance_costs.branch_id', 'branches.id');
+            ->join('branches', 'infra_maintenance_costs.branch_id', 'branches.id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
 
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
-            $query = $query->where('id', 'like', $searchQuery);
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('branch_name', 'like', $searchQuery)
+                    ->orWhere('nama_project', 'like', $searchQuery)
+                    ->orWhere('nama_vendor', 'like', $searchQuery);
+            });
         }
 
+
+        if (isset($request->type_name) && !is_null($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
+        }
+        if (isset($request->category) && !is_null($request->category)) {
+            $query = $query->whereIn('category', $request->category);
+        }
         $query->where('jenis_pekerjaan', $jenis_pekerjaan);
 
         if ($perpage == "All") {
@@ -232,10 +272,13 @@ class InfraApiController extends Controller
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('pic', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('description', 'like', $searchQuery);
             });
+        }
+
+        if (isset($request->status_pekerjaan) && !is_null($request->status_pekerjaan)) {
+            $query = $query->whereIn('status_pekerjaan', $request->status_pekerjaan);
         }
 
         if ($perpage == "All") {
@@ -308,9 +351,8 @@ class InfraApiController extends Controller
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('pic', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery)
-                    ->orWhereHas('branches', function ($q) use ($searchQuery) {
-                        $q->where('branch_name', 'like', $searchQuery);
-                    });
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('description', 'like', $searchQuery);
             });
         }
         if ($perpage == "All") {
