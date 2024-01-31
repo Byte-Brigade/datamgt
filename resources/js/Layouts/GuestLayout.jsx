@@ -9,11 +9,11 @@ export default function Guest({ children }) {
           <ApplicationLogo className="w-48 h-48 text-gray-500 fill-current" />
         </Link>
         <h1 className="mt-4 text-4xl font-semibold text-center">
-          Pengolahan Data-data Branch Operation Management
+          Pengelolaan Data-data Branch Operation Management
         </h1>
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden bg-white shadow-md sm:rounded-lg">
+      <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden bg-white shadow-md">
         {children}
       </div>
     </div>
