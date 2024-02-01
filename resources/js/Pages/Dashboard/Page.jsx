@@ -387,7 +387,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           <>
                             <td className="text-center">{item.jumlah_item}</td>
                             <td className="text-center">
-                              {item.nilai_perolehan}
+                              {item.nilai_perolehan.toLocaleString("id-ID")}
                             </td>
                           </>
                         )
