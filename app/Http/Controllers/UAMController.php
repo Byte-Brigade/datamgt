@@ -38,10 +38,16 @@ class UAMController extends Controller
         })->orderBy($sortField, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-        //  if (!is_null($searchInput)) {
-        //      $searchQuery = "%$searchInput%";
-        //      $query = $query->where('tgl_speciment', 'like', $searchQuery);
-        //  }
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('email', 'like', $searchQuery)
+                    ->orWhere('name', 'like', $searchQuery)
+                    ->orWhere('nik', 'like', $searchQuery);
+            });
+        }
+
+
         $users = $query->paginate($perpage);
         return UserResource::collection($users);
     }

@@ -28,6 +28,8 @@ class GapAsset extends Model
         'net_book_value',
         'periode',
         'remark',
+        'tgl_awal_susut',
+        'tgl_akhir_susut'
 
     ];
 

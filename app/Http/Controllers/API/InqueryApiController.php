@@ -56,6 +56,9 @@ class InqueryApiController extends Controller
             });
         }
 
+        if (isset($request->type_name) && !is_null($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
+        }
         if ($perpage == "All") {
             $perpage = $query->count();
         }
