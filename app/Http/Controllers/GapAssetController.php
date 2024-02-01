@@ -28,21 +28,21 @@ class GapAssetController extends Controller
     public function import(Request $request)
     {
         try {
-            $tableName = 'Asset';
-            $timestamp = Carbon::now()->format('YmdHis');
+            // $tableName = 'Asset';
+            // $timestamp = Carbon::now()->format('YmdHis');
             $uploadedFile = $request->file('file');
-            $originalFilename = $uploadedFile->getClientOriginalName();
-            $newFilename = "{$timestamp}_{$originalFilename}";
+            // $originalFilename = $uploadedFile->getClientOriginalName();
+            // $newFilename = "{$timestamp}_{$originalFilename}";
             (new AssetsImport)->import($uploadedFile);
 
-            $path = $uploadedFile->storeAs("files/{$tableName}", $newFilename, 'local'); // 'local' is the disk name
-            File::create([
-                'user_id' => Auth::user()->id,
-                'table_name' => $tableName,
-                'filename' => $newFilename,
-                'path' => $path,
-                'status' => 'Success'
-            ]);
+            // $path = $uploadedFile->storeAs("files/{$tableName}", $newFilename, 'local'); // 'local' is the disk name
+            // File::create([
+            //     'user_id' => Auth::user()->id,
+            //     'table_name' => $tableName,
+            //     'filename' => $newFilename,
+            //     'path' => $path,
+            //     'status' => 'Success'
+            // ]);
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';
