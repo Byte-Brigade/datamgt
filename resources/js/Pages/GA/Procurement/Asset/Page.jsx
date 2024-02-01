@@ -66,7 +66,7 @@ export default function Page({ auth, branches, sessions, major_categories }) {
   const columns = [
     {
       name: "Cabang",
-      field: "branches.branch_name",
+      field: "branch_name",
       sortable: true,
       freeze: true,
     },

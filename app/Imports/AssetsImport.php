@@ -30,8 +30,6 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
     protected $sheetName;
     use Importable;
 
-
-
     public function collection(Collection $rows)
     {
         try {
@@ -51,13 +49,15 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                                 'asset_number' => $row['asset_number'],
                                 'asset_description' => $row['asset_description'],
                                 'date_in_place_service' => is_int($row['date_in_place_service']) ? Date::excelToDateTimeObject($row['date_in_place_service']) : null,
+                                'tgl_awal_susut' => is_int($row['tgl_awal_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
+                                'tgl_akhir_susut' => is_int($row['tgl_akhir_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
                                 'asset_cost' => round($row['asset_cost']),
                                 'accum_depre' => round($row['accum_depre']),
                                 'asset_location' => $row['asset_location'],
                                 'major_category' => $row['major_category'],
                                 'minor_category' => $row['minor_category'],
                                 'depre_exp' => round($row['depre_exp']),
-                                'net_book_value' => round($row['net_book_value']),
+                                'net_book_value' => round($row['asset_cost']) - round($row['accum_depre']),
                                 'periode' => $periode,
 
                             ]
@@ -70,13 +70,15 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                                 'asset_number' => $row['asset_number'],
                                 'asset_description' => $row['asset_description'],
                                 'date_in_place_service' => is_int($row['date_in_place_service']) ? Date::excelToDateTimeObject($row['date_in_place_service']) : null,
+                                'tgl_awal_susut' => is_int($row['tgl_awal_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
+                                'tgl_akhir_susut' => is_int($row['tgl_akhir_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
                                 'asset_cost' => round($row['asset_cost']),
                                 'accum_depre' => round($row['accum_depre']),
                                 'asset_location' => $row['asset_location'],
                                 'major_category' => $row['major_category'],
                                 'minor_category' => $row['minor_category'],
                                 'depre_exp' => round($row['depre_exp']),
-                                'net_book_value' => round($row['net_book_value']),
+                                'net_book_value' => round($row['asset_cost']) - round($row['accum_depre']),
                                 'periode' => $periode,
 
                             ]
