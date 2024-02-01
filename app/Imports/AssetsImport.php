@@ -57,7 +57,7 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                                 'major_category' => $row['major_category'],
                                 'minor_category' => $row['minor_category'],
                                 'depre_exp' => round($row['depre_exp']),
-                                'net_book_value' => round($row['asset_cost']) - round($row['accum_depre']),
+                                'net_book_value' => abs(round($row['asset_cost']) - round($row['accum_depre'])),
                                 'periode' => $periode,
 
                             ]
