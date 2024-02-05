@@ -40,33 +40,20 @@ class DashboardController extends Controller
             'jumlahKaryawanBSO' => $jumlahKaryawanBSO,
             'employee_positions' => $employee_positions,
             'employees' => $employees,
-            'summary_assets' => $gap_asset->sortBy('branches.branch_code')->map(function ($asset) {
-                $asset->branch_name = str_contains($asset->branches->branch_name, 'Sampoerna') ? 'Sampoerna Strategic' : $asset->branches->branch_name;
-                $asset->branch_code = $asset->branches->branch_code;
-                return $asset;
-            })->groupBy('branch_name')->mapWithKeys(function ($assets, $branch_name) {
-
+            'summary_assets' => $gap_asset->groupBy('branch_id')->map(function ($assets, $branch_id) {
+                $branch = Branch::find($branch_id);
                 return [
-                    $branch_name => $assets->groupBy('category')->map(function ($assets, $index) {
-                        return [
-                            'name' => $index,
-                            'jumlah_item' => $assets->count(),
-                            'nilai_perolehan' => $assets->sum('asset_cost'),
-                            'penyusutan' => $assets->sum('accum_depre'),
-                            'net_book_value' => $assets->sum('net_book_value'),
-                        ];
-                    })
-                ];
-            }),
-            'assets' => GapAsset::with('branches')->get()->map(function ($asset) {
-                return [
-                    'branch_id' => $asset->branch_id,
-                    'branch_name' => $asset->branches->branch_name,
-                    'area' => $asset->branches->area,
-                    'nilai_perolehan' => $asset->asset_cost,
-                    'penyusutan' => $asset->accum_depre,
-                    'net_book_value' => $asset->net_book_value,
-                    'category' => $asset->category
+                    "branch_id" => $branch->id,
+                    "branch_code" => $branch->branch_code,
+                    "branch_name" => $branch->branch_name,
+                    "area" => $branch->area,
+                    'depre_jumlah_item' => $assets->where('category', 'Depre')->count(),
+                    'non_depre_jumlah_item' => $assets->where('category', 'Non-Depre')->count(),
+                    'depre_nilai_perolehan' => $assets->where('category', 'Depre')->sum('asset_cost'),
+                    'non_depre_nilai_perolehan' => $assets->where('category', 'Non-Depre')->sum('asset_cost'),
+                    'penyusutan' => $assets->sum('accum_depre'),
+                    'net_book_value' => $assets->sum('net_book_value'),
+                    'type' => $branch->branch_name == "Kantor Pusat" ? $branch->branch_name : "Kantor Cabang",
                 ];
             }),
             'gap_scorings' => $gap_scorings,
