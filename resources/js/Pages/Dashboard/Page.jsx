@@ -382,7 +382,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                             </td>
                           )}
                           <td className="text-center">{asset.non_depre_jumlah_item}</td>
-                          <td className="text-center">
+                          <td className="text-right">
                             {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
                           </td>
                         </>
@@ -413,7 +413,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       .toLocaleString("id-ID")}
                   </td>
 
-                  <td className="text-center">
+                  <td className="text-right">
                     {Object.values(data.summary_assets).filter(
                       (asset) =>
                         asset.branch_name !== "Kantor Pusat"
@@ -423,7 +423,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       .toLocaleString("id-ID")}
                   </td>
 
-                  <td className="text-center">
+                  <td className="text-right">
                     {Object.values(data.summary_assets).filter(
                       (asset) =>
                         asset.branch_name !== "Kantor Pusat"
@@ -442,7 +442,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     }, 0)}
                   </td>
 
-                  <td className="text-center">
+                  <td className="text-right">
                     {Object.values(data.summary_assets).filter(
                       (asset) =>
                         asset.branch_name !== "Kantor Pusat"
@@ -487,8 +487,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         <td className="text-center">
                           {asset.non_depre_jumlah_item}
                         </td>
-                        <td className="text-center">
-                          {asset.non_depre_nilai_perolehan}
+                        <td className="text-right">
+                          {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
                         </td>
                       </tr>
                     )

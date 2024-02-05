@@ -22,7 +22,8 @@ class DashboardController extends Controller
         $jumlahKaryawanBSO = Employee::where('position_id', 3)->get();
         $employee_positions = EmployeePosition::get();
         $employees = Employee::with(['employee_positions', 'branches'])->get();
-        $gap_asset = GapAsset::with('branches')->get();
+        $latestPeriode = GapAsset::max('periode');
+        $gap_asset = GapAsset::with('branches')->where('periode', $latestPeriode)->get();
         $gap_scorings = GapScoring::with('branches')->get();
         $months = [
             "January", "February", "March", "April", "May", "June", "July",
