@@ -410,7 +410,6 @@ export default function Page({ sessions, auth, data, type_names }) {
                         <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
                           <td>{key}</td>
                           {data.months.map((month) => {
-                            console.log(values);
                             return (
                               <td className="text-right">
                                 {values

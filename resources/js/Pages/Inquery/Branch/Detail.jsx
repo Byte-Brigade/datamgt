@@ -59,7 +59,7 @@ export default function Detail({
           <div className="grid grid-cols-2 gap-2 mt-4">
             <div className="flex flex-col">
               <span className="mb-2">Staff Cabang</span>
-              <table className="w-full text-left">
+              <table className="w-full text-left overflow-auto">
                 <thead className="border-b-2 border-slate-200">
                   <tr className="[&>th]:p-2 bg-slate-100">
                     <th>Jabatan</th>
@@ -67,18 +67,21 @@ export default function Detail({
                   </tr>
                 </thead>
                 <tbody>
-                  {positions.map((position) => (
-                    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                      <td>{position.position_name}</td>
-                      <td>
-                        {
-                          branch.employees.filter(
-                            (employee) => employee.position_id === position.id
-                          ).length
-                        }
-                      </td>
-                    </tr>
-                  ))}
+                  {positions.map((position) => branch.employees.filter(
+                    (employee) => employee.position_id === position.id
+                  ).length > 0 && (
+
+                      <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+                        <td>{position.position_name}</td>
+                        <td>
+                          {
+                            branch.employees.filter(
+                              (employee) => employee.position_id === position.id
+                            ).length
+                          }
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
