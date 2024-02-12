@@ -254,7 +254,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   data={data}
                   branchState={branchId}
                   areaState={area}
-                  height={1000}
+                  height={950}
                 />
               </div>
               <div className="overflow-y-auto h-[450px]">
@@ -514,10 +514,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <th className="text-center" colSpan={7}>
                     Type Scoring
                   </th>
-
-                  {/* Lokasi: Kantor Pusat, Cabang */}
-                  {/* Kategori A (Asset Depresiasi) */}
-                  {/* Kategori A (Asset Non-Depresiasi) */}
                 </tr>
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th className="text-center" colSpan={2}>
@@ -667,151 +663,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                     }
                   </td>
                 </tr>
-
-                {/* <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-                  <td colSpan={2}>Kantor Pusat</td>
-                  {Object.values(data.summary_assets)["Kantor Pusat"] &&
-                    Object.entries(Object.values(data.summary_assets)["Kantor Pusat"]).map(
-                      ([key, item]) =>
-                        key === "Depre" ? (
-                          <>
-                            <td className="text-center">{item.jumlah_item}</td>
-                            <td className="text-right">
-                              {item.nilai_perolehan.toLocaleString("id-ID")}
-                            </td>
-
-                            <td className="text-right">
-                              {item.penyusutan.toLocaleString("id-ID")}
-                            </td>
-
-                            {item.net_book_value > 0 && (
-                              <td className="text-right">
-                                {item.net_book_value.toLocaleString("id-ID")}
-                              </td>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <td className="text-center">{item.jumlah_item}</td>
-                            <td className="text-center">
-                              {item.nilai_perolehan}
-                            </td>
-                          </>
-                        )
-                    )}
-                </tr>
-
-                <tr
-                  onClick={handleOpen}
-                  className="[&>td]:p-2 cursor-pointer font-bold text-cyan-600 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200"
-                >
-                  <td colSpan={2}>Kantor Cabang</td>
-
-                  <td className="text-center">
-                    {
-                      data.assets.filter(
-                        (item) =>
-                          item.branch_name !== "Kantor Pusat" &&
-                          item.category === "Depre"
-                      ).length
-                    }
-                  </td>
-                  <td className="text-right">{
-                    data.assets.filter(
-                      (item) =>
-                        item.branch_name !== "Kantor Pusat" &&
-                        item.category === "Depre"
-                    ).reduce((total, item) => {
-                      return total + item.asset_cost
-                    }, 0).toLocaleString('id-ID')
-                  }</td>
-
-                  <td className="text-center">{data.assets
-                    .filter(
-                      (item) =>
-                        item.branch_name !== "Kantor Pusat" &&
-                        item.category === "Depre"
-                    )
-                    .reduce((total, item) => {
-                      return total + item.accum_depre;
-                    }, 0).toLocaleString('id-ID')}</td>
-
-                  <td className="text-center">
-                    {data.assets
-                      .filter(
-                        (item) =>
-                          item.branch_name !== "Kantor Pusat" &&
-                          item.category === "Depre"
-                      )
-                      .reduce((total, item) => {
-                        return total + item.net_book_value;
-                      }, 0).toLocaleString('id-ID')}
-                  </td>
-
-
-                  <td className="text-center">
-                    {
-                      data.assets.filter(
-                        (item) =>
-                          item.branch_name !== "Kantor Pusat" &&
-                          item.category === "Non-Depre"
-                      ).length
-                    }
-                  </td>
-                  <td className="text-center">
-
-                  </td>
-
-
-                </tr>
-
-                {open &&
-                  Object.keys(Object.values(data.summary_assets)).map(
-                    (lokasi, index) =>
-                      lokasi !== "Kantor Pusat" && (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
-                          <td key={index} colSpan={2}>
-                            {`> ${ lokasi } `}
-                          </td>
-                          {Object.entries(Object.values(data.summary_assets)[lokasi]).map(
-                            ([key, item]) =>
-                              key === "Depre" ? (
-                                <>
-                                  <td className="text-center">
-                                    {item.jumlah_item}
-                                  </td>
-                                  <td className="text-right">
-                                    {item.nilai_perolehan.toLocaleString(
-                                      "id-ID"
-                                    )}
-                                  </td>
-
-                                  <td className="text-right">
-                                    {item.penyusutan.toLocaleString("id-ID")}
-                                  </td>
-
-                                  {item.net_book_value > 0 && (
-                                    <td className="text-right">
-                                      {item.net_book_value.toLocaleString(
-                                        "id-ID"
-                                      )}
-                                    </td>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <td className="text-center">
-                                    {item.jumlah_item}
-                                  </td>
-                                  <td className="text-center">
-                                    {item.nilai_perolehan}
-                                  </td>
-                                </>
-                              )
-                          )}
-                        </tr>
-                      )
-                  )} */}
               </tbody>
             </table>
           )}
