@@ -2,9 +2,11 @@ import { DateTime } from "@/Utils/DateTime";
 import {
   Bars3Icon,
   ChevronDownIcon,
-  UserCircleIcon
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowLeftEndOnRectangleIcon
+} from "@heroicons/react/24/solid";
 import { Link, usePage } from "@inertiajs/react";
 import {
   Button,
@@ -24,7 +26,7 @@ const profileMenuItems = [
     link: route("profile.edit"),
     label: (
       <Link href={route("profile.edit")}>
-        <Typography>My Profile</Typography>
+        <Typography>Edit Profile</Typography>
       </Link>
     ),
     icon: UserCircleIcon,
@@ -35,7 +37,7 @@ const profileMenuItems = [
         <Typography>Keluar</Typography>
       </Link>
     ),
-    icon: ArrowLeftOnRectangleIcon,
+    icon: ArrowLeftEndOnRectangleIcon,
   },
 ];
 
