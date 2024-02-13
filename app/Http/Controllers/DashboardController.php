@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\PaginationHelper;
+use Inertia\Inertia;
 use App\Models\Branch;
 use App\Models\Employee;
-use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapScoring;
-use Inertia\Inertia;
+use App\Models\EmployeePosition;
+use App\Helpers\PaginationHelper;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        if (Auth::user()->hasRole('cabang')) {
+            return Inertia::render('Cabang');
+        }
+
         $branches = Branch::with('branch_types')->get();
         $areas = Branch::distinct()->whereNotNull('area')->pluck('area')->prepend('All');
         $jumlahATM = Branch::whereNot('layanan_atm', 'Tidak Ada')->get();
@@ -26,8 +31,18 @@ class DashboardController extends Controller
         $gap_asset = GapAsset::with('branches')->where('periode', $latestPeriode)->get();
         $gap_scorings = GapScoring::with('branches')->get();
         $months = [
-            "January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
         ];
 
         $data = [
