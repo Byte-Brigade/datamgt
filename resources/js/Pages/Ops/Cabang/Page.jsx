@@ -73,7 +73,7 @@ export default function Cabang({
       filterable: true,
     },
     { name: "Nama Cabang", field: "branch_name" },
-    { name: "NPWP", field: "npwp" },
+    { name: "NPWP", field: "npwp", className: "w-[200px]" },
     { name: "Area", field: "area", className: "text-center", filterable: true},
     { name: "Alamat", field: "address", className: "w-[300px]" },
     { name: "No. Telpon", field: "telp" },

@@ -22,6 +22,7 @@ class InfraMaintenanceCost extends Model
         'nilai_project_memo',
         'nilai_project_final',
         'kerja_tambah_kurang',
+        'keterangan',
         'periode',
     ];
 

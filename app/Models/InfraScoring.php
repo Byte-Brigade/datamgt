@@ -30,6 +30,7 @@ class InfraScoring extends Model
         'scoring_vendor',
         'type',
         'keterangan',
+        'reason',
         'periode',
     ];
 
