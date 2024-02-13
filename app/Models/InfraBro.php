@@ -30,6 +30,7 @@ class InfraBro extends Model
         'inventory_non_it',
         'barang_it',
         'asuransi',
+        'keterangan',
 
     ];
 }

@@ -65,6 +65,7 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                             'inventory_non_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['inventory_non_it'])),
                             'barang_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['barang_it'])),
                             'asuransi' => doubleval(preg_replace('/[^0-9.]/', "", $row['asuransi'])),
+                            'keterangan' => $row['keterangan'],
                             'periode' => $periode,
                         ],
                         [
@@ -85,6 +86,8 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                             'inventory_non_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['inventory_non_it'])),
                             'barang_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['barang_it'])),
                             'asuransi' => doubleval(preg_replace('/[^0-9.]/', "", $row['asuransi'])),
+                            'keterangan' => $row['keterangan'],
+
                             'periode' => $periode,
                         ]
                     );
@@ -108,6 +111,8 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                         'inventory_non_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['inventory_non_it'])),
                         'barang_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['barang_it'])),
                         'asuransi' => doubleval(preg_replace('/[^0-9.]/', "", $row['asuransi'])),
+                        'keterangan' => $row['keterangan'],
+
                         'periode' => $periode,
                     ]);
                 }

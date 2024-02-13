@@ -59,6 +59,7 @@ class MaintenanceCostImport implements ToCollection, WithHeadingRow, WithValidat
                                 'nilai_project_memo' => is_int($row['nilai_project_sesuai_memopersetujuan']) ? $row['nilai_project_sesuai_memopersetujuan'] : 0,
                                 'nilai_project_final' => is_int($row['nilai_project_sesuai_final_account']) ? $row['nilai_project_sesuai_final_account'] : 0,
                                 'kerja_tambah_kurang' => is_int($row['kerja_tambah_kurang']) ? $row['kerja_tambah_kurang'] : 0,
+                                'keterangan' => $row['keterangan'],
                                 'periode' => $periode,
                             ],
                             [
@@ -74,6 +75,7 @@ class MaintenanceCostImport implements ToCollection, WithHeadingRow, WithValidat
                                 'nilai_project_memo' => is_int($row['nilai_project_sesuai_memopersetujuan']) ? $row['nilai_project_sesuai_memopersetujuan'] : 0,
                                 'nilai_project_final' => is_int($row['nilai_project_sesuai_final_account']) ? $row['nilai_project_sesuai_final_account'] : 0,
                                 'kerja_tambah_kurang' => is_int($row['kerja_tambah_kurang']) ? $row['kerja_tambah_kurang'] : 0,
+                                'keterangan' => $row['keterangan'],
                                 'periode' => $periode,
                             ]
                         );
@@ -92,7 +94,9 @@ class MaintenanceCostImport implements ToCollection, WithHeadingRow, WithValidat
                             'nilai_project_memo' => is_int($row['nilai_project_sesuai_memopersetujuan']) ? $row['nilai_project_sesuai_memopersetujuan'] : 0,
                             'nilai_project_final' => is_int($row['nilai_project_sesuai_final_account']) ? $row['nilai_project_sesuai_final_account'] : 0,
                             'kerja_tambah_kurang' => is_int($row['kerja_tambah_kurang']) ? $row['kerja_tambah_kurang'] : 0,
+                            'keterangan' => $row['keterangan'],
                             'periode' => $periode,
+
                         ]);
                     }
                 }
