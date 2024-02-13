@@ -48,6 +48,7 @@ export default function UpdateProfileInformation({
             required
             isFocused
             autoComplete="name"
+            disabled={true}
           />
 
           <InputError className="mt-2" message={errors.name} />
@@ -64,6 +65,7 @@ export default function UpdateProfileInformation({
             onChange={(e) => setData("email", e.target.value)}
             required
             autoComplete="username"
+            disabled={true}
           />
 
           <InputError className="mt-2" message={errors.email} />
@@ -92,7 +94,7 @@ export default function UpdateProfileInformation({
         )}
 
         <div className="flex items-center gap-4">
-          <PrimaryButton disabled={processing}>Save</PrimaryButton>
+          {/* <PrimaryButton disabled={processing}>Save</PrimaryButton> */}
 
           <Transition
             show={recentlySuccessful}

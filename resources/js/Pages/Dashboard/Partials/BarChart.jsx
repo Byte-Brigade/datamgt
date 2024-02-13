@@ -61,15 +61,21 @@ export default function BarChart({
         },
       },
     },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
+      },
+    },
   };
 
   const branchLabels = Object.keys(data.jumlah_cabang_alt);
-  const employeeLabels = data.employee_positions.map(
-    (position) => position.position_name
-  ).sort();
-  const truncatedEmployeeLabels = employeeLabels.map((label) =>
-    label.length > 25 ? label.substring(0, 25) + "..." : label
-  );
+  const employeeLabels = data.employee_positions
+    .map((position) => position.position_name)
+    .sort();
+
   const atmLabels = Object.keys(data.jumlah_atm);
 
   const labels =
@@ -92,16 +98,18 @@ export default function BarChart({
         ).length;
       case "employee":
         return branchState
-          ? data.employees.sort().filter(
-              (employee) =>
-                employee.employee_positions.position_name === label &&
-                employee.branch_id === branchState &&
-                (areaState === "none" ||
-                  employee.branches.area === areaState) &&
-                !["BM", "BSM", "BSO"].includes(
-                  employee.employee_positions.position_name
-                )
-            ).length
+          ? data.employees
+              .sort()
+              .filter(
+                (employee) =>
+                  employee.employee_positions.position_name === label &&
+                  employee.branch_id === branchState &&
+                  (areaState === "none" ||
+                    employee.branches.area === areaState) &&
+                  !["BM", "BSM", "BSO"].includes(
+                    employee.employee_positions.position_name
+                  )
+              ).length
           : data.employees.filter(
               (employee) =>
                 employee.employee_positions.position_name === label &&
@@ -122,16 +130,27 @@ export default function BarChart({
     }
   });
 
+  const datasetsObj = labels.reduce((acc, label, index) => {
+    const val = setData[index];
+
+    return val > 0 ? { ...acc, [label]: val } : acc;
+  }, {});
+
+  const newLabels = Object.keys(datasetsObj);
+
+  const truncatedEmployeeLabels = newLabels.map((label) =>
+    label.length > 25 ? label.substring(0, 25) + "..." : label
+  );
+
   const datasets = [
     {
       label,
-      data: setData,
+      data: type === "employee" ? Object.values(datasetsObj) : setData,
       backgroundColor,
     },
   ];
 
-  const chart = { labels, datasets };
-
+  const chart = { labels: newLabels, datasets };
   return (
     <Bar
       options={options}

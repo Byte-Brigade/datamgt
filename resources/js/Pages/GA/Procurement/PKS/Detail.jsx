@@ -89,14 +89,14 @@ export default function Detail({ auth, sessions, status }) {
       type: "date",
     },
 
-    {
-      name: "Tahun Akhir",
-      field: "tahun_akhir",
-    },
-    {
-      name: "Status",
-      field: "status",
-    },
+    // {
+    //   name: "Tahun Akhir",
+    //   field: "tahun_akhir",
+    // },
+    // {
+    //   name: "Status",
+    //   field: "status",
+    // },
 
     // {
     //   name: "Detail",

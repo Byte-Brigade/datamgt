@@ -39,6 +39,7 @@ export default function Page({ sessions, auth }) {
             fetchUrl={"/api/inquery/staff"}
             columns={columns}
             bordered={true}
+            parameters={{branch_id: auth.user.branch_id}}
           />
         </div>
       </div>

@@ -65,6 +65,7 @@ class GapScoringProjectsImport implements ToCollection, WithHeadingRow, WithVali
                         'schedule_scoring' => $row['schedule_scoring'],
                         'type' => $row['type'],
                         'keterangan' => $row['keterangan'],
+                        'reason' => $row['reason'],
                         'periode' => $periode,
                     ]
                 );
