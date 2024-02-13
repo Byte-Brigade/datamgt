@@ -47,9 +47,10 @@ class GapApiController extends Controller
             $query = $query->where('category', $request->category);
         }
 
-        if (isset($request->category)) {
-            $query = $query->whereIn('category', $request->category);
-        }
+        // if (isset($request->category)) {
+        //     $query = $query->whereIn('category', $request->category);
+        // }
+
         if (isset($request->major_category)) {
             $query = $query->whereIn('major_category', $request->major_category);
         }
@@ -131,7 +132,7 @@ class GapApiController extends Controller
                     'branches' => Branch::find($branch),
                     'type_name' => $kdos->first()->branches->branch_types->type_name,
                     'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
-                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                    'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
@@ -145,7 +146,7 @@ class GapApiController extends Controller
                 return [
                     'vendor' => $vendor,
                     'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
-                    'sewa_perbulan' => isset($biaya_sewa)  ? $biaya_sewa->sum('value')
+                    'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
@@ -315,7 +316,7 @@ class GapApiController extends Controller
 
         $collections = $data->groupBy('scoring_vendor')->map(function ($scorings, $grade) {
             return [
-                'scoring_vendor' => $grade == "" ?  'Tidak Ada' : $grade,
+                'scoring_vendor' => $grade == "" ? 'Tidak Ada' : $grade,
                 'jumlah_vendor' => $scorings->count(),
                 'q1' => $scorings->where('schedule_scoring', 'Q1')->count(),
                 'q2' => $scorings->where('schedule_scoring', 'Q2')->count(),
@@ -385,7 +386,7 @@ class GapApiController extends Controller
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
                 $query->where('divisi_pembebanan', 'like', $searchQuery)
-                ->orWhere('user', 'like', $searchQuery);
+                    ->orWhere('user', 'like', $searchQuery);
             });
         }
 
@@ -601,7 +602,8 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_toners.branch_id', 'branches.id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');;
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        ;
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
@@ -700,9 +702,7 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
-
-
-
+        $query = $query->where('status', '!=', 'TIDAK AKTIF');
 
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);

@@ -187,7 +187,10 @@ export default function Page({ sessions, auth, data, type_names }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", data.branches.slug)}>
+        <Link href={route("gap.kdos.mobil", {
+          slug: data.branches.slug,
+          periode: data.periode,
+        })}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),

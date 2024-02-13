@@ -265,84 +265,93 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             </List>
           </AccordionBody>
         </Accordion>
-        {/* Report */}
-        <hr className="my-2 border-blue-gray-50" />
-        <Accordion
-          open={openAcc2}
-          className={`${sidebarOpen && "w-12"}`}
-          icon={
-            !sidebarOpen && (
-              <ChevronDownIcon
-                strokeWidth={2.5}
-                className={`mx-auto h-4 w-4 transition-transform ${
-                  openAcc2 ? "rotate-180" : ""
-                }`}
-              />
-            )
-          }
-        >
-          <ListItem className="p-0" selected={openAcc2}>
-            <Tooltip
-              content="Report"
-              placement="right"
-              className={`${!sidebarOpen && "hidden"}`}
+
+        {auth.role !== "cabang" && (
+          <>
+            {/* Report */}
+            <hr className="my-2 border-blue-gray-50" />
+            <Accordion
+              open={openAcc2}
+              className={`${sidebarOpen && "w-12"}`}
+              icon={
+                !sidebarOpen && (
+                  <ChevronDownIcon
+                    strokeWidth={2.5}
+                    className={`mx-auto h-4 w-4 transition-transform ${
+                      openAcc2 ? "rotate-180" : ""
+                    }`}
+                  />
+                )
+              }
             >
-              <AccordionHeader
-                onClick={() => {
-                  handleOpenAcc(2);
-                  sidebarOpen && setSidebarOpen(!sidebarOpen);
-                }}
-                className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
-              >
-                <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                  <DocumentTextIcon className="w-5 h-5" />
-                </ListItemPrefix>
-                {!sidebarOpen && (
-                  <Typography
-                    color="blue-gray"
-                    className={`mr-auto font-normal`}
-                  >
-                    Report
-                  </Typography>
-                )}
-              </AccordionHeader>
-            </Tooltip>
-          </ListItem>
-          <AccordionBody className="py-1">
-            <List
-              className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"}`}
-            >
-              {reportRouter.map((router, index) => (
+              <ListItem className="p-0" selected={openAcc2}>
                 <Tooltip
-                  key={index}
-                  content={router.name}
+                  content="Report"
                   placement="right"
                   className={`${!sidebarOpen && "hidden"}`}
                 >
-                  <Link href={route(router.path)}>
-                    <ListItem
-                      className={`${sidebarOpen && "justify-center"}`}
-                      selected={
-                        route().current(router.path) ||
-                        route().current(`${router.path}.*`)
-                      }
-                    >
-                      <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-                        <ChevronRightIcon
-                          strokeWidth={3}
-                          className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
-                        />
-                      </ListItemPrefix>
-                      {!sidebarOpen && <Typography>{router.name}</Typography>}
-                    </ListItem>
-                  </Link>
+                  <AccordionHeader
+                    onClick={() => {
+                      handleOpenAcc(2);
+                      sidebarOpen && setSidebarOpen(!sidebarOpen);
+                    }}
+                    className={`p-3 border-b-0 [&>span]:m-0 justify-center`}
+                  >
+                    <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                      <DocumentTextIcon className="w-5 h-5" />
+                    </ListItemPrefix>
+                    {!sidebarOpen && (
+                      <Typography
+                        color="blue-gray"
+                        className={`mr-auto font-normal`}
+                      >
+                        Report
+                      </Typography>
+                    )}
+                  </AccordionHeader>
                 </Tooltip>
-              ))}
-            </List>
-          </AccordionBody>
-        </Accordion>
+              </ListItem>
+              <AccordionBody className="py-1">
+                <List
+                  className={`p-0 ${
+                    !sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                  }`}
+                >
+                  {reportRouter.map((router, index) => (
+                    <Tooltip
+                      key={index}
+                      content={router.name}
+                      placement="right"
+                      className={`${!sidebarOpen && "hidden"}`}
+                    >
+                      <Link href={route(router.path)}>
+                        <ListItem
+                          className={`${sidebarOpen && "justify-center"}`}
+                          selected={
+                            route().current(router.path) ||
+                            route().current(`${router.path}.*`)
+                          }
+                        >
+                          <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                            <ChevronRightIcon
+                              strokeWidth={3}
+                              className={`w-5 h-3 ${sidebarOpen && "my-1"}`}
+                            />
+                          </ListItemPrefix>
+                          {!sidebarOpen && (
+                            <Typography>{router.name}</Typography>
+                          )}
+                        </ListItem>
+                      </Link>
+                    </Tooltip>
+                  ))}
+                </List>
+              </AccordionBody>
+            </Accordion>
+          </>
+        )}
 
-        {auth.role !== "branch" && (
+        {auth.role !== "cabang" && (
           <>
             {/* Data Maintenance */}
             <hr className="my-2 border-blue-gray-50" />

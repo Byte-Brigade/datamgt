@@ -86,6 +86,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
     });
 
+    Route::get('/kdos/mobil/{slug}', [GapKdoController::class, 'kdo_mobil'])->name('gap.kdos.mobil');
+
     Route::prefix('/reporting')->name('reporting.')->group(function () {
         Route::get('/branches', [ReportController::class, 'branches'])->name('branches');
         Route::get('/assets', [ReportController::class, 'assets'])->name('assets');
@@ -117,7 +119,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/kdos/import', [GapKdoController::class, 'import'])->name('kdos.import');
             Route::post('/kdos/mobil/import', [GapKdoController::class, 'kdo_mobil_import'])->name('kdos.mobil.import');
             Route::post('/kdos', [GapKdoController::class, 'store'])->name('kdos.store');
-            Route::get('/kdos/mobil/{slug}', [GapKdoController::class, 'kdo_mobil'])->name('kdos.mobil');
             Route::post('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_store'])->name('kdos.mobil.store');
             Route::put('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_update'])->name('kdos.mobil.update');
             Route::delete('/kdos/mobil/{id}', [GapKdoController::class, 'kdo_mobil_destroy'])->name('kdos.mobil.destroy');

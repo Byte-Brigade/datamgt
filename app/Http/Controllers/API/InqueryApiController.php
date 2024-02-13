@@ -132,6 +132,10 @@ class InqueryApiController extends Controller
             });
         }
 
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
