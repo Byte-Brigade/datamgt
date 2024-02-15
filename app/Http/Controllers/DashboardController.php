@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function index()
     {
         if (Auth::user()->hasRole('cabang')) {
-            return Inertia::render('Cabang');
+            return $this->indexCabang();
         }
 
         $branches = Branch::with('branch_types')->get();
@@ -80,6 +80,11 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Page', [
             'data' => $data,
         ]);
+    }
+
+    public function indexCabang()
+    {
+        return Inertia::render('Dashboard/Cabang');
     }
 
     public function api()

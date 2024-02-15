@@ -28,25 +28,27 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
 
             $exist_periode = GapAlihDaya::where('periode', $periode)->first();
             if ($exist_periode) {
-                GapAlihDaya::updateOrCreate(
-                    [
-                        'jenis_pekerjaan' => $row['jenis_pekerjaan'],
-                        'nama_pegawai' => $row['nama_pegawai'],
-                        'user' => $row['user'],
-                        'lokasi' => $row['lokasi'],
-                        'vendor' => $row['vendor'],
-                        'periode' => $periode
-                    ],
-                    [
-                        'jenis_pekerjaan' => $row['jenis_pekerjaan'],
-                        'nama_pegawai' => $row['nama_pegawai'],
-                        'user' => $row['user'],
-                        'lokasi' => $row['lokasi'],
-                        'vendor' => $row['vendor'],
-                        'cost' => $row['cost'],
-                        'periode' => $periode
-                    ]
-                );
+                if ($row['cost'] > 0) {
+                    GapAlihDaya::updateOrCreate(
+                        [
+                            'jenis_pekerjaan' => $row['jenis_pekerjaan'],
+                            'nama_pegawai' => $row['nama_pegawai'],
+                            'user' => $row['user'],
+                            'lokasi' => $row['lokasi'],
+                            'vendor' => $row['vendor'],
+                            'periode' => $periode
+                        ],
+                        [
+                            'jenis_pekerjaan' => $row['jenis_pekerjaan'],
+                            'nama_pegawai' => $row['nama_pegawai'],
+                            'user' => $row['user'],
+                            'lokasi' => $row['lokasi'],
+                            'vendor' => $row['vendor'],
+                            'cost' => $row['cost'],
+                            'periode' => $periode
+                        ]
+                    );
+                }
             } else {
                 GapAlihDaya::create(
                     [
