@@ -6,6 +6,7 @@ import {
   CircleStackIcon,
   DocumentTextIcon,
   FolderIcon,
+  HomeIcon,
   PresentationChartBarIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
@@ -179,11 +180,15 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             selected={route().current("dashboard")}
           >
             <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-              <ChartBarSquareIcon className="w-5 h-5" />
+              {auth.role !== "cabang" ? (
+                <ChartBarSquareIcon className="w-5 h-5" />
+              ) : (
+                <HomeIcon className="w-5 h-5" />
+              )}
             </ListItemPrefix>
             {!sidebarOpen && (
               <Typography color="blue-gray" className={`mr-auto font-normal`}>
-                Dashboard
+                {auth.role !== "cabang" ? "Dashboard" : "Home"}
               </Typography>
             )}
           </ListItem>

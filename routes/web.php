@@ -53,7 +53,7 @@ Route::get('/maintenance', function () {
     abort(404);
 })->name('maintenance');
 
-Route::get('/test', function () {
+Route::get('/home', function () {
     return Inertia::render('Cabang');
 });
 

@@ -33,7 +33,7 @@ class InqueryController extends Controller
     {
         return Inertia::render('Inquery/Staff/Page');
     }
-    public function staff_detail($slug)
+    public function staff_detail($slug, Request $request)
     {
         $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
 
@@ -59,7 +59,7 @@ class InqueryController extends Controller
         $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->get()->map(function ($disnaker) {
             return [
                 'name' => $disnaker->jenis_perizinan->name,
-                'remark' =>  'Ada',
+                'remark' => 'Ada',
                 'jatuh_tempo' => $disnaker->tgl_masa_berlaku,
                 'url' => isset($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
 
@@ -110,19 +110,32 @@ class InqueryController extends Controller
         $gap_toners = GapToner::orderBy('idecice_date', 'asc')->with('branches')->get()->map(function ($toner) {
             $type_name = $toner->branches->branch_types->type_name;
             $toner->cabang = $toner->branches->branch_name;
-            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ?  $type_name : 'Cabang'));
+            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ? $type_name : 'Cabang'));
             return $toner;
         });
 
 
         $months = [
-            "January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
         ];
-        return Inertia::render('Inquery/Asset/Page', ['data' => [
-            'gap_toners' => $gap_toners,
-            'months' => $months,
-        ], 'type_names' =>  BranchType::whereNotIn('type_name',['KF', 'SFI'])->pluck('type_name')->toArray()]);
+        return Inertia::render('Inquery/Asset/Page', [
+            'data' => [
+                'gap_toners' => $gap_toners,
+                'months' => $months,
+            ],
+            'type_names' => BranchType::whereNotIn('type_name', ['KF', 'SFI'])->pluck('type_name')->toArray()
+        ]);
     }
     public function scorings()
     {

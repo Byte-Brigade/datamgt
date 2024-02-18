@@ -2,53 +2,12 @@ import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-} from "@material-tailwind/react";
-import { useState } from "react";
+import { Head } from "@inertiajs/react";
 
 export default function Detail({ auth, branch, sessions, slug }) {
-
-  const initialData = {
-    file: null,
-    branch: "0",
-    position: "0",
-    employee_id: null,
-    name: null,
-    email: null,
-    branches: {
-      id: null,
-    },
-    employee_positions: {
-      id: null,
-    },
-    gender: null,
-    birth_date: null,
-    hiring_date: null,
-  };
-  const {
-    data,
-    setData,
-    post,
-    put,
-    delete: destroy,
-    processing,
-    errors,
-  } = useForm(initialData);
-  const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isRefreshed, setIsRefreshed] = useState(false);
-
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -98,6 +57,9 @@ export default function Detail({ auth, branch, sessions, slug }) {
     setIsModalExportOpen(!isModalExportOpen);
   };
 
+  const searchParams = route().params?.search;
+  console.log(searchParams);
+
   return (
     <AuthenticatedLayout auth={auth}>
       <BreadcrumbsDefault />
@@ -135,13 +97,17 @@ export default function Detail({ auth, branch, sessions, slug }) {
                   )
                 : true
             )}
+            parameters={
+              searchParams && {
+                search: searchParams,
+              }
+            }
             fetchUrl={`/api/inquery/staff/${slug}`}
-            refreshUrl={isRefreshed}
           />
         </div>
       </div>
       {/* Modal Export */}
-      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
+      {/* <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
         <DialogHeader className="flex items-center justify-between">
           Export Data
           <IconButton
@@ -157,7 +123,6 @@ export default function Detail({ auth, branch, sessions, slug }) {
         <form onSubmit={handleSubmitExport} encType="multipart/form-data">
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">Export</div>
-
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
@@ -170,7 +135,7 @@ export default function Detail({ auth, branch, sessions, slug }) {
             </div>
           </DialogFooter>
         </form>
-      </Dialog>
+      </Dialog> */}
     </AuthenticatedLayout>
   );
 }
