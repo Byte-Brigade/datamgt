@@ -23,6 +23,7 @@ class AlihDayaResource extends JsonResource
             'lokasi' => $this->lokasi,
             'vendor' => $this->vendor,
             'cost' => $this->cost,
+            'periode' => $this->periode,
 
         ];
     }

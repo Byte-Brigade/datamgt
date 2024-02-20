@@ -414,7 +414,8 @@ export default function Page({ auth, sessions }) {
               periodic={true}
               bordered={true}
               parameters={{
-                type: "tenaga-kerja"
+                type: "tenaga-kerja",
+                branch_id: auth.user.branch_id
               }}
             />
           )}
@@ -427,7 +428,8 @@ export default function Page({ auth, sessions }) {
               refreshUrl={isRefreshed}
               bordered={true}
               parameters={{
-                type: "biaya"
+                type: "biaya",
+                branch_id: auth.user.branch_id
               }}
             />
           )}

@@ -44,77 +44,24 @@ class InqueryController extends Controller
             'positions' => $positionsProps,
         ]);
     }
-
-    public function branchDetail($slug)
+    public function alihdaya_summary()
     {
-        $branch = Branch::with('employees')->where('slug', $slug)->firstOrFail();
-        $positions = EmployeePosition::get();
-
-        // Lisensi
-        $ops_skoperasional = OpsSkOperasional::where('branch_id', $branch->id)->first();
-        $ops_skbirtgs = OpsSkbirtgs::where('branch_id', $branch->id)->first();
-        $ops_pajak_reklame = OpsPajakReklame::where('branch_id', $branch->id)->first();
-        $ops_apar = OpsApar::where('branch_id', $branch->id)->first();
-
-        $izin_disnaker = GapDisnaker::where('branch_id', $branch->id)->orderBy('tgl_masa_berlaku', 'asc')->get()->map(function ($disnaker) {
-            return [
-                'name' => $disnaker->jenis_perizinan->name,
-                'remark' => 'Ada',
-                'jatuh_tempo' => $disnaker->tgl_masa_berlaku,
-                'url' => isset($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
-
-            ];
-        });
-        $lisensi = collect([
-            [
-                'name' => 'Izin OJK',
-                'remark' => isset($branch->izin) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => '-',
-                'url' => isset($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
-
-            ],
-            [
-                'name' => 'SK BI RTGS',
-                'remark' => isset($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => '-',
-                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->id}/{$ops_skbirtgs->file}" : false,
-            ],
-            [
-                'name' => 'Reklame',
-                'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
-                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_pajak_reklame->id}/{$ops_skbirtgs->file_izin_reklame}" : false,
-
-            ],
-            [
-                'name' => 'APAR',
-                'remark' => isset($ops_apar) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
-            ],
-
+        return Inertia::render('Inquery/AlihDaya/Summary');
+    }
+    public function alihdayas($slug, Request $request)
+    {
+        return Inertia::render('Inquery/AlihDaya/Page', [
+            'slug' => $slug,
         ]);
-
-        $lisensi = $lisensi->merge($izin_disnaker);
-
-
-
-        return Inertia::render('Inquery/Branch/Detail', [
-            'branch' => $branch,
-            'positions' => $positions,
-            'licenses' => $lisensi
+    }
+    public function alihdaya_detail($slug, Request $request)
+    {
+        return Inertia::render('Inquery/AlihDaya/Detail', [
+            'slug' => $slug,
         ]);
     }
     public function assets()
     {
-
-        $gap_toners = GapToner::orderBy('idecice_date', 'asc')->with('branches')->get()->map(function ($toner) {
-            $type_name = $toner->branches->branch_types->type_name;
-            $toner->cabang = $toner->branches->branch_name;
-            $toner->kategori = $toner->branches->branch_name == 'Kantor Pusat' ? 'HO' : ($type_name == 'KFO' ? 'KF' : (in_array($type_name, ['KFNO', 'SFI']) ? $type_name : 'Cabang'));
-            return $toner;
-        });
-
-
         $months = [
             "January",
             "February",
@@ -131,7 +78,6 @@ class InqueryController extends Controller
         ];
         return Inertia::render('Inquery/Asset/Page', [
             'data' => [
-                'gap_toners' => $gap_toners,
                 'months' => $months,
             ],
             'type_names' => BranchType::whereNotIn('type_name', ['KF', 'SFI'])->pluck('type_name')->toArray()

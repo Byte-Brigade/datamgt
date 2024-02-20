@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AlihDayaResource;
 use App\Http\Resources\Inquery\AssetsResource;
 use App\Http\Resources\Inquery\BranchResource;
 use App\Http\Resources\Inquery\LicensesResource;
@@ -11,8 +12,11 @@ use App\Http\Resources\Inquery\StoResource;
 use App\Http\Resources\Ops\EmployeeResource;
 use App\Models\Branch;
 use App\Models\Employee;
+use App\Models\GapAlihDaya;
 use App\Models\GapAsset;
 use App\Models\GapKdo;
+use App\Models\GapToner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -383,5 +387,232 @@ class InqueryApiController extends Controller
         }
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+
+    public function toners(GapToner $gap_toner, Request $request, $type)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_toner->select('gap_toners.*')->orderBy('branches.branch_code', 'asc')
+            ->join('branches', 'gap_toners.branch_id', 'branches.id')
+            ->join('branch_types', 'branch_types.id', 'branches.branch_type_id');
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($request->vendor)) {
+            $query = $query->where('vendor', $request->vendor);
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('type_name', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery);
+            });
+        }
+
+        if (isset($request->type_name)) {
+            $query = $query->whereIn('type_name', $request->type_name);
+        }
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+        $collections = $query->get();
+        if ($type == 'quantity') {
+            $collections = $collections->groupBy('branch_id')->map(function ($toners, $branch_id) {
+                $branch = Branch::find($branch_id);
+                $minPeriode = Carbon::parse($toners->min('idecice_date'))->year;
+                $maxPeriode = Carbon::parse($toners->max('idecice_date'))->year;
+                return [
+                    'branch_name' => $branch->branch_name,
+                    'slug' => $branch->slug,
+                    'january' => $toners->whereBetween('idecice_date', [$minPeriode . '-01-01', $maxPeriode . '-01-31'])->sum('quantity'),
+                    'february' => $toners->whereBetween('idecice_date', [$minPeriode . '-02-01', $maxPeriode . '-02-31'])->sum('quantity'),
+                    'march' => $toners->whereBetween('idecice_date', [$minPeriode . '-03-01', $maxPeriode . '-03-31'])->sum('quantity'),
+                    'april' => $toners->whereBetween('idecice_date', [$minPeriode . '-04-01', $maxPeriode . '-04-31'])->sum('quantity'),
+                    'may' => $toners->whereBetween('idecice_date', [$minPeriode . '-05-01', $maxPeriode . '-05-31'])->sum('quantity'),
+                    'june' => $toners->whereBetween('idecice_date', [$minPeriode . '-06-01', $maxPeriode . '-06-31'])->sum('quantity'),
+                    'july' => $toners->whereBetween('idecice_date', [$minPeriode . '-07-01', $maxPeriode . '-07-31'])->sum('quantity'),
+                    'august' => $toners->whereBetween('idecice_date', [$minPeriode . '-08-01', $maxPeriode . '-08-31'])->sum('quantity'),
+                    'september' => $toners->whereBetween('idecice_date', [$minPeriode . '-09-01', $maxPeriode . '-09-31'])->sum('quantity'),
+                    'october' => $toners->whereBetween('idecice_date', [$minPeriode . '-10-01', $maxPeriode . '-10-31'])->sum('quantity'),
+                    'november' => $toners->whereBetween('idecice_date', [$minPeriode . '-11-01', $maxPeriode . '-11-31'])->sum('quantity'),
+                    'december' => $toners->whereBetween('idecice_date', [$minPeriode . '-12-01', $maxPeriode . '-12-31'])->sum('quantity'),
+                ];
+            });
+        } else if ($type == 'nominal') {
+            $collections = $collections->groupBy('branch_id')->map(function ($toners, $branch_id) {
+                $branch = Branch::find($branch_id);
+                $minPeriode = Carbon::parse($toners->min('idecice_date'))->year;
+                $maxPeriode = Carbon::parse($toners->max('idecice_date'))->year;
+                return [
+                    'branch_name' => $branch->branch_name,
+                    'slug' => $branch->slug,
+                    'january' => $toners->whereBetween('idecice_date', [$minPeriode . '-01-01', $maxPeriode . '-01-31'])->sum('total'),
+                    'february' => $toners->whereBetween('idecice_date', [$minPeriode . '-02-01', $maxPeriode . '-02-31'])->sum('total'),
+                    'march' => $toners->whereBetween('idecice_date', [$minPeriode . '-03-01', $maxPeriode . '-03-31'])->sum('total'),
+                    'april' => $toners->whereBetween('idecice_date', [$minPeriode . '-04-01', $maxPeriode . '-04-31'])->sum('total'),
+                    'may' => $toners->whereBetween('idecice_date', [$minPeriode . '-05-01', $maxPeriode . '-05-31'])->sum('total'),
+                    'june' => $toners->whereBetween('idecice_date', [$minPeriode . '-06-01', $maxPeriode . '-06-31'])->sum('total'),
+                    'july' => $toners->whereBetween('idecice_date', [$minPeriode . '-07-01', $maxPeriode . '-07-31'])->sum('total'),
+                    'august' => $toners->whereBetween('idecice_date', [$minPeriode . '-08-01', $maxPeriode . '-08-31'])->sum('total'),
+                    'september' => $toners->whereBetween('idecice_date', [$minPeriode . '-09-01', $maxPeriode . '-09-31'])->sum('total'),
+                    'october' => $toners->whereBetween('idecice_date', [$minPeriode . '-10-01', $maxPeriode . '-10-31'])->sum('total'),
+                    'november' => $toners->whereBetween('idecice_date', [$minPeriode . '-11-01', $maxPeriode . '-11-31'])->sum('total'),
+                    'december' => $toners->whereBetween('idecice_date', [$minPeriode . '-12-01', $maxPeriode . '-12-31'])->sum('total'),
+                ];
+            });
+        }
+
+
+        if ($sortOrder == 'desc') {
+            $collections = $collections->sortByDesc($sortFieldInput);
+        } else {
+            $collections = $collections->sortBy($sortFieldInput);
+        }
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+
+    public function alihdayas(GapAlihDaya $gap_alih_daya, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('jenis_pekerjaan', 'like', $searchQuery);
+            });
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+        $yearToDate = false;
+
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $sameMonth = true;
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $yearToDate = true;
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
+        } else {
+            $yearToDate = true;
+            $minPeriode = $query->min('periode');
+            $maxPeriode = $query->max('periode');
+            $query->whereBetween('periode', [$minPeriode, $maxPeriode]);
+        }
+        // } else {
+        //     $latestPeriode = $query->max('periode');
+        //     $query->where('periode', $latestPeriode);
+        // }
+
+
+        if ($yearToDate && $request->type == "tenaga-kerja") {
+
+            $query = $query->select([
+                'jenis_pekerjaan',
+                'nama_pegawai',
+                'user',
+                'lokasi',
+                'vendor',
+            ])->distinct();
+        }
+        $query = $query->get();
+
+        $collections = $query->groupBy('jenis_pekerjaan')->map(function ($alihdayas, $jenis_pekerjaan) {
+            return [
+                'jenis_pekerjaan' => $jenis_pekerjaan,
+                'vendor' => $alihdayas,
+                'total_pegawai' => $alihdayas->count(),
+                'total_biaya' => $alihdayas->sum('cost'),
+                'alihdaya' => $alihdayas,
+            ];
+        });
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+    public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $type)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+        if ($type == 'jenis_pekerjaan') {
+            $query = $query->where('jenis_pekerjaan', $request->type_item);
+        } else if ($type == 'vendor') {
+            $query = $query->where('vendor', $request->type_item);
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                return $query->where('nama_pegawai', 'like', $searchQuery)
+                    ->orWhere('user', 'like', $searchQuery);
+            });
+        }
+
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return AlihDayaResource::collection($query);
     }
 }

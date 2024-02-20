@@ -1,4 +1,5 @@
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ConvertDate } from "@/Utils/ConvertDate";
 import { Head } from "@inertiajs/react";
@@ -10,6 +11,8 @@ export default function Detail({
   positions,
   licenses,
 }) {
+
+
   // console.log(positions.map((pos) => branch.employees.filter((employee) => employee.position_id === pos.id)));
   // const staff = positions
   //   .sort((a, b) => {
@@ -84,6 +87,22 @@ export default function Detail({
               </div>
             </div>
             <div className="flex flex-col gap-y-2">
+              <span className="font-semibold">Staff Support</span>
+              <div className="relative overflow-y-auto max-h-96">
+                <table className="w-full overflow-auto text-left">
+                  <thead className="sticky top-0 border-b-2 border-slate-200">
+                    <tr className="[&>th]:p-2 bg-slate-100">
+                      <th>Jabatan</th>
+                      <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <StaffRow positions={positions} branch={branch} type={"alih_daya"} />
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="flex flex-col gap-y-2">
               <span className="font-semibold">Lisensi</span>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -125,28 +144,44 @@ export default function Detail({
   );
 }
 
-const StaffRow = ({ positions, branch }) =>
-  positions
-    .sort((a, b) => {
-      let pa = a.position_name.toLowerCase();
-      let pb = b.position_name.toLowerCase();
+const StaffRow = ({ positions, branch, type }) => {
 
-      return (pa > pb ? 1 : -1) || 0;
-    })
-    .map(
-      (position) =>
-        branch.employees.filter(
-          (employee) => employee.position_id === position.id
-        ).length > 0 && (
-          <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-            <td>{position.position_name}</td>
-            <td>
-              {
-                branch.employees.filter(
-                  (employee) => employee.position_id === position.id
-                ).length
-              }
-            </td>
-          </tr>
-        )
-    );
+
+  const { groupBy } = useFormContext();
+  return type === "alih_daya" ? Object.entries(
+    groupBy(branch.gap_alih_dayas, "jenis_pekerjaan")
+  ).map(([key, alih_daya]) => (
+    <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+      <td>{key}</td>
+      <td>
+        {
+          alih_daya.length
+        }
+      </td>
+    </tr>
+  )) :
+    positions
+      .sort((a, b) => {
+        let pa = a.position_name.toLowerCase();
+        let pb = b.position_name.toLowerCase();
+
+        return (pa > pb ? 1 : -1) || 0;
+      })
+      .map(
+        (position) =>
+          branch.employees.filter(
+            (employee) => employee.position_id === position.id
+          ).length > 0 && (
+            <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+              <td>{position.position_name}</td>
+              <td>
+                {
+                  branch.employees.filter(
+                    (employee) => employee.position_id === position.id
+                  ).length
+                }
+              </td>
+            </tr>
+          )
+      );
+}

@@ -7,11 +7,8 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-  List,
-  ListItem,
-  ListItemPrefix,
   Tooltip,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
@@ -189,7 +186,6 @@ export default function DataTable({
   const fetchData = async (currPage = 0) => {
     setLoading(true);
     const params = {
-      ...parameters,
       page: currPage > 0 ? currPage : currentPage,
       perpage: perPage,
       sort_field: sortColumn,
@@ -197,6 +193,7 @@ export default function DataTable({
       search,
       ...dateRange,
       ...filterData,
+      ...parameters,
     };
 
     if (fetchUrl) {
