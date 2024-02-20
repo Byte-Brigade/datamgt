@@ -143,10 +143,12 @@ class InqueryController extends Controller
             "November",
             "December"
         ];
+        $yearToner = Carbon::parse(GapToner::max('idecice_date'))->year;
         return Inertia::render('Inquery/Asset/Page', [
             'data' => [
                 'months' => $months,
             ],
+            'yearToner' => $yearToner,
             'type_names' => BranchType::whereNotIn('type_name', ['KF', 'SFI'])->pluck('type_name')->toArray()
         ]);
     }
