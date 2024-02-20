@@ -81,6 +81,238 @@ export default function Page({ sessions, auth, data, type_names }) {
       colSpan: 4,
     },
   ];
+  const columnTonerCosts = [
+    {
+      name: "Cabang",
+      field: "branch_name",
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+        >
+          {data.branch_name}
+        </Link>
+      ),
+    },
+
+    {
+      name: "January",
+      field: "january",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.january.toLocaleString('id-ID')
+    },
+    {
+      name: "February",
+      field: "february",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.february.toLocaleString('id-ID')
+    },
+    {
+      name: "March",
+      field: "march",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.march.toLocaleString('id-ID')
+    },
+    {
+      name: "April",
+      field: "April",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.april.toLocaleString('id-ID')
+    },
+    {
+      name: "May",
+      field: "may",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.may.toLocaleString('id-ID')
+    },
+    {
+      name: "June",
+      field: "june",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.june.toLocaleString('id-ID')
+    },
+    {
+      name: "July",
+      field: "july",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.july.toLocaleString('id-ID')
+    },
+    {
+      name: "August",
+      field: "august",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.august.toLocaleString('id-ID')
+    },
+    {
+      name: "September",
+      field: "september",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.september.toLocaleString('id-ID')
+    },
+    {
+      name: "October",
+      field: "october",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.october.toLocaleString('id-ID')
+    },
+    {
+      name: "November",
+      field: "november",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.november.toLocaleString('id-ID')
+    },
+    {
+      name: "December",
+      field: "december",
+      type: "custom",
+      className: "text-right",
+      agg: "sum",
+      format: "currency",
+      render: (data) =>
+        data.december.toLocaleString('id-ID')
+    },
+
+
+  ];
+  const columnTonerQuantities = [
+    {
+      name: "Cabang",
+      field: "branch_name",
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+        >
+          {data.branch_name}
+        </Link>
+      ),
+    },
+
+    {
+      name: "January",
+      field: "january",
+      agg: "sum",
+
+
+    },
+    {
+      name: "February",
+      field: "february",
+      agg: "sum",
+
+
+    },
+    {
+      name: "March",
+      field: "march",
+      agg: "sum",
+
+
+    },
+    {
+      name: "April",
+      field: "April",
+      agg: "sum",
+
+
+    },
+    {
+      name: "May",
+      field: "may",
+      agg: "sum",
+
+
+    },
+    {
+      name: "June",
+      field: "june",
+      agg: "sum",
+
+    },
+    {
+      name: "July",
+      field: "july",
+      agg: "sum",
+
+    },
+    {
+      name: "August",
+      field: "august",
+      agg: "sum",
+
+
+    },
+    {
+      name: "September",
+      field: "september",
+      agg: "sum",
+
+    },
+    {
+      name: "October",
+      field: "october",
+      agg: "sum",
+
+    },
+    {
+      name: "November",
+      field: "november",
+      agg: "sum",
+
+    },
+    {
+      name: "December",
+      field: "december",
+      agg: "sum",
+
+    },
+
+
+  ];
 
   const columns = [
     {
@@ -388,158 +620,175 @@ export default function Page({ sessions, auth, data, type_names }) {
 
           {/* Toner */}
           {active === "toner" && (
-            <div className="mt-4">
-              <div className="overflow-x-auto">
-                <table className={`text-sm leading-3 bg-white w-full mb-2`}>
-                  <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                    <tr className="[&>th]:p-2 bg-slate-100">
-                      <th className="text-center">Kategori Kantor</th>
-                      {data.months.map((month) => (
-                        <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                            undefined
-                            ? new Date(
-                              Object.values(data.gap_toners)[0].idecice_date
-                            ).getFullYear()
-                            : new Date().getFullYear()
-                            }`}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="overflow-y-auto">
-                    {Object.entries(groupBy(data.gap_toners, "kategori")).map(
-                      ([key, values]) => (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                          <td>{key}</td>
-                          {data.months.map((month) => {
-                            return (
-                              <td className="text-right">
-                                {values
-                                  .filter(
-                                    (value) =>
-                                      new Date(
-                                        value.idecice_date
-                                      ).toLocaleString("en-US", {
-                                        month: "long",
-                                      }) === month
-                                  )
-                                  .reduce((acc, toner) => {
-                                    return acc + toner.total;
-                                  }, 0)
-                                  .toLocaleString("id-ID")}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              <h2 className="mt-2 text-lg font-semibold">
-                Quantity Per Cabang
-              </h2>
-              <div className="mt-2 overflow-x-auto">
-                <table className={`text-sm leading-3 bg-white w-full mb-2`}>
-                  <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                    <tr className="[&>th]:p-2 bg-slate-100">
-                      <th className="text-center">Kategori Kantor</th>
-                      {data.months.map((month) => (
-                        <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                            undefined
-                            ? new Date(
-                              Object.values(data.gap_toners)[0].idecice_date
-                            ).getFullYear()
-                            : new Date().getFullYear()
-                            }`}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="overflow-y-auto">
-                    {Object.entries(groupBy(data.gap_toners, "cabang")).map(
-                      ([key, values]) => (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                          <td>{key}</td>
-                          {data.months.map((month) => {
-                            console.log(values);
-                            return (
-                              <td className="text-center">
-                                {values
-                                  .filter(
-                                    (value) =>
-                                      new Date(
-                                        value.idecice_date
-                                      ).toLocaleString("en-US", {
-                                        month: "long",
-                                      }) === month
-                                  )
-                                  .reduce((acc, toner) => {
-                                    return acc + toner.quantity;
-                                  }, 0)
-                                  .toLocaleString("id-ID")}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            // <div className="mt-4">
+            //   <div className="overflow-x-auto">
+            //     <table className={`text-sm leading-3 bg-white w-full mb-2`}>
+            //       <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+            //         <tr className="[&>th]:p-2 bg-slate-100">
+            //           <th className="text-center">Kategori Kantor</th>
+            //           {data.months.map((month) => (
+            //             <th className="text-center">
+            //               {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+            //                 undefined
+            //                 ? new Date(
+            //                   Object.values(data.gap_toners)[0].idecice_date
+            //                 ).getFullYear()
+            //                 : new Date().getFullYear()
+            //                 }`}
+            //             </th>
+            //           ))}
+            //         </tr>
+            //       </thead>
+            //       <tbody className="overflow-y-auto">
+            //         {Object.entries(groupBy(data.gap_toners, "kategori")).map(
+            //           ([key, values]) => (
+            //             <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+            //               <td>{key}</td>
+            //               {data.months.map((month) => {
+            //                 return (
+            //                   <td className="text-right">
+            //                     {values
+            //                       .filter(
+            //                         (value) =>
+            //                           new Date(
+            //                             value.idecice_date
+            //                           ).toLocaleString("en-US", {
+            //                             month: "long",
+            //                           }) === month
+            //                       )
+            //                       .reduce((acc, toner) => {
+            //                         return acc + toner.total;
+            //                       }, 0)
+            //                       .toLocaleString("id-ID")}
+            //                   </td>
+            //                 );
+            //               })}
+            //             </tr>
+            //           )
+            //         )}
+            //       </tbody>
+            //     </table>
+            //   </div>
+            //   <h2 className="mt-2 text-lg font-semibold">
+            //     Quantity Per Cabang
+            //   </h2>
+            //   <div className="mt-2 overflow-x-auto">
+            //     <table className={`text-sm leading-3 bg-white w-full mb-2`}>
+            //       <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+            //         <tr className="[&>th]:p-2 bg-slate-100">
+            //           <th className="text-center">Kategori Kantor</th>
+            //           {data.months.map((month) => (
+            //             <th className="text-center">
+            //               {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+            //                 undefined
+            //                 ? new Date(
+            //                   Object.values(data.gap_toners)[0].idecice_date
+            //                 ).getFullYear()
+            //                 : new Date().getFullYear()
+            //                 }`}
+            //             </th>
+            //           ))}
+            //         </tr>
+            //       </thead>
+            //       <tbody className="overflow-y-auto">
+            //         {Object.entries(groupBy(data.gap_toners, "cabang")).map(
+            //           ([key, values]) => (
+            //             <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+            //               <td>{key}</td>
+            //               {data.months.map((month) => {
+            //                 console.log(values);
+            //                 return (
+            //                   <td className="text-center">
+            //                     {values
+            //                       .filter(
+            //                         (value) =>
+            //                           new Date(
+            //                             value.idecice_date
+            //                           ).toLocaleString("en-US", {
+            //                             month: "long",
+            //                           }) === month
+            //                       )
+            //                       .reduce((acc, toner) => {
+            //                         return acc + toner.quantity;
+            //                       }, 0)
+            //                       .toLocaleString("id-ID")}
+            //                   </td>
+            //                 );
+            //               })}
+            //             </tr>
+            //           )
+            //         )}
+            //       </tbody>
+            //     </table>
+            //   </div>
+            //   <h2 className="mt-2 text-lg font-semibold">Nominal Per Cabang</h2>
+            //   <div className="mt-2 overflow-x-auto">
+            //     <table className={`text-sm leading-3 bg-white w-full`}>
+            //       <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
+            //         <tr className="[&>th]:p-2 bg-slate-100">
+            //           <th className="text-center">Kategori Kantor</th>
+            //           {data.months.map((month) => (
+            //             <th className="text-center">
+            //               {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
+            //                 undefined
+            //                 ? new Date(
+            //                   Object.values(data.gap_toners)[0].idecice_date
+            //                 ).getFullYear()
+            //                 : new Date().getFullYear()
+            //                 }`}
+            //             </th>
+            //           ))}
+            //         </tr>
+            //       </thead>
+            //       <tbody className="overflow-y-auto">
+            //         {Object.entries(groupBy(data.gap_toners, "cabang")).map(
+            //           ([key, values]) => (
+            //             <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
+            //               <td>{key}</td>
+            //               {data.months.map((month) => {
+            //                 console.log(values);
+            //                 return (
+            //                   <td className="text-right">
+            //                     {values
+            //                       .filter(
+            //                         (value) =>
+            //                           new Date(
+            //                             value.idecice_date
+            //                           ).toLocaleString("en-US", {
+            //                             month: "long",
+            //                           }) === month
+            //                       )
+            //                       .reduce((acc, toner) => {
+            //                         return acc + toner.total;
+            //                       }, 0)
+            //                       .toLocaleString("id-ID")}
+            //                   </td>
+            //                 );
+            //               })}
+            //             </tr>
+            //           )
+            //         )}
+            //       </tbody>
+            //     </table>
+            //   </div>
+            // </div>
+            <>
+              <h2 className="mt-2 text-lg font-semibold">Quantity Per Cabang</h2>
+              <DataTable
+                columns={columnTonerQuantities}
+                fetchUrl={"/api/inquery/toners/quantity"}
+                refreshUrl={isRefreshed}
+                bordered={true}
+                parameters={{ branch_id: auth.user.branch_id }}
+              />
               <h2 className="mt-2 text-lg font-semibold">Nominal Per Cabang</h2>
-              <div className="mt-2 overflow-x-auto">
-                <table className={`text-sm leading-3 bg-white w-full`}>
-                  <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
-                    <tr className="[&>th]:p-2 bg-slate-100">
-                      <th className="text-center">Kategori Kantor</th>
-                      {data.months.map((month) => (
-                        <th className="text-center">
-                          {`${month} ${Object.values(data.gap_toners)[0].idecice_date !==
-                            undefined
-                            ? new Date(
-                              Object.values(data.gap_toners)[0].idecice_date
-                            ).getFullYear()
-                            : new Date().getFullYear()
-                            }`}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="overflow-y-auto">
-                    {Object.entries(groupBy(data.gap_toners, "cabang")).map(
-                      ([key, values]) => (
-                        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 divide-x divide-slate-200">
-                          <td>{key}</td>
-                          {data.months.map((month) => {
-                            console.log(values);
-                            return (
-                              <td className="text-right">
-                                {values
-                                  .filter(
-                                    (value) =>
-                                      new Date(
-                                        value.idecice_date
-                                      ).toLocaleString("en-US", {
-                                        month: "long",
-                                      }) === month
-                                  )
-                                  .reduce((acc, toner) => {
-                                    return acc + toner.total;
-                                  }, 0)
-                                  .toLocaleString("id-ID")}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              <DataTable
+                columns={columnTonerCosts}
+                fetchUrl={"/api/inquery/toners/nominal"}
+                refreshUrl={isRefreshed}
+                bordered={true}
+                parameters={{ branch_id: auth.user.branch_id }}
+              /></>
           )}
           {active === "kdo" && (
             <DataTable

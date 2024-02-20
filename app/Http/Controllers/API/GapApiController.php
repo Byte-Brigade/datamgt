@@ -193,6 +193,7 @@ class GapApiController extends Controller
             });
         }
 
+
         if ($perpage == "All") {
             $perpage = $query->count();
         }
@@ -274,7 +275,6 @@ class GapApiController extends Controller
                     ->orWhere('branch_name', 'like', $searchQuery)
                     ->orWhere('description', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery);
-
             });
         }
 
@@ -355,7 +355,6 @@ class GapApiController extends Controller
                     ->orWhere('branch_name', 'like', $searchQuery)
                     ->orWhere('description', 'like', $searchQuery)
                     ->orWhere('vendor', 'like', $searchQuery);
-
             });
         }
 
@@ -519,18 +518,25 @@ class GapApiController extends Controller
                 $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
             }
         } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
+            $yearToDate = true;
+            $minPeriode = $query->min('periode');
+            $maxPeriode = $query->max('periode');
+            $query->whereBetween('periode', [$minPeriode, $maxPeriode]);
         }
+        // } else {
+        //     $latestPeriode = $query->max('periode');
+        //     $query->where('periode', $latestPeriode);
+        // }
 
-        if ($yearToDate) {
+
+        if ($yearToDate && $request->type == "tenaga-kerja") {
+
             $query = $query->select([
                 'jenis_pekerjaan',
                 'nama_pegawai',
                 'user',
                 'lokasi',
                 'vendor',
-                'cost',
             ])->distinct();
         }
         $query = $query->get();
@@ -541,6 +547,7 @@ class GapApiController extends Controller
                 'vendor' => $alihdayas,
                 'total_pegawai' => $alihdayas->count(),
                 'total_biaya' => $alihdayas->sum('cost'),
+                'alihdaya' => $alihdayas,
             ];
         });
 
@@ -602,8 +609,7 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_toners.branch_id', 'branches.id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
-        ;
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');;
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {

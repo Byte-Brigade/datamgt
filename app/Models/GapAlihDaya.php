@@ -17,6 +17,11 @@ class GapAlihDaya extends Model
         'lokasi',
         'vendor',
         'cost',
-        'periode'
+        'periode',
+        'branch_id',
     ];
+
+    public function branches() {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
 }
