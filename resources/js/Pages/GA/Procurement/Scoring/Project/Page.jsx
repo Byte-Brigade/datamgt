@@ -107,7 +107,7 @@ export default function Page({ auth, branches, sessions }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.scoring_projects.detail", data.scoring_vendor)}>
+        <Link href={route("gap.scoring-projects.detail", data.scoring_vendor)}>
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -116,7 +116,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_projects.import"), {
+    post(route("gap.scoring-projects.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -129,14 +129,14 @@ export default function Page({ auth, branches, sessions }) {
     const { branch } = data;
     e.preventDefault();
     window.open(
-      route("gap.scoring_projects.export") + `?branch=${branch}`,
+      route("gap.scoring-projects.export") + `?branch=${branch}`,
       "_self"
     );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_projects.upload", data.id), {
+    post(route("gap.scoring-projects.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -147,7 +147,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.scoring_projects.update", data.id), {
+    put(route("gap.scoring-projects.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -158,7 +158,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.scoring_projects.store", data.id), {
+    post(route("gap.scoring-projects.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -170,7 +170,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.scoring_projects.delete", data.id), {
+    destroy(route("gap.scoring-projects.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -276,7 +276,7 @@ export default function Page({ auth, branches, sessions }) {
             )}
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/scoring_projects"}
+            fetchUrl={"/api/gap/scoring-projects"}
             refreshUrl={isRefreshed}
             bordered={true}
           />
@@ -313,7 +313,7 @@ export default function Page({ auth, branches, sessions }) {
           </DialogBody>
           <DialogFooter className="w-100 flex justify-between">
             <SecondaryButton type="button">
-              <a href={route("gap.scoring_projects.template")}>
+              <a href={route("gap.scoring-projects.template")}>
                 Download Template
               </a>
             </SecondaryButton>

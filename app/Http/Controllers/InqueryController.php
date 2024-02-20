@@ -33,10 +33,13 @@ class InqueryController extends Controller
     public function branchDetail($slug)
     {
 
-        $branch = Branch::with(['employees', 'gap_alih_dayas' => function ($query) {
-            $latestPeriode = $query->max('periode');
-            return $query->where('periode', $latestPeriode);
-        }])->where('slug', $slug)->firstOrFail();
+        $branch = Branch::with([
+            'employees',
+            'gap_alih_dayas' => function ($query) {
+                $latestPeriode = $query->max('periode');
+                return $query->where('periode', $latestPeriode);
+            }
+        ])->where('slug', $slug)->firstOrFail();
         $positions = EmployeePosition::get();
 
         // Lisensi
@@ -94,6 +97,7 @@ class InqueryController extends Controller
     }
     public function staff()
     {
+        $positionsProps = EmployeePosition::all();
         return Inertia::render('Inquery/Staff/Page');
     }
     public function staff_detail($slug, Request $request)

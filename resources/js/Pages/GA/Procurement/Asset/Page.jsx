@@ -275,13 +275,13 @@ export default function Page({ auth, branches, sessions, major_categories }) {
                       Create Report
                     </PrimaryButton>
                   )}
-                  <Link
+                  {/* <Link
                     href={route("files.detail", 'Asset')}
                   >
                     <PrimaryButton>
                       Files
                     </PrimaryButton>
-                  </Link>
+                  </Link> */}
 
                 </div>
               </div>

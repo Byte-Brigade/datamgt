@@ -49,10 +49,10 @@ class InfraScoringProjectController extends Controller
         try {
             (new InfraScoringProjectsImport)->import($request->file('file'));
 
-            return redirect(route('infra.scoring_projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('infra.scoring-projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);
-            return redirect(route('infra.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.scoring-projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 

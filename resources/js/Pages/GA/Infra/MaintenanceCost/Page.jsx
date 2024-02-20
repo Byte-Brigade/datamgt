@@ -57,7 +57,7 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
-
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
         <Link

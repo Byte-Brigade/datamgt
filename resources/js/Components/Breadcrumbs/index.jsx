@@ -59,9 +59,9 @@ export function BreadcrumbsDefault() {
         return "Inquery Data";
       case "mobil":
         return "Detail";
-      case "scoring_projects":
+      case "scoring-projects":
         return "Scoring Projects";
-      case "scoring_assessments":
+      case "scoring-assessments":
         return "Scoring Assessments";
       case "sewa_gedungs":
         return "Sewa Gedung";

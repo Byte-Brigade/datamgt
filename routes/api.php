@@ -69,10 +69,10 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('alihdayas', [GapApiController::class, 'alihdayas']);
     Route::get('alihdaya/{type}', [GapApiController::class, 'alihdaya_details']);
     Route::get('perdin/{divisi_pembebanan}', [GapApiController::class, 'perdin_details']);
-    Route::get('scoring_projects', [GapApiController::class, 'scoring_projects']);
-    Route::get('scoring_projects/{scoring_vendor}', [GapApiController::class, 'scoring_project_details']);
-    Route::get('scoring_assessments', [GapApiController::class, 'scoring_assessments']);
-    Route::get('scoring_assessments/{scoring_vendor}', [GapApiController::class, 'scoring_assessment_details']);
+    Route::get('scoring-projects', [GapApiController::class, 'scoring_projects']);
+    Route::get('scoring-projects/{scoring_vendor}', [GapApiController::class, 'scoring_project_details']);
+    Route::get('scoring-assessments', [GapApiController::class, 'scoring_assessments']);
+    Route::get('scoring-assessments/{scoring_vendor}', [GapApiController::class, 'scoring_assessment_details']);
 });
 
 Route::prefix('inquery')->name('iqry.')->group(function () {
@@ -96,8 +96,8 @@ Route::prefix('infra')->name('infra.')->group(function () {
     Route::get('maintenance-costs', [InfraApiController::class, 'maintenance_costs']);
     Route::get('maintenance-costs/{jenis_pekerjaan}', [InfraApiController::class, 'maintenance_cost_details']);
     Route::get('disnakers', [InfraApiController::class, 'disnakers']);
-    Route::get('scoring_projects', [InfraApiController::class, 'scoring_projects']);
-    Route::get('scoring_projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);
-    Route::get('scoring_assessments', [InfraApiController::class, 'scoring_assessments']);
-    Route::get('scoring_assessments/{scoring_vendor}', [InfraApiController::class, 'scoring_assessment_details']);
+    Route::get('scoring-projects', [InfraApiController::class, 'scoring_projects']);
+    Route::get('scoring-projects/{scoring_vendor}', [InfraApiController::class, 'scoring_project_details']);
+    Route::get('scoring-assessments', [InfraApiController::class, 'scoring_assessments']);
+    Route::get('scoring-assessments/{scoring_vendor}', [InfraApiController::class, 'scoring_assessment_details']);
 });

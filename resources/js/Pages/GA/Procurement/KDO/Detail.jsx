@@ -208,29 +208,10 @@ export default function Detail({
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="text-xl font-semibold text-end mb-4">
+          <h2 className="text-xl font-semibold text-center mb-4">
             {kdo_mobil.branches.branch_name}
           </h2>
-          {hasRoles("superadmin|admin|procurement", auth) &&
-            ["can add", "can export"].some((permission) =>
-              auth.permissions.includes(permission)
-            ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
 
-                  <PrimaryButton
-                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                    onClick={toggleModalImport}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <DocumentPlusIcon className="w-4 h-4" />
-                      Import Excel
-                    </div>
-                  </PrimaryButton>
-
-                )}
-              </div>
-            )}
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"

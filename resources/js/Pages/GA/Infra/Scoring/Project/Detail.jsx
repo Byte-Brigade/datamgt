@@ -165,7 +165,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_projects.import"), {
+    post(route("infra.scoring-projects.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -178,14 +178,14 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
     const { branch } = data;
     e.preventDefault();
     window.open(
-      route("infra.scoring_projects.export") + `?branch=${branch}`,
+      route("infra.scoring-projects.export") + `?branch=${branch}`,
       "_self"
     );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_projects.upload", data.id), {
+    post(route("infra.scoring-projects.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -196,7 +196,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("infra.scoring_projects.update", data.id), {
+    put(route("infra.scoring-projects.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -207,7 +207,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_projects.store", data.id), {
+    post(route("infra.scoring-projects.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -219,7 +219,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("infra.scoring_projects.delete", data.id), {
+    destroy(route("infra.scoring-projects.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -334,7 +334,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
                 : true
             )}
             className="w-[1500px]"
-            fetchUrl={`/api/infra/scoring_projects/${scoring_vendor}`}
+            fetchUrl={`/api/infra/scoring-projects/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
             component={[
