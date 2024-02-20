@@ -108,11 +108,11 @@ class GapScoringProjectController extends Controller
                 ]
             );
             DB::commit();
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan']);
+            return redirect(route('gap.scoring-projects'))->with(['status' => 'success', 'message' => 'Data berhasil disimpan']);
         } catch (Throwable $e) {
 
             DB::rollBack();
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.scoring-projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -176,11 +176,11 @@ class GapScoringProjectController extends Controller
                 ]
             );
             DB::commit();
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
+            return redirect(route('gap.scoring-projects'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
         } catch (Throwable $e) {
 
             DB::rollBack();
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.scoring-projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -197,10 +197,10 @@ class GapScoringProjectController extends Controller
             $gap_scoring = GapScoring::find($id);
             $gap_scoring->delete();
             DB::commit();
-         return redirect(route('gap.scoring_projects'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+         return redirect(route('gap.scoring-projects'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
         } catch (Throwable $e) {
             DB::rollBack();
-            return redirect(route('gap.scoring_projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('gap.scoring-projects'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 }

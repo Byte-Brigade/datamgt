@@ -102,7 +102,7 @@ export default function Detail({
                 </table>
               </div>
             </div>
-            <div className="flex flex-col gap-y-2">
+            <div className="flex flex-col gap-y-2 col-span-2">
               <span className="font-semibold">Lisensi</span>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">

@@ -122,11 +122,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Hasil Scoring Vendor",
-      path: "gap.scoring_projects",
+      path: "gap.scoring-projects",
     },
     {
       name: "Hasil Self Assessment",
-      path: "gap.scoring_assessments",
+      path: "gap.scoring-assessments",
     },
     {
       name: "Biaya Perjalanan Dinas",
@@ -154,11 +154,11 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     },
     {
       name: "Hasil Self Asssessment",
-      path: "infra.scoring_assessments",
+      path: "infra.scoring-assessments",
     },
     {
       name: "Hasil Scoring Vendor",
-      path: "infra.scoring_projects",
+      path: "infra.scoring-projects",
     },
     {
       name: "Izin Disnaker",

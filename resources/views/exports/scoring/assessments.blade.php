@@ -20,7 +20,7 @@
         @php
             $number = 0;
         @endphp
-        @foreach ($scoring_assessments as $index => $scoring_assessment)
+        @foreach ($scoring-assessments as $index => $scoring_assessment)
             <tr>
                 <td>{{ $number = $number + 1 }}</td>
                 <td>{{ $scoring_assessment->branches->branch_name }}</td>

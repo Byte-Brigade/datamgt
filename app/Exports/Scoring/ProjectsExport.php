@@ -20,7 +20,7 @@ class ProjectsExport implements FromView, ShouldAutoSize, WithTitle, WithColumnF
     public function view(): View
     {
         return view('exports.scoring.projects', [
-            'scoring_projects' => GapScoring::all()->where('type','Project')->sortBy('branches.branch_code')
+            'scoring-projects' => GapScoring::all()->where('type','Project')->sortBy('branches.branch_code')
         ]);
     }
 

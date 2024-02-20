@@ -89,7 +89,7 @@ export default function Page({ auth, branches, sessions }) {
       className: "text-center",
       render: (data) => (
         <Link
-          href={route("infra.scoring_assessments.detail", data.scoring_vendor)}
+          href={route("infra.scoring-assessments.detail", data.scoring_vendor)}
         >
           <Button variant="outlined">Detail</Button>
         </Link>
@@ -99,7 +99,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.import"), {
+    post(route("infra.scoring-assessments.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -112,14 +112,14 @@ export default function Page({ auth, branches, sessions }) {
     const { branch } = data;
     e.preventDefault();
     window.open(
-      route("infra.scoring_assessments.export") + `?branch=${branch}`,
+      route("infra.scoring-assessments.export") + `?branch=${branch}`,
       "_self"
     );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.upload", data.id), {
+    post(route("infra.scoring-assessments.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -130,7 +130,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("infra.scoring_assessments.update", data.id), {
+    put(route("infra.scoring-assessments.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -141,7 +141,7 @@ export default function Page({ auth, branches, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.store", data.id), {
+    post(route("infra.scoring-assessments.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -153,7 +153,7 @@ export default function Page({ auth, branches, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("infra.scoring_assessments.delete", data.id), {
+    destroy(route("infra.scoring-assessments.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -229,7 +229,7 @@ export default function Page({ auth, branches, sessions }) {
             )}
           <DataTable
             columns={columns}
-            fetchUrl={"/api/infra/scoring_assessments"}
+            fetchUrl={"/api/infra/scoring-assessments"}
             refreshUrl={isRefreshed}
             bordered={true}
           />
@@ -265,7 +265,7 @@ export default function Page({ auth, branches, sessions }) {
           </DialogBody>
           <DialogFooter className="w-100 flex justify-between">
             <SecondaryButton type="button">
-              <a href={route("infra.scoring_assessments.template")}>
+              <a href={route("infra.scoring-assessments.template")}>
                 Download Template
               </a>
             </SecondaryButton>

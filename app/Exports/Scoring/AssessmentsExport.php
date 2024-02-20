@@ -20,7 +20,7 @@ class AssessmentsExport implements FromView, ShouldAutoSize, WithTitle, WithColu
     public function view(): View
     {
         return view('exports.scoring.assessments', [
-            'scoring_assessments' => GapScoring::all()->where('type','Assessment')->sortBy('branches.branch_code')
+            'scoring-assessments' => GapScoring::all()->where('type','Assessment')->sortBy('branches.branch_code')
         ]);
     }
 

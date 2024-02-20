@@ -37,10 +37,10 @@ class InfraScoringAssessmentController extends Controller
         try {
             (new InfraScoringAssessmentsImport)->import($request->file('file'));
 
-            return redirect(route('infra.scoring_assessments'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
+            return redirect(route('infra.scoring-assessments'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);
-            return redirect(route('infra.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.scoring-assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -127,11 +127,11 @@ class InfraScoringAssessmentController extends Controller
                 ]
             );
             DB::commit();
-            return redirect(route('infra.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
+            return redirect(route('infra.scoring-assessments'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
         } catch (Throwable $e) {
 
             DB::rollBack();
-            return redirect(route('infra.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.scoring-assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
@@ -150,10 +150,10 @@ class InfraScoringAssessmentController extends Controller
             $infra_scoring = InfraScoring::find($id);
             $infra_scoring->delete();
             DB::commit();
-         return redirect(route('infra.scoring_assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
+         return redirect(route('infra.scoring-assessments'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);
         } catch (Throwable $e) {
             DB::rollBack();
-            return redirect(route('infra.scoring_assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return redirect(route('infra.scoring-assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 }

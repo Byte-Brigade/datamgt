@@ -7,7 +7,7 @@ import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 
-export default function Detail({ auth, branch, sessions, slug }) {
+export default function Detail({ auth, branch, sessions, positions, slug }) {
   const columns = [
     { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
     {
@@ -67,7 +67,7 @@ export default function Detail({ auth, branch, sessions, slug }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-4">
             <h2 className="text-xl font-semibold text-end">
               {branch.branch_name}
             </h2>
@@ -103,6 +103,14 @@ export default function Detail({ auth, branch, sessions, slug }) {
               }
             }
             fetchUrl={`/api/inquery/staff/${slug}`}
+            component={[
+              {
+                data: Array.from(
+                  new Set(positions.map((position) => position.position_name))
+                ),
+                field: "employee_positions.position_name",
+              },
+            ]}
           />
         </div>
       </div>
