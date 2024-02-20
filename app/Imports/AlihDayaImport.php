@@ -25,7 +25,9 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
     {
         foreach ($rows as $row) {
             $periode = Date::excelToDateTimeObject($row['periode']);
-
+            $branch_name = trim(preg_replace('/\b(KF|KFO|KFNO|KC)\b/', '', $row['lokasi']));
+            $branch_name = $branch_name == "KPO" ? "Kantor Pusat" : $branch_name;
+            $branch = Branch::where('branch_name', 'like', '%' . $branch_name . '%')->first();
             $exist_periode = GapAlihDaya::where('periode', $periode)->first();
             if ($row['cost'] > 0) {
                 if ($exist_periode) {
@@ -45,7 +47,8 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
                             'lokasi' => $row['lokasi'],
                             'vendor' => $row['vendor'],
                             'cost' => $row['cost'],
-                            'periode' => $periode
+                            'periode' => $periode,
+                            'branch_id' => isset($branch) ? $branch->id :
                         ]
                     );
                 } else {
@@ -57,7 +60,9 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
                             'lokasi' => $row['lokasi'],
                             'vendor' => $row['vendor'],
                             'cost' => $row['cost'],
-                            'periode' => $periode
+                            'periode' => $periode,
+                            'branch_id' => isset($branch) ? $branch->id :
+
                         ]
                     );
                 }
