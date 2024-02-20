@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, type, type_item }) {
+export default function Detail({ auth, sessions, type, type_item, periode }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -34,7 +34,7 @@ export default function Detail({ auth, sessions, type, type_item }) {
     periode: null,
   };
 
-
+  console.log(periode)
   const {
     data,
     setData,
@@ -80,6 +80,11 @@ export default function Detail({ auth, sessions, type, type_item }) {
       type: "custom",
       render: (data) => data.cost.toLocaleString("id-ID"),
     },
+    {
+      name: "Periode",
+      field: "periode",
+      type: "date",
+    }
     // {
     //   name: "Detail",
     //   field: "detail",
@@ -201,6 +206,7 @@ export default function Detail({ auth, sessions, type, type_item }) {
             columns={columns.filter((column) => column.field === "cost" ? auth.permissions.includes('can alih daya') : true)}
             fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
             refreshUrl={isRefreshed}
+            parameters={periode}
           />
         </div>
       </div>

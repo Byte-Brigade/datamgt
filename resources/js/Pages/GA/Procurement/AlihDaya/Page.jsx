@@ -413,6 +413,9 @@ export default function Page({ auth, sessions }) {
               refreshUrl={isRefreshed}
               periodic={true}
               bordered={true}
+              parameters={{
+                type: "tenaga-kerja"
+              }}
             />
           )}
 
@@ -423,6 +426,9 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/gap/alihdayas"}
               refreshUrl={isRefreshed}
               bordered={true}
+              parameters={{
+                type: "biaya"
+              }}
             />
           )}
         </div>

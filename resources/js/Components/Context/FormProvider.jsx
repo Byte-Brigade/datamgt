@@ -21,6 +21,22 @@ export const FormProvider = ({ children }) => {
     import: false,
   });
 
+  const groupBy = (array, key) =>
+    array.reduce((result, item) => {
+      // Extract the value for the current key
+      const keyValue = item[key];
+
+      // If the key doesn't exist in the result object, create it with an empty array
+      if (!result[keyValue]) {
+        result[keyValue] = [];
+      }
+
+      // Push the current item to the array associated with the key
+      result[keyValue].push(item);
+
+      return result;
+    }, {});
+
 
   const form = useForm(initialData);
 
@@ -59,7 +75,8 @@ export const FormProvider = ({ children }) => {
       setModalOpen,
       setId,
       selected, setSelected,
-      periode, setPeriode
+      periode, setPeriode,
+      groupBy
     }}>
       {children}
     </FormContext.Provider>

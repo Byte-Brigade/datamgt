@@ -102,6 +102,10 @@ class Branch extends Model
     {
         return $this->hasMany(GapToner::class, 'branch_id');
     }
+    public function gap_alih_dayas()
+    {
+        return $this->hasMany(GapAlihDaya::class, 'branch_id');
+    }
 
     public function gap_stos()
     {
@@ -113,4 +117,3 @@ class Branch extends Model
         return $this->hasMany(InfraMaintenanceCost::class, 'branch_id');
     }
 }
-

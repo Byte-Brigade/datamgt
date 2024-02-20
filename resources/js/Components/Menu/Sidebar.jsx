@@ -6,8 +6,9 @@ import {
   CircleStackIcon,
   DocumentTextIcon,
   FolderIcon,
+  HomeIcon,
   PresentationChartBarIcon,
-  UserGroupIcon,
+  UserGroupIcon
 } from "@heroicons/react/24/outline";
 import { Link, usePage } from "@inertiajs/react";
 import {
@@ -28,16 +29,16 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
   const [openAcc2, setOpenAcc2] = useState(route().current("reporting.*"));
   const [openAcc3, setOpenAcc3] = useState(
     route().current("ops.*") ||
-      route().current("gap.*") ||
-      route().current("infra.*") ||
-      route().current("branches") ||
-      route().current("employees")
+    route().current("gap.*") ||
+    route().current("infra.*") ||
+    route().current("branches") ||
+    route().current("employees")
   );
 
   const [openAcc4, setOpenAcc4] = useState(
     route().current("ops.*") ||
-      route().current("branches") ||
-      route().current("employees")
+    route().current("branches") ||
+    route().current("employees")
   );
   const [openAcc5, setOpenAcc5] = useState(route().current("gap.*"));
   const [openAcc6, setOpenAcc6] = useState(route().current("infra.*"));
@@ -71,7 +72,13 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "inquery.staff" },
     { name: "Asset", path: "inquery.assets" },
-    { name: "Lisensi", path: "inquery.licenses" },
+    { name: "Alih Daya", path: "inquery.alihdayas.summary" },
+    // { name: "Lisensi", path: "inquery.licenses" },
+    // { name: "Branch (Report)", path: "reporting.branches", state: "reporting.*" },
+    // { name: "Asset (Report)", path: "reporting.assets" },
+    // { name: "Lisensi (Report)", path: "reporting.licenses" },
+    // { name: "Vendor (Report)", path: "reporting.vendor" },
+    // { name: "Branch Roll Out (Report)", path: "reporting.bros" },
   ];
 
   const reportRouter = [
@@ -161,16 +168,13 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <aside
-      className={`flex flex-col fixed h-screen top-0 left-0 ${
-        auth.role === "cabang" ? "pt-20" : ""
-      } ${
-        !sidebarOpen ? "p-4 w-64 -x-translate-full" : "py-4 px-2 w-16"
-      } z-5 pt-20 bg-white border-r border-gray-200 shadow-xl shadow-blue-gray-900/5`}
+      className={`flex flex-col fixed h-screen top-0 left-0 ${auth.role === "cabang" ? "pt-20" : ""
+        } ${!sidebarOpen ? "p-4 w-64 -x-translate-full" : "py-4 px-2 w-16"
+        } z-5 pt-20 bg-white border-r border-gray-200 shadow-xl shadow-blue-gray-900/5`}
     >
       <List
-        className={`${
-          !sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0 overflow-x-hidden"
-        } overflow-y-auto`}
+        className={`${!sidebarOpen ? "min-w-[200px]" : "px-0 min-w-0 overflow-x-hidden"
+          } overflow-y-auto`}
       >
         {/* Dashboard */}
         <Link href={route("dashboard")}>
@@ -179,11 +183,15 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             selected={route().current("dashboard")}
           >
             <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
-              <ChartBarSquareIcon className="w-5 h-5" />
+              {auth.role !== "cabang" ? (
+                <ChartBarSquareIcon className="w-5 h-5" />
+              ) : (
+                <HomeIcon className="w-5 h-5" />
+              )}
             </ListItemPrefix>
             {!sidebarOpen && (
               <Typography color="blue-gray" className={`mr-auto font-normal`}>
-                Dashboard
+                {auth.role !== "cabang" ? "Dashboard" : "Home"}
               </Typography>
             )}
           </ListItem>
@@ -198,9 +206,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
             !sidebarOpen && (
               <ChevronDownIcon
                 strokeWidth={2.5}
-                className={`mx-auto h-4 w-4 transition-transform ${
-                  openAcc1 ? "rotate-180" : ""
-                }`}
+                className={`mx-auto h-4 w-4 transition-transform ${openAcc1 ? "rotate-180" : ""
+                  }`}
               />
             )
           }
@@ -277,9 +284,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 !sidebarOpen && (
                   <ChevronDownIcon
                     strokeWidth={2.5}
-                    className={`mx-auto h-4 w-4 transition-transform ${
-                      openAcc2 ? "rotate-180" : ""
-                    }`}
+                    className={`mx-auto h-4 w-4 transition-transform ${openAcc2 ? "rotate-180" : ""
+                      }`}
                   />
                 )
               }
@@ -313,9 +319,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
               </ListItem>
               <AccordionBody className="py-1">
                 <List
-                  className={`p-0 ${
-                    !sidebarOpen ? "min-w-[200px]" : "min-w-0"
-                  }`}
+                  className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                    }`}
                 >
                   {reportRouter.map((router, index) => (
                     <Tooltip
@@ -351,6 +356,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
           </>
         )}
 
+
+
         {auth.role !== "cabang" && (
           <>
             {/* Data Maintenance */}
@@ -362,9 +369,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                 !sidebarOpen && (
                   <ChevronDownIcon
                     strokeWidth={2.5}
-                    className={`mx-auto h-4 w-4 transition-transform ${
-                      openAcc3 ? "rotate-180" : ""
-                    }`}
+                    className={`mx-auto h-4 w-4 transition-transform ${openAcc3 ? "rotate-180" : ""
+                      }`}
                   />
                 )
               }
@@ -404,9 +410,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     !sidebarOpen && (
                       <ChevronDownIcon
                         strokeWidth={2.5}
-                        className={`mx-auto h-4 w-4 transition-transform ${
-                          openAcc4 ? "rotate-180" : ""
-                        }`}
+                        className={`mx-auto h-4 w-4 transition-transform ${openAcc4 ? "rotate-180" : ""
+                          }`}
                       />
                     )
                   }
@@ -440,9 +445,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   </ListItem>
                   <AccordionBody className="py-1">
                     <List
-                      className={`p-0 ${
-                        !sidebarOpen ? "min-w-[200px]" : "min-w-0"
-                      }`}
+                      className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                        }`}
                     >
                       {opsRouter.map((router, index) => (
                         <Tooltip
@@ -484,9 +488,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     !sidebarOpen && (
                       <ChevronDownIcon
                         strokeWidth={2.5}
-                        className={`mx-auto h-4 w-4 transition-transform ${
-                          openAcc5 ? "rotate-180" : ""
-                        }`}
+                        className={`mx-auto h-4 w-4 transition-transform ${openAcc5 ? "rotate-180" : ""
+                          }`}
                       />
                     )
                   }
@@ -520,9 +523,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   </ListItem>
                   <AccordionBody className="py-1">
                     <List
-                      className={`p-0 ${
-                        !sidebarOpen ? "min-w-[200px]" : "min-w-0"
-                      }`}
+                      className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                        }`}
                     >
                       {gaProcurementRouter.map((router, index) => (
                         <Tooltip
@@ -564,9 +566,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                     !sidebarOpen && (
                       <ChevronDownIcon
                         strokeWidth={2.5}
-                        className={`mx-auto h-4 w-4 transition-transform ${
-                          openAcc6 ? "rotate-180" : ""
-                        }`}
+                        className={`mx-auto h-4 w-4 transition-transform ${openAcc6 ? "rotate-180" : ""
+                          }`}
                       />
                     )
                   }
@@ -600,9 +601,8 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                   </ListItem>
                   <AccordionBody className="py-1">
                     <List
-                      className={`p-0 ${
-                        !sidebarOpen ? "min-w-[200px]" : "min-w-0"
-                      }`}
+                      className={`p-0 ${!sidebarOpen ? "min-w-[200px]" : "min-w-0"
+                        }`}
                     >
                       {infraRouter.map((router, index) => (
                         <Tooltip

@@ -53,7 +53,7 @@ Route::get('/maintenance', function () {
     abort(404);
 })->name('maintenance');
 
-Route::get('/test', function () {
+Route::get('/home', function () {
     return Inertia::render('Cabang');
 });
 
@@ -74,6 +74,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::get('/staff', [InqueryController::class, 'staff'])->name('inquery.staff');
+        Route::get('/alihdayas', [InqueryController::class, 'alihdaya_summary'])->name('inquery.alihdayas.summary');
+        Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('inquery.alihdayas');
+        Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail'])->name('inquery.alihdayas.detail');
 
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
