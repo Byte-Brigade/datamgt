@@ -113,8 +113,10 @@ class InqueryController extends Controller
     }
     public function alihdayas($slug, Request $request)
     {
+        $branch = Branch::where('slug', $slug)->first();
         return Inertia::render('Inquery/AlihDaya/Page', [
             'slug' => $slug,
+            'branch' => $branch,
         ]);
     }
     public function alihdaya_detail($slug, Request $request)

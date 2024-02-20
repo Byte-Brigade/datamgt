@@ -3,13 +3,11 @@ import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
-import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions, slug }) {
+export default function Page({ auth, sessions, slug, branch }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -282,54 +280,23 @@ export default function Page({ auth, sessions, slug }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            <CardMenu
-              label="Jumlah Tenaga Kerja"
-              data
-              type="tenaga-kerja"
-              Icon={ArchiveBoxIcon}
-              active={params.value}
-              onClick={() => handleTabChange("tenaga-kerja")}
-              color="purple"
-            />
-            <CardMenu
-              label="Jumlah Biaya Tenaga Kerja"
-              data
-              type="biaya"
-              Icon={ArchiveBoxIcon}
-              active={params.value}
-              onClick={() => handleTabChange("biaya")}
-              color="purple"
-            />
-          </div>
+          <h2 className="text-xl font-semibold text-end mb-4">
+            {branch.branch_name}
+          </h2>
 
-          {active === "tenaga-kerja" && (
             <DataTable
               columns={columnItems}
               headings={heading1}
               fetchUrl={`/api/inquery/alihdayas/${slug}`}
               refreshUrl={isRefreshed}
-              periodic={true}
               bordered={true}
               parameters={{
                 type: "tenaga-kerja",
               }}
             />
-          )}
 
-          {active === "biaya" && (
-            <DataTable
-              columns={columnCosts}
-              headings={heading2}
-              fetchUrl={`/api/inquery/alihdayas/${slug}`}
-              refreshUrl={isRefreshed}
-              bordered={true}
-              parameters={{
-                type: "biaya",
 
-              }}
-            />
-          )}
+
         </div>
       </div>
 

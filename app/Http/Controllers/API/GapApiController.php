@@ -178,8 +178,14 @@ class GapApiController extends Controller
 
         $perpage = $request->perpage ?? 15;
 
+        if(!is_null($request->periode)) {
 
-        $query = $query->where('periode', $request->periode);
+            $query = $query->where('periode', $request->periode);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query = $query->where('periode', $latestPeriode);
+
+        }
 
         if (!is_null($request->vendor)) {
             $query = $query->where('vendor', $request->vendor);
