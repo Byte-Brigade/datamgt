@@ -35,6 +35,7 @@ export default function Summary({ auth, sessions }) {
     {
       name: "Nama Cabang",
       field: "branch_name",
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
         <Link
