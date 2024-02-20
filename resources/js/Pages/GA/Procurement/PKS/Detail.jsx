@@ -51,7 +51,7 @@ export default function Detail({ auth, sessions, status }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
-  const columns = [
+  const columnsAktif = [
     {
       name: "Vendor",
       field: "vendor",
@@ -109,7 +109,53 @@ export default function Detail({ auth, sessions, status }) {
     //   ),
     // },
   ];
+  const columnsOnProgress = [
+    {
+      name: "Vendor",
+      field: "vendor",
+    },
+    {
+      name: "Type",
+      field: "type",
+    },
+    {
+      name: "Description",
+      field: "description",
+      className: "w-[500px]"
+    },
+    {
+      name: "Awal",
+      field: "awal",
+      type: "date",
+    },
+    {
+      name: "Akhir",
+      field: "akhir",
+      type: "date",
+    },
 
+    // {
+    //   name: "Tahun Akhir",
+    //   field: "tahun_akhir",
+    // },
+    // {
+    //   name: "Status",
+    //   field: "status",
+    // },
+
+    // {
+    //   name: "Detail",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.pks.detail", data.vendor)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
+  ];
+
+  const columns = status == "AKTIF" ? columnsAktif : columnsOnProgress
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
@@ -219,9 +265,9 @@ export default function Detail({ auth, sessions, status }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             className="w-[1500px]"

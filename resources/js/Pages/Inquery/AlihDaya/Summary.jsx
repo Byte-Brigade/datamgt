@@ -50,13 +50,7 @@ export default function Summary({ auth, sessions }) {
       name: "Jumlah Tenaga Kerja",
       field: "tenaga_kerja",
     },
-    {
-      name: "Jumlah Biaya",
-      field: "biaya",
-      type: "custom",
-      className: "text-right",
-      render: (data) => data.biaya.toLocaleString("id-ID")
-    }
+
 
   ];
 
