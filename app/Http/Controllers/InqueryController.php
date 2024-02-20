@@ -119,9 +119,7 @@ class InqueryController extends Controller
     }
     public function alihdaya_detail($slug, Request $request)
     {
-        return Inertia::render('Inquery/AlihDaya/Detail', [
-            'slug' => $slug,
-        ]);
+        return Inertia::render('Inquery/AlihDaya/Detail', ['slug' => $slug, 'type' => $request->type, 'type_item' => $request->type_item, 'periode' => ['startDate' => $request->startDate, 'endDate' => $request->endDate]]);
     }
     public function assets()
     {

@@ -72,7 +72,7 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "inquery.staff" },
     { name: "Asset", path: "inquery.assets" },
-    { name: "Alih Daya", path: "maintenance" },
+    { name: "Alih Daya", path: "inquery.alihdayas.summary" },
     // { name: "Lisensi", path: "inquery.licenses" },
     // { name: "Branch (Report)", path: "reporting.branches", state: "reporting.*" },
     // { name: "Asset (Report)", path: "reporting.assets" },

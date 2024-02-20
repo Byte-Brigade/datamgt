@@ -83,7 +83,7 @@ Route::prefix('inquery')->name('iqry.')->group(function () {
     Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
     Route::get('kdos', [InqueryApiController::class, 'kdos']);
     Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
-    Route::get('alihdayas', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
+    Route::get('alihdayas', [InqueryApiController::class, 'alihdaya_summary'])->name('alihdayas');
     Route::get('alihdayas/{slug}', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
     Route::get('alihdaya/{slug}/detail', [InqueryApiController::class, 'alihdaya_details']);
 

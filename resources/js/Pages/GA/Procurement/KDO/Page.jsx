@@ -1,5 +1,6 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
@@ -59,7 +60,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
   const { active, params, handleTabChange } = tabState(["cabang", "vendor"]);
-
+  const { periode } = useFormContext();
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
     {
@@ -98,7 +99,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
         <Link
           href={route("gap.kdos.mobil", {
             slug: data.branches.slug,
-            periode: data.periode,
+            ...periode,
           })}
         >
           <Button variant="outlined">Detail</Button>
@@ -270,12 +271,17 @@ export default function Page({ auth, branches, sessions, type_names }) {
               columns={columns}
               fetchUrl={"/api/gap/kdos/cabang"}
               refreshUrl={isRefreshed}
+              periodic={true}
               component={[
                 {
                   data: type_names,
                   field: 'type_name',
+
                 }
               ]}
+              parameters={
+                {...periode}
+              }
             />
           )}
           {active === "vendor" && (
