@@ -33,10 +33,13 @@ class InqueryController extends Controller
     public function branchDetail($slug)
     {
 
-        $branch = Branch::with(['employees', 'gap_alih_dayas' => function ($query) {
-            $latestPeriode = $query->max('periode');
-            return $query->where('periode', $latestPeriode);
-        }])->where('slug', $slug)->firstOrFail();
+        $branch = Branch::with([
+            'employees',
+            'gap_alih_dayas' => function ($query) {
+                $latestPeriode = $query->max('periode');
+                return $query->where('periode', $latestPeriode);
+            }
+        ])->where('slug', $slug)->firstOrFail();
         $positions = EmployeePosition::get();
 
         // Lisensi
@@ -66,13 +69,13 @@ class InqueryController extends Controller
                 'name' => 'SK BI RTGS',
                 'remark' => isset($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => '-',
-                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->id}/{$ops_skbirtgs->file}" : false,
+                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->file}" : false,
             ],
             [
                 'name' => 'Reklame',
                 'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
-                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_pajak_reklame->id}/{$ops_skbirtgs->file_izin_reklame}" : false,
+                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_skbirtgs->file_izin_reklame}" : false,
 
             ],
             [
@@ -94,6 +97,7 @@ class InqueryController extends Controller
     }
     public function staff()
     {
+        $positionsProps = EmployeePosition::all();
         return Inertia::render('Inquery/Staff/Page');
     }
     public function staff_detail($slug, Request $request)

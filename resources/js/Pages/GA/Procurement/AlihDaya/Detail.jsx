@@ -56,6 +56,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
+      className: 'text-center'
     },
     {
       name: "Nama Pegawai",
@@ -181,20 +182,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
-                )}
+              <div className="flex items-center justify-end mb-4">
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
                     Create Report

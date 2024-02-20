@@ -55,7 +55,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Status",
       field: "status",
-
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
         <Link

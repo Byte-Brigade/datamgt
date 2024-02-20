@@ -27,7 +27,7 @@
         @php
             $number = 0;
         @endphp
-        @foreach ($scoring_projects as $index => $scoring_project)
+        @foreach ($scoring-projects as $index => $scoring_project)
             <tr>
                 <td>{{ $number = $number + 1 }}</td>
                 <td>{{ $scoring_project->branches->branch_name }}</td>

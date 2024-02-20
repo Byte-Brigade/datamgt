@@ -78,6 +78,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Nama",
       field: "jenis_pekerjaan",
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
         <Link
@@ -160,6 +161,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Jenis Pekerjaan",
       field: "jenis_pekerjaan",
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
         <Link

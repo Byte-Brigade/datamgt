@@ -120,7 +120,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.import"), {
+    post(route("infra.scoring-assessments.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -133,14 +133,14 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
     const { branch } = data;
     e.preventDefault();
     window.open(
-      route("infra.scoring_assessments.export") + `?branch=${branch}`,
+      route("infra.scoring-assessments.export") + `?branch=${branch}`,
       "_self"
     );
     setIsModalExportOpen(!isModalExportOpen);
   };
   const handleSubmitUpload = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.upload", data.id), {
+    post(route("infra.scoring-assessments.upload", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -151,7 +151,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("infra.scoring_assessments.update", data.id), {
+    put(route("infra.scoring-assessments.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -162,7 +162,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("infra.scoring_assessments.store", data.id), {
+    post(route("infra.scoring-assessments.store", data.id), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -174,7 +174,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("infra.scoring_assessments.delete", data.id), {
+    destroy(route("infra.scoring-assessments.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -258,7 +258,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 : true
             )}
             className="w-[1500px]"
-            fetchUrl={`/api/infra/scoring_assessments/${scoring_vendor}`}
+            fetchUrl={`/api/infra/scoring-assessments/${scoring_vendor}`}
             refreshUrl={isRefreshed}
             bordered={true}
           />
