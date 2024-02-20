@@ -48,8 +48,8 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
                             'vendor' => $row['vendor'],
                             'cost' => $row['cost'],
                             'periode' => $periode,
-                            'branch_id' => isset($branch) ? $branch->id :
-                        ]
+                            'branch_id' => isset($branch) ? $branch->id : null,
+                        ],
                     );
                 } else {
                     GapAlihDaya::create(
@@ -61,7 +61,7 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
                             'vendor' => $row['vendor'],
                             'cost' => $row['cost'],
                             'periode' => $periode,
-                            'branch_id' => isset($branch) ? $branch->id :
+                            'branch_id' => isset($branch) ? $branch->id : null
 
                         ]
                     );
