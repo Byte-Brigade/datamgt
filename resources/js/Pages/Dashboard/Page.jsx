@@ -13,6 +13,7 @@ import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
+import Tabs from "@/Components/Tabs";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
@@ -143,6 +144,42 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       color: "purple",
     },
   ];
+
+  const tabsMenu = [
+    {
+      label: "Jumlah Cabang",
+      value: "jumlah-cabang",
+    },
+    {
+      label: "Jumlah Atm",
+      value: "jumlah-atm",
+    },
+    {
+      label: "Jumlah Karyawan",
+      value: "jumlah-karyawan",
+    },
+    {
+      label: "Jumlah Asset",
+      value: "jumlah-asset",
+    },
+    {
+      label: "Perjalanan Dinas",
+      value: "perdin",
+    },
+    {
+      label: "Alih Daya",
+      value: "alih-daya",
+    },
+    {
+      label: "KDO",
+      value: "kdo",
+    },
+    {
+      label: "Vendor",
+      value: "vendor",
+    },
+  ];
+
   console.log(data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
@@ -194,7 +231,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-8 gap-4 mb-2">
+          {/* <Tabs data={tabsMenu} /> */}
+          <div className="grid grid-cols-8 p-1 mb-2 gap-x-2">
             {cardMenus.map((menu, index) => (
               <CardMenu
                 key={index}
@@ -207,6 +245,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 branchState={menu.branchState}
                 areaState={menu.areaState}
                 color={menu.color}
+                tab={true}
               />
             ))}
           </div>
@@ -407,30 +446,36 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               <tbody className="overflow-y-auto">
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
-                  {
-                    Object.values(data.summary_assets).filter(asset => asset.branch_name === "Kantor Pusat").map(
-                      (asset) =>
-                        <>
-                          <td className="text-center">{asset.depre_jumlah_item}</td>
-                          <td className="text-right">
-                            {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
-                          </td>
+                  {Object.values(data.summary_assets)
+                    .filter((asset) => asset.branch_name === "Kantor Pusat")
+                    .map((asset) => (
+                      <>
+                        <td className="text-center">
+                          {asset.depre_jumlah_item}
+                        </td>
+                        <td className="text-right">
+                          {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
+                        </td>
 
-                          <td className="text-right">
-                            {asset.penyusutan.toLocaleString("id-ID")}
-                          </td>
+                        <td className="text-right">
+                          {asset.penyusutan.toLocaleString("id-ID")}
+                        </td>
 
-                          {asset.net_book_value > 0 && (
-                            <td className="text-right">
-                              {asset.net_book_value.toLocaleString("id-ID")}
-                            </td>
+                        {asset.net_book_value > 0 && (
+                          <td className="text-right">
+                            {asset.net_book_value.toLocaleString("id-ID")}
+                          </td>
+                        )}
+                        <td className="text-center">
+                          {asset.non_depre_jumlah_item}
+                        </td>
+                        <td className="text-right">
+                          {asset.non_depre_nilai_perolehan.toLocaleString(
+                            "id-ID"
                           )}
-                          <td className="text-center">{asset.non_depre_jumlah_item}</td>
-                          <td className="text-right">
-                            {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
-                          </td>
-                        </>
-                    )}
+                        </td>
+                      </>
+                    ))}
                 </tr>
 
                 <tr
@@ -440,68 +485,61 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <td colSpan={2}>Kantor Cabang</td>
 
                   <td className="text-center">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.depre_jumlah_item
-                    }, 0)}
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.depre_jumlah_item;
+                      }, 0)}
                   </td>
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.depre_nilai_perolehan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.depre_nilai_perolehan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.penyusutan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.penyusutan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.net_book_value
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.net_book_value;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-center">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.non_depre_jumlah_item
-                    }, 0)}
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.non_depre_jumlah_item;
+                      }, 0)}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.non_depre_nilai_perolehan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.non_depre_nilai_perolehan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
-
                 </tr>
 
                 {open &&
-                  Object.values(data.summary_assets).filter(asset => asset.branch_name !== "Kantor Pusat").map(
-                    (asset) =>
-                    (
+                  Object.values(data.summary_assets)
+                    .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                    .map((asset) => (
                       <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                         <td key={asset.branch_code} colSpan={2}>
                           {`> ${asset.branch_name} `}
@@ -511,9 +549,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           {asset.depre_jumlah_item}
                         </td>
                         <td className="text-right">
-                          {asset.depre_nilai_perolehan.toLocaleString(
-                            "id-ID"
-                          )}
+                          {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
                         </td>
 
                         <td className="text-right">
@@ -522,9 +558,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
                         {asset.net_book_value > 0 && (
                           <td className="text-right">
-                            {asset.net_book_value.toLocaleString(
-                              "id-ID"
-                            )}
+                            {asset.net_book_value.toLocaleString("id-ID")}
                           </td>
                         )}
 
@@ -532,11 +566,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           {asset.non_depre_jumlah_item}
                         </td>
                         <td className="text-right">
-                          {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
+                          {asset.non_depre_nilai_perolehan.toLocaleString(
+                            "id-ID"
+                          )}
                         </td>
                       </tr>
-                    )
-                  )}
+                    ))}
               </tbody>
             </table>
           )}
