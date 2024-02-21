@@ -98,6 +98,50 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
+    {
+      label: "Perjalanan Dinas",
+      data,
+      type: "perjalanan_dinas",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("perjalanan_dinas"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "Alih Daya",
+      data,
+      type: "alih_daya",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("alih_daya"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "KDO",
+      data,
+      type: "kdo",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("kdo"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "Vendor",
+      data,
+      type: "vendor",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("vendor"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
   ];
   console.log(data);
   return (
@@ -150,7 +194,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
+          <div className="grid grid-cols-8 gap-4 mb-2">
             {cardMenus.map((menu, index) => (
               <CardMenu
                 key={index}

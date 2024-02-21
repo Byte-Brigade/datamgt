@@ -75,7 +75,7 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('scoring-assessments/{scoring_vendor}', [GapApiController::class, 'scoring_assessment_details']);
 });
 
-Route::prefix('inquery')->name('iqry.')->group(function () {
+Route::prefix('inquery')->name('inquery.')->group(function () {
     Route::get('assets', [InqueryApiController::class, 'assets']);
     Route::get('branches', [InqueryApiController::class, 'branches'])->name('branches');
     Route::get('staff', [InqueryApiController::class, 'staff'])->name('staff');
@@ -83,9 +83,11 @@ Route::prefix('inquery')->name('iqry.')->group(function () {
     Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
     Route::get('kdos', [InqueryApiController::class, 'kdos']);
     Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
-    Route::get('alihdayas', [InqueryApiController::class, 'alihdaya_summary'])->name('alihdayas');
-    Route::get('alihdayas/{slug}', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
-    Route::get('alihdaya/{slug}/detail', [InqueryApiController::class, 'alihdaya_details']);
+    Route::get('alihdayas', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
+    Route::get('alihdayas/detail/{type}', [InqueryApiController::class, 'alihdaya_details'])->name('alihdayas.type');
+    Route::get('alihdayas/branch', [InqueryApiController::class, 'alihdaya_summary'])->name('alihdayas.summary');
+    Route::get('alihdayas/branch/{slug}', [InqueryApiController::class, 'alihdayas_branch'])->name('alihdayas.branch');
+    Route::get('alihdayas/branch/{slug}/detail', [InqueryApiController::class, 'alihdaya_details_branch'])->name('alihdayas.branch.detail');
 
     Route::get('toners/{type}', [InqueryApiController::class, 'toners'])->name('toners');
 });

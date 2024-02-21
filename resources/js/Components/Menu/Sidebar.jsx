@@ -71,13 +71,13 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "inquery.staff" },
     { name: "Asset", path: "inquery.assets" },
+    { name: "Branch Roll Out", path: "reporting.bros" },
     { name: "Alih Daya", path: "inquery.alihdayas.summary" },
     // { name: "Lisensi", path: "inquery.licenses" },
-    { name: "Branch (Report)", path: "reporting.branches", state: "reporting.*" },
-    { name: "Asset (Report)", path: "reporting.assets" },
+    // { name: "Branch (Report)", path: "reporting.branches", state: "reporting.*" },
+    // { name: "Asset (Report)", path: "reporting.assets" },
     // { name: "Lisensi (Report)", path: "reporting.licenses" },
-    { name: "Vendor (Report)", path: "reporting.vendor" },
-    { name: "Branch Roll Out (Report)", path: "reporting.bros" },
+    { name: "Vendor", path: "reporting.vendor" },
   ];
 
   const reportRouter = [
