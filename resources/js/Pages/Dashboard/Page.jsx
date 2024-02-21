@@ -8,12 +8,11 @@ import {
   CreditCardIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
-import Tabs from "@/Components/Tabs";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
@@ -43,6 +42,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
       return result;
     }, {});
+
   const positionColumns = [
     {
       name: "Jabatan",
@@ -53,6 +53,253 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       field: "jumlah_employee",
     },
   ];
+
+  const perdinColumns = [
+    {
+      name: "Divisi Pembebanan",
+      field: "divisi_pembebanan",
+      type: "custom",
+      className: "cursor-pointer hover:text-blue-500",
+
+      render: (data) => (
+        <Link href={route("gap.perdins.detail", data.divisi_pembebanan)}>
+          {data.divisi_pembebanan}
+        </Link>
+      )
+    },
+    {
+      name: "Airline",
+      field: "airline",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+
+      render: (data) => data.airline.toLocaleString("id-ID"),
+    },
+    {
+      name: "KA",
+      field: "ka",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.ka.toLocaleString("id-ID"),
+    },
+    {
+      name: "Hotel",
+      field: "hotel",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.hotel.toLocaleString("id-ID"),
+    },
+    {
+      name: "Total",
+      field: "total",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.total.toLocaleString("id-ID"),
+    },
+  ];
+
+  const alihDayaHeading = [
+    {
+      name: "Jenis Pekerjaan",
+      colSpan: 2,
+    },
+    {
+      name: "Jumlah Tenaga Kerja",
+      colSpan: 7,
+    },
+  ];
+
+  const alihDayaColumns = [
+    {
+      name: "Nama",
+      field: "jenis_pekerjaan",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={route('gap.alihdayas.type', {
+            type: "jenis_pekerjaan",
+            type_item: data.jenis_pekerjaan,
+          })}
+        >
+          {data.jenis_pekerjaan}
+        </Link>
+      ),
+    },
+
+    {
+      name: "Permata",
+      field: "permata",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Permata").length,
+    },
+    {
+      name: "Sigap",
+      field: "sigap",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "SIGAP").length,
+    },
+    {
+      name: "Pusaka",
+      field: "pusaka",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Pusaka").length,
+    },
+    {
+      name: "Assa",
+      field: "assa",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Assa").length,
+    },
+    {
+      name: "Indorent",
+      field: "indorent",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Indorent").length,
+    },
+    {
+      name: "Salawati",
+      field: "salawati",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Salawati").length,
+    },
+    {
+      name: "Total",
+      field: "vendor",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) => data.vendor.length,
+    },
+  ];
+
+  const kdocolumns = [
+    {
+      name: "Cabang", field: "branches.branch_name",
+      className: "cursor-pointer hover:text-blue-500",
+
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={route("gap.kdos.mobil", {
+            slug: data.branches.slug,
+          })}
+        >
+          {data.branches.branch_name}
+        </Link>
+      )
+    },
+    {
+      name: "Jumlah",
+      field: "jumlah_kendaraan",
+      className: "text-center",
+      agg: "sum",
+    },
+    {
+      name: "Tipe Cabang",
+      field: "type_name",
+      filterable: true,
+    },
+    {
+      name: "Sewa Perbulan",
+      field: "sewa_perbulan",
+      agg: "sum",
+      type: "custom",
+      format: "currency",
+      render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
+      className: "text-right",
+    },
+    {
+      name: "Jatuh Tempo",
+      field: "akhir_sewa",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center",
+    },
+  ];
+
+  const vendorColumns = [
+    {
+      name: "Scoring Vendor",
+      field: "scoring_vendor",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("gap.scoring-projects.detail", data.scoring_vendor)}>
+          {data.scoring_vendor}
+        </Link>
+      )
+    },
+    {
+      name: "Jumlah Vendor",
+      field: "jumlah_vendor",
+    },
+    {
+      name: "Q1",
+      field: "q1",
+    },
+    {
+      name: "Q2",
+      field: "q2",
+    },
+    {
+      name: "Q3",
+      field: "q3",
+    },
+    {
+      name: "Q4",
+      field: "q4",
+    },
+
+    {
+      name: "Nilai Project",
+      field: "nilai_project",
+      className: "text-right",
+      type: "custom",
+      render: (data) => {
+        return data.nilai_project
+          ? data.nilai_project.toLocaleString("id-ID")
+          : 0;
+      },
+    },
+    // {
+    //   name: "Action",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    // <Link href={route("gap.scoring-projects.detail", data.scoring_vendor)}>
+    //   <Button variant="outlined">Detail</Button>
+    // </Link>
+    //   ),
+    // },
+  ];
+
 
   const cardMenus = [
     {
@@ -744,6 +991,44 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 </tr>
               </tbody>
             </table>
+          )}
+          {active === "perjalanan_dinas" && (
+            <DataTable
+              columns={perdinColumns}
+              fetchUrl={"/api/gap/perdins"}
+              bordered={true}
+              configuration={false}
+              parameters={{ summary: "divisi" }}
+            />
+          )}
+          {active === "alih_daya" && (
+            <DataTable
+              configuration={false}
+              columns={alihDayaColumns}
+              headings={alihDayaHeading}
+              fetchUrl={"/api/gap/alihdayas"}
+              bordered={true}
+              parameters={{
+                type: "tenaga-kerja"
+              }}
+            />
+          )}
+          {active === "kdo" && (
+            <DataTable
+              configuration={false}
+
+              columns={kdocolumns}
+              fetchUrl={"/api/gap/kdos/cabang"}
+
+            />
+          )}
+          {active === "vendor" && (
+            <DataTable
+              columns={vendorColumns}
+              configuration={false}
+              fetchUrl={"/api/gap/scoring-projects"}
+              bordered={true}
+            />
           )}
         </div>
       </div>
