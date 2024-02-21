@@ -8,6 +8,7 @@ use App\Models\BranchType;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapDisnaker;
+use App\Models\GapKdo;
 use App\Models\GapScoring;
 use App\Models\GapToner;
 use App\Models\OpsApar;
@@ -87,12 +88,18 @@ class InqueryController extends Controller
 
         $lisensi = $lisensi->merge($izin_disnaker);
 
-
+        $kdos = GapKdo::where('branch_id', $branch->id)->get();
+        $kdos = $kdos->map(function ($kdo) {
+            $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
+            $kdo->biaya_sewa = isset($biaya_sewa) ? $biaya_sewa->value : 0;
+            return $kdo;
+        });
 
         return Inertia::render('Inquery/Branch/Detail', [
             'branch' => $branch,
             'positions' => $positions,
-            'licenses' => $lisensi
+            'licenses' => $lisensi,
+            'kdos' => $kdos,
         ]);
     }
     public function staff()

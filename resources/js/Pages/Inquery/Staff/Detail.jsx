@@ -67,27 +67,9 @@ export default function Detail({ auth, branch, sessions, positions, slug }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex justify-end mb-4">
-            <h2 className="text-xl font-semibold text-end">
+            <h2 className="text-xl font-semibold text-center">
               {branch.branch_name}
             </h2>
-          </div>
-
-          {hasRoles("superadmin|admin|branch_ops", auth) &&
-            ["can add", "can export"].some((permission) =>
-              auth.permissions.includes(permission)
-            ) && (
-              <div className="flex items-center justify-between mb-4">
-                {auth.permissions.includes("can export") && (
-                  <PrimaryButton onClick={toggleModalExport}>
-                    <div className="flex items-center gap-x-2">
-                      <DocumentArrowDownIcon className="w-4 h-4" />
-                      Create Report
-                    </div>
-                  </PrimaryButton>
-                )}
-              </div>
-            )}
           <DataTable
             columns={columns.filter((column) =>
               column.field === "action"
