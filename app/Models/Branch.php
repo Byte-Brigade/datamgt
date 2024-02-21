@@ -33,6 +33,7 @@ class Branch extends Model
         'area',
         'file_ojk',
         'slug',
+        'photo',
     ];
 
     public function users()

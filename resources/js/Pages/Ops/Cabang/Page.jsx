@@ -63,6 +63,7 @@ export default function Cabang({
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
+  const [fileType, setFileType] = useState("file-ojk");
 
   const columns = [
     { name: "Kode Cabang", field: "branch_code" },
@@ -74,7 +75,7 @@ export default function Cabang({
     },
     { name: "Nama Cabang", field: "branch_name" },
     { name: "NPWP", field: "npwp", className: "w-[200px]" },
-    { name: "Area", field: "area", className: "text-center", filterable: true},
+    { name: "Area", field: "area", className: "text-center", filterable: true },
     { name: "Alamat", field: "address", className: "w-[300px]" },
     { name: "No. Telpon", field: "telp" },
     { name: "Fasilitas ATM", field: "fasilitas_atm" },
@@ -105,6 +106,41 @@ export default function Cabang({
             color="blue"
             onClick={() => {
               toggleModalUpload();
+              setFileType("file_ojk")
+              setData(data);
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <ArrowUpTrayIcon className="w-4 h-4" />
+              Upload Lampiran
+            </div>
+          </Button>
+        ) : (
+          <p>Belum ada lampiran</p>
+        ),
+    },
+    {
+      name: "Photo",
+      field: "photo",
+      type: "custom",
+      render: (data) =>
+        data.photo ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/ops/branches/${data.slug}/${data.photo}`}
+            target="__blank"
+          >
+            {" "}
+            {data.photo}
+          </a>
+        ) : hasRoles("superadmin|admin|branch_ops", auth) ? (
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={() => {
+              toggleModalUpload();
+              setFileType("photo")
               setData(data);
             }}
           >
@@ -379,13 +415,13 @@ export default function Cabang({
             <div className="flex flex-col gap-y-4">
               <Input
                 variant="standard"
-                label="Upload Lampiran File OJK (.pdf)"
+                label={fileType === "photo" ? "Upload Photo Tampilan Gedung" : "Upload Lampiran File OJK (.pdf)"}
                 disabled={processing}
                 type="file"
                 name="upload"
                 id="upload"
-                accept=".pdf"
-                onChange={(e) => setData("file_ojk", e.target.files[0])}
+                accept={fileType === "photo" ? ".jpg,.png,.jpeg" : ".pdf"}
+                onChange={(e) => setData(fileType, e.target.files[0])}
               />
             </div>
           </DialogBody>

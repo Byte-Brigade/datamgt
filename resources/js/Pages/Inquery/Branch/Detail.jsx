@@ -86,7 +86,10 @@ export default function Detail({
               </table>
             </div>
             <div className="p-4">
-              <div className="w-full h-full p-2 border border-slate-200 rounded-xl bg-slate-100"></div>
+              <div className="w-full h-full  p-2 border border-slate-200 rounded-xl bg-slate-100">
+
+              <img src={`/storage/ops/branches/${branch.slug}/${branch.photo}`} alt={`Photo ${branch.branch_name}`} />
+              </div>
             </div>
           </div>
 
@@ -213,35 +216,35 @@ const StaffRow = ({ positions, branch, type }) => {
   const { groupBy } = useFormContext();
   return type === "alih_daya"
     ? Object.entries(groupBy(branch.gap_alih_dayas, "jenis_pekerjaan")).map(
-        ([key, alih_daya]) => (
-          <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-            <td>{key}</td>
-            <td>{alih_daya.length}</td>
-          </tr>
-        )
+      ([key, alih_daya]) => (
+        <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+          <td>{key}</td>
+          <td>{alih_daya.length}</td>
+        </tr>
       )
+    )
     : positions
-        .sort((a, b) => {
-          let pa = a.position_name.toLowerCase();
-          let pb = b.position_name.toLowerCase();
+      .sort((a, b) => {
+        let pa = a.position_name.toLowerCase();
+        let pb = b.position_name.toLowerCase();
 
-          return (pa > pb ? 1 : -1) || 0;
-        })
-        .map(
-          (position) =>
-            branch.employees.filter(
-              (employee) => employee.position_id === position.id
-            ).length > 0 && (
-              <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
-                <td>{position.position_name}</td>
-                <td>
-                  {
-                    branch.employees.filter(
-                      (employee) => employee.position_id === position.id
-                    ).length
-                  }
-                </td>
-              </tr>
-            )
-        );
+        return (pa > pb ? 1 : -1) || 0;
+      })
+      .map(
+        (position) =>
+          branch.employees.filter(
+            (employee) => employee.position_id === position.id
+          ).length > 0 && (
+            <tr className="[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200">
+              <td>{position.position_name}</td>
+              <td>
+                {
+                  branch.employees.filter(
+                    (employee) => employee.position_id === position.id
+                  ).length
+                }
+              </td>
+            </tr>
+          )
+      );
 };
