@@ -134,7 +134,7 @@ class GapApiController extends Controller
                     'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
                     'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
-                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
+                    'akhir_sewa' => $kdos->sortByDesc('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
                 ];
             });
@@ -148,7 +148,7 @@ class GapApiController extends Controller
                     'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
                     'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
-                    'akhir_sewa' => $kdos->sortBy('akhir_sewa')->first()->akhir_sewa,
+                    'akhir_sewa' => $kdos->sortByDesc('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
                 ];
             });

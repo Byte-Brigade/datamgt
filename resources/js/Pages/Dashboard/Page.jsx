@@ -8,7 +8,7 @@ import {
   CreditCardIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
@@ -42,6 +42,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
       return result;
     }, {});
+
   const positionColumns = [
     {
       name: "Jabatan",
@@ -53,6 +54,282 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     },
   ];
 
+  const perdinColumns = [
+    {
+      name: "Divisi Pembebanan",
+      field: "divisi_pembebanan",
+      type: "custom",
+      className: "cursor-pointer hover:text-blue-500",
+
+      render: (data) => (
+        <Link href={route("gap.perdins.detail", data.divisi_pembebanan)}>
+          {data.divisi_pembebanan}
+        </Link>
+      )
+    },
+    {
+      name: "Airline",
+      field: "airline",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+
+      render: (data) => data.airline.toLocaleString("id-ID"),
+    },
+    {
+      name: "KA",
+      field: "ka",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.ka.toLocaleString("id-ID"),
+    },
+    {
+      name: "Hotel",
+      field: "hotel",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.hotel.toLocaleString("id-ID"),
+    },
+    {
+      name: "Total",
+      field: "total",
+      className: "text-right",
+      type: "custom",
+      agg: "sum",
+      format: "currency",
+      render: (data) => data.total.toLocaleString("id-ID"),
+    },
+  ];
+
+  const alihDayaHeading = [
+    {
+      name: "Jenis Pekerjaan",
+      colSpan: 2,
+    },
+    {
+      name: "Jumlah Tenaga Kerja",
+      colSpan: 7,
+    },
+  ];
+
+  const alihDayaColumns = [
+    {
+      name: "Nama",
+      field: "jenis_pekerjaan",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={route('gap.alihdayas.type', {
+            type: "jenis_pekerjaan",
+            type_item: data.jenis_pekerjaan,
+          })}
+        >
+          {data.jenis_pekerjaan}
+        </Link>
+      ),
+    },
+
+    {
+      name: "Permata",
+      field: "permata",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Permata").length,
+    },
+    {
+      name: "Sigap",
+      field: "sigap",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "SIGAP").length,
+    },
+    {
+      name: "Pusaka",
+      field: "pusaka",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Pusaka").length,
+    },
+    {
+      name: "Assa",
+      field: "assa",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Assa").length,
+    },
+    {
+      name: "Indorent",
+      field: "indorent",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Indorent").length,
+    },
+    {
+      name: "Salawati",
+      field: "salawati",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) =>
+        data.vendor.filter((item) => item.vendor === "Salawati").length,
+    },
+    {
+      name: "Total",
+      field: "vendor",
+      type: "custom",
+      agg: "count",
+      className: "text-center",
+      render: (data) => data.vendor.length,
+    },
+  ];
+
+  const kdocolumns = [
+    {
+      name: "Cabang", field: "branches.branch_name",
+      className: "cursor-pointer hover:text-blue-500",
+
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={route("gap.kdos.mobil", {
+            slug: data.branches.slug,
+          })}
+        >
+          {data.branches.branch_name}
+        </Link>
+      )
+    },
+    {
+      name: "Jumlah",
+      field: "jumlah_kendaraan",
+      className: "text-center",
+      agg: "sum",
+    },
+    {
+      name: "Tipe Cabang",
+      field: "type_name",
+      filterable: true,
+    },
+    {
+      name: "Sewa Perbulan",
+      field: "sewa_perbulan",
+      agg: "sum",
+      type: "custom",
+      format: "currency",
+      render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
+      className: "text-right",
+    },
+    {
+      name: "Jatuh Tempo",
+      field: "akhir_sewa",
+      type: "date",
+      sortable: true,
+      className: "justify-center text-center",
+    },
+  ];
+
+  const vendorColumns = [
+    {
+      name: "Scoring Vendor",
+      field: "scoring_vendor",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route("gap.scoring-projects.detail", data.scoring_vendor)}>
+          {data.scoring_vendor}
+        </Link>
+      )
+    },
+    {
+      name: "Jumlah Vendor",
+      field: "jumlah_vendor",
+    },
+    {
+      name: "Q1",
+      field: "q1",
+    },
+    {
+      name: "Q2",
+      field: "q2",
+    },
+    {
+      name: "Q3",
+      field: "q3",
+    },
+    {
+      name: "Q4",
+      field: "q4",
+    },
+
+    {
+      name: "Nilai Project",
+      field: "nilai_project",
+      className: "text-right",
+      type: "custom",
+      render: (data) => {
+        return data.nilai_project
+          ? data.nilai_project.toLocaleString("id-ID")
+          : 0;
+      },
+    },
+    // {
+    //   name: "Action",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    // <Link href={route("gap.scoring-projects.detail", data.scoring_vendor)}>
+    //   <Button variant="outlined">Detail</Button>
+    // </Link>
+    //   ),
+    // },
+  ];
+
+  const broHeadings = [
+    {
+      name: 'Kategori',
+      colSpan: 2,
+    },
+    {
+      name: 'Target',
+    },
+    {
+      name: 'Status',
+      colSpan: 4,
+    },
+  ]
+  const broColumns = [
+
+    {
+      name: "Nama", field: "category", sortable: false,
+      type: "custom",
+      render: (data) => (
+        <Link href={route("reporting.bros.category", data.category)}>
+          {data.category}
+        </Link>
+      ),
+    },
+    { name: "", field: "target", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Done", field: "done", className: "text-center", sortable: false, agg: "sum" },
+    { name: "On Progress", field: "on_progress", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Not Start", field: "not_start", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg: "sum" },
+  ];
   const cardMenus = [
     {
       label: "Jumlah Cabang",
@@ -98,7 +375,98 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       areaState: area,
       color: "purple",
     },
+    {
+      label: "Perjalanan Dinas",
+      data,
+      type: "perjalanan_dinas",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("perjalanan_dinas"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "Alih Daya",
+      data,
+      type: "alih_daya",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("alih_daya"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "KDO",
+      data,
+      type: "kdo",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("kdo"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "Vendor",
+      data,
+      type: "vendor",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("vendor"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "BRO",
+      data,
+      type: "bro",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("bro"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
   ];
+
+  const tabsMenu = [
+    {
+      label: "Jumlah Cabang",
+      value: "jumlah-cabang",
+    },
+    {
+      label: "Jumlah Atm",
+      value: "jumlah-atm",
+    },
+    {
+      label: "Jumlah Karyawan",
+      value: "jumlah-karyawan",
+    },
+    {
+      label: "Jumlah Asset",
+      value: "jumlah-asset",
+    },
+    {
+      label: "Perjalanan Dinas",
+      value: "perdin",
+    },
+    {
+      label: "Alih Daya",
+      value: "alih-daya",
+    },
+    {
+      label: "KDO",
+      value: "kdo",
+    },
+    {
+      label: "Vendor",
+      value: "vendor",
+    },
+  ];
+
   console.log(data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
@@ -150,7 +518,8 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4 mb-2">
+          {/* <Tabs data={tabsMenu} /> */}
+          <div className="grid grid-cols-8 p-1 mb-2 gap-x-2">
             {cardMenus.map((menu, index) => (
               <CardMenu
                 key={index}
@@ -163,6 +532,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 branchState={menu.branchState}
                 areaState={menu.areaState}
                 color={menu.color}
+                tab={true}
               />
             ))}
           </div>
@@ -363,30 +733,36 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               <tbody className="overflow-y-auto">
                 <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                   <td colSpan={2}>Kantor Pusat</td>
-                  {
-                    Object.values(data.summary_assets).filter(asset => asset.branch_name === "Kantor Pusat").map(
-                      (asset) =>
-                        <>
-                          <td className="text-center">{asset.depre_jumlah_item}</td>
-                          <td className="text-right">
-                            {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
-                          </td>
+                  {Object.values(data.summary_assets)
+                    .filter((asset) => asset.branch_name === "Kantor Pusat")
+                    .map((asset) => (
+                      <>
+                        <td className="text-center">
+                          {asset.depre_jumlah_item}
+                        </td>
+                        <td className="text-right">
+                          {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
+                        </td>
 
-                          <td className="text-right">
-                            {asset.penyusutan.toLocaleString("id-ID")}
-                          </td>
+                        <td className="text-right">
+                          {asset.penyusutan.toLocaleString("id-ID")}
+                        </td>
 
-                          {asset.net_book_value > 0 && (
-                            <td className="text-right">
-                              {asset.net_book_value.toLocaleString("id-ID")}
-                            </td>
+                        {asset.net_book_value > 0 && (
+                          <td className="text-right">
+                            {asset.net_book_value.toLocaleString("id-ID")}
+                          </td>
+                        )}
+                        <td className="text-center">
+                          {asset.non_depre_jumlah_item}
+                        </td>
+                        <td className="text-right">
+                          {asset.non_depre_nilai_perolehan.toLocaleString(
+                            "id-ID"
                           )}
-                          <td className="text-center">{asset.non_depre_jumlah_item}</td>
-                          <td className="text-right">
-                            {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
-                          </td>
-                        </>
-                    )}
+                        </td>
+                      </>
+                    ))}
                 </tr>
 
                 <tr
@@ -396,68 +772,61 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   <td colSpan={2}>Kantor Cabang</td>
 
                   <td className="text-center">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.depre_jumlah_item
-                    }, 0)}
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.depre_jumlah_item;
+                      }, 0)}
                   </td>
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.depre_nilai_perolehan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.depre_nilai_perolehan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.penyusutan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.penyusutan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.net_book_value
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.net_book_value;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
 
                   <td className="text-center">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.non_depre_jumlah_item
-                    }, 0)}
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.non_depre_jumlah_item;
+                      }, 0)}
                   </td>
 
                   <td className="text-right">
-                    {Object.values(data.summary_assets).filter(
-                      (asset) =>
-                        asset.branch_name !== "Kantor Pusat"
-                    ).reduce((total, asset) => {
-                      return total + asset.non_depre_nilai_perolehan
-                    }, 0)
+                    {Object.values(data.summary_assets)
+                      .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                      .reduce((total, asset) => {
+                        return total + asset.non_depre_nilai_perolehan;
+                      }, 0)
                       .toLocaleString("id-ID")}
                   </td>
-
                 </tr>
 
                 {open &&
-                  Object.values(data.summary_assets).filter(asset => asset.branch_name !== "Kantor Pusat").map(
-                    (asset) =>
-                    (
+                  Object.values(data.summary_assets)
+                    .filter((asset) => asset.branch_name !== "Kantor Pusat")
+                    .map((asset) => (
                       <tr className="[&>td]:p-2 hover:bg-slate-200 border-b divide-x divide-slate-200 border-slate-200">
                         <td key={asset.branch_code} colSpan={2}>
                           {`> ${asset.branch_name} `}
@@ -467,9 +836,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           {asset.depre_jumlah_item}
                         </td>
                         <td className="text-right">
-                          {asset.depre_nilai_perolehan.toLocaleString(
-                            "id-ID"
-                          )}
+                          {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
                         </td>
 
                         <td className="text-right">
@@ -478,9 +845,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
                         {asset.net_book_value > 0 && (
                           <td className="text-right">
-                            {asset.net_book_value.toLocaleString(
-                              "id-ID"
-                            )}
+                            {asset.net_book_value.toLocaleString("id-ID")}
                           </td>
                         )}
 
@@ -488,11 +853,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                           {asset.non_depre_jumlah_item}
                         </td>
                         <td className="text-right">
-                          {asset.non_depre_nilai_perolehan.toLocaleString("id-ID")}
+                          {asset.non_depre_nilai_perolehan.toLocaleString(
+                            "id-ID"
+                          )}
                         </td>
                       </tr>
-                    )
-                  )}
+                    ))}
               </tbody>
             </table>
           )}
@@ -665,6 +1031,59 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 </tr>
               </tbody>
             </table>
+          )}
+          {active === "perjalanan_dinas" && (
+            <DataTable
+              columns={perdinColumns}
+              fetchUrl={"/api/gap/perdins"}
+              periodic={true}
+
+              bordered={true}
+
+              parameters={{ summary: "divisi" }}
+            />
+          )}
+          {active === "alih_daya" && (
+            <DataTable
+
+              columns={alihDayaColumns}
+              headings={alihDayaHeading}
+              periodic={true}
+
+              fetchUrl={"/api/gap/alihdayas"}
+              bordered={true}
+              parameters={{
+                type: "tenaga-kerja"
+              }}
+            />
+          )}
+          {active === "kdo" && (
+            <DataTable
+
+
+              columns={kdocolumns}
+              fetchUrl={"/api/gap/kdos/cabang"}
+              periodic={true}
+
+
+            />
+          )}
+          {active === "vendor" && (
+            <DataTable
+              columns={vendorColumns}
+              configuration={false}
+              fetchUrl={"/api/gap/scoring-projects"}
+              bordered={true}
+            />
+          )}
+          {active === "bro" && (
+            <DataTable
+              headings={broHeadings}
+              columns={broColumns}
+              fetchUrl={"/api/report/bros"}
+              bordered={true}
+              periodic={true}
+            />
           )}
         </div>
       </div>

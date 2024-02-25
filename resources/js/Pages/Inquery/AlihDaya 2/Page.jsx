@@ -281,14 +281,14 @@ export default function Page({ auth, sessions, slug, branch }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="mb-4 text-xl font-semibold text-end">
+          <h2 className="text-xl font-semibold text-end mb-4">
             {branch.branch_name}
           </h2>
 
             <DataTable
               columns={columnItems}
               headings={heading1}
-              fetchUrl={`/api/inquery/alihdayas/branch/${slug}`}
+              fetchUrl={`/api/inquery/alihdayas/${slug}`}
               refreshUrl={isRefreshed}
               bordered={true}
               parameters={{
