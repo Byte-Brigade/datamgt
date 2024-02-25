@@ -95,7 +95,11 @@ export default function BarChart({
           (branch) =>
             (branchState === 0 || branch.id === branchState) &&
             (areaState === "none" || branch.area === areaState)
-        ).length;
+        ).length > 0 ? data.jumlah_cabang_alt[label].filter(
+          (branch) =>
+            (branchState === 0 || branch.id === branchState) &&
+            (areaState === "none" || branch.area === areaState)
+        ).length : 0;
       case "employee":
         return branchState
           ? data.employees
@@ -138,6 +142,7 @@ export default function BarChart({
 
   const newLabels = Object.keys(datasetsObj);
 
+
   const truncatedEmployeeLabels = newLabels.map((label) =>
     label.length > 25 ? label.substring(0, 25) + "..." : label
   );
@@ -145,10 +150,12 @@ export default function BarChart({
   const datasets = [
     {
       label,
-      data: type === "employee" ? Object.values(datasetsObj) : setData,
+      data: type === "employee" ? Object.values(datasetsObj).filter(item => item > 0) : setData.filter(item => item > 0),
       backgroundColor,
     },
   ];
+
+
 
   const chart = { labels: newLabels, datasets };
   return (

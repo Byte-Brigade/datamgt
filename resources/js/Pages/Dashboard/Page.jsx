@@ -300,7 +300,36 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     // },
   ];
 
+  const broHeadings = [
+    {
+      name: 'Kategori',
+      colSpan: 2,
+    },
+    {
+      name: 'Target',
+    },
+    {
+      name: 'Status',
+      colSpan: 4,
+    },
+  ]
+  const broColumns = [
 
+    {
+      name: "Nama", field: "category", sortable: false,
+      type: "custom",
+      render: (data) => (
+        <Link href={route("reporting.bros.category", data.category)}>
+          {data.category}
+        </Link>
+      ),
+    },
+    { name: "", field: "target", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Done", field: "done", className: "text-center", sortable: false, agg: "sum" },
+    { name: "On Progress", field: "on_progress", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Not Start", field: "not_start", className: "text-center", sortable: false, agg: "sum" },
+    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg: "sum" },
+  ];
   const cardMenus = [
     {
       label: "Jumlah Cabang",
@@ -386,6 +415,17 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       Icon: ArchiveBoxIcon,
       active,
       onClick: () => handleTabChange("vendor"),
+      branchState: branchId,
+      areaState: area,
+      color: "purple",
+    },
+    {
+      label: "BRO",
+      data,
+      type: "bro",
+      Icon: ArchiveBoxIcon,
+      active,
+      onClick: () => handleTabChange("bro"),
       branchState: branchId,
       areaState: area,
       color: "purple",
@@ -996,16 +1036,20 @@ export default function Dashboard({ auth, errors, sessions, data }) {
             <DataTable
               columns={perdinColumns}
               fetchUrl={"/api/gap/perdins"}
+              periodic={true}
+
               bordered={true}
-              configuration={false}
+
               parameters={{ summary: "divisi" }}
             />
           )}
           {active === "alih_daya" && (
             <DataTable
-              configuration={false}
+
               columns={alihDayaColumns}
               headings={alihDayaHeading}
+              periodic={true}
+
               fetchUrl={"/api/gap/alihdayas"}
               bordered={true}
               parameters={{
@@ -1015,10 +1059,12 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           )}
           {active === "kdo" && (
             <DataTable
-              configuration={false}
+
 
               columns={kdocolumns}
               fetchUrl={"/api/gap/kdos/cabang"}
+              periodic={true}
+
 
             />
           )}
@@ -1028,6 +1074,15 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               configuration={false}
               fetchUrl={"/api/gap/scoring-projects"}
               bordered={true}
+            />
+          )}
+          {active === "bro" && (
+            <DataTable
+              headings={broHeadings}
+              columns={broColumns}
+              fetchUrl={"/api/report/bros"}
+              bordered={true}
+              periodic={true}
             />
           )}
         </div>
