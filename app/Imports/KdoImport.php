@@ -28,7 +28,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
 
             $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
-            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
+            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|july|august|sept|oct|nov|dec)$/i', array_keys($row))));
             $periode = Date::excelToDateTimeObject($row['periode']);
 
             if (!isset($branch)) {
