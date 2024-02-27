@@ -21,14 +21,13 @@ class KdoMobilResource extends JsonResource
     public function toArray($request)
     {
         $biaya_sewa = $this->biaya_sewas()->orderBy('periode', 'desc')->first();
-        $periode = null;
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
-            // Create a Carbon instance using the year and month
-            $periode = Carbon::createFromDate($request->year, $paddedMonth, 1);
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+
+            $biaya_sewa = $this->biaya_sewas()->where('periode', $endDate->startOfMonth()->format('Y-m-d'))->first();
         }
-        $biaya_sewa = !is_null($periode) ?  $this->biaya_sewas->where('periode', $periode->format('Y-m-d'))->first() : $biaya_sewa;
         return [
             'id' => $this->id,
             'branch_id' => $this->branch_id,

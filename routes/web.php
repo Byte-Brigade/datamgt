@@ -75,8 +75,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
         Route::get('/staff', [InqueryController::class, 'staff'])->name('inquery.staff');
         Route::get('/alihdayas', [InqueryController::class, 'alihdaya_summary'])->name('inquery.alihdayas.summary');
-        Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('inquery.alihdayas');
+        Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('inquery.alihdayas.branch');
         Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail'])->name('inquery.alihdayas.detail');
+        Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
 
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');

@@ -548,7 +548,7 @@ class InqueryApiController extends Controller
         return PaginationHelper::paginate($collections, $perpage);
     }
 
-    public function alihdayas(GapAlihDaya $gap_alih_daya, Request $request, $slug)
+    public function alihdayas_branch(GapAlihDaya $gap_alih_daya, Request $request, $slug)
     {
 
         $branch = Branch::where('slug', $slug)->first();
@@ -623,7 +623,7 @@ class InqueryApiController extends Controller
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
-    public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $slug)
+    public function alihdaya_details_branch(GapAlihDaya $gap_alih_daya, Request $request, $slug)
     {
         $branch = Branch::where('slug', $slug)->first();
         $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
@@ -640,6 +640,123 @@ class InqueryApiController extends Controller
 
         $query = $query->where('branch_id', $branch->id);
 
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                return $query->where('nama_pegawai', 'like', $searchQuery)
+                    ->orWhere('user', 'like', $searchQuery);
+            });
+        }
+
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return AlihDayaResource::collection($query);
+    }
+
+    public function alihdayas(GapAlihDaya $gap_alih_daya, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
+
+        $perpage = $request->perpage ?? 15;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('jenis_pekerjaan', 'like', $searchQuery);
+            });
+        }
+        $yearToDate = false;
+
+        if (!is_null($request->startDate) && !is_null($request->endDate)) {
+            $startDate = Carbon::parse($request->startDate);
+            $endDate = Carbon::parse($request->endDate);
+            if ($startDate->isSameMonth($endDate)) {
+                $sameMonth = true;
+                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
+            } else {
+                $yearToDate = true;
+                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
+            }
+        } else {
+            $yearToDate = true;
+            $minPeriode = $query->min('periode');
+            $maxPeriode = $query->max('periode');
+            $query->whereBetween('periode', [$minPeriode, $maxPeriode]);
+        }
+        // } else {
+        //     $latestPeriode = $query->max('periode');
+        //     $query->where('periode', $latestPeriode);
+        // }
+
+
+        if ($yearToDate && $request->type == "tenaga-kerja") {
+
+            $query = $query->select([
+                'jenis_pekerjaan',
+                'nama_pegawai',
+                'user',
+                'lokasi',
+                'vendor',
+            ])->distinct();
+        }
+        $query = $query->get();
+
+        $collections = $query->groupBy('jenis_pekerjaan')->map(function ($alihdayas, $jenis_pekerjaan) {
+            return [
+                'jenis_pekerjaan' => $jenis_pekerjaan,
+                'vendor' => $alihdayas,
+                'total_pegawai' => $alihdayas->count(),
+                'total_biaya' => $alihdayas->sum('cost'),
+                'alihdaya' => $alihdayas,
+            ];
+        });
+
+        if ($perpage == "All") {
+            $perpage = $collections->count();
+        }
+
+        return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+    public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $type)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'jenis_pekerjaan';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_alih_daya->select('gap_alih_dayas.*')->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+        if ($type == 'jenis_pekerjaan') {
+            $query = $query->where('jenis_pekerjaan', $request->type_item);
+        } else if ($type == 'vendor') {
+            $query = $query->where('vendor', $request->type_item);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";

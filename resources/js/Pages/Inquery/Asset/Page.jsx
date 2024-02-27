@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-export default function Page({ sessions, auth, data, type_names }) {
+export default function Page({ sessions, auth, data, type_names, yearToner }) {
   const { active, params, handleTabChange } = tabState([
     "assets",
     "toner",
@@ -85,11 +85,10 @@ export default function Page({ sessions, auth, data, type_names }) {
     {
       name: "Cabang",
       field: "branch_name",
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link
-          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
-        >
+        <Link href={route("gap.toners.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
@@ -222,11 +221,10 @@ export default function Page({ sessions, auth, data, type_names }) {
     {
       name: "Cabang",
       field: "branch_name",
+      className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link
-          href={`/gap/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
-        >
+        <Link href={route("gap.toners.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
@@ -561,6 +559,7 @@ export default function Page({ sessions, auth, data, type_names }) {
                 parameters={{ branch_id: auth.user.branch_id }}
                 isRefreshed={isRefreshed}
                 bordered={true}
+                periodic={true}
               />
               <Dialog
                 open={modalOpen.create}
@@ -773,7 +772,7 @@ export default function Page({ sessions, auth, data, type_names }) {
             //   </div>
             // </div>
             <>
-              <h2 className="mt-2 text-lg font-semibold">Quantity Per Cabang</h2>
+              <h2 className="mt-2 text-lg font-semibold">Quantity Per Cabang Tahun {yearToner}</h2>
               <DataTable
                 columns={columnTonerQuantities}
                 fetchUrl={"/api/inquery/toners/quantity"}
@@ -781,7 +780,7 @@ export default function Page({ sessions, auth, data, type_names }) {
                 bordered={true}
                 parameters={{ branch_id: auth.user.branch_id }}
               />
-              <h2 className="mt-2 text-lg font-semibold">Nominal Per Cabang</h2>
+              <h2 className="mt-2 text-lg font-semibold">Nominal Per Cabang Tahun {yearToner}</h2>
               <DataTable
                 columns={columnTonerCosts}
                 fetchUrl={"/api/inquery/toners/nominal"}
