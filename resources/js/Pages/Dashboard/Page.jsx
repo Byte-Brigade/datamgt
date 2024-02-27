@@ -1,4 +1,5 @@
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { tabState } from "@/Utils/TabState";
@@ -27,6 +28,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
   const handleFilterBranch = (id) => setBranchId(parseInt(id));
   const handleFilterArea = (value) => setArea(value);
   const handleOpen = () => setOpen(!open);
+  const { periode } = useFormContext();
   const groupBy = (array, key) =>
     array.reduce((result, item) => {
       // Extract the value for the current key
@@ -128,6 +130,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           href={route('gap.alihdayas.type', {
             type: "jenis_pekerjaan",
             type_item: data.jenis_pekerjaan,
+            ...periode
           })}
         >
           {data.jenis_pekerjaan}

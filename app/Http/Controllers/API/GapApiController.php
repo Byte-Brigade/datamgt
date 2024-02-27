@@ -134,8 +134,12 @@ class GapApiController extends Controller
                     'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
                     'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
-                    'akhir_sewa' => $kdos->sortByDesc('akhir_sewa')->first()->akhir_sewa,
+                    'akhir_sewa' => $kdos->filter(function ($kdo) {
+                        $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
+                        return $biaya_sewa->value > 0;
+                    })->sortBy('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
+                    'biaya_sewas' => $biaya_sewa
                 ];
             });
         } else if ($type == 'vendor') {
@@ -148,7 +152,10 @@ class GapApiController extends Controller
                     'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
                     'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
-                    'akhir_sewa' => $kdos->sortByDesc('akhir_sewa')->first()->akhir_sewa,
+                    'akhir_sewa' => $kdos->filter(function ($kdo) {
+                        $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
+                        return $biaya_sewa->value > 0;
+                    })->sortBy('akhir_sewa')->first()->akhir_sewa,
                     'periode' => $kdos->first()->periode,
                 ];
             });
@@ -178,13 +185,12 @@ class GapApiController extends Controller
 
         $perpage = $request->perpage ?? 15;
 
-        if(!is_null($request->periode)) {
+        if (!is_null($request->periode)) {
 
             $query = $query->where('periode', $request->periode);
         } else {
             $latestPeriode = $query->max('periode');
             $query = $query->where('periode', $latestPeriode);
-
         }
 
         if (!is_null($request->vendor)) {
