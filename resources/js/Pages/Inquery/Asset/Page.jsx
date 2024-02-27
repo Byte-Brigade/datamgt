@@ -559,6 +559,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                 parameters={{ branch_id: auth.user.branch_id }}
                 isRefreshed={isRefreshed}
                 bordered={true}
+                periodic={true}
               />
               <Dialog
                 open={modalOpen.create}
