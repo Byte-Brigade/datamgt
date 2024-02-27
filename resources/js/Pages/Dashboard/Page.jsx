@@ -387,7 +387,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       onClick: () => handleTabChange("perjalanan_dinas"),
       branchState: branchId,
       areaState: area,
-      color: "purple",
+      color: "blue",
     },
     {
       label: "Alih Daya",
@@ -398,7 +398,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       onClick: () => handleTabChange("alih_daya"),
       branchState: branchId,
       areaState: area,
-      color: "purple",
+      color: "green",
     },
     {
       label: "KDO",
@@ -409,18 +409,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       onClick: () => handleTabChange("kdo"),
       branchState: branchId,
       areaState: area,
-      color: "purple",
-    },
-    {
-      label: "Vendor",
-      data,
-      type: "vendor",
-      Icon: ArchiveBoxIcon,
-      active,
-      onClick: () => handleTabChange("vendor"),
-      branchState: branchId,
-      areaState: area,
-      color: "purple",
+      color: "orange",
     },
     {
       label: "BRO",
@@ -480,65 +469,67 @@ export default function Dashboard({ auth, errors, sessions, data }) {
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex flex-col">
             <h2 className="text-2xl font-semibold text-left w-80">Dashboard</h2>
-            <div className="flex my-4 gap-x-4">
-              <Select
-                label="Area"
-                value=""
-                onChange={(e) => handleFilterArea(e)}
-                className="bg-white"
-              >
-                {data.areas.map((area, index) => {
-                  return area === "All" ? (
-                    <Option key={index} value="none">
-                      {area}
+
+            {/* <Tabs data={tabsMenu} /> */}
+            <div className="grid grid-cols-8 p-1 mb-2 gap-x-2">
+              {cardMenus.map((menu, index) => (
+                <CardMenu
+                  key={index}
+                  label={menu.label}
+                  data={menu.data}
+                  type={menu.type}
+                  Icon={menu.Icon}
+                  active={active}
+                  onClick={menu.onClick}
+                  branchState={menu.branchState}
+                  areaState={menu.areaState}
+                  color={menu.color}
+                  tab={true}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex my-4 gap-x-4">
+            <Select
+              label="Area"
+              value=""
+              onChange={(e) => handleFilterArea(e)}
+              className="bg-white"
+            >
+              {data.areas.map((area, index) => {
+                return area === "All" ? (
+                  <Option key={index} value="none">
+                    {area}
+                  </Option>
+                ) : (
+                  <Option key={index} value={`${area}`}>
+                    {area}
+                  </Option>
+                );
+              })}
+            </Select>
+            <Select
+              label="Branch"
+              value=""
+              onChange={(e) => handleFilterBranch(e)}
+              className="bg-white"
+            >
+              {data.list_branches
+                .filter((branch) => area === "none" || branch.area === area)
+                .map((branch, index) => {
+                  return branch.branch_code === "none" ? (
+                    <Option key={index} value="0">
+                      {branch.branch_name}
                     </Option>
                   ) : (
-                    <Option key={index} value={`${area}`}>
-                      {area}
+                    <Option key={index} value={`${branch.id} `}>
+                      {branch.branch_code} - {branch.branch_name}
                     </Option>
                   );
                 })}
-              </Select>
-              <Select
-                label="Branch"
-                value=""
-                onChange={(e) => handleFilterBranch(e)}
-                className="bg-white"
-              >
-                {data.list_branches
-                  .filter((branch) => area === "none" || branch.area === area)
-                  .map((branch, index) => {
-                    return branch.branch_code === "none" ? (
-                      <Option key={index} value="0">
-                        {branch.branch_name}
-                      </Option>
-                    ) : (
-                      <Option key={index} value={`${branch.id} `}>
-                        {branch.branch_code} - {branch.branch_name}
-                      </Option>
-                    );
-                  })}
-              </Select>
-            </div>
+            </Select>
           </div>
-          {/* <Tabs data={tabsMenu} /> */}
-          <div className="grid grid-cols-8 p-1 mb-2 gap-x-2">
-            {cardMenus.map((menu, index) => (
-              <CardMenu
-                key={index}
-                label={menu.label}
-                data={menu.data}
-                type={menu.type}
-                Icon={menu.Icon}
-                active={active}
-                onClick={menu.onClick}
-                branchState={menu.branchState}
-                areaState={menu.areaState}
-                color={menu.color}
-                tab={true}
-              />
-            ))}
-          </div>
+
           {active === "branch" && (
             <div className="pt-4 w-full h-[300px] grid grid-cols-2 gap-4">
               <div className="cols-span-1">

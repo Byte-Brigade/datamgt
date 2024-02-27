@@ -103,8 +103,8 @@ export default function CardMenu({
         onClick={onClick}
         className={`flex-row cursor-pointer ${
           active === type
-            ? "hover:bg-slate-200 bg-slate-100 ring-2 ring-offset-2 " +
-              ringColor
+            ? `hover:${outlineColor} ring-2 ring-offset-2 ` +
+              ringColor + " "+ outlineColor
             : "bg-white hover:bg-slate-200"
         } transition-all duration-300 w-full rounded-lg py-2 shadow-md`}
       >
