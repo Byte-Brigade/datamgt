@@ -73,6 +73,32 @@ export default function Page({ auth, sessions }) {
       field: "keterangan",
       className: "text-center",
     },
+    {
+      name: "Sudah STO",
+      field: "remarked",
+      className: "text-center",
+      type: "custom",
+      render: (data) => (data.remarked === 1 ? "Sudah" : "Belum"),
+    },
+
+    {
+      name: "Disclaimer",
+      field: "detail",
+      className: "text-center",
+      render: (data) =>
+        data.disclaimer ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            target="__blank"
+          >
+            {" "}
+            {data.disclaimer}
+          </a>
+        ) : (
+          "-"
+        ),
+    },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
