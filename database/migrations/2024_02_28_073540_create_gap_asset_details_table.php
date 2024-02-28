@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('gap_stos');
-        Schema::create('gap_stos', function (Blueprint $table) {
+        Schema::create('gap_asset_details', function (Blueprint $table) {
             $table->id();
-            $table->date('periode');
+            $table->unsignedBigInteger('gap_asset_id');
+            $table->string('status');
             $table->string('semester');
-            $table->enum('status', ['On Progress','Selesai']);
-            $table->text('keterangan')->nullable();
+            $table->date('periode');
+            $table->boolean('sto')->default(false);
             $table->timestamps();
+            $table->foreign('gap_asset_id')->references('id')->on('gap_assets')->onDelete('cascade');
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gap_stos');
+        Schema::dropIfExists('gap_asset_details');
     }
 };

@@ -105,16 +105,29 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
     },
     {
-      name: "Semester",
-      filterable: true,
-      field: "semester",
-      className: "text-center",
+      name: "Ada/Tidak",
+      field: "remark",
+      type: "custom",
+      render: (data) =>
+        auth.permissions.includes("can sto") ? (
+          <Select
+            className="bg-white"
+            label="Status"
+            value={`${data.remark || ""}`}
+            onChange={(e) => handleChanged(data.id, e)}
+          >
+            <Option value={`Ada`}>Ada</Option>
+            <Option value={`Tidak Ada`}>Tidak Ada</Option>
+            <Option value={`Ada Rusak`}>Ada Rusak</Option>
+            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
+            <Option value={`Mutasi`}>Mutasi</Option>
+            <Option value={`Lelang`}>Lelang</Option>
+            <Option value={`Non Asset`}>Non Asset</Option>
+          </Select>
+        ) : (
+          data.remark
+        ),
     },
-    {
-      name: "Status",
-      field: "status",
-      className: "text-center",
-    }
   ];
 
   return (
@@ -158,19 +171,20 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
+              submitUrl={`inquery.assets.remark`}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
-              periodic={true}
-              component={[
-
-                {
-                  data: ['S1','S2'],
-                  field: 'semester'
-                }
-              ]}
-            />
+            >
+              <Button
+                size="sm"
+                type="submit"
+                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+              >
+                Submit
+              </Button>
+            </DataTable>
           )}
 
           {active == "nonDepre" && (
@@ -183,7 +197,14 @@ export default function Detail({ auth, branch, sessions }) {
                 branch_code: branch.branch_code,
                 category: "Non-Depre",
               }}
-            />
+            >
+              <Button
+                type="submit"
+                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+              >
+                Submit
+              </Button>
+            </DataTable>
           )}
         </div>
       </div>

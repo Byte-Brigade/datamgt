@@ -15,6 +15,9 @@ class StoResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        $latestPeriode = $branch->gap_assets->max('periode');
+
         return [
             'id' => $this->id,
             'branch_name' => $this->branches->branch_name,
@@ -24,9 +27,9 @@ class StoResource extends JsonResource
             'remarked' => $this->remarked,
             'disclaimer' => $this->disclaimer,
             'periode' => $this->periode,
-            'depre' => $this->gap_assets->where('category','Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Depre')->count(),
-            'non_depre' => $this->gap_assets->where('category','Non-Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Non-Depre')->count(),
-            'total_remarked' => $this->gap_assets->whereNotNull('remark')->count(). '/'. $this->gap_assets->count(),
+            'depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode',$latestPeriode)->where('category', 'Depre')->count(),
+            'non_depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode',$latestPeriode)->where('category', 'Non-Depre')->count(),
+            'total_remarked' => $this->gap_assets->where('periode',$latestPeriode)->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode',$latestPeriode)->count(),
         ];
     }
 }

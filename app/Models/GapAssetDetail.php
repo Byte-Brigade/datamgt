@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GapSto extends Model
+class GapAssetDetail extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'periode',
-        'semester',
+        'gap_asset_id',
         'status',
-        'keterangan',
+        'semester',
+        'periode',
+        'sto',
     ];
 
-    public function hasil_stos()
+    public function gap_assets()
     {
-        $this->hasMany(GapHasilSto::class, 'gap_sto_id');
+        $this->belongsTo(GapAsset::class, 'gap_asset_id', 'id');
     }
-
 
 }

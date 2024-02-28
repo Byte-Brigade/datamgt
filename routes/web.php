@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
             Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
+            Route::get('/assets/sto/{slug}', [InqueryController::class, 'sto_detail'])->name('inquery.assets.sto');
             Route::get('/staff/detail/{slug}', [InqueryController::class, 'staff_detail'])->name('inquery.staff.detail');
         });
         Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
@@ -109,6 +110,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:can sto')->group(function () {
         Route::prefix('gap')->name('gap.')->group(function () {
             Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
+            Route::post('/stos', [GapStoController::class, 'store_hasil_sto'])->name('stos.store.hasil_sto');
         });
     });
 

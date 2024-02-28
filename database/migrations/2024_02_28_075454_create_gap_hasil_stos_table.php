@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('hasil_stos', function (Blueprint $table) {
+        Schema::create('gap_hasil_stos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('gap_sto_id');
             $table->boolean('remarked')->default(false);
             $table->string('disclaimer')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->foreign('gap_sto_id')->references('id')->on('gap_stos')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hasil_stos');
+        Schema::dropIfExists('gap_hasil_stos');
     }
 };

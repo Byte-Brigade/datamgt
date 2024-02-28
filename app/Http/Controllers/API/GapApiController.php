@@ -791,7 +791,7 @@ class GapApiController extends Controller
 
     public function stos(GapSto $gap_stos, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortFieldInput = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
         $query = $gap_stos->select('gap_stos.*')->orderBy($sortFieldInput, $sortOrder);

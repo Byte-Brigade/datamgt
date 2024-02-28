@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Inquery;
 
 use App\Models\Branch;
+use App\Models\GapHasilSto;
+use App\Models\GapSto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StoResource extends JsonResource
@@ -15,17 +17,23 @@ class StoResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        $latestPeriode = $this->gap_assets->max('periode');
+        $periode = GapSto::max('periode');
+
+        $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
+        $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->first();
         return [
             'id' => $this->id,
             'branch_name' => $this->branch_name,
             'branch_code' => $this->branch_code,
             'type_name' => $this->branch_types->type_name,
             'slug' => $this->slug,
-            'depre' => $this->gap_assets->where('category','Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Depre')->count(),
-            'non_depre' => $this->gap_assets->where('category','Non-Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Non-Depre')->count(),
-            'total_remarked' => $this->gap_assets->whereNotNull('remark')->count(). '/'. $this->gap_assets->count(),
-            'remarked' => isset($this->gap_stos) ? $this->gap_stos->remarked : 0,
-            'disclaimer' => isset($this->gap_stos) ? $this->gap_stos->disclaimer : null
+            'depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
+            'non_depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
+            'total_remarked' => $this->gap_assets->where('periode', $latestPeriode)->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->count(),
+            'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
+            'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
         ];
     }
 }

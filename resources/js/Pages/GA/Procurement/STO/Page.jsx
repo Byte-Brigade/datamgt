@@ -24,15 +24,10 @@ import { useState } from "react";
 
 export default function Page({ auth, sessions }) {
   const initialData = {
-    jumlah_kendaraan: null,
-    jumlah_driver: null,
-    sewa_kendaraan: null,
-    biaya_driver: null,
-    ot: null,
-    rfid: null,
-    non_rfid: null,
-    grab: null,
     periode: null,
+    semester: null,
+    status: null,
+    keterangan: null,
   };
   const {
     data,

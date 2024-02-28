@@ -44,6 +44,11 @@ class GapAsset extends Model
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 
+    public function gap_asset_details()
+    {
+        return $this->hasMany(GapAssetDetail::class, 'gap_asset_id');
+    }
+
 
 
 

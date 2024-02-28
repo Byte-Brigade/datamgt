@@ -7,15 +7,18 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\EmployeePosition;
 use App\Models\GapAsset;
+use App\Models\GapAssetDetail;
 use App\Models\GapDisnaker;
 use App\Models\GapKdo;
 use App\Models\GapScoring;
+use App\Models\GapSto;
 use App\Models\GapToner;
 use App\Models\OpsApar;
 use App\Models\OpsPajakReklame;
 use App\Models\OpsSkbirtgs;
 use App\Models\OpsSkOperasional;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -176,16 +179,34 @@ class InqueryController extends Controller
         // Format the data for createMany
         DB::beginTransaction();
         try {
-            foreach ($remarks as $id => $value) {
-                // Assuming you have a 'gap_assets' table
-                $gapAsset = GapAsset::find($id);
+            $periode = GapSto::max('periode');
+            $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
+            if(!is_null($remarks)) {
+                dd($remarks);
+                foreach ($remarks as $id => $value) {
+                    // Assuming you have a 'gap_assets' table
+                    $gapAsset = GapAsset::find($id);
+                    if ($gapAsset && $sto) {
+                        // Update the 'remark' field based on the condition
+                        $gapAsset->remark = $value;
+                        $gapAsset->save();
+                        if (!is_null($value)) {
 
-                if ($gapAsset) {
-                    // Update the 'remark' field based on the condition
-                    $gapAsset->remark = $value;
-                    $gapAsset->save();
+                            GapAssetDetail::create([
+                                'gap_asset_id' => $gapAsset->id,
+                                'status' => $value,
+                                'semester' => $sto->semester,
+                                'periode' => $sto->periode,
+                                'sto' => false,
+                            ]);
+                        }
+                    }
                 }
+            } else {
+                throw new Exception("Data belum diremark");
             }
+
+
             DB::commit();
             return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (\Throwable $th) {
@@ -196,10 +217,18 @@ class InqueryController extends Controller
 
 
 
-    public function asset_detail($slug)
+    public function asset_detail(Request $request, $slug)
     {
         $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
         return Inertia::render('Inquery/Asset/Detail', [
+            'branch' => $branch,
+        ]);
+    }
+
+    public function sto_detail(Request $request, $slug)
+    {
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+        return Inertia::render('Inquery/Asset/STO', [
             'branch' => $branch,
         ]);
     }
