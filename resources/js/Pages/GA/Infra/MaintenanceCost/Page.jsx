@@ -70,9 +70,9 @@ export default function Page({ auth, branches, sessions }) {
     { name: "Jumlah Project", field: "jumlah_project", className: "text-center", },
     // { name: "BAU", field: "bau", className: "text-center", },
     // { name: "Project", field: "project", className: "text-center", },
-    { name: "Total OE", agg: 'sum', className: "text-right", format: 'currency', field: "total_oe", type: "custom", render: (data) => data.total_oe.toLocaleString('ID-id') },
-    { name: "Nilai Project Memo/Persetujuan", className: "text-right", agg: 'sum', format: 'currency', field: "nilai_project_memo", type: "custom", render: (data) => data.nilai_project_memo.toLocaleString('ID-id') },
-    { name: "Nilai Project Final Account", className: "text-right", agg: 'sum', format: 'currency', field: "nilai_project_final", type: "custom", render: (data) => data.nilai_project_final.toLocaleString('ID-id') },
+    { name: "Total OE", agg: 'sum', className: "text-right tabular-nums", format: 'currency', field: "total_oe", type: "custom", render: (data) => data.total_oe.toLocaleString('ID-id') },
+    { name: "Nilai Project Memo/Persetujuan", className: "text-right tabular-nums", agg: 'sum', format: 'currency', field: "nilai_project_memo", type: "custom", render: (data) => data.nilai_project_memo.toLocaleString('ID-id') },
+    { name: "Nilai Project Final Account", className: "text-right tabular-nums", agg: 'sum', format: 'currency', field: "nilai_project_final", type: "custom", render: (data) => data.nilai_project_final.toLocaleString('ID-id') },
 
   ];
 

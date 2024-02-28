@@ -94,6 +94,7 @@ export default function Detail({ auth, branches, sessions, scoring_vendor, statu
     {
       name: "Nilai Project",
       field: "nilai_project",
+      className: "text-right tabular-nums",
       type: "custom",
       render: (data) => {
         return data.nilai_project

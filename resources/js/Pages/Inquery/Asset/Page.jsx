@@ -98,7 +98,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "January",
       field: "january",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -108,7 +108,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "February",
       field: "february",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -118,7 +118,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "March",
       field: "march",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -128,7 +128,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "April",
       field: "April",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -138,7 +138,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "May",
       field: "may",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -148,7 +148,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "June",
       field: "june",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -158,7 +158,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "July",
       field: "july",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -168,7 +168,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "August",
       field: "august",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -178,7 +178,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "September",
       field: "september",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -188,7 +188,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "October",
       field: "october",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -198,7 +198,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "November",
       field: "november",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -208,7 +208,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "December",
       field: "december",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       render: (data) =>
@@ -337,7 +337,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Nilai Perolehan",
       field: "nilai_perolehan.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       type: "custom",
@@ -348,7 +348,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Penyusutan",
       field: "penyusutan.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       format: "currency",
       type: "custom",
       render: (data) => {
@@ -358,7 +358,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Net Book Value",
       field: "net_book_value.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       format: "currency",
       type: "custom",
       render: (data) => {
@@ -374,7 +374,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Nilai Perolehan",
       field: "nilai_perolehan_non_depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       type: "custom",
@@ -402,7 +402,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       type: "custom",
       format: "currency",
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
-      className: "text-right",
+      className: "text-right tabular-nums",
     },
     {
       name: "Jatuh Tempo",

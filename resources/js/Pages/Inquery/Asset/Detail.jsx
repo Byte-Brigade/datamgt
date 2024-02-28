@@ -45,7 +45,7 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Assst Cost",
       field: "asset_cost",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       sortable: true,
       render: (data) => {
@@ -55,7 +55,7 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Depre Exp",
       field: "depre_exp",
-      className: "text-right",
+      className: "text-right tabular-nums",
       sortable: true,
       type: "custom",
       render: (data) => {
@@ -65,7 +65,7 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Accum Depre",
       field: "accum_depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       sortable: true,
       render: (data) => {
@@ -77,7 +77,7 @@ export default function Detail({ auth, branch, sessions }) {
     {
       name: "Net Book Value",
       field: "net_book_value",
-      className: "text-right",
+      className: "text-right tabular-nums",
       sortable: true,
       type: "custom",
       render: (data) =>

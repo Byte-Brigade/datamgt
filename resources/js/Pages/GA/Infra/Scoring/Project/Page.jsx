@@ -94,7 +94,7 @@ export default function Page({ auth, branches, sessions }) {
     {
       name: "Nilai Project",
       field: "nilai_project",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       render: (data) => {
         return data.nilai_project

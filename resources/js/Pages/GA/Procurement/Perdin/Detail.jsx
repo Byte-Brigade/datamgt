@@ -184,7 +184,7 @@ export default function Detail({
     {
       name: "Airline",
       field: "airline",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -194,7 +194,7 @@ export default function Detail({
     {
       name: "KA",
       field: "ka",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -203,7 +203,7 @@ export default function Detail({
     {
       name: "Hotel",
       field: "hotel",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -212,7 +212,7 @@ export default function Detail({
     {
       name: "Total",
       field: "total",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",

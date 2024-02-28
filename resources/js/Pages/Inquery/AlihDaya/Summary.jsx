@@ -173,7 +173,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "Permata")
@@ -188,7 +188,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "SIGAP")
@@ -203,7 +203,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "Pusaka")
@@ -218,7 +218,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "Assa")
@@ -233,7 +233,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "Indorent")
@@ -248,7 +248,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) =>
         data.vendor
           .filter((item) => item.vendor === "Salawati")
@@ -263,7 +263,7 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       agg: "sum",
       format: "currency",
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) => data.total_biaya.toLocaleString("id-ID"),
     },
 

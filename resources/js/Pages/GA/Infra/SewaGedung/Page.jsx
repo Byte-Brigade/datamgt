@@ -91,7 +91,7 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
     {
       name: "Biaya Per Tahun",
       field: "biaya_per_tahun",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       render: (data) => {
         return data.biaya_per_tahun
@@ -102,7 +102,7 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
     {
       name: "Total Biaya",
       field: "total_biaya",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       render: (data) => {
         return data.total_biaya ? data.total_biaya.toLocaleString("id-ID") : "";

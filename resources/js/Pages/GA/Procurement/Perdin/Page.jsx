@@ -60,7 +60,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Airline",
       field: "airline",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -70,7 +70,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "KA",
       field: "ka",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -79,7 +79,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Hotel",
       field: "hotel",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -88,7 +88,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Total",
       field: "total",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -115,7 +115,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Airline",
       field: "airline",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -125,7 +125,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "KA",
       field: "ka",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -134,7 +134,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Hotel",
       field: "hotel",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -143,7 +143,7 @@ export default function Page({ auth, sessions }) {
     {
       name: "Total",
       field: "total",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
