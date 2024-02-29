@@ -22,5 +22,8 @@ class GapPks extends Model
         'tahun_akhir',
         'status',
         'periode',
+        'renewal',
+        'end_contract',
+        'need_update'
     ];
 }

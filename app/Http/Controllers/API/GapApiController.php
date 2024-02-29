@@ -720,7 +720,7 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
-        $query = $query->where('status', '!=', 'TIDAK AKTIF');
+        // $query = $query->where('status', '!=', 'TIDAK AKTIF');
 
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
@@ -741,6 +741,8 @@ class GapApiController extends Controller
                 'status' => $status,
                 'jumlah_pks' => $pks->count(),
                 'jumlah_vendor' => $pks->unique('vendor')->count(),
+                'end_contract' => $pks->whereNotNull('end_contract')->count(),
+                'need_update' => $pks->whereNotNull('need_update')->count(),
             ];
         });
 

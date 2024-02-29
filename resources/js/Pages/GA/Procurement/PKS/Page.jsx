@@ -75,7 +75,14 @@ export default function Page({ auth, sessions }) {
       field: "jumlah_vendor",
       agg: "sum",
     },
-
+    {
+      name: "End Contract",
+      field: "end_contract",
+    },
+    {
+      name: "Need Update",
+      field: "need_update",
+    },
 
     // {
     //   name: "Detail",
