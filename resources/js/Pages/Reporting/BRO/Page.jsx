@@ -69,7 +69,7 @@ export default function Branch({ auth, sessions, branch_types }) {
       name: "Nama", field: "category", sortable: false,
       type: "custom",
       render: (data) => (
-        <Link href={route("reporting.bros.category", data.category)}>
+        <Link href={route("bros.category", data.category)}>
           {data.category}
         </Link>
       ),
