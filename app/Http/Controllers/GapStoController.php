@@ -28,6 +28,10 @@ class GapStoController extends Controller
     {
         return Inertia::render('GA/Procurement/STO/Page');
     }
+    public function detail($gap_sto_id)
+    {
+        return Inertia::render('GA/Procurement/STO/Detail', ['gap_sto_id' => $gap_sto_id]);
+    }
     /**
      * Show the form for creating a new resource.
      *

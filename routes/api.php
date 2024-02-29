@@ -63,11 +63,12 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('perdins', [GapApiController::class, 'perdins']);
     Route::get('toners', [GapApiController::class, 'toners']);
     Route::get('stos', [GapApiController::class, 'stos']);
+    Route::get('hasil_stos/{gap_sto_id}', [GapApiController::class, 'hasil_stos']);
     Route::get('pks', [GapApiController::class, 'pks']);
     Route::get('pks/{status}', [GapApiController::class, 'pks_details']);
     Route::get('toners/{slug}', [GapApiController::class, 'toner_details']);
     Route::get('alihdayas', [GapApiController::class, 'alihdayas']);
-    Route::get('alihdaya/{type}', [GapApiController::class, 'alihdaya_details']);
+    Route::get('alihdaya/{typegap}', [GapApiController::class, 'alihdaya_details']);
     Route::get('perdin/{divisi_pembebanan}', [GapApiController::class, 'perdin_details']);
     Route::get('scoring-projects', [GapApiController::class, 'scoring_projects']);
     Route::get('scoring-projects/{scoring_vendor}', [GapApiController::class, 'scoring_project_details']);

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->date('periode');
             $table->string('semester');
-            $table->enum('status', ['On Progress','Selesai']);
+            $table->enum('status', ['On Progress', 'Done']);
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

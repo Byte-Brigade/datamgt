@@ -77,14 +77,12 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       render: (data) => (
         <Link
-          href={route("inquery.alihdayas.type", {
-            type: "jenis_pekerjaan",
-            type_item: data.jenis_pekerjaan,
-            ...periode,
-          })}
+          href={`/inquery/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
         >
           {data.jenis_pekerjaan}
         </Link>
+
+
       ),
     },
 
@@ -334,7 +332,7 @@ export default function Page({ auth, sessions }) {
               color="purple"
             />
           </div>
-      
+
           {active === "tenaga-kerja" && (
             <DataTable
               columns={columnItems}
