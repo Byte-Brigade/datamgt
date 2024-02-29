@@ -61,12 +61,12 @@ class GapStoController extends Controller
         }
     }
 
-    public function store_hasil_sto(Request $request)
+    public function store_hasil_sto(Request $request, $slug)
     {
-        // dd("aa");
+        // dd($slug);
         try {
 
-            $branch = Branch::with('gap_assets')->where('branch_code', $request->branch_code)->first();
+            $branch = Branch::with('gap_assets')->where('slug', $slug)->first();
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/', $fileName, ["disk" => 'public']);
             $latestPeriode = $branch->gap_assets->max('periode');
@@ -85,7 +85,6 @@ class GapStoController extends Controller
 
                 GapAssetDetail::where('periode', $sto->periode)->where('semester', $sto->semester)->update(['sto' => true]);
                 User::find(Auth::user()->id)->revokePermissionTo("can sto");
-                dd()
             } else {
                 throw new Exception("STO belum dimulai");
             }

@@ -108,9 +108,9 @@ class Branch extends Model
         return $this->hasMany(GapAlihDaya::class, 'branch_id');
     }
 
-    public function gap_hasil_sto()
+    public function gap_hasil_stos()
     {
-        return $this->hasOne(GapHasilSto::class, 'branch_id');
+        return $this->hasMany(GapHasilSto::class, 'branch_id');
     }
 
     public function infra_maintenance_costs()

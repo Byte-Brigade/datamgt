@@ -182,7 +182,6 @@ class InqueryController extends Controller
             $periode = GapSto::max('periode');
             $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
             if(!is_null($remarks)) {
-                dd($remarks);
                 foreach ($remarks as $id => $value) {
                     // Assuming you have a 'gap_assets' table
                     $gapAsset = GapAsset::find($id);

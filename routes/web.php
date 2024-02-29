@@ -110,7 +110,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:can sto')->group(function () {
         Route::prefix('gap')->name('gap.')->group(function () {
             Route::post('/stos', [GapStoController::class, 'store'])->name('stos.store');
-            Route::post('/stos', [GapStoController::class, 'store_hasil_sto'])->name('stos.store.hasil_sto');
+            Route::post('/stos/hasil_sto/{slug}', [GapStoController::class, 'store_hasil_sto'])->name('stos.store.hasil_sto');
         });
     });
 

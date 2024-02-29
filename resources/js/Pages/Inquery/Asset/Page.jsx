@@ -39,9 +39,9 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
   } = useFormContext();
 
   const toggleModalCreate = (id) => {
-    setInitialData({ disclaimer: null, branch_code: null });
+    setInitialData({ disclaimer: null });
     setUrl("gap.stos.store.hasil_sto");
-    form.setData("branch_code", id);
+    setId(id);
 
     setModalOpen((prevModalOpen) => {
       const updatedModalOpen = {
@@ -485,7 +485,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
           </a>
         ) : (
           <Button
-            onClick={(e) => toggleModalCreate(data.branch_code)}
+            onClick={(e) => toggleModalCreate(data.slug)}
             variant="outlined"
           >
             Submit

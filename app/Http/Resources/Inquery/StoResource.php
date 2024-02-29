@@ -22,7 +22,13 @@ class StoResource extends JsonResource
         $periode = GapSto::max('periode');
 
         $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
-        $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->first();
+        $hasil_sto = null;
+        if (isset($sto)) {
+
+            $hasil_sto = $this->gap_hasil_stos()->where('gap_sto_id', $sto->id)->first();
+        }
+
+
         return [
             'id' => $this->id,
             'branch_name' => $this->branch_name,

@@ -28,7 +28,7 @@ class AssetsResource extends JsonResource
                 $gap_asset_details = $gap_asset_details->where('periode', $periode);
             }
 
-            $gap_asset_details = $gap_asset_details->where('semester', $request->semester == "S2" ? $request->semester : "S1")->first();
+            $gap_asset_details = $gap_asset_details->where('semester', isset($request->semester) ? $request->semester : "S1")->first();
         }
 
         return [
@@ -52,6 +52,7 @@ class AssetsResource extends JsonResource
             'remark' => $this->remark,
             'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
             'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
+            'semestawdaer' => $this->gap_asset_details,
 
 
         ];

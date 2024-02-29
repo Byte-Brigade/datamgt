@@ -8,7 +8,7 @@ export const FormProvider = ({ children }) => {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [initialData, setInitialData] = useState({});
   const [url, setUrl] = useState([]);
-  const [id, setId] = useState([]);
+  const [id, setId] = useState(null);
   const [periode, setPeriode] = useState({
     startDate: null,
     endDate: null
@@ -41,7 +41,7 @@ export const FormProvider = ({ children }) => {
   const form = useForm(initialData);
 
 
- const handleFormEdit = (e) => {
+  const handleFormEdit = (e) => {
     e.preventDefault();
     form.put(route(url, id), {
       method: "put",
@@ -55,12 +55,22 @@ export const FormProvider = ({ children }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    form.post(route(url), {
-      onFinish: () => {
-        setIsRefreshed(!isRefreshed);
-        setModalOpen(!modalOpen);
-      }
-    })
+    if (id) {
+      form.post(route(url, id), {
+        onFinish: () => {
+          setIsRefreshed(!isRefreshed);
+          setModalOpen(!modalOpen);
+        }
+      })
+    } else {
+      form.post(route(url), {
+        onFinish: () => {
+          setIsRefreshed(!isRefreshed);
+          setModalOpen(!modalOpen);
+        }
+      })
+    }
+
   }
 
   return (

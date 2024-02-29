@@ -113,7 +113,7 @@ export default function Detail({ auth, branch, sessions }) {
           <Select
             className="bg-white"
             label="Status"
-            value={`${data.remark || ""}`}
+            value={`${data.status || ""}`}
             onChange={(e) => handleChanged(data.id, e)}
           >
             <Option value={`Ada`}>Ada</Option>
@@ -125,7 +125,7 @@ export default function Detail({ auth, branch, sessions }) {
             <Option value={`Non Asset`}>Non Asset</Option>
           </Select>
         ) : (
-          data.remark
+          data.status
         ),
     },
   ];
