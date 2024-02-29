@@ -24,10 +24,15 @@ import { useState } from "react";
 
 export default function Page({ auth, sessions }) {
   const initialData = {
+    jumlah_kendaraan: null,
+    jumlah_driver: null,
+    sewa_kendaraan: null,
+    biaya_driver: null,
+    ot: null,
+    rfid: null,
+    non_rfid: null,
+    grab: null,
     periode: null,
-    semester: null,
-    status: null,
-    keterangan: null,
   };
   const {
     data,
@@ -67,6 +72,32 @@ export default function Page({ auth, sessions }) {
       name: "Keterangan",
       field: "keterangan",
       className: "text-center",
+    },
+    {
+      name: "Sudah STO",
+      field: "remarked",
+      className: "text-center",
+      type: "custom",
+      render: (data) => (data.remarked === 1 ? "Sudah" : "Belum"),
+    },
+
+    {
+      name: "Disclaimer",
+      field: "detail",
+      className: "text-center",
+      render: (data) =>
+        data.disclaimer ? (
+          <a
+            className="text-blue-500 hover:underline text-ellipsis"
+            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            target="__blank"
+          >
+            {" "}
+            {data.disclaimer}
+          </a>
+        ) : (
+          "-"
+        ),
     },
   ];
 

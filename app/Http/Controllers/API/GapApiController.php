@@ -791,12 +791,10 @@ class GapApiController extends Controller
 
     public function stos(GapSto $gap_stos, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortFieldInput = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_stos->select('gap_stos.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'branches.id', 'gap_stos.branch_id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        $query = $gap_stos->select('gap_stos.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
 
@@ -804,16 +802,7 @@ class GapApiController extends Controller
 
 
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
-        }
 
 
         if (!is_null($searchInput)) {

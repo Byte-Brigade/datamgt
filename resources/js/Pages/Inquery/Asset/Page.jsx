@@ -1,3 +1,4 @@
+import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
@@ -38,9 +39,9 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
   } = useFormContext();
 
   const toggleModalCreate = (id) => {
-    setInitialData({ disclaimer: null, branch_code: null });
-    setUrl("gap.stos.store");
-    form.setData("branch_code", id);
+    setInitialData({ disclaimer: null });
+    setUrl("gap.stos.store.hasil_sto");
+    setId(id);
 
     setModalOpen((prevModalOpen) => {
       const updatedModalOpen = {
@@ -433,7 +434,9 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.assets.detail", data.slug)}>
+        <Link href={route("inquery.assets.sto", {
+          slug: data.slug,
+        })}>
           {data.branch_name}
         </Link>
       ),
@@ -482,7 +485,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
           </a>
         ) : (
           <Button
-            onClick={(e) => toggleModalCreate(data.branch_code)}
+            onClick={(e) => toggleModalCreate(data.slug)}
             variant="outlined"
           >
             Submit
@@ -497,6 +500,8 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
+
           <div className="grid grid-cols-4 gap-4 mb-4">
             <CardMenu
               label="Asset"
@@ -543,11 +548,12 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
               parameters={{ branch_id: auth.user.branch_id }}
               headings={headings}
               bordered={true}
+              periodic={true}
               component={[
                 {
                   data: type_names,
                   field: 'type_name'
-                }
+                },
               ]}
             />
           )}

@@ -17,16 +17,10 @@ class StoResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'branch_name' => $this->branches->branch_name,
-            'branch_code' => $this->branches->branch_code,
-            'type_name' => $this->branches->branch_types->type_name,
-            'slug' => $this->branches->slug,
-            'remarked' => $this->remarked,
-            'disclaimer' => $this->disclaimer,
             'periode' => $this->periode,
-            'depre' => $this->gap_assets->where('category','Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Depre')->count(),
-            'non_depre' => $this->gap_assets->where('category','Non-Depre')->whereNotNull('remark')->count(). '/'. $this->gap_assets->where('category','Non-Depre')->count(),
-            'total_remarked' => $this->gap_assets->whereNotNull('remark')->count(). '/'. $this->gap_assets->count(),
+            'semester' => $this->semester,
+            'status' => $this->status,
+            'keterangan' => $this->keterangan,
         ];
     }
 }

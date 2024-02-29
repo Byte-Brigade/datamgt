@@ -9,6 +9,7 @@
         "doctrine/dbal": "^3.7",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.3",
+        "itsgoingd/clockwork": "^5.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.2",
         "laravel/scout": "^10.2",
