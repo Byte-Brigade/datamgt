@@ -58,11 +58,7 @@ export default function Page({ auth, sessions }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link
-          href={`/gap/pks/detail/${data.status}`}
-        >
-          {data.status}
-        </Link>
+        <Link href={`/gap/pks/detail/${data.status}`}>{data.status}</Link>
       ),
     },
     {
@@ -71,11 +67,22 @@ export default function Page({ auth, sessions }) {
       agg: "sum",
     },
     {
+      name: "End Contract",
+      field: "end_contract",
+    },
+    {
+      name: "Need Update",
+      field: "need_update",
+    },
+    {
+      name: "On Progress",
+      field: "on_progress",
+    },
+    {
       name: "Jumlah Vendor",
       field: "jumlah_vendor",
       agg: "sum",
     },
-
 
     // {
     //   name: "Detail",
