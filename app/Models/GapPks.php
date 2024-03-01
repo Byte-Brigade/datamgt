@@ -24,6 +24,7 @@ class GapPks extends Model
         'periode',
         'renewal',
         'end_contract',
-        'need_update'
+        'need_update',
+        'on_progress'
     ];
 }

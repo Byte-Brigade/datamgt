@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('renewal')->nullable();
             $table->string('end_contract')->nullable();
             $table->string('need_update')->nullable();
+            $table->string('on_progress')->nullable();
         });
     }
 

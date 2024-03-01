@@ -743,6 +743,7 @@ class GapApiController extends Controller
                 'jumlah_vendor' => $pks->unique('vendor')->count(),
                 'end_contract' => $pks->whereNotNull('end_contract')->count(),
                 'need_update' => $pks->whereNotNull('need_update')->count(),
+                'on_progress' => $pks->whereNotNull('on_progress')->count(),
             ];
         });
 

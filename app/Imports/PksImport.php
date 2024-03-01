@@ -50,6 +50,7 @@ class PksImport implements ToCollection, WithHeadingRow, WithValidation
                             'renewal' => $row['renewal'],
                             'end_contract' => $row['end_contract'],
                             'need_update' => $row['need_update'],
+                            'on_progress' => $row['on_progress'],
                             'periode' => $periode,
                         ]
                     );
