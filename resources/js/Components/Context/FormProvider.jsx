@@ -7,6 +7,7 @@ const FormContext = createContext();
 export const FormProvider = ({ children }) => {
   const [isRefreshed, setIsRefreshed] = useState(false);
   const [initialData, setInitialData] = useState({});
+  const [filterData, setFilterData] = useState({});
   const [url, setUrl] = useState([]);
   const [id, setId] = useState(null);
   const [periode, setPeriode] = useState({
@@ -86,7 +87,8 @@ export const FormProvider = ({ children }) => {
       setId,
       selected, setSelected,
       periode, setPeriode,
-      groupBy
+      groupBy,
+      filterData, setFilterData
     }}>
       {children}
     </FormContext.Provider>

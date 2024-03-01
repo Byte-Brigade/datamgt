@@ -69,11 +69,11 @@ export default function DataTable({
     isRefreshed,
     selected,
     setSelected,
+    filterData, setFilterData
   } = useFormContext();
 
   // filters
   const [filters, setFilters] = useState([]);
-  const [filterData, setFilterData] = useState({});
   const [clearFilter, setClearFilter] = useState(false);
 
   const toggleOpen = () => setOpen((cur) => !cur);
@@ -81,12 +81,12 @@ export default function DataTable({
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null
-    });
+  });
 
-    const handleDateChange = (newValue) => {
+  const handleDateChange = (newValue) => {
     console.log("newValue:", newValue);
     setDateRange(newValue);
-    }
+  }
 
   const handleSort = (column) => {
     if (columns === sortColumn) {
@@ -499,16 +499,16 @@ export default function DataTable({
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
                             className={`${sortOrder === SORT_ASC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                           <ChevronDownIcon
                             className={`${sortOrder === SORT_DESC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                         </span>

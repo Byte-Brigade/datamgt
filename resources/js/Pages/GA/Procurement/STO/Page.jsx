@@ -1,5 +1,6 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -7,7 +8,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -39,8 +40,12 @@ export default function Page({ auth, sessions }) {
     errors,
   } = useForm(initialData);
 
+  const { modalOpen, setModalOpen, handleFormEdit, setUrl, setId
+    , setInitialData } = useFormContext();
+
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
+  const [isModalStatusOpen, setIsModalStatusOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -68,6 +73,28 @@ export default function Page({ auth, sessions }) {
       field: "keterangan",
       className: "text-center",
     },
+
+    {
+      name: "Action",
+      field: "action",
+      className: "text-center w-[300px]",
+      render: (data) =>
+
+        <div className="flex justify-around">
+
+          {data.status === "On Progress" && (<Button
+            onClick={(e) => toggleModalStatus(data.id)}
+            variant="outlined"
+          >
+            Selesai STO
+          </Button>)}
+
+          <Link href={route("gap.stos.detail", data.id)}>
+            <Button variant="outlined">Lihat STO</Button>
+          </Link>
+        </div>
+    },
+
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -138,6 +165,12 @@ export default function Page({ auth, sessions }) {
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
   };
+  const toggleModalStatus = (id) => {
+    setInitialData({ status: null })
+    setUrl("gap.sto.status");
+    setId(id)
+    setIsModalStatusOpen(!isModalStatusOpen);
+  };
 
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
@@ -160,7 +193,7 @@ export default function Page({ auth, sessions }) {
                   >
                     <div className="flex items-center gap-x-2">
                       <DocumentPlusIcon className="w-4 h-4" />
-                        Create STO
+                      Create STO
 
                     </div>
                   </PrimaryButton>
@@ -256,6 +289,40 @@ export default function Page({ auth, sessions }) {
           </div>
         </DialogFooter>
       </Dialog>
+      {/* Modal Status */}
+      <Dialog open={isModalStatusOpen} handler={toggleModalStatus} size="md">
+        <DialogHeader className="flex items-center justify-between">
+          Create Report
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalStatus}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <div className="flex flex-col gap-y-4">
+            <Typography>Buat Report Data STO?</Typography>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-row-reverse gap-x-4">
+            <Button
+              onClick={handleFormEdit}
+              disabled={processing}
+              type="submit"
+            >
+              Buat
+            </Button>
+            <SecondaryButton type="button" onClick={toggleModalExport}>
+              Tutup
+            </SecondaryButton>
+          </div>
+        </DialogFooter>
+      </Dialog>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -330,12 +397,12 @@ export default function Page({ auth, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("semester", e)}
               >
-                  <Option value="S1">
-                    S1
-                  </Option>
-                  <Option value="S2">
-                    S2
-                  </Option>
+                <Option value="S1">
+                  S1
+                </Option>
+                <Option value="S2">
+                  S2
+                </Option>
               </Select>
               <Input
                 label="Keterangan"
