@@ -48,9 +48,9 @@ class PksImport implements ToCollection, WithHeadingRow, WithValidation
                             'tahun_akhir' => $tahun_akhir,
                             'status' => $row['status'],
                             'renewal' => $row['renewal'],
-                            'end_contract' => $row['end_contract'],
-                            'need_update' => $row['need_update'],
-                            'on_progress' => $row['on_progress'],
+                            'end_contract' => $row['end_contract'] == 'YES' ? true : false,
+                            'need_update' => $row['need_update'] == 'YES' ? true : false,
+                            'on_progress' => $row['on_progress'] == 'YES' ? true : false,
                             'periode' => $periode,
                         ]
                     );
