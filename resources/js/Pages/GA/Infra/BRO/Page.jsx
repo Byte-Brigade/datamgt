@@ -266,6 +266,10 @@ export default function Page({ auth, branches, sessions, type_names, status_bro 
                 id="import"
                 accept=".xlsx"
                 onChange={(e) => setData("file", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
             </div>
           </DialogBody>
@@ -374,7 +378,7 @@ export default function Page({ auth, branches, sessions, type_names, status_bro 
               >
                 {branches.map((branch) => (
                   <Option key={branch.id} value={`${branch.id}`}>
-                    {branch.branch_code} - {branch.branch_name}
+                    {branch.branch_code || '-'} - {branch.branch_name}
                   </Option>
                 ))}
               </Select>
@@ -509,7 +513,7 @@ export default function Page({ auth, branches, sessions, type_names, status_bro 
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
             <span className="text-lg font-bold">
-              {data.branches.branch_code} - {data.branches.branch_name}
+              {data.branches.branch_code || '-'} - {data.branches.branch_name}
             </span>{" "}
             ?
           </Typography>

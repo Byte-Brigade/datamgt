@@ -32,9 +32,6 @@ class OpsApiController extends Controller
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 15;
 
-
-
-
         $input = $request->all();
         if (isset($input['type_name'])) {
             $type_name = $input['type_name'];
@@ -117,6 +114,13 @@ class OpsApiController extends Controller
                 $q->whereIn('position_name', $request->get('employee_positions_position_name'));
             });
         }
+
+        if (!is_null($request->input('branches_branch_name'))) {
+            $query = $query->whereHas('branches', function ($q) use ($request) {
+                $q->whereIn('branch_name', $request->get('branches_branch_name'));
+            });
+        }
+
         if ($perpage == "All") {
             $perpage = $query->count();
         }

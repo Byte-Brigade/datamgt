@@ -385,6 +385,27 @@ export default function UAM({
                   </Option>
                 ))}
               </Select>
+              {data.position === "cabang" && (
+                <Select
+                  label="Branch"
+                  value={`${data.branch_id || 0}`}
+                  disabled={processing}
+                  onChange={(e) => setData("branch_id", e)}
+                  className="bg-white"
+                >
+                  {branches.map((branch, index) => {
+                    return branch.branch_code === "none" ? (
+                      <Option key={index} value="0">
+                        {branch.branch_name}
+                      </Option>
+                    ) : (
+                      <Option key={index} value={`${branch.id} `}>
+                        {branch.branch_code} - {branch.branch_name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              )}
               <Input
                 type="password"
                 label="Password"

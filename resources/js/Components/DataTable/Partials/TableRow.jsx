@@ -4,7 +4,7 @@ export default function TableRow({
   const selectedClass = isSelected ? 'bg-slate-200 ' : '';
 
   return (
-    <tr key={index} className={`${className} ${selectedClass} cursor-pointer ${isShiftPressed ? 'select-none' : ''}`} onClick={onClick}>
+    <tr key={index} className={`${className} ${selectedClass} ${isShiftPressed ? 'select-none' : ''}`} onClick={onClick}>
       {children}
     </tr>
   )
