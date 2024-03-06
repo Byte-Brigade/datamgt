@@ -766,6 +766,10 @@ class GapApiController extends Controller
 
         $query->where('status', $status);
 
+        if (!is_null($request->action) && $request->action == "need_update") {
+            $query->where('need_update', true);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($q) use ($searchQuery) {

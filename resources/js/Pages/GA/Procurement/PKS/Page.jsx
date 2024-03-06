@@ -73,6 +73,14 @@ export default function Page({ auth, sessions }) {
     {
       name: "Need Update",
       field: "need_update",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route('gap.pks.detail', {
+          status: data.status,
+          action: "need_update",
+        })}>{data.need_update}</Link>
+      )
     },
     {
       name: "On Progress",
@@ -205,9 +213,9 @@ export default function Page({ auth, sessions }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/gap/pks"}
