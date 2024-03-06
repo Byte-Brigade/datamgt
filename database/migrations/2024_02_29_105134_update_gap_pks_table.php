@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::table('gap_pks', function (Blueprint $table) {
             $table->string('renewal')->nullable();
-            $table->string('end_contract')->nullable();
-            $table->string('need_update')->nullable();
-            $table->string('on_progress')->nullable();
+            $table->boolean('end_contract')->default(false);
+            $table->boolean('need_update')->default(false);
+            $table->boolean('on_progress')->default(false);
         });
     }
 
