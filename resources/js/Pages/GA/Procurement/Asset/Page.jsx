@@ -103,7 +103,7 @@ export default function Page({ auth, branches, sessions, major_categories }) {
     {
       name: "Net Book Value",
       field: "net_book_value",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       sortable: true,
       format: "currency",

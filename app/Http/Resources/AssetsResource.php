@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssetsResource extends JsonResource
@@ -14,6 +15,22 @@ class AssetsResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        $gap_asset_details = $this->gap_asset_details()->where('sto', true);
+
+        if (isset($gap_asset_details)) {
+            if (!is_null($request->endDate) && !is_null($request->semester)) {
+                $endDate = Carbon::parse($request->endDate)->startOfMonth()->format('Y-m-d');
+
+                $gap_asset_details = $gap_asset_details->where('periode', $endDate);
+            } else {
+                $periode = $gap_asset_details->get()->max('periode');
+                $gap_asset_details = $gap_asset_details->where('periode', $periode);
+            }
+
+            $gap_asset_details = $gap_asset_details->where('semester', isset($request->semester) ? $request->semester : "S1")->first();
+        }
+
         return [
             'id' => $this->id,
             'branch_id' => $this->branch_id,
@@ -33,6 +50,11 @@ class AssetsResource extends JsonResource
 
             'slug' => $this->slug,
             'remark' => $this->remark,
+            'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
+            'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
+            'semestawdaer' => $this->gap_asset_details,
+
+
         ];
     }
 }

@@ -62,7 +62,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Nilai OE Interior",
       field: "nilai_oe_interior",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -71,7 +71,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Nilai OE ME",
       field: "nilai_oe_me",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -80,7 +80,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Total OE",
       field: "total_oe",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -89,7 +89,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Nilai Project Memo/Persetujuan",
       field: "nilai_project_memo",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -98,7 +98,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Nilai Project Final Account",
       field: "nilai_project_final",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -107,7 +107,7 @@ export default function Page({ auth, branches, sessions, jenis_pekerjaan , type_
     {
       name: "Kerja Tambah/Kurang",
       field: "kerja_tambah_kurang",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",

@@ -191,6 +191,7 @@ class InqueryApiController extends Controller
             });
         }
 
+
         if (!is_null($request->branch_id)) {
             $query = $query->where('branches.id', $request->branch_id);
         }
@@ -220,13 +221,16 @@ class InqueryApiController extends Controller
         // $query = $query->paginate($perpage);
 
         $collections = $query->map(function ($branch) {
+
+            $latestPeriode = $branch->gap_assets->max('periode');
+
             return [
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'item' => [
-                    'depre' => $branch->gap_assets->where('category', 'Depre')->count(),
-                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->count(),
+                    'depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
+                    'non_depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
 
                 ],
                 'nilai_perolehan' => [

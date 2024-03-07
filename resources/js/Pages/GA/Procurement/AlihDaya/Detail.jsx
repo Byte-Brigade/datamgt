@@ -77,7 +77,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
     {
       name: "Cost",
       field: "cost",
-      className: "text-center",
+      className: "text-right tabular-nums",
       type: "custom",
       render: (data) => data.cost.toLocaleString("id-ID"),
     },

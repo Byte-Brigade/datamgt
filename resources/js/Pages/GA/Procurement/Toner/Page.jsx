@@ -81,7 +81,7 @@ export default function Page({ auth, sessions, type_names }) {
       field: "total",
       format: 'currency',
       agg: 'sum',
-      className: "text-right",
+      className: "text-right tabular-nums",
       render: (data) => (data.total).toLocaleString('ID-id'),
 
     },

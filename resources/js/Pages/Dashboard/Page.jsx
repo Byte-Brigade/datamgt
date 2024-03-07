@@ -72,7 +72,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "Airline",
       field: "airline",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -82,7 +82,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "KA",
       field: "ka",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -91,7 +91,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "Hotel",
       field: "hotel",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -100,7 +100,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "Total",
       field: "total",
-      className: "text-right",
+      className: "text-right tabular-nums",
       type: "custom",
       agg: "sum",
       format: "currency",
@@ -206,7 +206,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "Cabang", field: "branches.branch_name",
       className: "cursor-pointer hover:text-blue-500",
-
       type: "custom",
       render: (data) => (
         <Link
@@ -236,7 +235,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       type: "custom",
       format: "currency",
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
-      className: "text-right",
+      className: "text-right tabular-nums",
     },
     {
       name: "Jatuh Tempo",
@@ -465,13 +464,11 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       <Head title="Dashboard" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-        <div className="flex flex-col mb-4 rounded">
+        <div className="flex flex-col mb-4 rounded gap-y-2">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-y-2">
             <h2 className="text-2xl font-semibold text-left w-80">Dashboard</h2>
-
-            {/* <Tabs data={tabsMenu} /> */}
-            <div className="grid grid-cols-8 p-1 mb-2 gap-x-2">
+            <div className="grid grid-cols-8 p-1 gap-x-2">
               {cardMenus.map((menu, index) => (
                 <CardMenu
                   key={index}
@@ -489,7 +486,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               ))}
             </div>
           </div>
-          <div className="flex my-4 gap-x-4">
+          <div className="flex gap-x-4">
             <Select
               label="Area"
               value=""
@@ -734,23 +731,23 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         <td className="text-center">
                           {asset.depre_jumlah_item}
                         </td>
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
                         </td>
 
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.penyusutan.toLocaleString("id-ID")}
                         </td>
 
                         {asset.net_book_value > 0 && (
-                          <td className="text-right">
+                          <td className="text-right tabular-nums">
                             {asset.net_book_value.toLocaleString("id-ID")}
                           </td>
                         )}
                         <td className="text-center">
                           {asset.non_depre_jumlah_item}
                         </td>
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.non_depre_nilai_perolehan.toLocaleString(
                             "id-ID"
                           )}
@@ -772,7 +769,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         return total + asset.depre_jumlah_item;
                       }, 0)}
                   </td>
-                  <td className="text-right">
+                  <td className="text-right tabular-nums">
                     {Object.values(data.summary_assets)
                       .filter((asset) => asset.branch_name !== "Kantor Pusat")
                       .reduce((total, asset) => {
@@ -781,7 +778,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       .toLocaleString("id-ID")}
                   </td>
 
-                  <td className="text-right">
+                  <td className="text-right tabular-nums">
                     {Object.values(data.summary_assets)
                       .filter((asset) => asset.branch_name !== "Kantor Pusat")
                       .reduce((total, asset) => {
@@ -790,7 +787,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       .toLocaleString("id-ID")}
                   </td>
 
-                  <td className="text-right">
+                  <td className="text-right tabular-nums">
                     {Object.values(data.summary_assets)
                       .filter((asset) => asset.branch_name !== "Kantor Pusat")
                       .reduce((total, asset) => {
@@ -807,7 +804,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                       }, 0)}
                   </td>
 
-                  <td className="text-right">
+                  <td className="text-right tabular-nums">
                     {Object.values(data.summary_assets)
                       .filter((asset) => asset.branch_name !== "Kantor Pusat")
                       .reduce((total, asset) => {
@@ -829,16 +826,16 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         <td className="text-center">
                           {asset.depre_jumlah_item}
                         </td>
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.depre_nilai_perolehan.toLocaleString("id-ID")}
                         </td>
 
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.penyusutan.toLocaleString("id-ID")}
                         </td>
 
                         {asset.net_book_value > 0 && (
-                          <td className="text-right">
+                          <td className="text-right tabular-nums">
                             {asset.net_book_value.toLocaleString("id-ID")}
                           </td>
                         )}
@@ -846,7 +843,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                         <td className="text-center">
                           {asset.non_depre_jumlah_item}
                         </td>
-                        <td className="text-right">
+                        <td className="text-right tabular-nums">
                           {asset.non_depre_nilai_perolehan.toLocaleString(
                             "id-ID"
                           )}

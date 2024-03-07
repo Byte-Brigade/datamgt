@@ -58,11 +58,7 @@ export default function Page({ auth, sessions }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link
-          href={`/gap/pks/detail/${data.status}`}
-        >
-          {data.status}
-        </Link>
+        <Link href={`/gap/pks/detail/${data.status}`}>{data.status}</Link>
       ),
     },
     {
@@ -71,11 +67,30 @@ export default function Page({ auth, sessions }) {
       agg: "sum",
     },
     {
+      name: "End Contract",
+      field: "end_contract",
+    },
+    {
+      name: "Need Update",
+      field: "need_update",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) => (
+        <Link href={route('gap.pks.detail', {
+          status: data.status,
+          action: "need_update",
+        })}>{data.need_update}</Link>
+      )
+    },
+    {
+      name: "On Progress",
+      field: "on_progress",
+    },
+    {
       name: "Jumlah Vendor",
       field: "jumlah_vendor",
       agg: "sum",
     },
-
 
     // {
     //   name: "Detail",
@@ -198,9 +213,9 @@ export default function Page({ auth, sessions }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/gap/pks"}

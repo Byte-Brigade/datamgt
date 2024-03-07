@@ -94,6 +94,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
       name: "Nilai Project",
       field: "nilai_project",
       type: "custom",
+      className: "text-right tabular-nums",
       render: (data) => {
         return data.nilai_project
           ? data.nilai_project.toLocaleString("id-ID")

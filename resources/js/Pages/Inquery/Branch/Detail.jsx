@@ -207,7 +207,9 @@ export default function Detail({
                           <td>{kdo.nopol}</td>
                           <td>{ConvertDate(kdo.awal_sewa)}</td>
                           <td>{ConvertDate(kdo.akhir_sewa)}</td>
-                          <td>{kdo.biaya_sewa.toLocaleString("id-ID")}</td>
+                          <td className="tabular-nums">
+                            {kdo.biaya_sewa.toLocaleString("id-ID")}
+                          </td>
                         </tr>
                       ))}
                   </tbody>
@@ -219,7 +221,9 @@ export default function Detail({
                         Total
                       </td>
                       <td className="font-semibold">
-                        {kdos.reduce((prev, kdo) => prev + kdo.biaya_sewa, 0).toLocaleString("id-ID")}
+                        {kdos
+                          .reduce((prev, kdo) => prev + kdo.biaya_sewa, 0)
+                          .toLocaleString("id-ID")}
                       </td>
                     </tr>
                   </tfoot>
