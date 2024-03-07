@@ -16,8 +16,9 @@ class DepreSheet implements FromView, ShouldAutoSize, WithTitle, WithColumnForma
     use Exportable;
     public function view(): View
     {
+        $periode = GapAsset::max('periode');
         return view('exports.assets.depre', [
-            'assets' => GapAsset::with('branches')->where('category','Depre')->get()
+            'assets' => GapAsset::with('branches')->where('periode', $periode)->where('category', 'Depre')->get()
         ]);
     }
 

@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, status }) {
+export default function Detail({ auth, sessions, status, action }) {
   const initialData = {
     vendor: null,
     entity: null,
@@ -274,6 +274,9 @@ export default function Detail({ auth, sessions, status }) {
             fetchUrl={`/api/gap/pks/${status}`}
             refreshUrl={isRefreshed}
             bordered={true}
+            parameters={
+              { action }
+            }
           />
         </div>
       </div>

@@ -6,6 +6,7 @@ use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AlihDayaResource;
 use App\Http\Resources\AssetsResource;
+use App\Http\Resources\HasilStoResource;
 use App\Http\Resources\KdoMobilResource;
 use App\Http\Resources\PerdinResource;
 use App\Http\Resources\PksResource;
@@ -17,6 +18,7 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapAlihDaya;
 use App\Models\GapAsset;
+use App\Models\GapHasilSto;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
@@ -720,7 +722,7 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_pks->select('gap_pks.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
-        $query = $query->where('status', '!=', 'TIDAK AKTIF');
+        // $query = $query->where('status', '!=', 'TIDAK AKTIF');
 
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
@@ -741,6 +743,9 @@ class GapApiController extends Controller
                 'status' => $status,
                 'jumlah_pks' => $pks->count(),
                 'jumlah_vendor' => $pks->unique('vendor')->count(),
+                'end_contract' => $pks->where('end_contract', true)->count(),
+                'need_update' => $pks->where('need_update', true)->count(),
+                'on_progress' => $pks->where('on_progress', true)->count(),
             ];
         });
 
@@ -760,6 +765,10 @@ class GapApiController extends Controller
         $perpage = $request->perpage ?? 15;
 
         $query->where('status', $status);
+
+        if (!is_null($request->action) && $request->action == "need_update") {
+            $query->where('need_update', true);
+        }
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
@@ -791,12 +800,10 @@ class GapApiController extends Controller
 
     public function stos(GapSto $gap_stos, Request $request)
     {
-        $sortFieldInput = $request->input('sort_field', 'branch_code');
+        $sortFieldInput = $request->input('sort_field', 'id');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $gap_stos->select('gap_stos.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
-            ->join('branches', 'branches.id', 'gap_stos.branch_id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        $query = $gap_stos->select('gap_stos.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
 
@@ -804,16 +811,7 @@ class GapApiController extends Controller
 
 
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
-        }
 
 
         if (!is_null($searchInput)) {
@@ -834,5 +832,71 @@ class GapApiController extends Controller
 
 
         return StoResource::collection($query);
+    }
+    public function hasil_stos(GapHasilSto $gap_hasil_sto, Request $request, $gap_sto_id)
+    {
+        $sortFieldInput = $request->input('sort_field', 'id');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_hasil_sto->select('gap_hasil_stos.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'branches.id', 'gap_hasil_stos.branch_id')
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        $perpage = $request->perpage ?? 15;
+
+
+        $input = $request->all();
+        if (isset($input['branch_types_type_name'])) {
+            $type_name = $input['branch_types_type_name'];
+            $query = $query->whereHas('branch_types', function (Builder $q) use ($type_name) {
+                if (in_array('KF', $type_name)) {
+                    return $q->whereIn('type_name', ['KF', 'KFNO']);
+                }
+                return $q->whereIn('type_name', $type_name);
+            });
+        }
+
+        $query = $query->where('gap_sto_id', $gap_sto_id);
+
+        if (isset($request->layanan_atm)) {
+            $query = $query->whereIn('layanan_atm', $request->layanan_atm);
+        }
+
+        if (!is_null($request->branch_id)) {
+            $query = $query->where('branches.id', $request->branch_id);
+        }
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('branch_code', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery)
+                    ->orWhere('address', 'like', $searchQuery);
+            });
+        }
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->get();
+
+        $collection = $query->groupBy('branch_id')->map(function ($hasil_stos, $branch_id) {
+            $branch = Branch::find($branch_id);
+            $latestPeriode = $branch->gap_assets->max('periode');
+            $hasil_sto = $hasil_stos->first();
+            return [
+                'id' => $branch->id,
+                'branch_name' => $branch->branch_name,
+                'branch_code' => $branch->branch_code,
+                'type_name' => $branch->branch_types->type_name,
+                'slug' => $branch->slug,
+                'depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
+                'non_depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
+                'total_remarked' => $branch->gap_assets->where('periode', $latestPeriode)->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->count(),
+                'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
+                'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
+            ];
+        });
+
+        return PaginationHelper::paginate($collection, $perpage);
     }
 }

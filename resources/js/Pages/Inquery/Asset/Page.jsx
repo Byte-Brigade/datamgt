@@ -1,3 +1,4 @@
+import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
@@ -38,9 +39,9 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
   } = useFormContext();
 
   const toggleModalCreate = (id) => {
-    setInitialData({ disclaimer: null, branch_code: null });
-    setUrl("gap.stos.store");
-    form.setData("branch_code", id);
+    setInitialData({ disclaimer: null });
+    setUrl("gap.stos.store.hasil_sto");
+    setId(id);
 
     setModalOpen((prevModalOpen) => {
       const updatedModalOpen = {
@@ -98,124 +99,110 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "January",
       field: "january",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.january.toLocaleString('id-ID')
+      render: (data) => data.january.toLocaleString("id-ID"),
     },
     {
       name: "February",
       field: "february",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.february.toLocaleString('id-ID')
+      render: (data) => data.february.toLocaleString("id-ID"),
     },
     {
       name: "March",
       field: "march",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.march.toLocaleString('id-ID')
+      render: (data) => data.march.toLocaleString("id-ID"),
     },
     {
       name: "April",
       field: "April",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.april.toLocaleString('id-ID')
+      render: (data) => data.april.toLocaleString("id-ID"),
     },
     {
       name: "May",
       field: "may",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.may.toLocaleString('id-ID')
+      render: (data) => data.may.toLocaleString("id-ID"),
     },
     {
       name: "June",
       field: "june",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.june.toLocaleString('id-ID')
+      render: (data) => data.june.toLocaleString("id-ID"),
     },
     {
       name: "July",
       field: "july",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.july.toLocaleString('id-ID')
+      render: (data) => data.july.toLocaleString("id-ID"),
     },
     {
       name: "August",
       field: "august",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.august.toLocaleString('id-ID')
+      render: (data) => data.august.toLocaleString("id-ID"),
     },
     {
       name: "September",
       field: "september",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.september.toLocaleString('id-ID')
+      render: (data) => data.september.toLocaleString("id-ID"),
     },
     {
       name: "October",
       field: "october",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.october.toLocaleString('id-ID')
+      render: (data) => data.october.toLocaleString("id-ID"),
     },
     {
       name: "November",
       field: "november",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.november.toLocaleString('id-ID')
+      render: (data) => data.november.toLocaleString("id-ID"),
     },
     {
       name: "December",
       field: "december",
       type: "custom",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
-      render: (data) =>
-        data.december.toLocaleString('id-ID')
+      render: (data) => data.december.toLocaleString("id-ID"),
     },
-
-
   ];
   const columnTonerQuantities = [
     {
@@ -234,82 +221,62 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "January",
       field: "january",
       agg: "sum",
-
-
     },
     {
       name: "February",
       field: "february",
       agg: "sum",
-
-
     },
     {
       name: "March",
       field: "march",
       agg: "sum",
-
-
     },
     {
       name: "April",
       field: "April",
       agg: "sum",
-
-
     },
     {
       name: "May",
       field: "may",
       agg: "sum",
-
-
     },
     {
       name: "June",
       field: "june",
       agg: "sum",
-
     },
     {
       name: "July",
       field: "july",
       agg: "sum",
-
     },
     {
       name: "August",
       field: "august",
       agg: "sum",
-
-
     },
     {
       name: "September",
       field: "september",
       agg: "sum",
-
     },
     {
       name: "October",
       field: "october",
       agg: "sum",
-
     },
     {
       name: "November",
       field: "november",
       agg: "sum",
-
     },
     {
       name: "December",
       field: "december",
       agg: "sum",
-
     },
-
-
   ];
 
   const columns = [
@@ -327,7 +294,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Tipe Cabang",
       field: "type_name",
-      filterable: true
+      filterable: true,
     },
     {
       name: "Item",
@@ -337,7 +304,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Nilai Perolehan",
       field: "nilai_perolehan.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       type: "custom",
@@ -348,7 +315,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Penyusutan",
       field: "penyusutan.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       format: "currency",
       type: "custom",
       render: (data) => {
@@ -358,7 +325,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     {
       name: "Net Book Value",
       field: "net_book_value.depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       format: "currency",
       type: "custom",
       render: (data) => {
@@ -369,12 +336,11 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       name: "Item",
       field: "item.non_depre",
       className: "text-center",
-
     },
     {
       name: "Nilai Perolehan",
       field: "nilai_perolehan_non_depre",
-      className: "text-right",
+      className: "text-right tabular-nums",
       agg: "sum",
       format: "currency",
       type: "custom",
@@ -402,7 +368,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       type: "custom",
       format: "currency",
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
-      className: "text-right",
+      className: "text-right tabular-nums",
     },
     {
       name: "Jatuh Tempo",
@@ -417,10 +383,12 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       field: "detail",
       className: "text-center",
       render: (data) => (
-        <Link href={route("gap.kdos.mobil", {
-          slug: data.branches.slug,
-          periode: data.periode,
-        })}>
+        <Link
+          href={route("gap.kdos.mobil", {
+            slug: data.branches.slug,
+            periode: data.periode,
+          })}
+        >
           <Button variant="outlined">Detail</Button>
         </Link>
       ),
@@ -433,7 +401,11 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.assets.detail", data.slug)}>
+        <Link
+          href={route("inquery.assets.sto", {
+            slug: data.slug,
+          })}
+        >
           {data.branch_name}
         </Link>
       ),
@@ -482,7 +454,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
           </a>
         ) : (
           <Button
-            onClick={(e) => toggleModalCreate(data.branch_code)}
+            onClick={(e) => toggleModalCreate(data.slug)}
             variant="outlined"
           >
             Submit
@@ -497,6 +469,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
+          <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="grid grid-cols-4 gap-4 mb-4">
             <CardMenu
               label="Asset"
@@ -543,11 +516,12 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
               parameters={{ branch_id: auth.user.branch_id }}
               headings={headings}
               bordered={true}
+              periodic={true}
               component={[
                 {
                   data: type_names,
-                  field: 'type_name'
-                }
+                  field: "type_name",
+                },
               ]}
             />
           )}
@@ -772,7 +746,9 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
             //   </div>
             // </div>
             <>
-              <h2 className="mt-2 text-lg font-semibold">Quantity Per Cabang Tahun {yearToner}</h2>
+              <h2 className="mt-2 text-lg font-semibold">
+                Quantity Per Cabang Tahun {yearToner}
+              </h2>
               <DataTable
                 columns={columnTonerQuantities}
                 fetchUrl={"/api/inquery/toners/quantity"}
@@ -780,14 +756,17 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                 bordered={true}
                 parameters={{ branch_id: auth.user.branch_id }}
               />
-              <h2 className="mt-2 text-lg font-semibold">Nominal Per Cabang Tahun {yearToner}</h2>
+              <h2 className="mt-2 text-lg font-semibold">
+                Nominal Per Cabang Tahun {yearToner}
+              </h2>
               <DataTable
                 columns={columnTonerCosts}
                 fetchUrl={"/api/inquery/toners/nominal"}
                 refreshUrl={isRefreshed}
                 bordered={true}
                 parameters={{ branch_id: auth.user.branch_id }}
-              /></>
+              />
+            </>
           )}
           {active === "kdo" && (
             <DataTable

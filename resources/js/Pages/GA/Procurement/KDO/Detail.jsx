@@ -172,8 +172,7 @@ export default function Detail({
       name: "Biaya Sewa",
       field: "biaya_sewa",
       type: "custom",
-
-      className: "text-center ",
+      className: "text-right tabular-nums",
       render: (data) => {
         return data.biaya_sewa
           ? data.biaya_sewa.toLocaleString("ID-id")

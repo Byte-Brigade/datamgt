@@ -34,12 +34,6 @@ class PksImport implements ToCollection, WithHeadingRow, WithValidation
                             'description' => $row['description'],
                             'contract_date' => $contract_date,
                             'contract_no' => $row['contract_no'],
-                            'durasi_kontrak' => $row['durasi_kontrak'],
-                            'awal' => $awal,
-                            'akhir' => $akhir,
-                            'tahun_akhir' => $tahun_akhir,
-                            'status' => $row['status'],
-
                         ],
                         [
                             'vendor' => $row['vendor'],
@@ -53,6 +47,10 @@ class PksImport implements ToCollection, WithHeadingRow, WithValidation
                             'akhir' => $akhir,
                             'tahun_akhir' => $tahun_akhir,
                             'status' => $row['status'],
+                            'renewal' => $row['renewal'],
+                            'end_contract' => $row['end_contract'] == 'YES' ? true : false,
+                            'need_update' => $row['need_update'] == 'YES' ? true : false,
+                            'on_progress' => $row['on_progress'] == 'YES' ? true : false,
                             'periode' => $periode,
                         ]
                     );

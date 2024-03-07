@@ -81,7 +81,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
       type: "custom",
       format: "currency",
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
-      className: "text-right",
+      className: "text-right tabular-nums",
     },
     {
       name: "Jatuh Tempo",
@@ -122,7 +122,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
       type: "custom",
       format: "currency",
       render: (data) => data.sewa_perbulan.toLocaleString("id-ID"),
-      className: "text-right",
+      className: "text-right tabular-nums",
     },
 
     {
