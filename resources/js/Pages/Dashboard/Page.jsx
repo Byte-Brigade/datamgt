@@ -62,7 +62,6 @@ export default function Dashboard({ auth, errors, sessions, data }) {
       field: "divisi_pembebanan",
       type: "custom",
       className: "cursor-pointer hover:text-blue-500",
-
       render: (data) => (
         <Link href={route("gap.perdins.detail", data.divisi_pembebanan)}>
           {data.divisi_pembebanan}
@@ -320,8 +319,9 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     {
       name: "Nama", field: "category", sortable: false,
       type: "custom",
+      className: "cursor-pointer hover:text-blue-500",
       render: (data) => (
-        <Link href={route("reporting.bros.category", data.category)}>
+        <Link href={route("inquery.bros.category", data.category)}>
           {data.category}
         </Link>
       ),

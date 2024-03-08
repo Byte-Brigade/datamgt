@@ -289,6 +289,10 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
                 id="import"
                 accept=".xlsx"
                 onChange={(e) => setData("file", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
             </div>
           </DialogBody>

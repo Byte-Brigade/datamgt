@@ -458,7 +458,6 @@ export default function Page({ auth, branches, sessions, type_names, status_bro 
                   </Option>
                 ))}
               </Select>
-
               <Input
                 label="Tanggal Pengesahan"
                 value={data.tgl_pengesahan || ""}
