@@ -84,6 +84,7 @@ Route::prefix('inquery')->name('inquery.')->group(function () {
     Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
     Route::get('kdos', [InqueryApiController::class, 'kdos']);
     Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
+    Route::get('stos/detail', [InqueryApiController::class, 'sto_details'])->name('stos.detail');
     Route::get('alihdayas', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
     Route::get('alihdayas/detail/{type}', [InqueryApiController::class, 'alihdaya_details'])->name('alihdayas.type');
     Route::get('alihdayas/branch', [InqueryApiController::class, 'alihdaya_summary'])->name('alihdayas.summary');

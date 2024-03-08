@@ -66,17 +66,6 @@ class GapApiController extends Controller
                     ->orWhere('branch_name', 'like', $searchQuery);
             });
         }
-
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
-
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
-        }
         if ($perpage == "All") {
             $perpage = $query->count();
         }
@@ -885,7 +874,6 @@ class GapApiController extends Controller
 
         $collection = $query->groupBy('branch_id')->map(function ($hasil_stos, $branch_id) {
             $branch = Branch::find($branch_id);
-            $latestPeriode = $branch->gap_assets->max('periode');
             $hasil_sto = $hasil_stos->first();
             return [
                 'id' => $branch->id,
@@ -893,9 +881,9 @@ class GapApiController extends Controller
                 'branch_code' => $branch->branch_code,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
-                'depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
-                'non_depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
-                'total_remarked' => $branch->gap_assets->where('periode', $latestPeriode)->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('periode', $latestPeriode)->count(),
+                'depre' => $branch->gap_assets->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('category', 'Depre')->count(),
+                'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('category', 'Non-Depre')->count(),
+                'total_remarked' => $branch->gap_assets->whereNotNull('remark')->count() . '/' . $branch->gap_assets->count(),
                 'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
                 'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
             ];

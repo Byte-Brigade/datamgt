@@ -6,6 +6,7 @@ use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AlihDayaResource;
 use App\Http\Resources\Inquery\AssetsResource;
+use App\Http\Resources\Inquery\AssetSTOResource;
 use App\Http\Resources\Inquery\BranchResource;
 use App\Http\Resources\Inquery\LicensesResource;
 use App\Http\Resources\Inquery\StoResource;
@@ -222,15 +223,14 @@ class InqueryApiController extends Controller
 
         $collections = $query->map(function ($branch) {
 
-            $latestPeriode = $branch->gap_assets->max('periode');
 
             return [
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'item' => [
-                    'depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
-                    'non_depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->count(),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->count(),
 
                 ],
                 'nilai_perolehan' => [
@@ -296,6 +296,49 @@ class InqueryApiController extends Controller
         $query = $query->paginate($perpage);
 
         return StoResource::collection($query);
+    }
+
+    public function sto_details(GapAsset $gap_asset, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_asset->select('gap_assets.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'gap_assets.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+        if (!is_null($request->category)) {
+            $query = $query->where('category', $request->category);
+        }
+
+        // if (isset($request->category)) {
+        //     $query = $query->whereIn('category', $request->category);
+        // }
+
+        if (isset($request->major_category)) {
+            $query = $query->whereIn('major_category', $request->major_category);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('asset_number', 'like', $searchQuery)
+                    ->orWhere('category', 'like', $searchQuery)
+                    ->orWhere('asset_description', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery);
+            });
+        }
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return AssetSTOResource::collection($query);
     }
 
     public function licenses(Branch $branch, Request $request)

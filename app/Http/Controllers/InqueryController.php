@@ -192,7 +192,7 @@ class InqueryController extends Controller
                         if (!is_null($value)) {
 
                             GapAssetDetail::create([
-                                'gap_asset_id' => $gapAsset->id,
+                                'asset_number' => $gapAsset->asset_number,
                                 'status' => $value,
                                 'semester' => $sto->semester,
                                 'periode' => $sto->periode,
