@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('gap_assets', function (Blueprint $table) {
             $table->unique('asset_number','asset_id');
-            // $table->dropColumn('periode');
+            $table->dropColumn('periode');
         });
     }
 
@@ -28,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('gap_assets', function (Blueprint $table) {
             $table->dropUnique('asset_id');
+            $table->date('periode')->nullable();
         });
     }
 };
