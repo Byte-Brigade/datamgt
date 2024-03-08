@@ -8,7 +8,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -142,17 +142,6 @@ export default function Detail({ auth, sessions, status, action }) {
     //   name: "Status",
     //   field: "status",
     // },
-
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.pks.detail", data.vendor)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
 
   const columns = status == "AKTIF" ? columnsAktif : columnsOnProgress
@@ -229,6 +218,14 @@ export default function Detail({ auth, sessions, status, action }) {
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
+  const page = usePage()
+  console.log(page)
+
+  let title = page.props.status
+  if (page.props.action) {
+    title = `${page.props.status} | ${page.props.action.split('_').join(' ').toUpperCase()}`
+  }
+
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | PKS" />
@@ -236,6 +233,9 @@ export default function Detail({ auth, sessions, status, action }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <h2 className="text-xl font-semibold text-center">
+            {title}
+          </h2>
           {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)

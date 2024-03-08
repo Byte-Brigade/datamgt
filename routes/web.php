@@ -69,34 +69,34 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/files/download/{id}', [FileController::class, 'download'])->name('files.download');
     Route::delete('/files/delete/{id}', [FileController::class, 'delete'])->name('files.delete');
 
-    Route::prefix('/inquery')->group(function () {
+    Route::prefix('/inquery')->name('inquery.')->group(function () {
         Route::redirect('/', '/inquery/branch');
-        Route::get('/branch', [InqueryController::class, 'branch'])->name('inquery.branch');
-        Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
-        Route::get('/staff', [InqueryController::class, 'staff'])->name('inquery.staff');
+        Route::get('/branch', [InqueryController::class, 'branch'])->name('branch');
+        Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
+        Route::get('/staff', [InqueryController::class, 'staff'])->name('staff');
 
         Route::middleware(['check.slug'])->group(function () {
-            Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('inquery.branch.detail');
-            Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('inquery.assets.detail');
-            Route::get('/assets/sto/{slug}', [InqueryController::class, 'sto_detail'])->name('inquery.assets.sto');
-            Route::get('/staff/detail/{slug}', [InqueryController::class, 'staff_detail'])->name('inquery.staff.detail');
+            Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('branch.detail');
+            Route::get('/assets/{slug}', [InqueryController::class, 'asset_detail'])->name('assets.detail');
+            Route::get('/assets/sto/{slug}', [InqueryController::class, 'sto_detail'])->name('assets.sto');
+            Route::get('/staff/{slug}', [InqueryController::class, 'staff_detail'])->name('staff.detail');
         });
-        Route::get('/assets', [InqueryController::class, 'assets'])->name('inquery.assets');
-        Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('inquery.assets.remark');
-        Route::get('/scorings', [InqueryController::class, 'scorings'])->name('inquery.scorings');
-        Route::get('/licenses', [InqueryController::class, 'licenses'])->name('inquery.licenses');
+        Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
+        Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('assets.remark');
+        Route::get('/scorings', [InqueryController::class, 'scorings'])->name('scorings');
+        Route::get('/licenses', [InqueryController::class, 'licenses'])->name('licenses');
 
         // Non Cabang
-        Route::get('/bros', [ReportController::class, 'bros'])->name('inquery.bros');
+        Route::get('/bros', [ReportController::class, 'bros'])->name('bros');
         Route::get('/bros/export', [ReportController::class, 'bro_export'])->name('bros.export');
         Route::get('/bros/{category}', [ReportController::class, 'bro_category'])->name('bros.category');
 
-        Route::get('/alihdayas', [InqueryController::class, 'alihdaya_summary'])->name('inquery.alihdayas.summary');
-        Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('inquery.alihdayas.branch');
-        Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail'])->name('inquery.alihdayas.detail');
+        Route::get('/alihdayas', [InqueryController::class, 'alihdaya_summary'])->name('alihdayas.summary');
+        Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('alihdayas.branch');
+        Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail'])->name('alihdayas.detail');
         Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
 
-        Route::get('/vendor', [ReportController::class, 'vendor'])->name('inquery.vendor');
+        Route::get('/vendor', [ReportController::class, 'vendor'])->name('vendor');
     });
 
     Route::get('/kdos/mobil/{slug}', [GapKdoController::class, 'kdo_mobil'])->name('gap.kdos.mobil');

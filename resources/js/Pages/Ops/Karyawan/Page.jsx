@@ -79,7 +79,12 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
   }, []);
 
   const columns = [
-    { name: "Nama Cabang", field: "branches.branch_name", sortable: true },
+    {
+      name: "Cabang",
+      field: "branches.branch_name",
+      sortable: true,
+      filterable: true,
+    },
     {
       name: "Posisi",
       field: "employee_positions.position_name",
@@ -276,6 +281,12 @@ export default function Karyawan({ auth, branches, positions, sessions }) {
                 ),
                 field: "employee_positions.position_name",
               },
+              {
+                data: Array.from(
+                  new Set(branches.map((branch) => branch.branch_name))
+                ),
+                field: "branches.branch_name"
+              }
             ]}
           />
         </div>

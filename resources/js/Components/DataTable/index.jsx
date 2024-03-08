@@ -7,6 +7,7 @@ import {
   Checkbox,
   Collapse,
   IconButton,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
@@ -69,7 +70,8 @@ export default function DataTable({
     isRefreshed,
     selected,
     setSelected,
-    filterData, setFilterData
+    filterData,
+    setFilterData,
   } = useFormContext();
 
   // filters
@@ -80,13 +82,13 @@ export default function DataTable({
 
   const [dateRange, setDateRange] = useState({
     startDate: null,
-    endDate: null
+    endDate: null,
   });
 
   const handleDateChange = (newValue) => {
     console.log("newValue:", newValue);
     setDateRange(newValue);
-  }
+  };
 
   const handleSort = (column) => {
     if (columns === sortColumn) {
@@ -244,10 +246,6 @@ export default function DataTable({
     return formattedDate;
   };
 
-
-
-
-
   useEffect(() => {
     fetchData();
     setUrl(submitUrl);
@@ -261,7 +259,7 @@ export default function DataTable({
     clearFilter,
     isRefreshed,
     configuration,
-    dateRange
+    dateRange,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -373,60 +371,65 @@ export default function DataTable({
       {/* <Datepicker value={value} onChange={handleValueChange} /> */}
       <div id="filters">
         <Collapse open={open}>
-          <div className="flex justify-between w-full mx-auto my-2">
+          <div className="w-full mx-auto my-2 bg-slate-200 p-2 rounded-lg shadow-inner">
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3">Category</span>
+              <span className="ml-3 font-medium text-lg">Filters</span>
               {columns
                 .filter((column, index) => column.filterable)
                 .map((column, id) => {
                   if (column.name !== "Action") {
                     return (
-                      <Checkbox
-                        label={column.name}
-                        key={id}
-                        checked={filters.includes(column.field)}
-                        value={column.field}
-                        onChange={(e) =>
-                          handleCheckbox(
-                            e.target.value,
-                            column.component,
-                            column.field
-                          )
-                        }
-                      />
+                      <>
+                        <Checkbox
+                          label={column.name}
+                          key={id}
+                          checked={filters.includes(column.field)}
+                          value={column.field}
+                          onChange={(e) =>
+                            handleCheckbox(
+                              e.target.value,
+                              column.component,
+                              column.field
+                            )
+                          }
+                        />
+                        {component.length > 0 &&
+                          filters.includes(column.field) &&
+                          component.map(({ data, field }, i) =>
+                            column.field == field ? (
+                              <div className="ml-4 grid grid-cols-4">
+                                {data.map((item, index) => (
+                                  <div>
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        handleCheckboxData(
+                                          e.target.value,
+                                          field
+                                        )
+                                      }
+                                      checked={
+                                        filterData[field]
+                                          ? filterData[field].includes(item)
+                                          : false
+                                      }
+                                      key={index}
+                                      value={item}
+                                      label={item}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          )}
+                      </>
                     );
                   }
                 })}
             </div>
-            <div className="flex flex-wrap">
-              {columns
-                .filter((column) => column.filterable)
-                .map((column, i) => {
-                  if (component.length > 0 && filters.includes(column.field)) {
-                    return component.map(({ data, field }, i) =>
-                      column.field == field
-                        ? data.map((item, index) => (
-                          <Checkbox
-                            onChange={(e) =>
-                              handleCheckboxData(e.target.value, field)
-                            }
-                            checked={
-                              filterData[field]
-                                ? filterData[field].includes(item)
-                                : false
-                            }
-                            label={item}
-                            key={index}
-                            className={column.className}
-                            value={item}
-                          />
-                        ))
-                        : ""
-                    );
-                  }
-                })}
-            </div>
-            <div className="flex flex-col justify-center gap-y-2">
+
+            <div className="flex justify-end gap-x-2 mt-2">
               <Button size="sm" onClick={handleClearFilter}>
                 Clear
               </Button>
@@ -439,14 +442,18 @@ export default function DataTable({
       </div>
       <div id="settings">
         <Collapse open={openSetting}>
-          <div className="flex justify-between w-full mx-auto my-2">
+          <div className="flex justify-between w-full mx-auto my-2 bg-slate-200 p-2 rounded-lg shadow-inner">
             <div className="flex flex-col flex-wrap">
-              <span className="ml-3">Settings</span>
+              <span className="ml-3 font-medium text-lg">Settings</span>
               <div className="flex flex-wrap">
                 <Checkbox
-                  label="Freeze Header"
                   checked={fixedTable}
                   onChange={handleTableSettings}
+                  label={
+                    <Typography color="black" className="font-medium">
+                      Freeze Header
+                    </Typography>
+                  }
                 />
               </div>
             </div>
@@ -457,16 +464,18 @@ export default function DataTable({
         <form onSubmit={handleFormSubmit}>{children}</form>
       </div>
       <div
-        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${fixedTable ? "max-h-96" : "h-full"
-          }`}
+        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
+          fixedTable ? "max-h-96" : "h-full"
+        }`}
       >
         <table className={`${className} text-sm leading-3 bg-white z-0`}>
           <thead className="sticky top-0  border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr
-                className={`[&>th]:p-2 bg-slate-100 ${bordered &&
+                className={`[&>th]:p-2 bg-slate-100 ${
+                  bordered &&
                   "divide-x-2 divide-slate-200 border-b-2 border-slate-200"
-                  }`}
+                }`}
               >
                 {headings.map((column, i) => (
                   <th key={i} rowSpan={column.rowSpan} colSpan={column.colSpan}>
@@ -477,8 +486,9 @@ export default function DataTable({
             )}
 
             <tr
-              className={`[&>th]:p-2 bg-slate-100 ${bordered && "divide-x-2 divide-slate-200"
-                }`}
+              className={`[&>th]:p-2 bg-slate-100 ${
+                bordered && "divide-x-2 divide-slate-200"
+              }`}
             >
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
@@ -498,18 +508,20 @@ export default function DataTable({
                         {column.name}
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
-                            className={`${sortOrder === SORT_ASC &&
+                            className={`${
+                              sortOrder === SORT_ASC &&
                               column.field === sortColumn
-                              ? "text-slate-900"
-                              : "text-gray-400"
-                              } w-3 h-3`}
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
                           />
                           <ChevronDownIcon
-                            className={`${sortOrder === SORT_DESC &&
+                            className={`${
+                              sortOrder === SORT_DESC &&
                               column.field === sortColumn
-                              ? "text-slate-900"
-                              : "text-gray-400"
-                              } w-3 h-3`}
+                                ? "text-slate-900"
+                                : "text-gray-400"
+                            } w-3 h-3`}
                           />
                         </span>
                       </div>
@@ -545,10 +557,11 @@ export default function DataTable({
                 {data.map((data, index) => (
                   <TableRow
                     key={index}
-                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
-                      }`}
-                    isSelected={selectedRows.includes(index)}
-                    onClick={(event) => handleRowClick(event, index)}
+                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${
+                      bordered && "divide-x-2 divide-slate-200"
+                    }`}
+                    // isSelected={selectedRows.includes(index)}
+                    // onClick={(event) => handleRowClick(event, index)}
                   >
                     <td className="text-center">
                       {Object.keys(pagination).length === 0 ? (
@@ -560,12 +573,13 @@ export default function DataTable({
                     {columns.map((column, id) =>
                       column.field ? (
                         column.field === "action" ||
-                          column.field === "detail" ? (
+                        column.field === "detail" ? (
                           <td
                             key={column.field}
                             colSpan={column.colSpan}
-                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
-                              }`}
+                            className={`${column.className} ${
+                              column.freeze && "sticky left-0 bg-white"
+                            }`}
                           >
                             {column.render(data)}
                           </td>
@@ -588,16 +602,17 @@ export default function DataTable({
                                 : column.field
                             }
                             colSpan={column.colSpan}
-                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
-                              }`}
+                            className={`${column.className} ${
+                              column.freeze && "sticky left-0 bg-white"
+                            }`}
                           >
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                                ? column.render(data) && column.render(data) != 0
-                                  ? column.render(data)
-                                  : "-"
-                                : getNestedValue(data, column.field) || "-"}
+                              ? column.render(data) && column.render(data) != 0
+                                ? column.render(data)
+                                : "-"
+                              : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (
@@ -614,20 +629,21 @@ export default function DataTable({
                 ))}
                 {columns.filter((column) => column.agg !== undefined).length >
                   0 && (
-                    <tr
-                      className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
-                        }`}
-                    >
-                      <td className="font-bold text-center">Subtotal</td>
-                      {columns.map((column, index) =>
-                        column.agg === "sum" ? (
-                          <td
-                            key={index}
-                            className={`font-bold ${column.className}`}
-                          >
-                            {column.type === "custom"
-                              ? column.format === "currency"
-                                ? data
+                  <tr
+                    className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${
+                      bordered && "divide-x-2 divide-slate-200"
+                    }`}
+                  >
+                    <td className="font-bold text-center">Subtotal</td>
+                    {columns.map((column, index) =>
+                      column.agg === "sum" ? (
+                        <td
+                          key={index}
+                          className={`font-bold ${column.className}`}
+                        >
+                          {column.type === "custom"
+                            ? column.format === "currency"
+                              ? data
                                   .reduce((total, acc) => {
                                     return (
                                       total +
@@ -638,7 +654,7 @@ export default function DataTable({
                                     );
                                   }, 0)
                                   .toLocaleString("id-ID")
-                                : data.reduce((total, acc) => {
+                              : data.reduce((total, acc) => {
                                   return (
                                     total +
                                     parseInt(
@@ -647,29 +663,29 @@ export default function DataTable({
                                     )
                                   );
                                 }, 0)
-                              : data.reduce((total, acc) => {
+                            : data.reduce((total, acc) => {
                                 return total + acc[column.field];
                               }, 0)}
-                          </td>
-                        ) : column.agg === "count" ? (
-                          <td
-                            key={index}
-                            className={`font-bold ${column.className}`}
-                          >
-                            {column.type === "custom"
-                              ? data.reduce((total, acc) => {
+                        </td>
+                      ) : column.agg === "count" ? (
+                        <td
+                          key={index}
+                          className={`font-bold ${column.className}`}
+                        >
+                          {column.type === "custom"
+                            ? data.reduce((total, acc) => {
                                 return total + parseInt(column.render(acc));
                               }, 0)
-                              : data.reduce((total, acc) => {
+                            : data.reduce((total, acc) => {
                                 return total + acc[column.field].length;
                               }, 0)}
-                          </td>
-                        ) : (
-                          <td></td>
-                        )
-                      )}
-                    </tr>
-                  )}
+                        </td>
+                      ) : (
+                        <td></td>
+                      )
+                    )}
+                  </tr>
+                )}
               </>
             )}
           </tbody>

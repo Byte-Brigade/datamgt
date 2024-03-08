@@ -106,7 +106,7 @@ export default function Cabang({
             color="blue"
             onClick={() => {
               toggleModalUpload();
-              setFileType("file_ojk")
+              setFileType("file_ojk");
               setData(data);
             }}
           >
@@ -140,7 +140,7 @@ export default function Cabang({
             color="blue"
             onClick={() => {
               toggleModalUpload();
-              setFileType("photo")
+              setFileType("photo");
               setData(data);
             }}
           >
@@ -312,9 +312,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|branch_ops", auth) &&
-                ["can edit", "can delete"].some((permission) =>
-                  auth.permissions.includes(permission)
-                )
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -331,8 +331,8 @@ export default function Cabang({
                 data: Array.from(
                   new Set(
                     branch_types
-                      .filter((type) =>
-                        !["SFI", "KF", "KP"].includes(type.type_name)
+                      .filter(
+                        (type) => !["SFI", "KF", "KP"].includes(type.type_name)
                       )
                       .map((type) => type.type_name)
                   )
@@ -342,7 +342,8 @@ export default function Cabang({
               {
                 data: Array.from(
                   new Set(
-                    branches.filter((branch) => branch.area !== null)
+                    branches
+                      .filter((branch) => branch.area !== null)
                       .map((branch) => branch.area)
                   )
                 ),
@@ -378,6 +379,10 @@ export default function Cabang({
                 id="import"
                 accept=".xlsx"
                 onChange={(e) => setData("file", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
             </div>
           </DialogBody>
@@ -415,13 +420,21 @@ export default function Cabang({
             <div className="flex flex-col gap-y-4">
               <Input
                 variant="standard"
-                label={fileType === "photo" ? "Upload Photo Tampilan Gedung" : "Upload Lampiran File OJK (.pdf)"}
+                label={
+                  fileType === "photo"
+                    ? "Upload Photo Tampilan Gedung"
+                    : "Upload Lampiran File OJK (.pdf)"
+                }
                 disabled={processing}
                 type="file"
                 name="upload"
                 id="upload"
                 accept={fileType === "photo" ? ".jpg,.png,.jpeg" : ".pdf"}
                 onChange={(e) => setData(fileType, e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
             </div>
           </DialogBody>
@@ -553,6 +566,10 @@ export default function Cabang({
                 id="upload"
                 accept=".pdf"
                 onChange={(e) => setData("file_ojk", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>
@@ -677,6 +694,10 @@ export default function Cabang({
                 id="upload"
                 accept=".pdf"
                 onChange={(e) => setData("file_ojk", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-light">Fasilitas ATM</span>

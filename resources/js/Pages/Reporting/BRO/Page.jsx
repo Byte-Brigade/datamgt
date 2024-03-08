@@ -68,8 +68,9 @@ export default function Branch({ auth, sessions, branch_types }) {
     {
       name: "Nama", field: "category", sortable: false,
       type: "custom",
+      className: "cursor-pointer hover:text-blue-500", 
       render: (data) => (
-        <Link href={route("bros.category", data.category)}>
+        <Link href={route("inquery.bros.category", data.category)}>
           {data.category}
         </Link>
       ),
