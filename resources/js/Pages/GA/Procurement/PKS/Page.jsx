@@ -69,18 +69,40 @@ export default function Page({ auth, sessions }) {
     {
       name: "End Contract",
       field: "end_contract",
+      className: "cursor-pointer hover:text-blue-500",
+      type: "custom",
+      render: (data) =>
+        data.end_contract > 0 ? (
+          <Link
+            href={route("gap.pks.detail", {
+              status: data.status,
+              action: "end_contract",
+            })}
+          >
+            {data.end_contract}
+          </Link>
+        ) : (
+          data.end_contract
+        ),
     },
     {
       name: "Need Update",
       field: "need_update",
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
-      render: (data) => (
-        <Link href={route('gap.pks.detail', {
-          status: data.status,
-          action: "need_update",
-        })}>{data.need_update}</Link>
-      )
+      render: (data) =>
+        data.need_update > 0 ? (
+          <Link
+            href={route("gap.pks.detail", {
+              status: data.status,
+              action: "need_update",
+            })}
+          >
+            {data.need_update}
+          </Link>
+        ) : (
+          data.need_update
+        ),
     },
     {
       name: "On Progress",
@@ -91,17 +113,6 @@ export default function Page({ auth, sessions }) {
       field: "jumlah_vendor",
       agg: "sum",
     },
-
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.pks.detail", data.vendor)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -213,9 +224,9 @@ export default function Page({ auth, sessions }) {
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|procurement", auth) &&
-                ["can edit", "can delete"].some((permission) =>
-                  auth.permissions.includes(permission)
-                )
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
                 : true
             )}
             fetchUrl={"/api/gap/pks"}
@@ -250,6 +261,10 @@ export default function Page({ auth, sessions }) {
                 id="import"
                 accept=".xlsx"
                 onChange={(e) => setData("file", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
               />
             </div>
           </DialogBody>
