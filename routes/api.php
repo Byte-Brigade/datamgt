@@ -91,7 +91,8 @@ Route::prefix('inquery')->name('inquery.')->group(function () {
     Route::get('alihdayas/branch/{slug}', [InqueryApiController::class, 'alihdayas_branch'])->name('alihdayas.branch');
     Route::get('alihdayas/branch/{slug}/detail', [InqueryApiController::class, 'alihdaya_details_branch'])->name('alihdayas.branch.detail');
 
-    Route::get('toners/{type}', [InqueryApiController::class, 'toners'])->name('toners');
+    Route::get('toners', [InqueryApiController::class, 'toners'])->name('toners');
+    Route::get('toners/detail/{slug}', [InqueryApiController::class, 'toner_details'])->name('toners');
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 

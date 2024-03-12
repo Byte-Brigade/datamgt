@@ -223,6 +223,13 @@ class InqueryController extends Controller
             'branch' => $branch,
         ]);
     }
+    public function toner_detail(Request $request, $slug)
+    {
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+        return Inertia::render('Inquery/Toner/Detail', [
+            'branch' => $branch,
+        ]);
+    }
 
     public function sto_detail(Request $request, $slug)
     {
