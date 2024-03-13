@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('branch');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
         Route::get('/staff', [InqueryController::class, 'staff'])->name('staff');
+        Route::get('/toner/detail/{slug}', [InqueryController::class, 'toner_detail'])->name('toners.detail');
 
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('branch.detail');

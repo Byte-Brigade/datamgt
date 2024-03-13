@@ -6,10 +6,12 @@ use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AlihDayaResource;
 use App\Http\Resources\Inquery\AssetsResource;
+use App\Http\Resources\Inquery\AssetSTOResource;
 use App\Http\Resources\Inquery\BranchResource;
 use App\Http\Resources\Inquery\LicensesResource;
 use App\Http\Resources\Inquery\StoResource;
 use App\Http\Resources\Ops\EmployeeResource;
+use App\Http\Resources\TonerResource;
 use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\GapAlihDaya;
@@ -222,15 +224,14 @@ class InqueryApiController extends Controller
 
         $collections = $query->map(function ($branch) {
 
-            $latestPeriode = $branch->gap_assets->max('periode');
 
             return [
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'item' => [
-                    'depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
-                    'non_depre' => $branch->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
+                    'depre' => $branch->gap_assets->where('category', 'Depre')->count(),
+                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->count(),
 
                 ],
                 'nilai_perolehan' => [
@@ -296,6 +297,49 @@ class InqueryApiController extends Controller
         $query = $query->paginate($perpage);
 
         return StoResource::collection($query);
+    }
+
+    public function sto_details(GapAsset $gap_asset, Request $request)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $query = $gap_asset->select('gap_assets.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'gap_assets.branch_id', 'branches.id');
+
+        $perpage = $request->perpage ?? 10;
+
+        if (!is_null($request->branch_code)) {
+            $query = $query->where('branch_code', $request->branch_code);
+        }
+        if (!is_null($request->category)) {
+            $query = $query->where('category', $request->category);
+        }
+
+        // if (isset($request->category)) {
+        //     $query = $query->whereIn('category', $request->category);
+        // }
+
+        if (isset($request->major_category)) {
+            $query = $query->whereIn('major_category', $request->major_category);
+        }
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($query) use ($searchQuery) {
+                $query->where('asset_number', 'like', $searchQuery)
+                    ->orWhere('category', 'like', $searchQuery)
+                    ->orWhere('asset_description', 'like', $searchQuery)
+                    ->orWhere('branch_name', 'like', $searchQuery);
+            });
+        }
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return AssetSTOResource::collection($query);
     }
 
     public function licenses(Branch $branch, Request $request)
@@ -393,7 +437,7 @@ class InqueryApiController extends Controller
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
 
-    public function toners(GapToner $gap_toner, Request $request, $type)
+    public function toners(GapToner $gap_toner, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
@@ -435,7 +479,7 @@ class InqueryApiController extends Controller
             $query->where('periode', $latestPeriode);
         }
         $collections = $query->get();
-        if ($type == 'quantity') {
+        if (!is_null($request->type) && $request->type == 'quantity') {
             $collections = $collections->groupBy('branch_id')->map(function ($toners, $branch_id) {
                 $branch = Branch::find($branch_id);
                 $minPeriode = Carbon::parse($toners->min('idecice_date'))->year;
@@ -457,7 +501,7 @@ class InqueryApiController extends Controller
                     'december' => $toners->whereBetween('idecice_date', [$minPeriode . '-12-01', $maxPeriode . '-12-31'])->sum('quantity'),
                 ];
             });
-        } else if ($type == 'nominal') {
+        } else if (!is_null($request->type) && $request->type == 'nominal') {
             $collections = $collections->groupBy('branch_id')->map(function ($toners, $branch_id) {
                 $branch = Branch::find($branch_id);
                 $minPeriode = Carbon::parse($toners->min('idecice_date'))->year;
@@ -493,6 +537,49 @@ class InqueryApiController extends Controller
         }
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
+    }
+
+    public function toner_details(GapToner $gap_toner, Request $request, $slug)
+    {
+        $sortFieldInput = $request->input('sort_field') ?? 'branch_id';
+        $sortOrder = $request->input('sort_order', 'asc');
+        $searchInput = $request->search;
+        $branch = Branch::where('slug', $slug)->first();
+        $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
+        $perpage = $request->perpage ?? 15;
+
+
+        if (!is_null($searchInput)) {
+            $searchQuery = "%$searchInput%";
+            $query = $query->where(function ($q) use ($searchQuery) {
+                return $q->where('cartridge_order', 'like', $searchQuery)
+                    ->orWhere('invoice', 'like', $searchQuery);
+            });
+        }
+        if (!is_null($request->startDate)) {
+            $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
+        }
+
+
+        if (!is_null($request->month) && !is_null($request->year)) {
+            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
+
+            // Create a Carbon instance using the year and month
+            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
+            $query->where('periode', $carbonInstance);
+        } else {
+            $latestPeriode = $query->max('periode');
+            $query->where('periode', $latestPeriode);
+        }
+
+
+        if ($perpage == "All") {
+            $perpage = $query->count();
+        }
+
+        $query = $query->paginate($perpage);
+
+        return TonerResource::collection($query);
     }
 
     public function alihdaya_summary(Branch $branch, Request $request)

@@ -169,7 +169,7 @@ export default function Detail({ auth, branch, sessions }) {
           {active == "depre" && (
             <DataTable
               columns={columns}
-              fetchUrl={`/api/gap/assets`}
+              fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
               submitUrl={`inquery.assets.remark`}
               parameters={{

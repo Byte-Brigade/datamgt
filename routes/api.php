@@ -84,13 +84,15 @@ Route::prefix('inquery')->name('inquery.')->group(function () {
     Route::get('licenses', [InqueryApiController::class, 'licenses'])->name('licenses');
     Route::get('kdos', [InqueryApiController::class, 'kdos']);
     Route::get('stos', [InqueryApiController::class, 'stos'])->name('stos');
+    Route::get('stos/detail', [InqueryApiController::class, 'sto_details'])->name('stos.detail');
     Route::get('alihdayas', [InqueryApiController::class, 'alihdayas'])->name('alihdayas');
     Route::get('alihdayas/detail/{type}', [InqueryApiController::class, 'alihdaya_details'])->name('alihdayas.type');
     Route::get('alihdayas/branch', [InqueryApiController::class, 'alihdaya_summary'])->name('alihdayas.summary');
     Route::get('alihdayas/branch/{slug}', [InqueryApiController::class, 'alihdayas_branch'])->name('alihdayas.branch');
     Route::get('alihdayas/branch/{slug}/detail', [InqueryApiController::class, 'alihdaya_details_branch'])->name('alihdayas.branch.detail');
 
-    Route::get('toners/{type}', [InqueryApiController::class, 'toners'])->name('toners');
+    Route::get('toners', [InqueryApiController::class, 'toners'])->name('toners');
+    Route::get('toners/detail/{slug}', [InqueryApiController::class, 'toner_details'])->name('toners');
 });
 Route::prefix('infra')->name('infra.')->group(function () {
 

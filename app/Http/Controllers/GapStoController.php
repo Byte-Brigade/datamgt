@@ -73,7 +73,7 @@ class GapStoController extends Controller
             $branch = Branch::with('gap_assets')->where('slug', $slug)->first();
             $fileName = $request->file('file')->getClientOriginalName();
             $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/', $fileName, ["disk" => 'public']);
-            $latestPeriode = $branch->gap_assets->max('periode');
+
             $periodeSto = GapSto::max('periode');
             $sto = GapSto::where('status', 'On Progress')->where('periode', $periodeSto)->first();
             if (isset($sto)) {
@@ -82,7 +82,7 @@ class GapStoController extends Controller
                     [
                         'branch_id' => $branch->id,
                         'gap_sto_id' => $sto->id,
-                        'remarked' => $branch->gap_assets->where('periode', $latestPeriode)->whereNotNull('remark')->count() == $branch->gap_assets->where('periode', $latestPeriode)->count() ? true : false,
+                        'remarked' => $branch->gap_assets->whereNotNull('remark')->count() == $branch->gap_assets->count() ? true : false,
                         'disclaimer' => $fileName,
                     ]
                 );

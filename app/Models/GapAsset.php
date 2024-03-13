@@ -26,7 +26,6 @@ class GapAsset extends Model
         'major_category',
         'depre_exp',
         'net_book_value',
-        'periode',
         'remark',
         'tgl_awal_susut',
         'tgl_akhir_susut'
@@ -46,11 +45,7 @@ class GapAsset extends Model
 
     public function gap_asset_details()
     {
-        return $this->hasMany(GapAssetDetail::class, 'gap_asset_id');
+        return $this->hasMany(GapAssetDetail::class, 'asset_number','asset_number');
     }
-
-
-
-
 
 }

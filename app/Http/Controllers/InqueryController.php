@@ -192,7 +192,7 @@ class InqueryController extends Controller
                         if (!is_null($value)) {
 
                             GapAssetDetail::create([
-                                'gap_asset_id' => $gapAsset->id,
+                                'asset_number' => $gapAsset->asset_number,
                                 'status' => $value,
                                 'semester' => $sto->semester,
                                 'periode' => $sto->periode,
@@ -220,6 +220,13 @@ class InqueryController extends Controller
     {
         $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
         return Inertia::render('Inquery/Asset/Detail', [
+            'branch' => $branch,
+        ]);
+    }
+    public function toner_detail(Request $request, $slug)
+    {
+        $branch = Branch::with('branch_types')->where('slug', $slug)->firstOrFail();
+        return Inertia::render('Inquery/Toner/Detail', [
             'branch' => $branch,
         ]);
     }

@@ -29,7 +29,10 @@ return new class extends Migration
     public function down()
     {
         Schema::table('gap_pks', function (Blueprint $table) {
-            //
+            $table->dropColumn('renewal');
+            $table->dropColumn('end_contract');
+            $table->dropColumn('need_update');
+            $table->dropColumn('on_progress');
         });
     }
 };
