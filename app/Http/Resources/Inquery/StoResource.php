@@ -32,15 +32,18 @@ class StoResource extends JsonResource
 
         $latestPeriode = GapSto::where('status', 'On Progress')->max('periode');
         $prevSTO = GapSto::where('status', 'Done')->latest()->first();
-
-        $gap_asset = GapAsset::where('branch_id',$this->branches->id)->whereHas('gap_asset_detailS', function($q) use($prevSTO) {
-            return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)
-            ->where('status','Ada');
-        })->get();
-
+        $gap_asset = null;
         if (!isset($prevSTO)) {
             $gap_asset = $this->branches->gap_assets();
+        } else {
+            $gap_asset = GapAsset::where('branch_id',$this->branches->id)->whereHas('gap_asset_detailS', function($q) use($prevSTO) {
+                return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)
+                ->where('status','Ada');
+            })->get();
         }
+
+
+
 
         return [
             'id' => $this->branches->id,
