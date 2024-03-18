@@ -5,9 +5,8 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -42,9 +41,7 @@ export default function Page({ auth, sessions, gap_sto_id }) {
     errors,
   } = useForm(initialData);
 
-  const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -53,7 +50,7 @@ export default function Page({ auth, sessions, gap_sto_id }) {
   const columns = [
     {
       name: "Cabang",
-      field: "branch_code",
+      field: "branch_name",
       className: "cursor-pointer hover:text-blue-500",
 
     },
@@ -104,7 +101,15 @@ export default function Page({ auth, sessions, gap_sto_id }) {
   ];
 
 
-
+  const handleSubmitExport = (e) => {
+    const { branch } = data;
+    e.preventDefault();
+    window.open(
+      route("gap.stos.hasil-sto.export", gap_sto_id),
+      "_self"
+    );
+    setIsModalExportOpen(!isModalExportOpen);
+  };
 
 
   const handleSubmitEdit = (e) => {
@@ -132,6 +137,9 @@ export default function Page({ auth, sessions, gap_sto_id }) {
 
 
 
+  const toggleModalExport = () => {
+    setIsModalExportOpen(!isModalExportOpen);
+  };
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -149,9 +157,11 @@ export default function Page({ auth, sessions, gap_sto_id }) {
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
 
-            <PrimaryButton >
-              Create Report
-            </PrimaryButton>
+            {auth.permissions.includes("can export") && (
+              <PrimaryButton onClick={toggleModalExport}>
+                Create Report
+              </PrimaryButton>
+            )}
           </div>
           <DataTable
             fetchUrl={`/api/gap/hasil_stos/${gap_sto_id}`}
@@ -159,11 +169,23 @@ export default function Page({ auth, sessions, gap_sto_id }) {
             isRefreshed={isRefreshed}
             bordered={true}
 
-            periodic={true}
           />
 
         </div>
       </div>
+
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          Export Hasil STO Periode
+        </div>
+      </Modal>
 
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">

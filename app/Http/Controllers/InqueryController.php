@@ -9,6 +9,7 @@ use App\Models\EmployeePosition;
 use App\Models\GapAsset;
 use App\Models\GapAssetDetail;
 use App\Models\GapDisnaker;
+use App\Models\GapHasilSto;
 use App\Models\GapKdo;
 use App\Models\GapScoring;
 use App\Models\GapSto;
@@ -173,48 +174,59 @@ class InqueryController extends Controller
         return Inertia::render('Inquery/Lisensi/Page');
     }
 
-    public function assets_remark(Request $request)
+    public function assets_remark(Request $request, $slug)
     {
         $remarks = $request->input('remark');
-        // Format the data for createMany
         DB::beginTransaction();
         try {
-            $periode = GapSto::max('periode');
-            $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
-            if(!is_null($remarks)) {
+            $sto = GapSto::where('status', 'On Progress')->first();
+            if (!is_null($remarks)) {
                 foreach ($remarks as $id => $value) {
-                    // Assuming you have a 'gap_assets' table
                     $gapAsset = GapAsset::find($id);
-                    if ($gapAsset && $sto) {
-                        // Update the 'remark' field based on the condition
-                        $gapAsset->remark = $value;
-                        $gapAsset->save();
-                        if (!is_null($value)) {
+                    if (!isset($sto)) {
+                        throw new Exception("STO belum dimulai");
+                    }
+                    if (!isset($gapAsset)) {
+                        throw new Exception("Asset tidak ditemukan");
+                    }
 
-                            GapAssetDetail::create([
-                                'asset_number' => $gapAsset->asset_number,
-                                'status' => $value,
-                                'semester' => $sto->semester,
-                                'periode' => $sto->periode,
-                                'sto' => false,
+                    if (!is_null($value)) {
+                        $branch = Branch::where('slug', $slug)->first();
+                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                        if (!isset($gap_hasil_sto)) {
+                            $gap_hasil_sto = GapHasilSto::create([
+                                'branch_id' => $branch->id,
+                                'gap_sto_id' => $sto->id,
+                                'remarked' => false,
                             ]);
                         }
+                        GapAssetDetail::updateOrCreate(
+                            [
+                                'asset_number' => $gapAsset->asset_number,
+                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                            ],
+                            [
+                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                'asset_number' => $gapAsset->asset_number,
+                                'semester' => $sto->semester,
+                                'periode' => $sto->periode,
+                                'status' => $value,
+                                'sto' => false,
+                            ]
+                        );
                     }
                 }
             } else {
                 throw new Exception("Data belum diremark");
             }
 
-
             DB::commit();
             return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return Redirect::back()->with(['status' => 'success', 'message' => 'Data gagal disimpan. ' . $th->getMessage()]);
+            return Redirect::back()->with(['status' => 'failed', 'message' => 'Data gagal disimpan. ' . $th->getMessage()]);
         }
     }
-
-
 
     public function asset_detail(Request $request, $slug)
     {

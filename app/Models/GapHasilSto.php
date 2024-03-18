@@ -18,6 +18,10 @@ class GapHasilSto extends Model
 
     public function gap_stos()
     {
-        $this->belongsTo(GapSto::class, 'gap_sto_id', 'id');
+        return $this->belongsTo(GapSto::class, 'gap_sto_id', 'id');
+    }
+    public function detail_assets()
+    {
+        return $this->hasMany(GapAssetDetail::class, 'gap_hasil_sto_id');
     }
 }

@@ -223,8 +223,6 @@ class InqueryApiController extends Controller
         // $query = $query->paginate($perpage);
 
         $collections = $query->map(function ($branch) {
-
-
             return [
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
@@ -274,6 +272,8 @@ class InqueryApiController extends Controller
             });
         }
 
+
+
         if (isset($request->layanan_atm)) {
             $query = $query->whereIn('layanan_atm', $request->layanan_atm);
         }
@@ -281,6 +281,7 @@ class InqueryApiController extends Controller
         if (!is_null($request->branch_id)) {
             $query = $query->where('branches.id', $request->branch_id);
         }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -316,9 +317,6 @@ class InqueryApiController extends Controller
             $query = $query->where('category', $request->category);
         }
 
-        // if (isset($request->category)) {
-        //     $query = $query->whereIn('category', $request->category);
-        // }
 
         if (isset($request->major_category)) {
             $query = $query->whereIn('major_category', $request->major_category);

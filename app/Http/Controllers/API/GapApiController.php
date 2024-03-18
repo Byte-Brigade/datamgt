@@ -870,9 +870,14 @@ class GapApiController extends Controller
             $perpage = $query->count();
         }
 
+        $periode = GapSto::max('periode');
+        if (!is_null($request->tahun)) {
+            $periode = GapSto::whereYear('periode', $request->tahun)->where('semester', !is_null($request->semester) ? $request->semester : 'S1');
+        }
+
         $query = $query->get();
 
-        $collection = $query->groupBy('branch_id')->map(function ($hasil_stos, $branch_id) {
+        $collection = $query->groupBy('branch_id')->map(function ($hasil_stos, $branch_id) use ($periode) {
             $branch = Branch::find($branch_id);
             $hasil_sto = $hasil_stos->first();
             return [
@@ -881,9 +886,18 @@ class GapApiController extends Controller
                 'branch_code' => $branch->branch_code,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
-                'depre' => $branch->gap_assets->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('category', 'Depre')->count(),
-                'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $branch->gap_assets->where('category', 'Non-Depre')->count(),
-                'total_remarked' => $branch->gap_assets->whereNotNull('remark')->count() . '/' . $branch->gap_assets->count(),
+                'depre' => $branch->gap_assets()->where('category', 'Depre')->whereHas('gap_asset_details', function ($q) use ($periode) {
+
+                    return $q->where('periode', $periode);
+                })->count() . '/' . $branch->gap_assets->where('category', 'Depre')->count(),
+                'non_depre' => $branch->gap_assets()->where('category', 'Non-Depre')->whereHas('gap_asset_details', function ($q) use ($periode) {
+
+                    return $q->where('periode', $periode);
+                })->count() . '/' . $branch->gap_assets->where('category', 'Non-Depre')->count(),
+                'total_remarked' => $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($periode) {
+
+                    return $q->where('periode', $periode);
+                })->count() . '/' . $branch->gap_assets->count(),
                 'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
                 'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
             ];

@@ -103,7 +103,7 @@ class BranchController extends Controller
             if (!is_null($request->file('file_ojk'))) {
                 $file = $request->file('file_ojk');
                 $fileName = $file->getClientOriginalName();
-                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+                $file->storeAs("ops/branches/{$branch->slug}/", $fileName, ["disk" => "public"]);
 
                 $branch->file_ojk = $fileName;
                 $branch->save();
@@ -174,9 +174,17 @@ class BranchController extends Controller
             if (!is_null($request->file('file_ojk'))) {
                 $file = $request->file('file_ojk');
                 $fileName = $file->getClientOriginalName();
-                $file->storeAs("ops/branches/{$branch->id}/", $fileName, ["disk" => "public"]);
+                $file->storeAs("ops/branches/{$branch->slug}/", $fileName, ["disk" => "public"]);
 
                 $branch->file_ojk = $fileName;
+                $branch->save();
+            }
+            if (!is_null($request->file('photo'))) {
+                $file = $request->file('photo');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs("ops/branches/{$branch->slug}/", $fileName, ["disk" => "public"]);
+
+                $branch->photo = $fileName;
                 $branch->save();
             }
 
@@ -189,7 +197,7 @@ class BranchController extends Controller
     public function destroy($id)
     {
         $branch = Branch::find($id);
-        Storage::disk('public')->delete('ops/branches/' . $branch->id . '/');
+        Storage::disk('public')->delete('ops/branches/' . $branch->slug . '/');
         $branch->delete();
 
         return redirect(route('ops.branches'))->with(['status' => 'success', 'message' => 'Data berhasil dihapus']);

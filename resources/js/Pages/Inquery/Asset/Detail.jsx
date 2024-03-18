@@ -7,7 +7,6 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Option, Select } from "@material-tailwind/react";
 
 export default function Detail({ auth, branch, sessions }) {
   const { form, selected, setSelected } = useFormContext();
@@ -105,6 +104,12 @@ export default function Detail({ auth, branch, sessions }) {
       sortable: true,
     },
     {
+      name: "Tahun",
+      sortable: true,
+      field: "tahun",
+      className: "text-center",
+    },
+    {
       name: "Semester",
       filterable: true,
       field: "semester",
@@ -162,7 +167,6 @@ export default function Detail({ auth, branch, sessions }) {
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
-              periodic={true}
               component={[
 
                 {
@@ -178,7 +182,6 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/gap/assets`}
               bordered={true}
-              submitUrl={`inquery.assets.remark`}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Non-Depre",

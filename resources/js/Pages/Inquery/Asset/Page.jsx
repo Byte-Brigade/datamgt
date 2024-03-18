@@ -446,7 +446,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
         data.disclaimer ? (
           <a
             className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            href={`/storage/gap/stos/${data.slug}/${data.periode}/${data.semester}/${data.disclaimer}`}
             target="__blank"
           >
             {" "}

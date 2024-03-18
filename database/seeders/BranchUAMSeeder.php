@@ -20,7 +20,7 @@ class BranchUAMSeeder extends Seeder
         $branches = Branch::with('branch_types')->get();
         foreach ($branches as $branch) {
             $email = 'test.' . strtolower($branch->branch_types->type_name) . '.' . str_replace(" ", ".", strtolower($branch->branch_name));
-            $default_access = ['can view', 'can sto'];
+            $default_access = ['can view'];
             User::create([
                 'name' => 'Test ' . $branch->branch_types->type_name . ' ' . $branch->branch_name,
                 'password' => Hash::make('Sahabat1!'),

@@ -14,7 +14,8 @@ class STOExport implements FromView
     public function view(): View
     {
         return view('exports.stos', [
-            'stos' => GapSto::all()
+            'stos' => GapSto::all(),
+            'latestPeriode' => GapSto::max('periode'),
         ]);
     }
 }

@@ -22,7 +22,8 @@ class RoleSeeder extends Seeder
             'can delete',
             'can add',
             'can export',
-            'can sto'
+            'can sto',
+
         ];
 
         $default_access = ['can view'];

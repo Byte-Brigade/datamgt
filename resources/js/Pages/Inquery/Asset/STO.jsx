@@ -171,39 +171,43 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={`inquery.assets.remark`}
+              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
+
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
             >
-              <Button
+
+              {auth.permissions.includes("can sto") && <Button
                 size="sm"
                 type="submit"
                 className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               >
                 Submit
-              </Button>
+              </Button>}
+
             </DataTable>
           )}
 
           {active == "nonDepre" && (
             <DataTable
               columns={columns}
-              fetchUrl={`/api/gap/assets`}
+              fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={`inquery.assets.remark`}
+              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Non-Depre",
               }}
             >
-              <Button
+              {auth.permissions.includes("can sto") && <Button
+                size="sm"
                 type="submit"
                 className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
               >
                 Submit
-              </Button>
+              </Button>}
             </DataTable>
           )}
         </div>

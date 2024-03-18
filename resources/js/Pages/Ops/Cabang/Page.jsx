@@ -45,6 +45,7 @@ export default function Cabang({
     npwp: null,
     area: null,
     file_ojk: null,
+    photo: null,
   };
   const {
     data,
@@ -150,7 +151,7 @@ export default function Cabang({
             </div>
           </Button>
         ) : (
-          <p>Belum ada lampiran</p>
+          <p>Belum ada Lampiran</p>
         ),
     },
     {
@@ -312,9 +313,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|branch_ops", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -566,6 +567,20 @@ export default function Cabang({
                 id="upload"
                 accept=".pdf"
                 onChange={(e) => setData("file_ojk", e.target.files[0])}
+                className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
+                containerProps={{
+                  className: "h-fit",
+                }}
+              />
+              <Input
+                variant="standard"
+                label="Upload Foto Cabang"
+                disabled={processing}
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".jpg,.png,.jpeg"
+                onChange={(e) => setData("photo", e.target.files[0])}
                 className="file:border-0 file:text-sm file:font-medium file:text-white file:bg-slate-900 file:hover:opacity-90 file:cursor-pointer cursor-pointer file:rounded-lg file:py-2 file:px-3 !pt-2.5"
                 containerProps={{
                   className: "h-fit",

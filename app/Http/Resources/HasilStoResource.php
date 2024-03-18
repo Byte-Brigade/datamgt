@@ -22,8 +22,7 @@ class HasilStoResource extends JsonResource
     public function toArray($request)
     {
 
-        $latestPeriode = $this->gap_assets->max('periode');
-        $periode = GapSto::max('periode');
+        $latestPeriode = GapSto::max('periode');
 
         $sto = GapSto::find($request->gap_sto_id);
         $hasil_sto = null;
@@ -35,9 +34,18 @@ class HasilStoResource extends JsonResource
             'branch_code' => $this->branch_code,
             'type_name' => $this->branch_types->type_name,
             'slug' => $this->slug,
-            'depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Depre')->count(),
-            'non_depre' => $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->where('category', 'Non-Depre')->count(),
-            'total_remarked' => $this->gap_assets->where('periode', $latestPeriode)->whereNotNull('remark')->count() . '/' . $this->gap_assets->where('periode', $latestPeriode)->count(),
+            'depre' => $this->gap_assets()->where('category', 'Depre')->whereHas('gap_asset_details', function ($q) use($latestPeriode) {
+
+                return $q->where('periode', $latestPeriode);
+            })->count() . '/' . $this->gap_assets()->where('category', 'Depre')->count(),
+            'non_depre' => $this->gap_assets()->where('category', 'Non-Depre')->whereHas('gap_asset_details', function ($q) use($latestPeriode) {
+
+                return $q->where('periode', $latestPeriode);
+            })->count() . '/' . $this->gap_assets()->where('category', 'Non-Depre')->count(),
+            'total_remarked' => $this->gap_assets()->whereHas('gap_asset_details', function ($q) use($latestPeriode) {
+
+                return $q->where('periode', $latestPeriode);
+            })->count() . '/' . $this->gap_assets()->count(),
             'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
             'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
         ];

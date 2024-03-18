@@ -43,7 +43,7 @@ export default function DataTable({
   configuration = true,
   headings,
   children,
-  submitUrl = "",
+  submitUrl = {},
   fixed = false,
 }) {
   const [data, setData] = useState([]);
@@ -67,6 +67,7 @@ export default function DataTable({
     setInitialData,
     handleFormSubmit,
     setUrl,
+    setId,
     isRefreshed,
     selected,
     setSelected,
@@ -248,7 +249,11 @@ export default function DataTable({
 
   useEffect(() => {
     fetchData();
-    setUrl(submitUrl);
+    setUrl(submitUrl.url);
+    if (submitUrl.id !== undefined) {
+
+      setId(submitUrl.id);
+    }
   }, [
     perPage,
     sortColumn,
@@ -464,18 +469,16 @@ export default function DataTable({
         <form onSubmit={handleFormSubmit}>{children}</form>
       </div>
       <div
-        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
-          fixedTable ? "max-h-96" : "h-full"
-        }`}
+        className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${fixedTable ? "max-h-96" : "h-full"
+          }`}
       >
         <table className={`${className} text-sm leading-3 bg-white z-0`}>
           <thead className="sticky top-0  border-b-2 table-fixed border-slate-200">
             {headings && (
               <tr
-                className={`[&>th]:p-2 bg-slate-100 ${
-                  bordered &&
+                className={`[&>th]:p-2 bg-slate-100 ${bordered &&
                   "divide-x-2 divide-slate-200 border-b-2 border-slate-200"
-                }`}
+                  }`}
               >
                 {headings.map((column, i) => (
                   <th key={i} rowSpan={column.rowSpan} colSpan={column.colSpan}>
@@ -486,9 +489,8 @@ export default function DataTable({
             )}
 
             <tr
-              className={`[&>th]:p-2 bg-slate-100 ${
-                bordered && "divide-x-2 divide-slate-200"
-              }`}
+              className={`[&>th]:p-2 bg-slate-100 ${bordered && "divide-x-2 divide-slate-200"
+                }`}
             >
               <th className={"text-center"}>No</th>
               {columns.map((column, i) => (
@@ -508,20 +510,18 @@ export default function DataTable({
                         {column.name}
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
-                            className={`${
-                              sortOrder === SORT_ASC &&
-                              column.field === sortColumn
+                            className={`${sortOrder === SORT_ASC &&
+                                column.field === sortColumn
                                 ? "text-slate-900"
                                 : "text-gray-400"
-                            } w-3 h-3`}
+                              } w-3 h-3`}
                           />
                           <ChevronDownIcon
-                            className={`${
-                              sortOrder === SORT_DESC &&
-                              column.field === sortColumn
+                            className={`${sortOrder === SORT_DESC &&
+                                column.field === sortColumn
                                 ? "text-slate-900"
                                 : "text-gray-400"
-                            } w-3 h-3`}
+                              } w-3 h-3`}
                           />
                         </span>
                       </div>
@@ -557,11 +557,10 @@ export default function DataTable({
                 {data.map((data, index) => (
                   <TableRow
                     key={index}
-                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${
-                      bordered && "divide-x-2 divide-slate-200"
-                    }`}
-                    // isSelected={selectedRows.includes(index)}
-                    // onClick={(event) => handleRowClick(event, index)}
+                    className={`[&>td]:p-2 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
+                      }`}
+                  // isSelected={selectedRows.includes(index)}
+                  // onClick={(event) => handleRowClick(event, index)}
                   >
                     <td className="text-center">
                       {Object.keys(pagination).length === 0 ? (
@@ -573,13 +572,12 @@ export default function DataTable({
                     {columns.map((column, id) =>
                       column.field ? (
                         column.field === "action" ||
-                        column.field === "detail" ? (
+                          column.field === "detail" ? (
                           <td
                             key={column.field}
                             colSpan={column.colSpan}
-                            className={`${column.className} ${
-                              column.freeze && "sticky left-0 bg-white"
-                            }`}
+                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
+                              }`}
                           >
                             {column.render(data)}
                           </td>
@@ -602,17 +600,16 @@ export default function DataTable({
                                 : column.field
                             }
                             colSpan={column.colSpan}
-                            className={`${column.className} ${
-                              column.freeze && "sticky left-0 bg-white"
-                            }`}
+                            className={`${column.className} ${column.freeze && "sticky left-0 bg-white"
+                              }`}
                           >
                             {column.type === "date"
                               ? convertDate(getNestedValue(data, column.field))
                               : column.type === "custom"
-                              ? column.render(data) && column.render(data) != 0
-                                ? column.render(data)
-                                : "-"
-                              : getNestedValue(data, column.field) || "-"}
+                                ? column.render(data) && column.render(data) != 0
+                                  ? column.render(data)
+                                  : "-"
+                                : getNestedValue(data, column.field) || "-"}
                           </td>
                         )
                       ) : (
@@ -629,21 +626,20 @@ export default function DataTable({
                 ))}
                 {columns.filter((column) => column.agg !== undefined).length >
                   0 && (
-                  <tr
-                    className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${
-                      bordered && "divide-x-2 divide-slate-200"
-                    }`}
-                  >
-                    <td className="font-bold text-center">Subtotal</td>
-                    {columns.map((column, index) =>
-                      column.agg === "sum" ? (
-                        <td
-                          key={index}
-                          className={`font-bold ${column.className}`}
-                        >
-                          {column.type === "custom"
-                            ? column.format === "currency"
-                              ? data
+                    <tr
+                      className={`[&>td]:p-2 bg-slate-100 hover:bg-slate-200 border-b border-slate-200 ${bordered && "divide-x-2 divide-slate-200"
+                        }`}
+                    >
+                      <td className="font-bold text-center">Subtotal</td>
+                      {columns.map((column, index) =>
+                        column.agg === "sum" ? (
+                          <td
+                            key={index}
+                            className={`font-bold ${column.className}`}
+                          >
+                            {column.type === "custom"
+                              ? column.format === "currency"
+                                ? data
                                   .reduce((total, acc) => {
                                     return (
                                       total +
@@ -654,7 +650,7 @@ export default function DataTable({
                                     );
                                   }, 0)
                                   .toLocaleString("id-ID")
-                              : data.reduce((total, acc) => {
+                                : data.reduce((total, acc) => {
                                   return (
                                     total +
                                     parseInt(
@@ -663,29 +659,29 @@ export default function DataTable({
                                     )
                                   );
                                 }, 0)
-                            : data.reduce((total, acc) => {
+                              : data.reduce((total, acc) => {
                                 return total + acc[column.field];
                               }, 0)}
-                        </td>
-                      ) : column.agg === "count" ? (
-                        <td
-                          key={index}
-                          className={`font-bold ${column.className}`}
-                        >
-                          {column.type === "custom"
-                            ? data.reduce((total, acc) => {
+                          </td>
+                        ) : column.agg === "count" ? (
+                          <td
+                            key={index}
+                            className={`font-bold ${column.className}`}
+                          >
+                            {column.type === "custom"
+                              ? data.reduce((total, acc) => {
                                 return total + parseInt(column.render(acc));
                               }, 0)
-                            : data.reduce((total, acc) => {
+                              : data.reduce((total, acc) => {
                                 return total + acc[column.field].length;
                               }, 0)}
-                        </td>
-                      ) : (
-                        <td></td>
-                      )
-                    )}
-                  </tr>
-                )}
+                          </td>
+                        ) : (
+                          <td></td>
+                        )
+                      )}
+                    </tr>
+                  )}
               </>
             )}
           </tbody>

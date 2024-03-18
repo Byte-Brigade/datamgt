@@ -52,9 +52,8 @@ export default function Page({ auth, sessions }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-
     {
-      name: "Periode",
+      name: "Tahun",
       field: "periode",
       className: "text-center",
     },
@@ -167,9 +166,16 @@ export default function Page({ auth, sessions }) {
   };
   const toggleModalStatus = (id) => {
     setInitialData({ status: null })
-    setUrl("gap.sto.status");
+    setUrl("gap.stos.status");
     setId(id)
-    setIsModalStatusOpen(!isModalStatusOpen);
+
+    setModalOpen((prevModalOpen) => {
+      const updatedModalOpen = {
+        ...prevModalOpen,
+        ["edit"]: !modalOpen.edit,
+      };
+      return updatedModalOpen;
+    });
   };
 
   const toggleModalDelete = () => {
@@ -290,7 +296,7 @@ export default function Page({ auth, sessions }) {
         </DialogFooter>
       </Dialog>
       {/* Modal Status */}
-      <Dialog open={isModalStatusOpen} handler={toggleModalStatus} size="md">
+      <Dialog open={modalOpen.edit} handler={toggleModalStatus} size="md">
         <DialogHeader className="flex items-center justify-between">
           Create Report
           <IconButton
@@ -305,7 +311,7 @@ export default function Page({ auth, sessions }) {
         </DialogHeader>
         <DialogBody divider>
           <div className="flex flex-col gap-y-4">
-            <Typography>Buat Report Data STO?</Typography>
+            <Typography>Selesaikan STO?</Typography>
           </div>
         </DialogBody>
         <DialogFooter>
