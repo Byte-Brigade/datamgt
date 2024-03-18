@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Inquery;
 
+use App\Models\GapSto;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,16 +20,12 @@ class AssetSTOResource extends JsonResource
         $gap_asset_details = $this->gap_asset_details();
 
         if (isset($gap_asset_details)) {
-            if (!is_null($request->endDate) && !is_null($request->semester)) {
-                $endDate = Carbon::parse($request->endDate)->startOfMonth()->format('Y-m-d');
-
-                $gap_asset_details = $gap_asset_details->where('periode', $endDate);
-            } else {
-                $periode = $gap_asset_details->get()->max('periode');
-                $gap_asset_details = $gap_asset_details->where('periode', $periode);
+            $latestSTO = GapSto::where('status', 'On Progress')
+                ->latest()
+                ->first();
+            if (isset($latestSTO)) {
+                $gap_asset_details = $gap_asset_details->where('periode', $latestSTO->periode)->where('semester', $latestSTO->semester)->first();
             }
-
-            $gap_asset_details = $gap_asset_details->where('semester', isset($request->semester) ? $request->semester : "S1")->first();
         }
 
         return [

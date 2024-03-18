@@ -2,6 +2,7 @@ import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
+import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -91,6 +92,14 @@ export default function Page({ auth, sessions }) {
           <Link href={route("gap.stos.detail", data.id)}>
             <Button variant="outlined">Lihat STO</Button>
           </Link>
+
+          <DropdownMenu
+          placement="left-start"
+          onDeleteClick={() => {
+            toggleModalDelete();
+            setData(data);
+          }}
+        />
         </div>
     },
 

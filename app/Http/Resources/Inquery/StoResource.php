@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Inquery;
 
 use App\Models\Branch;
+use App\Models\GapAsset;
 use App\Models\GapHasilSto;
 use App\Models\GapSto;
 use Carbon\Carbon;
@@ -19,50 +20,49 @@ class StoResource extends JsonResource
     public function toArray($request)
     {
 
-        $latestPeriode = $this->gap_assets->max('periode');
+        $latestPeriode = $this->branches->gap_assets->max('periode');
         $periode = GapSto::max('periode');
 
-        $sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
+        $current_sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
         $hasil_sto = null;
-        if (isset($sto)) {
+        if (isset($current_sto)) {
 
-            $hasil_sto = $this->gap_hasil_stos()->where('gap_sto_id', $sto->id)->first();
+            $hasil_sto = $this->branches->gap_hasil_stos()->where('gap_sto_id', $current_sto->id)->first();
         }
 
         $latestPeriode = GapSto::where('status', 'On Progress')->max('periode');
-        $prevPeriode = GapSto::where('status', 'Done')->max('periode');
+        $prevSTO = GapSto::where('status', 'Done')->latest()->first();
 
-        $gap_asset = $this->gap_assets()->whereHas('gap_asset_details', function ($q) use ($prevPeriode) {
+        $gap_asset = GapAsset::where('branch_id',$this->branches->id)->whereHas('gap_asset_detailS', function($q) use($prevSTO) {
+            return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)
+            ->where('status','Ada');
+        })->get();
 
-            return $q->where('periode', $prevPeriode);
-        });
-
-        if (!isset($prevPeriode)) {
-            $gap_asset = $this->gap_assets();
+        if (!isset($prevSTO)) {
+            $gap_asset = $this->branches->gap_assets();
         }
 
         return [
-            'id' => $this->id,
-            'branch_name' => $this->branch_name,
-            'branch_code' => $this->branch_code,
-            'type_name' => $this->branch_types->type_name,
-            'slug' => $this->slug,
-            'depre' => $this->gap_assets()->where('category', 'Depre')->whereHas('gap_asset_details', function ($q) use ($latestPeriode) {
+            'id' => $this->branches->id,
+            'branch_name' => $this->branches->branch_name,
+            'branch_code' => $this->branches->branch_code,
+            'type_name' => $this->branches->branch_types->type_name,
+            'slug' => $this->branches->slug,
+            'depre' => $this->branches->gap_assets()->where('category', 'Depre')->whereHas('gap_asset_details', function ($q) use ($current_sto) {
 
-                return $q->where('periode', $latestPeriode);
-            })->count() . '/' . $this->gap_assets->where('category', 'Depre')->count(),
-            'non_depre' => $this->gap_assets()->where('category', 'Non-Depre')->whereHas('gap_asset_details', function ($q) use ($latestPeriode) {
+                return $q->where('periode', $current_sto->periode)->where('semester',$current_sto->semester);
+            })->count() . '/' . $gap_asset->where('category', 'Depre')->count(),
+            'non_depre' => $this->branches->gap_assets()->where('category', 'Non-Depre')->whereHas('gap_asset_details', function ($q) use ($current_sto) {
 
-                return $q->where('periode', $latestPeriode);
-            })->count() . '/' . $this->gap_assets->where('category', 'Non-Depre')->count(),
-            'total_remarked' => $this->gap_assets()->whereHas('gap_asset_details', function ($q) use ($latestPeriode) {
+                return $q->where('periode', $current_sto->periode)->where('semester',$current_sto->semester);
+            })->count() . '/' . $gap_asset->where('category', 'Non-Depre')->count(),
+            'total_remarked' => $this->branches->gap_assets()->whereHas('gap_asset_details', function ($q) use ($current_sto) {
 
-                return $q->where('periode', $latestPeriode);
-            })->count() . '/' . $this->gap_assets->count(),
+                return $q->where('periode', $current_sto->periode)->where('semester',$current_sto->semester);
+            })->count() . '/' . $gap_asset->count(),
             'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
             'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null,
-            'periode' => Carbon::parse($sto->periode)->year,
-            'semester' => $sto->semester,
+
         ];
     }
 }

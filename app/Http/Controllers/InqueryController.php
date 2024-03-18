@@ -179,11 +179,11 @@ class InqueryController extends Controller
         $remarks = $request->input('remark');
         DB::beginTransaction();
         try {
-            $sto = GapSto::where('status', 'On Progress')->first();
+            $current_sto = GapSto::where('status', 'On Progress')->first();
             if (!is_null($remarks)) {
                 foreach ($remarks as $id => $value) {
                     $gapAsset = GapAsset::find($id);
-                    if (!isset($sto)) {
+                    if (!isset($current_sto)) {
                         throw new Exception("STO belum dimulai");
                     }
                     if (!isset($gapAsset)) {
@@ -192,28 +192,31 @@ class InqueryController extends Controller
 
                     if (!is_null($value)) {
                         $branch = Branch::where('slug', $slug)->first();
-                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
                         if (!isset($gap_hasil_sto)) {
                             $gap_hasil_sto = GapHasilSto::create([
                                 'branch_id' => $branch->id,
-                                'gap_sto_id' => $sto->id,
+                                'gap_sto_id' => $current_sto->id,
                                 'remarked' => false,
                             ]);
                         }
-                        GapAssetDetail::updateOrCreate(
-                            [
-                                'asset_number' => $gapAsset->asset_number,
-                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                            ],
-                            [
-                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                'asset_number' => $gapAsset->asset_number,
-                                'semester' => $sto->semester,
-                                'periode' => $sto->periode,
-                                'status' => $value,
-                                'sto' => false,
-                            ]
-                        );
+                        if($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
+                            GapAssetDetail::updateOrCreate(
+                                [
+                                    'asset_number' => $gapAsset->asset_number,
+                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                ],
+                                [
+                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                    'asset_number' => $gapAsset->asset_number,
+                                    'semester' => $current_sto->semester,
+                                    'periode' => $current_sto->periode,
+                                    'status' => $value,
+                                    'sto' => false,
+                                ]
+                            );
+                        }
+
                     }
                 }
             } else {

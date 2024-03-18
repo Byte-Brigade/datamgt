@@ -16,7 +16,9 @@ use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\GapAlihDaya;
 use App\Models\GapAsset;
+use App\Models\GapHasilSto;
 use App\Models\GapKdo;
+use App\Models\GapSto;
 use App\Models\GapToner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -251,15 +253,20 @@ class InqueryApiController extends Controller
 
         return PaginationHelper::paginate($collections, $perpage);
     }
-    public function stos(Branch $branch, Request $request)
+
+    public function stos(GapHasilSto $gap_hasil_sto, Request $request)
     {
         $sortFieldInput = $request->input('sort_field', 'branch_code');
         $sortOrder = $request->input('sort_order', 'asc');
         $searchInput = $request->search;
-        $query = $branch->select('branches.*')->where('branches.branch_name', '!=', 'Kantor Pusat')->orderBy($sortFieldInput, $sortOrder)
+        $query = $gap_hasil_sto->select('gap_hasil_stos.*')->orderBy($sortFieldInput, $sortOrder)
+            ->join('branches', 'branches.id', 'gap_hasil_stos.branch_id')
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 15;
 
+        $query = $query->whereHas('gap_stos', function ($q) {
+            return $q->where('status', 'On Progress');
+        });
 
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
@@ -309,6 +316,17 @@ class InqueryApiController extends Controller
             ->join('branches', 'gap_assets.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
+
+        $query = $query->whereHas('gap_asset_details', function ($q) {
+            return $q->where('status','Ada')->whereHas('gap_hasil_sto', function($q) {
+                return $q->whereHas('gap_stos',function($q) {
+                    $latestSTO = GapSto::where('status', 'done')
+                    ->latest()
+                    ->first();
+                    return $q->where('id', $latestSTO->id);
+                });
+            });
+        });
 
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);

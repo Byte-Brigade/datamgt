@@ -63,6 +63,8 @@ Route::prefix('gap')->name('gap.')->group(function () {
     Route::get('perdins', [GapApiController::class, 'perdins']);
     Route::get('toners', [GapApiController::class, 'toners']);
     Route::get('stos', [GapApiController::class, 'stos']);
+    Route::get('stos/assets/{gap_hasil_sto_id}', [GapApiController::class, 'sto_assets'])->name('stos.assets');
+
     Route::get('hasil_stos/{gap_sto_id}', [GapApiController::class, 'hasil_stos']);
     Route::get('pks', [GapApiController::class, 'pks']);
     Route::get('pks/{status}', [GapApiController::class, 'pks_details']);

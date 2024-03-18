@@ -22,6 +22,11 @@ class GapHasilSto extends Model
     }
     public function detail_assets()
     {
-        return $this->hasMany(GapAssetDetail::class, 'gap_hasil_sto_id');
+        return $this->hasMany(GapAssetDetail::class, 'gap_hasil_sto_id')->onDelete('cascade');
+    }
+
+    public function branches()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 }
