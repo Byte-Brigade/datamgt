@@ -44,7 +44,7 @@ class GapStoController extends Controller
 
         $branch = Branch::where('slug', $slug)->first();
 
-        $gap_hasil_sto = GapHasilSto::where('gap_sto_id',$request->gap_sto_id)->where('branch_id', $branch->id)->first();
+        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $request->gap_sto_id)->where('branch_id', $branch->id)->first();
         return Inertia::render('GA/Procurement/STO/STO', ['gap_hasil_sto_id' => $gap_hasil_sto->id, 'branch' => $branch]);
     }
     /**
@@ -160,9 +160,13 @@ class GapStoController extends Controller
                 })->count();
                 $assets = GapAsset::where('branch_id', $branch->id)->count();
                 $prevSTO = GapSto::where('status', 'Done')->latest()->first();
-                $prev_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($prevSTO) {
-                    return $q->where('periode', $prevSTO->periode)->where('semester',$prevSTO->semester);
-                })->count();
+                $prev_asset = 0;
+                if (isset($prevSTO)) {
+                    $prev_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($prevSTO) {
+                        return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester);
+                    })->count();
+                }
+
                 if ($prev_asset == 0) {
                     $prev_asset = $assets;
                 }
@@ -200,12 +204,12 @@ class GapStoController extends Controller
     public function export()
     {
         $fileName = 'Data_STO_' . date('d-m-y') . '.xlsx';
-        return (new STOExport)->download($fileName);
+        return(new STOExport)->download($fileName);
     }
     public function export_hasil_sto($gap_sto_id)
     {
         $fileName = 'Data_STO_' . date('d-m-y') . '.xlsx';
-        return (new HasilSTOExport($gap_sto_id))->download($fileName);
+        return(new HasilSTOExport($gap_sto_id))->download($fileName);
     }
 
     public function disclaimer()

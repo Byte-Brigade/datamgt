@@ -316,17 +316,20 @@ class InqueryApiController extends Controller
             ->join('branches', 'gap_assets.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 10;
-
-        $query = $query->whereHas('gap_asset_details', function ($q) {
-            return $q->where('status','Ada')->whereHas('gap_hasil_sto', function($q) {
-                return $q->whereHas('gap_stos',function($q) {
-                    $latestSTO = GapSto::where('status', 'done')
-                    ->latest()
-                    ->first();
-                    return $q->where('id', $latestSTO->id);
+        $latestSTO = GapSto::where('status', 'Done')
+        ->latest()
+        ->first();
+        if(isset($latestSTO)) {
+            $query = $query->whereHas('gap_asset_details', function ($q) use($latestSTO) {
+                return $q->where('status','Ada')->whereHas('gap_hasil_sto', function($q)  use($latestSTO)  {
+                    return $q->whereHas('gap_stos',function($q) use($latestSTO)  {
+                       
+                        return $q->where('id', $latestSTO->id);
+                    });
                 });
             });
-        });
+        }
+       
 
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);

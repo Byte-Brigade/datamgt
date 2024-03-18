@@ -555,10 +555,10 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                   <DialogBody divider>
                     <div className="flex flex-col gap-y-4">
                       <Typography>
-                        BSM dan BSO menyatakan sudah melakukan STO dengan ini
-                        bertanggung jawab...
+                        BSM dan BSO menyatakan sudah melakukan Stock Opname ini
+                        dengan benar dan bertanggung jawab jika dikemudian hari
+                        diketahui ada data yang tidak sesuai.
                       </Typography>
-
                       <Input
                         variant="standard"
                         label="Upload Lampiran (.pdf)"
@@ -753,7 +753,10 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                 fetchUrl={"/api/inquery/toners"}
                 refreshUrl={isRefreshed}
                 bordered={true}
-                parameters={{ branch_id: auth.user.branch_id, type: "quantity" }}
+                parameters={{
+                  branch_id: auth.user.branch_id,
+                  type: "quantity",
+                }}
               />
               <h2 className="mt-2 text-lg font-semibold">
                 Nominal Per Cabang Tahun {yearToner}
