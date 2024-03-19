@@ -44,6 +44,9 @@ class StoResource extends JsonResource
             })->get();
         }
 
+
+
+
         return [
             'id' => $this->branches->id,
             'branch_name' => $this->branches->branch_name,
