@@ -182,7 +182,7 @@ class InqueryController extends Controller
             $current_sto = GapSto::where('status', 'On Progress')->first();
             if (!is_null($remarks)) {
                 foreach ($remarks as $id => $value) {
-                    $gapAsset = GapAsset::find($id);
+                    $gapAsset = GapAsset::where('asset_number', $id)->first();
                     if (!isset($current_sto)) {
                         throw new Exception("STO belum dimulai");
                     }
@@ -200,7 +200,7 @@ class InqueryController extends Controller
                                 'remarked' => false,
                             ]);
                         }
-                        if($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
+                        if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
                             GapAssetDetail::updateOrCreate(
                                 [
                                     'asset_number' => $gapAsset->asset_number,
@@ -216,7 +216,6 @@ class InqueryController extends Controller
                                 ]
                             );
                         }
-
                     }
                 }
             } else {

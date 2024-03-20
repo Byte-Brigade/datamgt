@@ -8,13 +8,14 @@ import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 import { Button, Option, Select } from "@material-tailwind/react";
+import { useEffect } from "react";
 
 export default function Detail({ auth, branch, sessions }) {
-  const { form, selected, setSelected } = useFormContext();
+  const { form, selected, setSelected, setInitialData, data, loading, isRefreshed } = useFormContext();
 
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
-  const handleChanged = (id, value) => {
+  const handleRemarkChanged = (id, value) => {
     setSelected((prevSelected) => {
       const updatedSelected = { ...prevSelected, [id]: value };
       console.log("Updated Selected:", value); // Add this line for debugging
@@ -22,8 +23,34 @@ export default function Detail({ auth, branch, sessions }) {
       return updatedSelected;
     });
 
-    form.setData("remark", { ...selected, [id]: value });
+    form.setData(columns, { ...selected, [id]: value });
   };
+
+
+  useEffect(() => {
+    if (!loading) {
+      if (Array.isArray(data)) {
+        if (
+          data.some(
+            (data) => data.remark !== undefined && data.remark !== null
+          )
+        ) {
+          const remarksData = data.reduce((acc, current) => {
+            acc[current.id] = current.remark;
+            return acc;
+          }, {});
+
+          setSelected(remarksData);
+        }
+      }
+      console.log("aa")
+      console.log(data)
+    }
+
+
+    setInitialData({ remark: {}, keterangan: null });
+
+  }, [isRefreshed])
 
   const columns = [
     {
@@ -114,7 +141,7 @@ export default function Detail({ auth, branch, sessions }) {
             className="bg-white"
             label="Status"
             value={`${data.status || ""}`}
-            onChange={(e) => handleChanged(data.id, e)}
+            onChange={(e) => handleRemarkChanged(data.asset_number, e)}
           >
             <Option value={`Ada`}>Ada</Option>
             <Option value={`Tidak Ada`}>Tidak Ada</Option>
@@ -128,6 +155,7 @@ export default function Detail({ auth, branch, sessions }) {
           data.status
         ),
     },
+
   ];
 
   return (
