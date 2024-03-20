@@ -41,6 +41,8 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             }
         }
 
+        $slug = strtolower($type_name).'-'.strtolower(str_replace(" ", "-",$branch_name));
+
         return new Branch([
             'branch_type_id' => $branch_type,
             'branch_code' => $row['kode_cabang'],
@@ -53,6 +55,7 @@ class BranchesImport implements ToModel, WithHeadingRow, WithUpserts, WithValida
             'izin' => $row['ijin_biojk'],
             'status' => $row['status'],
             'area' => $row['area'],
+            'slug' => $slug,
             'masa_sewa' => isset($row['masa_sewa']) ? preg_replace('/[^0-9]/', '',  $row['masa_sewa']) : null,
             'expired_date' => !is_null($row['jatuh_tempo']) ? Date::excelToDateTimeObject($row['jatuh_tempo']) : null,
             'open_date' => !is_null($row['open_date']) ? Date::excelToDateTimeObject($row['open_date']) : null,

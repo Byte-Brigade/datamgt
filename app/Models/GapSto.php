@@ -18,7 +18,7 @@ class GapSto extends Model
 
     public function hasil_stos()
     {
-        $this->hasMany(GapHasilSto::class, 'gap_sto_id');
+        $this->hasMany(GapHasilSto::class, 'gap_sto_id')->onDelete('cascade');
     }
 
 

@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/branch', [InqueryController::class, 'branch'])->name('branch');
         Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
         Route::get('/staff', [InqueryController::class, 'staff'])->name('staff');
+        Route::get('/toner/detail/{slug}', [InqueryController::class, 'toner_detail'])->name('toners.detail');
 
         Route::middleware(['check.slug'])->group(function () {
             Route::get('/branch/{slug}', [InqueryController::class, 'branchDetail'])->name('branch.detail');
@@ -82,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/staff/{slug}', [InqueryController::class, 'staff_detail'])->name('staff.detail');
         });
         Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
-        Route::post('/assets/sto/remark', [InqueryController::class, 'assets_remark'])->name('assets.remark');
+        Route::post('/assets/sto/remark/{slug}', [InqueryController::class, 'assets_remark'])->name('assets.remark');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('licenses');
 
@@ -204,12 +205,15 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
             Route::get('/stos/detail/{gap_sto_id}', [GapStoController::class, 'detail'])->name('stos.detail');
+            Route::get('/stos/detail/assets/{slug}', [GapStoController::class, 'assets'])->name('stos.detail.assets');
             Route::get('/stos/template', [GapStoController::class, 'template'])->name('stos.template');
             Route::get('/stos/disclaimer', [GapStoController::class, 'disclaimer'])->name('stos.disclaimer');
             Route::post('/stos/import', [GapStoController::class, 'import'])->name('stos.import');
 
             Route::put('/stos/{id}', [GapStoController::class, 'update'])->name('stos.update');
+            Route::put('/stos/status/{id}', [GapStoController::class, 'status'])->name('stos.status');
             Route::get('/stos/export', [GapStoController::class, 'export'])->name('stos.export');
+            Route::get('/stos/detail/{gap_sto_id}/export', [GapStoController::class, 'export_hasil_sto'])->name('stos.hasil-sto.export');
             Route::delete('/stos/{id}', [GapStoController::class, 'destroy'])->name('stos.delete');
         });
         Route::prefix('infra')->name('infra.')->group(function () {

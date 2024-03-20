@@ -1,11 +1,11 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
+import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
@@ -20,7 +20,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions, gap_sto_id }) {
+export default function Page({ auth, sessions, gap_sto_id, periode, semester }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -42,9 +42,16 @@ export default function Page({ auth, sessions, gap_sto_id }) {
     errors,
   } = useForm(initialData);
 
-  const [isModalImportOpen, setIsModalImportOpen] = useState(false);
+  const {
+    handleFormSubmit,
+    setInitialData,
+    setUrl,
+    setId,
+    modalOpen,
+    setModalOpen,
+    form,
+  } = useFormContext();
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
@@ -53,9 +60,19 @@ export default function Page({ auth, sessions, gap_sto_id }) {
   const columns = [
     {
       name: "Cabang",
-      field: "branch_code",
+      field: "branch_name",
       className: "cursor-pointer hover:text-blue-500",
-
+      type: "custom",
+      render: (data) => (
+        <Link
+          href={route("gap.stos.detail.assets", {
+            slug: data.slug,
+            gap_sto_id: data.gap_sto_id,
+          })}
+        >
+          {data.branch_name}
+        </Link>
+      ),
     },
     {
       name: "Tipe Cabang",
@@ -86,7 +103,7 @@ export default function Page({ auth, sessions, gap_sto_id }) {
         data.disclaimer ? (
           <a
             className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            href={`/storage/gap/stos/${data.slug}/${periode}/${semester}/${data.disclaimer}`}
             target="__blank"
           >
             {" "}
@@ -105,6 +122,16 @@ export default function Page({ auth, sessions, gap_sto_id }) {
 
 
 
+
+  const handleSubmitExport = (e) => {
+    const { branch } = data;
+    e.preventDefault();
+    window.open(
+      route("gap.stos.hasil-sto.export", gap_sto_id),
+      "_self"
+    );
+    setIsModalExportOpen(!isModalExportOpen);
+  };
 
 
   const handleSubmitEdit = (e) => {
@@ -130,8 +157,24 @@ export default function Page({ auth, sessions, gap_sto_id }) {
     });
   };
 
+  const toggleModalCreate = (id) => {
+    setInitialData({ disclaimer: null });
+    setUrl("gap.stos.store.hasil_sto");
+    setId(id);
+
+    setModalOpen((prevModalOpen) => {
+      const updatedModalOpen = {
+        ...prevModalOpen,
+        ["create"]: !modalOpen.create,
+      };
+      return updatedModalOpen;
+    });
+  };
 
 
+  const toggleModalExport = () => {
+    setIsModalExportOpen(!isModalExportOpen);
+  };
   const toggleModalEdit = () => {
     setIsModalEditOpen(!isModalEditOpen);
   };
@@ -149,9 +192,11 @@ export default function Page({ auth, sessions, gap_sto_id }) {
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
 
-            <PrimaryButton >
-              Create Report
-            </PrimaryButton>
+            {auth.permissions.includes("can export") && (
+              <PrimaryButton onClick={toggleModalExport}>
+                Create Report
+              </PrimaryButton>
+            )}
           </div>
           <DataTable
             fetchUrl={`/api/gap/hasil_stos/${gap_sto_id}`}
@@ -159,11 +204,78 @@ export default function Page({ auth, sessions, gap_sto_id }) {
             isRefreshed={isRefreshed}
             bordered={true}
 
-            periodic={true}
           />
 
         </div>
       </div>
+
+      {/* Modal Create */}
+      <Dialog
+        open={modalOpen.create}
+        handler={toggleModalCreate}
+        size="md"
+      >
+        <DialogHeader className="flex items-center justify-between">
+          Disclaimer
+          <IconButton
+            size="sm"
+            variant="text"
+            className="p-2"
+            color="gray"
+            onClick={toggleModalCreate}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </IconButton>
+        </DialogHeader>
+        <form onSubmit={handleFormSubmit}>
+          <DialogBody divider>
+            <div className="flex flex-col gap-y-4">
+              <Typography>
+                BSM dan BSO menyatakan sudah melakukan STO dengan ini
+                bertanggung jawab...
+              </Typography>
+
+              <Input
+                variant="standard"
+                label="Upload Lampiran (.pdf)"
+                type="file"
+                name="upload"
+                id="upload"
+                accept=".pdf"
+                onChange={(e) =>
+                  form.setData("file", e.target.files[0])
+                }
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <div className="flex flex-row-reverse gap-x-4">
+              <Button disabled={form.processing} type="submit">
+                Ubah
+              </Button>
+              <SecondaryButton
+                type="button"
+                onClick={toggleModalCreate}
+              >
+                Tutup
+              </SecondaryButton>
+            </div>
+          </DialogFooter>
+        </form>
+      </Dialog>
+
+      {/* Modal Export */}
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        <div className="flex flex-col gap-y-4">
+          Export Hasil STO Periode
+        </div>
+      </Modal>
 
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Branch;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StoResource extends JsonResource
@@ -17,7 +18,7 @@ class StoResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'periode' => $this->periode,
+            'periode' => Carbon::parse($this->periode)->year,
             'semester' => $this->semester,
             'status' => $this->status,
             'keterangan' => $this->keterangan,

@@ -89,7 +89,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("gap.toners.detail", data.slug)}>
+        <Link href={route("inquery.toners.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
@@ -211,7 +211,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("gap.toners.detail", data.slug)}>
+        <Link href={route("inquery.toners.detail", data.slug)}>
           {data.branch_name}
         </Link>
       ),
@@ -446,7 +446,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
         data.disclaimer ? (
           <a
             className="text-blue-500 hover:underline text-ellipsis"
-            href={`/storage/gap/stos/${data.slug}/${data.disclaimer}`}
+            href={`/storage/gap/stos/${data.slug}/${data.periode}/${data.semester}/${data.disclaimer}`}
             target="__blank"
           >
             {" "}
@@ -533,7 +533,6 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                 parameters={{ branch_id: auth.user.branch_id }}
                 isRefreshed={isRefreshed}
                 bordered={true}
-                periodic={true}
               />
               <Dialog
                 open={modalOpen.create}
@@ -556,10 +555,10 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
                   <DialogBody divider>
                     <div className="flex flex-col gap-y-4">
                       <Typography>
-                        BSM dan BSO menyatakan sudah melakukan STO dengan ini
-                        bertanggung jawab...
+                        BSM dan BSO menyatakan sudah melakukan Stock Opname ini
+                        dengan benar dan bertanggung jawab jika dikemudian hari
+                        diketahui ada data yang tidak sesuai.
                       </Typography>
-
                       <Input
                         variant="standard"
                         label="Upload Lampiran (.pdf)"
@@ -751,20 +750,23 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
               </h2>
               <DataTable
                 columns={columnTonerQuantities}
-                fetchUrl={"/api/inquery/toners/quantity"}
+                fetchUrl={"/api/inquery/toners"}
                 refreshUrl={isRefreshed}
                 bordered={true}
-                parameters={{ branch_id: auth.user.branch_id }}
+                parameters={{
+                  branch_id: auth.user.branch_id,
+                  type: "quantity",
+                }}
               />
               <h2 className="mt-2 text-lg font-semibold">
                 Nominal Per Cabang Tahun {yearToner}
               </h2>
               <DataTable
                 columns={columnTonerCosts}
-                fetchUrl={"/api/inquery/toners/nominal"}
+                fetchUrl={"/api/inquery/toners"}
                 refreshUrl={isRefreshed}
                 bordered={true}
-                parameters={{ branch_id: auth.user.branch_id }}
+                parameters={{ branch_id: auth.user.branch_id, type: "nominal" }}
               />
             </>
           )}

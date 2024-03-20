@@ -1,15 +1,14 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
-import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
-import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
   Dialog,
@@ -18,18 +17,21 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Option,
-  Select,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions }) {
+export default function Page({ auth, sessions, branch }) {
   const initialData = {
+    jumlah_kendaraan: null,
+    jumlah_driver: null,
+    sewa_kendaraan: null,
+    biaya_driver: null,
+    ot: null,
+    rfid: null,
+    non_rfid: null,
+    grab: null,
     periode: null,
-    semester: null,
-    status: null,
-    keterangan: null,
   };
   const {
     data,
@@ -41,12 +43,8 @@ export default function Page({ auth, sessions }) {
     errors,
   } = useForm(initialData);
 
-  const { modalOpen, setModalOpen, handleFormEdit, setUrl, setId
-    , setInitialData } = useFormContext();
-
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
-  const [isModalStatusOpen, setIsModalStatusOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -54,62 +52,59 @@ export default function Page({ auth, sessions }) {
 
   const columns = [
     {
-      name: "Tahun",
-      field: "periode",
-      className: "text-center",
+      name: "Invoice No",
+      field: "invoice",
     },
     {
-      name: "Semester",
-      field: "semester",
-      className: "text-center",
+      name: "Cabang",
+      field: "branches.branch_name",
     },
     {
-      name: "Status",
-      field: "status",
-      className: "text-center",
-    },
-    {
-      name: "Keterangan",
-      field: "keterangan",
-      className: "text-center",
+      name: "Tipe Cabang",
+      field: "type_name",
     },
 
     {
-      name: "Action",
-      field: "action",
-      className: "text-center w-[300px]",
-      render: (data) =>
-
-        <div className="flex justify-around">
-
-          {data.status === "On Progress" && (<Button
-            onClick={(e) => toggleModalStatus(data.id)}
-            variant="outlined"
-          >
-            Selesai STO
-          </Button>)}
-
-          <Link href={route("gap.stos.detail", data.id)}>
-            <Button variant="outlined">Lihat STO</Button>
-          </Link>
-
-          <DropdownMenu
-          placement="left-start"
-          onDeleteClick={() => {
-            toggleModalDelete();
-            setData(data);
-          }}
-        />
-        </div>
+      name: "Cartridge Order",
+      field: "cartridge_order",
+    },
+    {
+      name: "Quantity",
+      field: "quantity",
+      agg: "sum",
+    },
+    {
+      name: "Unit Price",
+      type: "custom",
+      field: "price",
+      className: "text-right tabular-nums",
+      render: (data) => data.price.toLocaleString("id-ID"),
+    },
+    {
+      name: "Total Price",
+      field: "total",
+      className: "text-right tabular-nums",
+      type: "custom",
+      format: "currency",
+      agg: "sum",
+      render: (data) => data.total.toLocaleString("id-ID"),
     },
 
+    // {
+    //   name: "Detail",
+    //   field: "detail",
+    //   className: "text-center",
+    //   render: (data) => (
+    //     <Link href={route("gap.toners.detail", data.vendor)}>
+    //       <Button variant="outlined">Detail</Button>
+    //     </Link>
+    //   ),
+    // },
   ];
-
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
 
   const handleSubmitImport = (e) => {
     e.preventDefault();
-    post(route("gap.stos.import"), {
+    post(route("gap.toners.import"), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -121,13 +116,13 @@ export default function Page({ auth, sessions }) {
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(route("gap.stos.export"), "_self");
+    window.open(route("gap.toners.export") + `?branch=${branch}`, "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    put(route("gap.stos.update", data.id), {
+    put(route("gap.toners.update", data.id), {
       method: "put",
       replace: true,
       onFinish: () => {
@@ -138,7 +133,7 @@ export default function Page({ auth, sessions }) {
   };
   const handleSubmitCreate = (e) => {
     e.preventDefault();
-    post(route("gap.stos.store"), {
+    post(route("gap.toners.store"), {
       method: "post",
       replace: true,
       onFinish: () => {
@@ -150,7 +145,7 @@ export default function Page({ auth, sessions }) {
 
   const handleSubmitDelete = (e) => {
     e.preventDefault();
-    destroy(route("gap.stos.delete", data.id), {
+    destroy(route("gap.toners.delete", data.id), {
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -173,19 +168,6 @@ export default function Page({ auth, sessions }) {
   const toggleModalCreate = () => {
     setIsModalCreateOpen(!isModalCreateOpen);
   };
-  const toggleModalStatus = (id) => {
-    setInitialData({ status: null })
-    setUrl("gap.stos.status");
-    setId(id)
-
-    setModalOpen((prevModalOpen) => {
-      const updatedModalOpen = {
-        ...prevModalOpen,
-        ["edit"]: !modalOpen.edit,
-      };
-      return updatedModalOpen;
-    });
-  };
 
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
@@ -193,41 +175,50 @@ export default function Page({ auth, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA Procurement | Toner" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
+          <h2 className="text-xl text-end font-semibold">
+              {branch.branch_types.type_name} {branch.branch_name}
+            </h2>
           {hasRoles("superadmin|admin|procurement", auth) &&
-            auth.permissions.includes("can export") && (
+            ["can add", "can export"].some((permission) =>
+              auth.permissions.includes(permission)
+            ) && (
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <PrimaryButton
-                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                    onClick={toggleModalCreate}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <DocumentPlusIcon className="w-4 h-4" />
-                      Create STO
-
-                    </div>
+                {auth.permissions.includes("can add") && (
+                  <div>
+                    <PrimaryButton
+                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                      onClick={toggleModalImport}
+                    >
+                      <div className="flex items-center gap-x-2">
+                        <DocumentPlusIcon className="w-4 h-4" />
+                        Import Excel
+                      </div>
+                    </PrimaryButton>
+                  </div>
+                )}
+                {auth.permissions.includes("can export") && (
+                  <PrimaryButton onClick={toggleModalExport}>
+                    Create Report
                   </PrimaryButton>
-                </div>
-                <PrimaryButton onClick={toggleModalExport}>
-                  Create Report
-                </PrimaryButton>
+                )}
               </div>
             )}
           <DataTable
             columns={columns}
-            fetchUrl={"/api/gap/stos"}
+            fetchUrl={`/api/inquery/toners/detail/${branch.slug}`}
             refreshUrl={isRefreshed}
             bordered={true}
+            parameters={{ branch_id: auth.user.branch_id }}
           />
         </div>
       </div>
       {/* Modal Import */}
-      {/* <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
+      <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
         <DialogHeader className="flex items-center justify-between">
           Import Data
           <IconButton
@@ -255,10 +246,7 @@ export default function Page({ auth, sessions }) {
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
-            <SecondaryButton type="button">
-              <a href={route("gap.stos.template")}>Download Template</a>
-            </SecondaryButton>
+          <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
                 Simpan
@@ -269,75 +257,17 @@ export default function Page({ auth, sessions }) {
             </div>
           </DialogFooter>
         </form>
-      </Dialog> */}
+      </Dialog>
       {/* Modal Export */}
-      <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Create Report
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalExport}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <DialogBody divider>
-          <div className="flex flex-col gap-y-4">
-            <Typography>Buat Report Data STO?</Typography>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <div className="flex flex-row-reverse gap-x-4">
-            <Button
-              onClick={handleSubmitExport}
-              disabled={processing}
-              type="submit"
-            >
-              Buat
-            </Button>
-            <SecondaryButton type="button" onClick={toggleModalExport}>
-              Tutup
-            </SecondaryButton>
-          </div>
-        </DialogFooter>
-      </Dialog>
-      {/* Modal Status */}
-      <Dialog open={modalOpen.edit} handler={toggleModalStatus} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Create Report
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalStatus}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <DialogBody divider>
-          <div className="flex flex-col gap-y-4">
-            <Typography>Selesaikan STO?</Typography>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <div className="flex flex-row-reverse gap-x-4">
-            <Button
-              onClick={handleFormEdit}
-              disabled={processing}
-              type="submit"
-            >
-              Buat
-            </Button>
-            <SecondaryButton type="button" onClick={toggleModalExport}>
-              Tutup
-            </SecondaryButton>
-          </div>
-        </DialogFooter>
-      </Dialog>
+      <Modal
+        isProcessing={processing}
+        name="Create Report"
+        isOpen={isModalExportOpen}
+        onToggle={toggleModalExport}
+        onSubmit={handleSubmitExport}
+      >
+        Export data
+      </Modal>
       {/* Modal Edit */}
       <Dialog open={isModalEditOpen} handler={toggleModalEdit} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -385,7 +315,7 @@ export default function Page({ auth, sessions }) {
       {/* Modal Create */}
       <Dialog open={isModalCreateOpen} handler={toggleModalCreate} size="md">
         <DialogHeader className="flex items-center justify-between">
-          Mulai STO
+          Tambah Data
           <IconButton
             size="sm"
             variant="text"
@@ -400,38 +330,78 @@ export default function Page({ auth, sessions }) {
           <DialogBody className="overflow-y-scroll max-h-96" divider>
             <div className="flex flex-col gap-y-4">
               <Input
-                label="Periode"
-                type="date"
-                value={data.periode || ""}
+                label="Divisi Pembebanan"
+                value={data.divisi_pembebanan || ""}
                 disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Category"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Tipe"
+                value={data.category || ""}
+                disabled={processing}
+                onChange={(e) => setData("divisi_pembebanan", e.target.value)}
+              />
+              <Input
+                label="Jumlah Driver"
+                value={data.jumlah_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("jumlah_driver", e.target.value)}
+              />
+              <Input
+                label="Sewa Kendaraan"
+                value={data.sewa_kendaraan || ""}
+                disabled={processing}
+                onChange={(e) => setData("sewa_kendaraan", e.target.value)}
+              />
+              <Input
+                label="Biaya Driver"
+                value={data.biaya_driver || ""}
+                disabled={processing}
+                onChange={(e) => setData("biaya_driver", e.target.value)}
+              />
+              <Input
+                label="OT"
+                value={data.ot || ""}
+                disabled={processing}
+                onChange={(e) => setData("ot", e.target.value)}
+              />
+              <Input
+                label="RFID"
+                value={data.rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("rfid", e.target.value)}
+              />
+              <Input
+                label="NON RFID"
+                value={data.non_rfid || ""}
+                disabled={processing}
+                onChange={(e) => setData("non_rfid", e.target.value)}
+              />
+              <Input
+                label="GRAB"
+                value={data.grab || ""}
+                disabled={processing}
+                onChange={(e) => setData("grab", e.target.value)}
+              />
+              <Input
+                label="Periode"
+                value={data.expired_date || ""}
+                disabled={processing}
+                type="date"
                 onChange={(e) => setData("periode", e.target.value)}
               />
-              <Select
-                label="Semester"
-                value={`${data.semester}`}
-                disabled={processing}
-                onChange={(e) => setData("semester", e)}
-              >
-                <Option value="S1">
-                  S1
-                </Option>
-                <Option value="S2">
-                  S2
-                </Option>
-              </Select>
-              <Input
-                label="Keterangan"
-                value={data.keterangan || ""}
-                disabled={processing}
-                onChange={(e) => setData("keterangan", e.target.value)}
-              />
-
             </div>
           </DialogBody>
           <DialogFooter>
             <div className="flex flex-row-reverse gap-x-4">
               <Button disabled={processing} type="submit">
-                Mulai
+                Tambah
               </Button>
               <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup

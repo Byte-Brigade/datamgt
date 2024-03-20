@@ -15,13 +15,15 @@ return new class extends Migration
     {
         Schema::create('gap_asset_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('gap_asset_id');
+            $table->string('asset_number');
+            $table->unsignedBigInteger('gap_hasil_sto_id');
             $table->string('status');
             $table->string('semester');
             $table->date('periode');
             $table->boolean('sto')->default(false);
             $table->timestamps();
-            $table->foreign('gap_asset_id')->references('id')->on('gap_assets')->onDelete('cascade');
+            $table->foreign('asset_number')->references('asset_number')->on('gap_assets')->onDelete('cascade');
+            $table->foreign('gap_hasil_sto_id')->references('id')->on('gap_hasil_stos')->onDelete('cascade');
         });
     }
 

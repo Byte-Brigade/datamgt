@@ -10,7 +10,8 @@ class GapAssetDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'gap_asset_id',
+        'asset_number',
+        'gap_hasil_sto_id',
         'status',
         'semester',
         'periode',
@@ -19,7 +20,12 @@ class GapAssetDetail extends Model
 
     public function gap_assets()
     {
-        $this->belongsTo(GapAsset::class, 'gap_asset_id', 'id');
+       return  $this->belongsTo(GapAsset::class, 'asset_number', 'asset_number');
+    }
+
+    public function gap_hasil_sto()
+    {
+        return $this->belongsTo(GapHasilSto::class, 'gap_hasil_sto_id', 'id');
     }
 
 }

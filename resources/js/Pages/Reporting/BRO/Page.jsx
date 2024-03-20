@@ -68,7 +68,7 @@ export default function Branch({ auth, sessions, branch_types }) {
     {
       name: "Nama", field: "category", sortable: false,
       type: "custom",
-      className: "cursor-pointer hover:text-blue-500", 
+      className: "cursor-pointer hover:text-blue-500",
       render: (data) => (
         <Link href={route("inquery.bros.category", data.category)}>
           {data.category}
@@ -167,6 +167,7 @@ export default function Branch({ auth, sessions, branch_types }) {
           </div>
           <DataTable
             headings={headings}
+            periodic={true}
             columns={columns}
             fetchUrl={"/api/report/bros"}
             refreshUrl={isRefreshed}
