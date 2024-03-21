@@ -24,7 +24,7 @@ class DataSheet implements FromCollection, ShouldAutoSize, WithTitle, WithHeadin
     private $data;
     private $periode;
 
-    public function __construct($data, $periode)
+    public function __construct($data)
     {
         $number = 1;
         $this->data = $data->flatMap(function($item) use(&$number) {
@@ -46,7 +46,6 @@ class DataSheet implements FromCollection, ShouldAutoSize, WithTitle, WithHeadin
                 ];
             });
         });
-        $this->periode = $periode;
     }
 
 
@@ -69,6 +68,6 @@ class DataSheet implements FromCollection, ShouldAutoSize, WithTitle, WithHeadin
 
     public function title(): string
     {
-        return 'Asset STO - '.$this->periode;
+        return 'Hasil_STO_'.Carbon::parse($this->data->periode)->year.'_'.$this->data->semester;
     }
 }

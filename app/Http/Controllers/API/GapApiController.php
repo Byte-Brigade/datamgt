@@ -882,7 +882,7 @@ class GapApiController extends Controller
             $hasil_sto = $hasil_stos->where('gap_sto_id', $sto->id)->first();
             return [
                 'id' => $branch->id,
-                'gap_sto_id' => $gap_sto_id,
+                'gap_hasil_sto_id' => $hasil_sto->id,
                 'branch_name' => $branch->branch_name,
                 'branch_code' => $branch->branch_code,
                 'type_name' => $branch->branch_types->type_name,
@@ -907,7 +907,7 @@ class GapApiController extends Controller
         return PaginationHelper::paginate($collection, $perpage);
     }
 
-    public function sto_assets(GapAsset $gap_asset, Request $request, $gap_hasil_sto_id)
+    public function sto_assets(GapAsset $gap_asset, Request $request, $slug)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order', 'asc');
@@ -917,9 +917,12 @@ class GapApiController extends Controller
             ->join('branches', 'gap_assets.branch_id', 'branches.id');
 
         $perpage = $request->perpage ?? 15;
+
+        $query = $query->where('slug', $slug);
+
         // $query = $query->where('gap_hasil_sto_id', $gap_hasil_sto_id);
-        $query = $query->whereHas('gap_asset_details', function ($q) use ($gap_hasil_sto_id) {
-            return $q->where('gap_hasil_sto_id', $gap_hasil_sto_id);
+        $query = $query->whereHas('gap_asset_details', function ($q) use ($request) {
+            return $q->where('gap_hasil_sto_id', $request->gap_hasil_sto_id);
         });
 
 
@@ -927,9 +930,7 @@ class GapApiController extends Controller
         if (!is_null($request->category)) {
             $query = $query->where('category', $request->category);
         }
-        if (!is_null($request->branch_code)) {
-            $query = $query->where('branch_code', $request->branch_code);
-        }
+
 
         if (isset($request->major_category)) {
             $query = $query->whereIn('major_category', $request->major_category);

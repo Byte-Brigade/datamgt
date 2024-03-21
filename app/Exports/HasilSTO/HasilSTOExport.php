@@ -22,10 +22,9 @@ class HasilSTOExport implements WithMultipleSheets
     public function sheets(): array
     {
         $data = GapSto::find($this->gap_sto_id);
-        $latestPeriode = GapSto::find($this->gap_sto_id)->periode;
         return [
             // new SummarySheet($data, $latestPeriode),
-            new DataSheet($data, $latestPeriode),
+            new DataSheet($data),
         ];
     }
 }

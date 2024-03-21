@@ -169,12 +169,12 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
           {active == "depre" && (
             <DataTable
               columns={columns}
-              fetchUrl={`/api/gap/stos/assets/${gap_hasil_sto_id}`}
+              fetchUrl={`/api/gap/stos/assets/${branch.slug}`}
               bordered={true}
               submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
 
               parameters={{
-                branch_code: branch.branch_code,
+                gap_hasil_sto_id,
                 category: "Depre",
               }}
             >
@@ -193,11 +193,11 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
           {active == "nonDepre" && (
             <DataTable
               columns={columns}
-              fetchUrl={`/api/gap/stos/assets/${gap_hasil_sto_id}`}
+              fetchUrl={`/api/gap/stos/assets/${branch.slug}`}
               bordered={true}
               submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
               parameters={{
-                branch_code: branch.branch_code,
+                gap_hasil_sto_id,
                 category: "Non-Depre",
               }}
             >
