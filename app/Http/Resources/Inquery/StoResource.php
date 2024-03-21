@@ -36,7 +36,7 @@ class StoResource extends JsonResource
         $gap_asset = null;
 
         if (!isset($prevSTO)) {
-            $gap_asset = $this->branches->gap_assets();
+            $gap_asset = $this->branches->gap_assets;
         } else {
             $gap_asset = GapAsset::where('branch_id',$this->branches->id)->whereHas('gap_asset_detailS', function($q) use($prevSTO) {
                 return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)

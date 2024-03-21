@@ -66,8 +66,8 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
       render: (data) => (
         <Link
           href={route("gap.stos.detail.assets", {
-            slug: data.slug,
-            gap_sto_id: data.gap_sto_id,
+            gap_hasil_sto_id: data.gap_hasil_sto_id,
+            branch: data.slug,
           })}
         >
           {data.branch_name}

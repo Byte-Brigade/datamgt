@@ -5,6 +5,7 @@ namespace App\Exports\HasilSTO;
 use App\Http\Resources\KdoMobilResource;
 use App\Models\Branch;
 use App\Models\GapAsset;
+use App\Models\GapHasilSto;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\KdoMobilBiayaSewa;
@@ -25,15 +26,19 @@ class DataSheet implements FromCollection, ShouldAutoSize, WithTitle, WithHeadin
     private $data;
     private $periode;
 
-    public function __construct($data, $periode)
+    public function __construct($data)
     {
-        $this->periode = $data->periode;
         $number = 1;
-        $data = GapAsset::whereHas('gap_asset_details', function ($q) use ($data) {
+        $assets = GapAsset::whereHas('gap_asset_details', function ($q) use ($data) {
             return $q->where('periode', $data->periode)->where('semester', $data->semester);
         })->get();
-        $this->data = $data->map(function ($asset) use (&$number) {
+        $this->data = $assets->map(function ($asset) use (&$number, $data) {
+
+            $hasil_sto = GapHasilSto::where('gap_sto_id', $data->id)->where('branch_id', $asset->branch_id)->first();
             $gap_asset_details = $asset->gap_asset_details->first();
+            if (isset($hasil_sto)) {
+                $gap_asset_details = $asset->gap_asset_details->where('gap_hasil_sto_id', $hasil_sto->id)->first();
+            }
             return [
                 'No' => $number++,
                 'Category' => $asset->category,

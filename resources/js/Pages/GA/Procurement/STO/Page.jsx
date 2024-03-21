@@ -412,11 +412,11 @@ export default function Page({ auth, sessions }) {
                 disabled={processing}
                 onChange={(e) => setData("semester", e)}
               >
-                <Option value="S1">
-                  S1
+                <Option value="Smtr 1">
+                  Smtr 1
                 </Option>
-                <Option value="S2">
-                  S2
+                <Option value="Smtr 2">
+                  Smtr 2
                 </Option>
               </Select>
               <Input
