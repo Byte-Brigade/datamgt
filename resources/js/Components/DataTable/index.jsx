@@ -7,7 +7,7 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
@@ -46,14 +46,14 @@ export default function DataTable({
   submitUrl = {},
   fixed = false,
 }) {
-
+  const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState();
   const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [fixedTable, setFixedTable] = useState(fixed);
@@ -73,10 +73,6 @@ export default function DataTable({
     setSelected,
     filterData,
     setFilterData,
-    data,
-    setData,
-    loading,
-    setLoading
   } = useFormContext();
 
   // filters
@@ -210,7 +206,22 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
+      if (Array.isArray(data.data)) {
+        if (
+          data.data.some(
+            (data) => data.remark !== undefined && data.remark !== null
+          )
+        ) {
+          const remarksData = data.data.reduce((acc, current) => {
+            acc[current.id] = current.remark;
+            return acc;
+          }, {});
 
+          setSelected(remarksData);
+        }
+      }
+
+      setInitialData({ remark: {} });
 
       console.log(data.data);
     }
