@@ -112,7 +112,7 @@ class GapStoController extends Controller
             }
 
             $gap_sto = GapSto::create([
-                'periode' => Carbon::parse($request->periode)->startOfMonth()->format('Y-m-d'),
+                'periode' => Carbon::createFromDate($request->periode)->format('Y-m-d'),
                 'semester' => $request->semester,
                 'status' => 'On Progress',
                 'keterangan' => $request->keterangan,
