@@ -20,7 +20,10 @@ class StoResource extends JsonResource
     public function toArray($request)
     {
 
-        $current_sto = GapSto::where('status', 'On Progress')->first();
+        $latestPeriode = $this->branches->gap_assets->max('periode');
+        $periode = GapSto::max('periode');
+
+        $current_sto = GapSto::where('status', 'On Progress')->where('periode', $periode)->first();
         $hasil_sto = null;
         if (isset($current_sto)) {
 
@@ -44,7 +47,6 @@ class StoResource extends JsonResource
 
 
 
-
         return [
             'id' => $this->branches->id,
             'branch_name' => $this->branches->branch_name,
@@ -58,15 +60,15 @@ class StoResource extends JsonResource
             'non_depre' => $this->branches->gap_assets()->where('category', 'Non-Depre')->whereHas('gap_asset_details', function ($q) use ($current_sto) {
 
                 return $q->where('periode', $current_sto->periode)->where('semester',$current_sto->semester);
-            })->count() . '/' . $gap_asset->where('category', 'Depre')->count(),
+            })->count() . '/' . $gap_asset->where('category', 'Non-Depre')->count(),
             'total_remarked' => $this->branches->gap_assets()->whereHas('gap_asset_details', function ($q) use ($current_sto) {
 
                 return $q->where('periode', $current_sto->periode)->where('semester',$current_sto->semester);
             })->count() . '/' . $gap_asset->count(),
             'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
             'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null,
-            'periode' => Carbon::parse($current_sto->periode)->year,
-            'semester' => $current_sto->semester,
+            'periode' => Carbon::parse($latestPeriode->periode)->year,
+            'semester' => $latestPeriode->semester,
 
         ];
     }
