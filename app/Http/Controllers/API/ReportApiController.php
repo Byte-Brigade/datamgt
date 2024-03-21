@@ -274,7 +274,7 @@ class ReportApiController extends Controller
         return PaginationHelper::paginate($collections, 15);
     }
 
-    public function bros(InfraBro $infra_bro, Request $request)
+    public function bros(InfraBro $infra_bro, Request $request, $periode)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order') ?? 'asc';
@@ -304,6 +304,27 @@ class ReportApiController extends Controller
         //         });
 
         // })->flatten(1);
+
+
+        // Get the latest BRO
+        $bro = InfraBro::orderBy('periode', 'desc')->first();
+
+
+
+        $bro = InfraBro::orderBy('periode', 'desc')->first();
+        if ($periode == "previous") {
+            $distinctPeriods = InfraBro::where('periode', '!=', $bro->periode)->distinct('periode')->pluck('periode');
+
+            if ($distinctPeriods->count() > 0) {
+                $previousPeriode = $distinctPeriods->first();
+                $bro = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+            }
+        }
+
+        $query = $query->where('periode', $bro->periode);
+
+
+
 
         $collections = $query->sortBy('category')->groupBy('category')->map(function ($bros, $category) {
             return  [

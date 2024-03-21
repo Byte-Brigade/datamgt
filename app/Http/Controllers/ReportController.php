@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapDisnaker;
 use App\Models\InfraBro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -69,25 +70,22 @@ class ReportController extends Controller
 
     public function bros()
     {
-        // $query = InfraBro::get();
-        // $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
-        //     return $bros->map(function ($bros, $branch_type) use ($category){
-        //             return [
-        //                 'category' => $category,
-        //                 'branch_type' => $branch_type,
-        //                 'target' => $bros->count(),
-        //                 'done' => $bros->where('status', 'Done')->count(),
-        //                 'on_progress' => $bros->where('status', 'On Progress')->count(),
-        //                 'not_start' => $bros->where('all_progress', 0)->count(),
-        //                 'drop' => $bros->where('status', 'Drop')->count(),
-        //             ];
-        //         });
+        $latestBRO = InfraBro::orderBy('periode', 'desc')->first();
+        $distinctPeriods = InfraBro::where('periode', '!=', $latestBRO->periode)->distinct('periode')->pluck('periode');
 
-        // })->flatten(1);
+        if ($distinctPeriods->count() > 0) {
+            $previousPeriode = $distinctPeriods->first();
+            $previousBRO = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+        } else {
+            $previousBRO = null;
+        }
 
 
-        // dd($collections);
         return Inertia::render('Reporting/BRO/Page', [
+            'periode' => [
+                "current" => isset($latestBRO) ? Carbon::parse($latestBRO->periode)->format('F Y') : false,
+                "previous" => isset($previousBRO) ? Carbon::parse($previousBRO->periode)->format('F Y') : false,
+            ],
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
@@ -125,5 +123,4 @@ class ReportController extends Controller
         $fileName = 'Data_BRO_' . date('d-m-y') . '.xlsx';
         return (new BROExport)->download($fileName);
     }
-
 }
