@@ -176,12 +176,31 @@ class InqueryController extends Controller
 
     public function assets_remark(Request $request, $slug)
     {
-        $remarks = $request->input('remark');
+        $remarks = !is_null($request->input('remark')) ? $request->input('remark') : [];
+        $keterangan = !is_null($request->input('keterangan')) ? $request->input('keterangan') : [];
+
+        $merged = [];
+        dd($request->all());
+        foreach ($remarks as $id => $remarkValue) {
+            $merged[$id] = [
+                'remark' => $remarkValue,
+                'keterangan' => $keterangan[$id] ?? null
+            ];
+        }
+
+        foreach ($keterangan as $id => $keteranganValue) {
+            if (!isset($merged[$id])) {
+                $merged[$id] = [
+                    'remark' => null,
+                    'keterangan' => $keteranganValue
+                ];
+            }
+        }
         DB::beginTransaction();
         try {
             $current_sto = GapSto::where('status', 'On Progress')->first();
             if (!is_null($remarks)) {
-                foreach ($remarks as $id => $value) {
+                foreach ($merged as $id => $value) {
                     $gapAsset = GapAsset::find($id);
                     if (!isset($current_sto)) {
                         throw new Exception("STO belum dimulai");
@@ -190,7 +209,7 @@ class InqueryController extends Controller
                         throw new Exception("Asset tidak ditemukan");
                     }
 
-                    if (!is_null($value)) {
+                    if (!is_null($value['remark'])) {
                         $branch = Branch::where('slug', $slug)->first();
                         $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
                         if (!isset($gap_hasil_sto)) {
@@ -200,7 +219,7 @@ class InqueryController extends Controller
                                 'remarked' => false,
                             ]);
                         }
-                        if($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
+                        if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
                             GapAssetDetail::updateOrCreate(
                                 [
                                     'asset_number' => $gapAsset->asset_number,
@@ -211,12 +230,12 @@ class InqueryController extends Controller
                                     'asset_number' => $gapAsset->asset_number,
                                     'semester' => $current_sto->semester,
                                     'periode' => $current_sto->periode,
-                                    'status' => $value,
+                                    'status' => $value['remark'],
                                     'sto' => false,
+                                    'keterangan' => $value['keterangan'],
                                 ]
                             );
                         }
-
                     }
                 }
             } else {

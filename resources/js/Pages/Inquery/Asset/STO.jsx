@@ -7,10 +7,10 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Option, Select } from "@material-tailwind/react";
+import { Button, Input, Option, Select } from "@material-tailwind/react";
 
 export default function Detail({ auth, branch, sessions }) {
-  const { form, selected, setSelected } = useFormContext();
+  const { form, selected, setSelected, input, setInput } = useFormContext();
 
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
@@ -25,6 +25,16 @@ export default function Detail({ auth, branch, sessions }) {
     form.setData("remark", { ...selected, [id]: value });
   };
 
+  const handleInputChange = (id, value) => {
+    setInput((prevInput) => {
+      const updateInput = { ...prevInput, [id]: value };
+      console.log("Updated Selected:", value); // Add this line for debugging
+      console.log("Updated Selected:", input); // Add this line for debugging
+      return updateInput;
+    });
+
+    form.setData("keterangan", { ...input, [id]: value });
+  }
   const columns = [
     {
       name: "Asset Number",
@@ -126,6 +136,18 @@ export default function Detail({ auth, branch, sessions }) {
           </Select>
         ) : (
           data.status
+        ),
+    },
+    {
+      name: "Keterangan",
+      field: "keterangan",
+      type: "custom",
+      render: (data) =>
+        auth.permissions.includes("can sto") ? (
+          <Input label={"Keterangan"} value={`${input[data.id] ? input[data.id] : (data.keterangan || "")}`}
+            onChange={(e) => handleInputChange(data.id, e.target.value)} />
+        ) : (
+          data.keterangan
         ),
     },
   ];

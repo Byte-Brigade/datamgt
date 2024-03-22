@@ -81,6 +81,7 @@ class ReportController extends Controller
         }
 
 
+
         return Inertia::render('Reporting/BRO/Page', [
             'periode' => [
                 "current" => isset($latestBRO) ? Carbon::parse($latestBRO->periode)->format('F Y') : false,
@@ -92,25 +93,7 @@ class ReportController extends Controller
     }
     public function bro_category($category)
     {
-        // $query = InfraBro::get();
-        // $collections = $query->groupBy(['category', 'branch_type'])->map(function ($bros, $category) {
-        //     return $bros->map(function ($bros, $branch_type) use ($category){
-        //             return [
-        //                 'category' => $category,
-        //                 'branch_type' => $branch_type,
-        //                 'target' => $bros->count(),
-        //                 'done' => $bros->where('status', 'Done')->count(),
-        //                 'on_progress' => $bros->where('status', 'On Progress')->count(),
-        //                 'not_start' => $bros->where('all_progress', 0)->count(),
-        //                 'drop' => $bros->where('status', 'Drop')->count(),
-        //             ];
-        //         });
-
-        // })->flatten(1);
-
-
-        // dd($collections);
-        $branchesProps = Branch::get();
+          $branchesProps = Branch::get();
 
         return Inertia::render('Reporting/BRO/Detail', [
             'branches' => $branchesProps,
