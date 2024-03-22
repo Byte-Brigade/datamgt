@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\GapDisnaker;
 use App\Models\InfraBro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -69,7 +70,23 @@ class ReportController extends Controller
 
     public function bros()
     {
+        $latestBRO = InfraBro::orderBy('periode', 'desc')->first();
+        $distinctPeriods = InfraBro::where('periode', '!=', $latestBRO->periode)->distinct('periode')->pluck('periode');
+
+        if ($distinctPeriods->count() > 0) {
+            $previousPeriode = $distinctPeriods->first();
+            $previousBRO = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+        } else {
+            $previousBRO = null;
+        }
+
+
+
         return Inertia::render('Reporting/BRO/Page', [
+            'periode' => [
+                "current" => isset($latestBRO) ? Carbon::parse($latestBRO->periode)->format('F Y') : false,
+                "previous" => isset($previousBRO) ? Carbon::parse($previousBRO->periode)->format('F Y') : false,
+            ],
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
@@ -89,5 +106,4 @@ class ReportController extends Controller
         $fileName = 'Data_BRO_' . date('d-m-y') . '.xlsx';
         return (new BROExport)->download($fileName);
     }
-
 }

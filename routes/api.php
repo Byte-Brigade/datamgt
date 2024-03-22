@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('report')->name('report.')->group(function () {
     Route::get('branches', [ReportApiController::class, 'branches'])->name('branches');
     Route::get('files', [ReportApiController::class, 'files'])->name('files');
-    Route::get('bros', [ReportApiController::class, 'bros'])->name('bros');
+    Route::get('bros/{periode}', [ReportApiController::class, 'bros'])->name('bros');
     Route::get('assets', [ReportApiController::class, 'assets'])->name('assets');
     Route::get('assets/{type_name}', [ReportApiController::class, 'asset_detail'])->name('assets.detail');
     Route::get('licenses', [ReportApiController::class, 'licenses'])->name('licenses');
