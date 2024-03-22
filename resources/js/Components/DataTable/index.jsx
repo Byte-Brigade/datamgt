@@ -206,6 +206,7 @@ export default function DataTable({
       // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
+      setInitialData({ remark: {}, });
       if (Array.isArray(data.data)) {
         if (
           data.data.some(
@@ -217,11 +218,13 @@ export default function DataTable({
             return acc;
           }, {});
 
+
           setSelected(remarksData);
+          form.setData('remark', remarksData);
         }
       }
 
-      setInitialData({ remark: {} });
+
 
       console.log(data.data);
     }
@@ -230,21 +233,6 @@ export default function DataTable({
       setData(dataArr);
       setLoading(false);
     }
-  };
-
-  const getFormattedDate = (currentDate, months = 0) => {
-    // Mendapatkan tanggal saat ini
-    // const currentDate = new Date();
-
-    // Mendapatkan tahun, bulan, dan tanggal dari objek Date
-    const year = currentDate.getFullYear();
-    const month = String(months + 1).padStart(2, "0"); // Ditambah 1 karena bulan dimulai dari 0
-    const day = String(currentDate.getDate()).padStart(2, "0");
-
-    // Menggabungkan komponen tanggal dalam format "YYYY-MM-DD"
-    const formattedDate = `${year}-${month}-${day}`;
-
-    return formattedDate;
   };
 
   useEffect(() => {

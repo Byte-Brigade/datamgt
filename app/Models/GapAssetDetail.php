@@ -16,6 +16,7 @@ class GapAssetDetail extends Model
         'semester',
         'periode',
         'sto',
+        'keterangan',
     ];
 
     public function gap_assets()
