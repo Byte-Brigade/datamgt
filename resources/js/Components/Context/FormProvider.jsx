@@ -15,6 +15,7 @@ export const FormProvider = ({ children }) => {
     endDate: null
   });
   const [selected, setSelected] = useState({})
+  const [input, setInput] = useState({})
   const [modalOpen, setModalOpen] = useState({
     create: false,
     edit: false,
@@ -87,6 +88,7 @@ export const FormProvider = ({ children }) => {
       setId,
       selected, setSelected,
       periode, setPeriode,
+      input, setInput,
       groupBy,
       filterData, setFilterData
     }}>

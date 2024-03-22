@@ -49,7 +49,9 @@ class AssetSTOResource extends JsonResource
             'remark' => $this->remark,
             'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
             'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
+            'keterangan' => isset($gap_asset_details) ? $gap_asset_details->keterangan : null,
             'semestawdaer' => $this->gap_asset_details,
+
 
 
         ];
