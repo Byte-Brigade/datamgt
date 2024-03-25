@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,7 +35,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $token = $request->user()->createToken('api-token')->plainTextToken;
+
+        $cookie = Cookie::make('api_token', $token, null, '/', null, false, true);
+        return redirect()->intended(RouteServiceProvider::HOME)->withCookie($cookie);
     }
 
     /**
@@ -47,7 +51,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        return redirect('/');
+        $cookie = Cookie::forget('api_token');
+        return redirect('/')->withCookie($cookie);
     }
 }

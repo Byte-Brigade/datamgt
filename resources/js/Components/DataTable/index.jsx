@@ -46,6 +46,7 @@ export default function DataTable({
   submitUrl = {},
   fixed = false,
 }) {
+
   const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState();
@@ -195,7 +196,7 @@ export default function DataTable({
     };
 
     if (fetchUrl) {
-      const { data } = await axios.get(fetchUrl, { params });
+      const { data } = await axios.get(fetchUrl, { params,  withCredentials: true  });
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
@@ -499,16 +500,16 @@ export default function DataTable({
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
                             className={`${sortOrder === SORT_ASC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                           <ChevronDownIcon
                             className={`${sortOrder === SORT_DESC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                         </span>
