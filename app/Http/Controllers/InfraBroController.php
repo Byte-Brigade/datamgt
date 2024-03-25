@@ -7,6 +7,7 @@ use App\Imports\BroImport;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\InfraBro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
@@ -16,7 +17,10 @@ class InfraBroController extends Controller
     public function index()
     {
         $branches = Branch::get();
+
+
         return Inertia::render('GA/Infra/BRO/Page', [
+
             'branches' => $branches,
             'type_names' => BranchType::whereNotIn('type_name', ['SFI'])->pluck('type_name')->toArray(),
             'status_bro' => InfraBro::pluck('status')->unique()->toArray(),
