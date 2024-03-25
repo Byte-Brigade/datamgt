@@ -53,6 +53,7 @@ class DataSheet implements FromCollection, ShouldAutoSize, WithTitle, WithHeadin
                 'Depre Exp' => number_format($asset->depre_exp, 0, '.', ','),
                 'Net Book Value' => number_format($asset->net_book_value, 0, '.', ','),
                 'Remark' => isset($gap_asset_details) ? $gap_asset_details->status : null,
+                'Keterangan' => isset($gap_asset_details) ? $gap_asset_details->keterangan : null,
                 'Tahun' => isset($gap_asset_details) ? Carbon::parse($gap_asset_details->periode)->year : null,
                 'Semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
 

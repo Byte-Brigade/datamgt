@@ -198,65 +198,67 @@ class InqueryController extends Controller
         DB::beginTransaction();
         try {
             $current_sto = GapSto::where('status', 'On Progress')->first();
-            if (!is_null($remarks)) {
-                foreach ($merged as $id => $value) {
-                    $gapAsset = GapAsset::find($id);
-                    if (!isset($current_sto)) {
-                        throw new Exception("STO belum dimulai");
-                    }
-                    if (!isset($gapAsset)) {
-                        throw new Exception("Asset tidak ditemukan");
-                    }
 
-                    if (!is_null($value['remark'])) {
-                        $branch = Branch::where('slug', $slug)->first();
-                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
-                        if (!isset($gap_hasil_sto)) {
-                            $gap_hasil_sto = GapHasilSto::create([
-                                'branch_id' => $branch->id,
-                                'gap_sto_id' => $current_sto->id,
-                                'remarked' => false,
-                            ]);
-                        }
-                        if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
-                            $asset_detail = GapAssetDetail::where('asset_number', $gapAsset->asset_number)->where('gap_hasil_sto_id', $gap_hasil_sto->id)->first();
-                            if (isset($asset_detail)) {
-                                $asset_detail->update(
-                                    [
-                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                        'asset_number' => $gapAsset->asset_number,
-                                        'semester' => $current_sto->semester,
-                                        'periode' => $current_sto->periode,
-                                        'status' => $value['remark'],
-                                        'sto' => false,
-                                        'keterangan' => $value['keterangan'],
-                                    ]
-                                );
-                            } else {
-                                GapAssetDetail::updateOrCreate(
-                                    [
-                                        'asset_number' => $gapAsset->asset_number,
-                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                    ],
-                                    [
-                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                        'asset_number' => $gapAsset->asset_number,
-                                        'semester' => $current_sto->semester,
-                                        'periode' => $current_sto->periode,
-                                        'status' => $value['remark'],
-                                        'sto' => false,
-                                        'keterangan' => $value['keterangan'],
-                                    ]
-                                );
-                            }
-                        }
+            foreach ($merged as $id => $value) {
+                $gapAsset = GapAsset::find($id);
+                if (!isset($current_sto)) {
+                    throw new Exception("STO belum dimulai");
+                }
+                if (!isset($gapAsset)) {
+                    throw new Exception("Asset tidak ditemukan");
+                }
+
+
+
+
+                $branch = Branch::where('slug', $slug)->first();
+                $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
+                if (!isset($gap_hasil_sto)) {
+                    $gap_hasil_sto = GapHasilSto::create([
+                        'branch_id' => $branch->id,
+                        'gap_sto_id' => $current_sto->id,
+                        'remarked' => false,
+                    ]);
+                }
+                if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
+                    $asset_detail = GapAssetDetail::where('asset_number', $gapAsset->asset_number)->where('gap_hasil_sto_id', $gap_hasil_sto->id)->first();
+                    $status_constraint = ['Ada', 'Tidak Ada'];
+                    if (isset($asset_detail)) {
+                        $asset_detail->update(
+                            [
+                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                'asset_number' => $gapAsset->asset_number,
+                                'semester' => $current_sto->semester,
+                                'periode' => $current_sto->periode,
+                                'status' => $asset_detail->status,
+                                'sto' => false,
+                                'keterangan' => !in_array($value['remark'], $status_constraint) ? $value['keterangan'] : null,
+                            ]
+                        );
                     } else {
-                        throw new Exception("Data belum diremark");
+                        if (!is_null($value['remark'])) {
+                            GapAssetDetail::updateOrCreate(
+                                [
+                                    'asset_number' => $gapAsset->asset_number,
+                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                ],
+                                [
+                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                    'asset_number' => $gapAsset->asset_number,
+                                    'semester' => $current_sto->semester,
+                                    'periode' => $current_sto->periode,
+                                    'status' => $value['remark'],
+                                    'sto' => false,
+                                    'keterangan' => !in_array($value['remark'], $status_constraint) ? $value['keterangan'] : null,
+                                ]
+                            );
+                        } else {
+                            throw new Exception("Data belum diremark");
+                        }
                     }
                 }
-            } else {
-                throw new Exception("Data belum diremark");
             }
+
 
             DB::commit();
             return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);

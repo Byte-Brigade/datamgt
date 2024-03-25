@@ -144,7 +144,13 @@ export default function Detail({ auth, branch, sessions }) {
       type: "custom",
       render: (data) =>
         auth.permissions.includes("can sto") ? (
-          <Input label={"Keterangan"} value={`${input[data.id] ? input[data.id] : (data.keterangan || "")}`}
+          <Input label={"Keterangan"} disabled={
+            ["Ada", "Ada Rusak"].includes(selected[data.id])
+              ? true
+              : ["Ada", "Tidak Ada"].includes(data.status)
+                ? true
+                : false
+          } value={`${input[data.id] ? input[data.id] : (data.keterangan || "")}`}
             onChange={(e) => handleInputChange(data.id, e.target.value)} />
         ) : (
           data.keterangan

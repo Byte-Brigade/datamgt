@@ -7,7 +7,7 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Option, Select } from "@material-tailwind/react";
+import { Button, Input, Option, Select } from "@material-tailwind/react";
 
 export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
   const { form, selected, setSelected } = useFormContext();
@@ -126,6 +126,24 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
           </Select>
         ) : (
           data.status
+        ),
+    },
+    {
+      name: "Keterangan",
+      field: "keterangan",
+      type: "custom",
+      render: (data) =>
+        auth.permissions.includes("can sto") ? (
+          <Input label={"Keterangan"} disabled={
+            ["Ada", "Ada Rusak"].includes(selected[data.id])
+              ? true
+              : ["Ada", "Tidak Ada"].includes(data.status)
+                ? true
+                : false
+          } value={`${input[data.id] ? input[data.id] : (data.keterangan || "")}`}
+            onChange={(e) => handleInputChange(data.id, e.target.value)} />
+        ) : (
+          data.keterangan
         ),
     },
   ];
