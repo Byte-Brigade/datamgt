@@ -274,7 +274,7 @@ class ReportApiController extends Controller
         return PaginationHelper::paginate($collections, 15);
     }
 
-    public function bros(InfraBro $infra_bro, Request $request, $periode)
+    public function bros(InfraBro $infra_bro, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
         $sortOrder = $request->input('sort_order') ?? 'asc';
@@ -312,7 +312,7 @@ class ReportApiController extends Controller
 
 
         $bro = InfraBro::orderBy('periode', 'desc')->first();
-        if ($periode == "previous") {
+        if (!is_null($request->periode) && $request->periode == "previous") {
             $distinctPeriods = InfraBro::where('periode', '!=', $bro->periode)->distinct('periode')->pluck('periode');
 
             if ($distinctPeriods->count() > 0) {
