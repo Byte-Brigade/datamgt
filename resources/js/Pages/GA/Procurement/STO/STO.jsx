@@ -10,7 +10,7 @@ import { Head } from "@inertiajs/react";
 import { Button, Input, Option, Select } from "@material-tailwind/react";
 
 export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
-  const { form, selected, setSelected } = useFormContext();
+  const { form, selected, setSelected, input, setInput } = useFormContext();
 
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
@@ -24,6 +24,17 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
 
     form.setData("remark", { ...selected, [id]: value });
   };
+
+  const handleInputChange = (id, value) => {
+    setInput((prevInput) => {
+      const updateInput = { ...prevInput, [id]: value };
+      console.log("Updated Selected:", value); // Add this line for debugging
+      console.log("Updated Selected:", input); // Add this line for debugging
+      return updateInput;
+    });
+
+    form.setData("keterangan", { ...input, [id]: value });
+  }
 
   const columns = [
     {
