@@ -196,6 +196,16 @@ class GapStoController extends Controller
 
                 if ($user->hasRole('cabang')) {
                     $user->revokePermissionTo("can sto");
+                } else {
+                    $users = User::whereHas('permissions', function ($query) {
+                        $query->where('name', 'can sto');
+                    })
+                    ->where('branch_id', $branch->id)
+                    ->get();
+
+                    foreach ($users as $user) {
+                        $user->revokePermissionTo('can sto');
+                    }
                 }
             } else {
                 throw new Exception("STO belum dimulai");

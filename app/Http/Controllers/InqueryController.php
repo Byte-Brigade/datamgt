@@ -180,7 +180,6 @@ class InqueryController extends Controller
         $keterangan = !is_null($request->input('keterangan')) ? $request->input('keterangan') : [];
 
         $merged = [];
-        dd($request->all());
         foreach ($remarks as $id => $remarkValue) {
             $merged[$id] = [
                 'remark' => $remarkValue,
@@ -220,22 +219,39 @@ class InqueryController extends Controller
                             ]);
                         }
                         if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
-                            GapAssetDetail::updateOrCreate(
-                                [
-                                    'asset_number' => $gapAsset->asset_number,
-                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                ],
-                                [
-                                    'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                    'asset_number' => $gapAsset->asset_number,
-                                    'semester' => $current_sto->semester,
-                                    'periode' => $current_sto->periode,
-                                    'status' => $value['remark'],
-                                    'sto' => false,
-                                    'keterangan' => $value['keterangan'],
-                                ]
-                            );
+                            $asset_detail = GapAssetDetail::where('asset_number', $gapAsset->asset_number)->where('gap_hasil_sto_id', $gap_hasil_sto->id)->first();
+                            if (isset($asset_detail)) {
+                                $asset_detail->update(
+                                    [
+                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                        'asset_number' => $gapAsset->asset_number,
+                                        'semester' => $current_sto->semester,
+                                        'periode' => $current_sto->periode,
+                                        'status' => $value['remark'],
+                                        'sto' => false,
+                                        'keterangan' => $value['keterangan'],
+                                    ]
+                                );
+                            } else {
+                                GapAssetDetail::updateOrCreate(
+                                    [
+                                        'asset_number' => $gapAsset->asset_number,
+                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                    ],
+                                    [
+                                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                        'asset_number' => $gapAsset->asset_number,
+                                        'semester' => $current_sto->semester,
+                                        'periode' => $current_sto->periode,
+                                        'status' => $value['remark'],
+                                        'sto' => false,
+                                        'keterangan' => $value['keterangan'],
+                                    ]
+                                );
+                            }
                         }
+                    } else {
+                        throw new Exception("Data belum diremark");
                     }
                 }
             } else {
