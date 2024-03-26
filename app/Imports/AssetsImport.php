@@ -99,7 +99,7 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                                 [
                                     'branch_id' => $branch->id,
                                     'gap_sto_id' => $current_sto->id,
-                                    'remarked' => true,
+                                    'remarked' => false,
                                 ]
                             );
                         }

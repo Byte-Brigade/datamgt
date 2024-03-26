@@ -58,35 +58,35 @@ class InqueryController extends Controller
                 'name' => $disnaker->jenis_perizinan->name,
                 'remark' => 'Ada',
                 'jatuh_tempo' => $disnaker->tgl_masa_berlaku,
-                'url' => isset($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
+                'url' => isset ($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
 
             ];
         });
         $lisensi = collect([
             [
                 'name' => 'Izin OJK',
-                'remark' => isset($branch->izin) ? 'Ada' : 'Tidak Ada',
+                'remark' => isset ($branch->izin) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => '-',
-                'url' => isset($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
+                'url' => isset ($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
 
             ],
             [
                 'name' => 'SK BI RTGS',
-                'remark' => isset($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
+                'remark' => isset ($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => '-',
-                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->file}" : false,
+                'url' => isset ($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->file}" : false,
             ],
             [
                 'name' => 'Reklame',
-                'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
-                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_skbirtgs->file_izin_reklame}" : false,
+                'remark' => isset ($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => isset ($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
+                'url' => isset ($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_skbirtgs->file_izin_reklame}" : false,
 
             ],
             [
                 'name' => 'APAR',
-                'remark' => isset($ops_apar) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
+                'remark' => isset ($ops_apar) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => isset ($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
             ],
         ]);
 
@@ -95,7 +95,7 @@ class InqueryController extends Controller
         $kdos = GapKdo::where('branch_id', $branch->id)->get();
         $kdos = $kdos->map(function ($kdo) {
             $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
-            $kdo->biaya_sewa = isset($biaya_sewa) ? $biaya_sewa->value : 0;
+            $kdo->biaya_sewa = isset ($biaya_sewa) ? $biaya_sewa->value : 0;
             return $kdo;
         });
 
@@ -188,7 +188,7 @@ class InqueryController extends Controller
         }
 
         foreach ($keterangan as $id => $keteranganValue) {
-            if (!isset($merged[$id])) {
+            if (!isset ($merged[$id])) {
                 $merged[$id] = [
                     'remark' => null,
                     'keterangan' => $keteranganValue
@@ -201,19 +201,15 @@ class InqueryController extends Controller
 
             foreach ($merged as $id => $value) {
                 $gapAsset = GapAsset::find($id);
-                if (!isset($current_sto)) {
+                if (!isset ($current_sto)) {
                     throw new Exception("STO belum dimulai");
                 }
-                if (!isset($gapAsset)) {
+                if (!isset ($gapAsset)) {
                     throw new Exception("Asset tidak ditemukan");
                 }
-
-
-
-
                 $branch = Branch::where('slug', $slug)->first();
                 $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
-                if (!isset($gap_hasil_sto)) {
+                if (!isset ($gap_hasil_sto)) {
                     $gap_hasil_sto = GapHasilSto::create([
                         'branch_id' => $branch->id,
                         'gap_sto_id' => $current_sto->id,
@@ -223,7 +219,7 @@ class InqueryController extends Controller
                 if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
                     $asset_detail = GapAssetDetail::where('asset_number', $gapAsset->asset_number)->where('gap_hasil_sto_id', $gap_hasil_sto->id)->first();
                     $status_constraint = ['Ada', 'Tidak Ada'];
-                    if (isset($asset_detail)) {
+                    if (isset ($asset_detail)) {
                         $asset_detail->update(
                             [
                                 'gap_hasil_sto_id' => $gap_hasil_sto->id,
@@ -258,14 +254,72 @@ class InqueryController extends Controller
                     }
                 }
             }
-
-
             DB::commit();
             return Redirect::back()->with(['status' => 'success', 'message' => 'Data Berhasil disimpan']);
         } catch (\Throwable $th) {
             DB::rollBack();
             return Redirect::back()->with(['status' => 'failed', 'message' => 'Data gagal disimpan. ' . $th->getMessage()]);
         }
+    }
+
+    public function sto_remark(Request $request, $slug)
+    {
+        $current_sto = GapSto::where('status', 'On Progress')->first();
+        try {
+            $gapAsset = GapAsset::find($request->id);
+            if (!isset ($current_sto)) {
+                throw new Exception("STO belum dimulai");
+            }
+            if (!isset ($gapAsset)) {
+                throw new Exception("Asset tidak ditemukan");
+            }
+            $branch = Branch::where('slug', $slug)->first();
+            $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
+
+            if (!is_null($request->remark)) {
+                GapAssetDetail::updateOrCreate(
+                    [
+                        'asset_number' => $gapAsset->asset_number,
+                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                    ],
+                    [
+                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                        'asset_number' => $gapAsset->asset_number,
+                        'semester' => $current_sto->semester,
+                        'periode' => $current_sto->periode,
+                        'status' => $request->remark,
+                        'sto' => false,
+                    ]
+                );
+            }
+
+            if (!is_null($request->keterangan)) {
+                GapAssetDetail::updateOrCreate(
+                    [
+                        'asset_number' => $gapAsset->asset_number,
+                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                    ],
+                    [
+                        'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                        'asset_number' => $gapAsset->asset_number,
+                        'semester' => $current_sto->semester,
+                        'periode' => $current_sto->periode,
+                        'sto' => false,
+                        'keterangan' => $request->keterangan,
+                    ]
+                );
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                "status" => "error",
+                "message" => $th->getMessage()
+            ], 500);
+        }
+        return response()->json([
+            "status" => "success",
+            "message" => "Status berhasil diubah!"
+        ]);
     }
 
     public function asset_detail(Request $request, $slug)
