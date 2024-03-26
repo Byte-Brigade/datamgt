@@ -70,7 +70,10 @@ export default function Branch({ auth, sessions, branch_types, periode }) {
       type: "custom",
       className: "cursor-pointer hover:text-blue-500",
       render: (data) => (
-        <Link href={route("inquery.bros.category", data.category)}>
+        <Link href={route("inquery.bros.category", {
+          category: data.category,
+          periode: data.periode
+        })}>
           {data.category}
         </Link>
       ),

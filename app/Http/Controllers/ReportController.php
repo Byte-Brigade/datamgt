@@ -71,33 +71,47 @@ class ReportController extends Controller
     public function bros()
     {
         $latestBRO = InfraBro::orderBy('periode', 'desc')->first();
-        $distinctPeriods = InfraBro::where('periode', '!=', $latestBRO->periode)->distinct('periode')->pluck('periode');
+        if (isset($latestBRO)) {
 
-        if ($distinctPeriods->count() > 0) {
-            $previousPeriode = $distinctPeriods->first();
-            $previousBRO = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
-        } else {
-            $previousBRO = null;
+
+            $distinctPeriods = InfraBro::where('periode', '!=', $latestBRO->periode)->distinct('periode')->pluck('periode');
+
+            if ($distinctPeriods->count() > 0) {
+                $previousPeriode = $distinctPeriods->first();
+                $previousBRO = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+            } else {
+                $previousBRO = null;
+            }
+
+
+
+            return Inertia::render('Reporting/BRO/Page', [
+                'periode' => [
+                    "current" => isset($latestBRO) ? Carbon::parse($latestBRO->periode)->format('F Y') : false,
+                    "previous" => isset($previousBRO) ? Carbon::parse($previousBRO->periode)->format('F Y') : false,
+                ],
+                'branches' => Branch::get(),
+                'branch_types' => BranchType::get(),
+            ]);
         }
-
-
 
         return Inertia::render('Reporting/BRO/Page', [
             'periode' => [
-                "current" => isset($latestBRO) ? Carbon::parse($latestBRO->periode)->format('F Y') : false,
-                "previous" => isset($previousBRO) ? Carbon::parse($previousBRO->periode)->format('F Y') : false,
+                "current" =>  false,
+                "previous" => false,
             ],
             'branches' => Branch::get(),
             'branch_types' => BranchType::get(),
         ]);
     }
-    public function bro_category($category)
+    public function bro_category(Request $request, $category)
     {
-          $branchesProps = Branch::get();
+        $branchesProps = Branch::get();
 
         return Inertia::render('Reporting/BRO/Detail', [
             'branches' => $branchesProps,
             'category' => $category,
+            'periode' => $request->periode,
         ]);
     }
 

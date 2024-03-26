@@ -6,6 +6,9 @@ use App\Helpers\PartitionManager;
 use App\Jobs\ProcessPartitioning;
 use App\Models\Branch;
 use App\Models\GapAsset;
+use App\Models\GapAssetDetail;
+use App\Models\GapHasilSto;
+use App\Models\GapSto;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
@@ -38,7 +41,8 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                 $cabang = str_contains($row['cabang'], 'Sampoerna') ? 'Sampoerna' : $row['cabang'];
                 $branch = Branch::where('branch_name', 'like', '%' . $cabang . '%')->first();
                 if ($branch) {
-                    GapAsset::updateOrCreate(
+
+                    $gap_asset = GapAsset::updateOrCreate(
                         ['asset_number' => $row['asset_number']],
                         [
                             'branch_id' => $branch->id,
@@ -57,6 +61,49 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                             'net_book_value' => abs(round($row['asset_cost']) - round($row['accum_depre'])),
                         ]
                     );
+
+                    $sto = GapSto::where('status', 'Done')->latest()->first();
+                    if (isset($sto)) {
+                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                        if (!isset($gap_hasil_sto)) {
+                            $gap_hasil_sto = GapHasilSto::create(
+                                [
+                                    'branch_id' => $branch->id,
+                                    'gap_sto_id' => $sto->id,
+                                    'remarked' => true,
+                                ]
+                            );
+                        }
+                        GapAssetDetail::updateOrCreate(
+                            [
+                                'asset_number' => $gap_asset->asset_number,
+                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                            ],
+                            [
+                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                                'asset_number' => $gap_asset->asset_number,
+                                'semester' => $sto->semester,
+                                'periode' => $sto->periode,
+                                'status' => "Ada",
+                                'sto' => true,
+                            ]
+                        );
+                    }
+
+
+                    $current_sto = GapSto::where('status', 'On Progress')->latest()->first();
+                    if (isset($current_sto)) {
+                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
+                        if (!isset($gap_hasil_sto)) {
+                            $gap_hasil_sto = GapHasilSto::create(
+                                [
+                                    'branch_id' => $branch->id,
+                                    'gap_sto_id' => $current_sto->id,
+                                    'remarked' => true,
+                                ]
+                            );
+                        }
+                    }
                 }
             }
             DB::commit();

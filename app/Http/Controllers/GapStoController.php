@@ -147,6 +147,7 @@ class GapStoController extends Controller
             $branch = Branch::with('gap_assets')->where('slug', $slug)->first();
 
 
+
             $sto = GapSto::where('status', 'On Progress')->first();
 
             $fileName = $branch->branch_types->type_name . '_' . $branch->branch_name . '_STO_' . Carbon::parse($sto->periode)->year . '_' . $sto->semester;
@@ -165,6 +166,18 @@ class GapStoController extends Controller
                     $prev_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($prevSTO) {
                         return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)->where('status', 'Ada');
                     })->count();
+
+                    // $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $prevSTO->id)->where('branch_id', $branch->id)->first();
+
+                    // if (isset($gap_hasil_sto)) {
+                    //     if ($gap_hasil_sto->remarked) {
+                    //         $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/' . Carbon::parse($sto->periode)->year . '/' . $sto->semester . '/', $fileName, ["disk" => 'public']);
+                    //         $gap_hasil_sto->update([
+                    //             "disclaimer" => $fileName
+                    //         ]);
+                    //         return Redirect::back()->with(['status' => 'success', 'message' => 'Data berhasil disimpan!']);
+                    //     }
+                    // }
                 }
 
 
