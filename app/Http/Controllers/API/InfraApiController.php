@@ -120,10 +120,15 @@ class InfraApiController extends Controller
             $query = $query->whereIn('status', $request->status);
         }
 
+        if (!is_null($request->periode)) {
+            $query = $query->where('periode', $request->periode);
+        }
 
         if ($perpage == "All") {
             $perpage = $query->count();
         }
+
+
 
         $data = $query->paginate($perpage);
 

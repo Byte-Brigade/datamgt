@@ -121,7 +121,7 @@ export default function Detail({ auth, branch, sessions }) {
       render: (data) =>
         auth.permissions.includes("can sto") ? (
           <Select
-            className="bg-white"
+            className="bg-white z-50"
             label="Status"
             value={`${data.status || ""}`}
             onChange={(e) => handleChanged(data.id, e)}

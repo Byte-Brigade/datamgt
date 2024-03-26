@@ -28,8 +28,8 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
 
             $row = $row->toArray();
             // $filteredData = array_intersect_key($row, array_flip(preg_grep('/^\d+$/', array_keys($row))));
-            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|july|august|sept|oct|nov|dec)$/i', array_keys($row))));
-            $periode = Date::excelToDateTimeObject($row['periode']);
+            $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|july|jun|jul|aug|august|sept|oct|nov|dec)$/i', array_keys($row))));
+            $periode = Carbon::createFromDate($row['tahun'])->startOfYear()->format('Y-m-d');
 
             if (!isset($branch)) {
                 throw new Exception("Branch " . $row['unit'] . " tidak ditemukan.");
@@ -40,6 +40,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
                     'branch_id' => $branch->id,
                     'vendor' => $row['vendor'],
                     'nopol' => $row['nopol'],
+                    'periode' => $periode,
                 ],
                 [
                     'branch_id' => $branch->id,
@@ -52,7 +53,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
             );
             foreach ($filteredData as $key => $value) {
 
-                $tanggal_periode = strtoupper($key) . '_' . $periode->format('Y');
+                $tanggal_periode = strtoupper($key) . '_' . Carbon::parse($periode)->year;
                 $carbonDate = Carbon::createFromFormat('M_Y', $tanggal_periode);
                 $tanggal_periode =  $carbonDate->startOfMonth()->format('Y-m-d');
 
@@ -74,7 +75,7 @@ class KdoImport implements ToCollection, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            '*.periode' => 'required|integer',
+            '*.tahun' => 'required|integer',
         ];
     }
 }

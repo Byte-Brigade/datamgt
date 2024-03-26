@@ -306,22 +306,22 @@ class ReportApiController extends Controller
         // })->flatten(1);
 
 
-        // Get the latest BRO
-        $bro = InfraBro::orderBy('periode', 'desc')->first();
-
 
 
         $bro = InfraBro::orderBy('periode', 'desc')->first();
-        if (!is_null($request->periode) && $request->periode == "previous") {
-            $distinctPeriods = InfraBro::where('periode', '!=', $bro->periode)->distinct('periode')->pluck('periode');
+        if (isset($bro)) {
+            if (!is_null($request->periode) && $request->periode == "previous") {
+                $distinctPeriods = InfraBro::where('periode', '!=', $bro->periode)->distinct('periode')->pluck('periode');
 
-            if ($distinctPeriods->count() > 0) {
-                $previousPeriode = $distinctPeriods->first();
-                $bro = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+                if ($distinctPeriods->count() > 0) {
+                    $previousPeriode = $distinctPeriods->first();
+                    $bro = InfraBro::where('periode', $previousPeriode)->orderBy('periode', 'desc')->first();
+                }
             }
+
+            $query = $query->where('periode', $bro->periode);
         }
 
-        $query = $query->where('periode', $bro->periode);
 
 
 
@@ -334,6 +334,7 @@ class ReportApiController extends Controller
                 'on_progress' => $bros->where('status', 'On Progress')->count(),
                 'not_start' => $bros->where('all_progress', 0)->whereNotIn('status', ['Done', 'On Progress', 'Drop'])->count(),
                 'drop' => $bros->where('status', 'Drop')->count(),
+                'periode' => $bros->first()->periode,
             ];
         });
 
