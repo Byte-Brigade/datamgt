@@ -194,6 +194,7 @@ export default function Detail({ auth, branch, sessions }) {
             }
             value={`${input[data.id] ? input[data.id] : data.keterangan || ""}`}
             onChange={(e) => handleInputChange(data.id, e.target.value)}
+            onBlur={(e) => handleBlur(data.id, e.target.value)}
             onKeyDown={(e) => handleKeyDown(data.id, e)}
           />
         ) : (
