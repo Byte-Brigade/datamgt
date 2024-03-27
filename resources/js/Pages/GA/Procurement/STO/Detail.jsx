@@ -71,6 +71,7 @@ export default function Page({
       render: (data) => (
         <Link
           href={route("gap.stos.detail.assets", {
+            gap_sto_id,
             gap_hasil_sto_id: data.gap_hasil_sto_id,
             branch: data.slug,
           })}

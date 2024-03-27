@@ -206,7 +206,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/stos', [GapStoController::class, 'index'])->name('stos');
             Route::get('/stos/detail/{gap_sto_id}', [GapStoController::class, 'detail'])->name('stos.detail');
-            Route::get('/stos/detail/assets/{gap_hasil_sto_id}', [GapStoController::class, 'assets'])->name('stos.detail.assets');
+            Route::get('/stos/detail/{gap_sto_id}/assets/{gap_hasil_sto_id}', [GapStoController::class, 'assets'])->name('stos.detail.assets');
             Route::get('/stos/template', [GapStoController::class, 'template'])->name('stos.template');
             Route::get('/stos/disclaimer', [GapStoController::class, 'disclaimer'])->name('stos.disclaimer');
             Route::post('/stos/import', [GapStoController::class, 'import'])->name('stos.import');

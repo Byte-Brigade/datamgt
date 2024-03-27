@@ -12,9 +12,6 @@ const tabState = (values) => {
     return { slug, value: initialValue };
   });
 
-  const page = usePage();
-  console.log(route().params);
-
   useEffect(() => {
     if (params.slug) {
       const newPath = `${params.slug}`;

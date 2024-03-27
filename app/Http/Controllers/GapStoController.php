@@ -39,13 +39,12 @@ class GapStoController extends Controller
         $gap_sto = GapSto::find($gap_sto_id);
         return Inertia::render('GA/Procurement/STO/Detail', ['gap_sto_id' => $gap_sto_id, 'periode' => Carbon::parse($gap_sto->periode)->year, 'semester' => $gap_sto->semester]);
     }
-    public function assets(Request $request, $gap_hasil_sto_id)
+    public function assets(Request $request, $gap_sto_id, $gap_hasil_sto_id)
     {
-
         $branch = Branch::where('slug', $request->branch)->first();
 
         $gap_hasil_sto = GapHasilSto::find($gap_hasil_sto_id);
-        return Inertia::render('GA/Procurement/STO/STO', ['gap_hasil_sto_id' => $gap_hasil_sto->id, 'branch' => $branch]);
+        return Inertia::render('GA/Procurement/STO/STO', ['gap_sto_id' => $gap_sto_id, 'gap_hasil_sto_id' => $gap_hasil_sto->id, 'branch' => $branch]);
     }
     /**
      * Show the form for creating a new resource.
@@ -145,17 +144,11 @@ class GapStoController extends Controller
     {
         try {
             $branch = Branch::with('gap_assets')->where('slug', $slug)->first();
-
-
-
             $sto = GapSto::where('status', 'On Progress')->first();
 
             $fileName = $branch->branch_types->type_name . '_' . $branch->branch_name . '_STO_' . Carbon::parse($sto->periode)->year . '_' . $sto->semester;
 
-
-
             if (isset($sto)) {
-
                 $current_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($sto) {
                     return $q->where('periode', $sto->periode)->where('semester', $sto->semester);
                 })->count();

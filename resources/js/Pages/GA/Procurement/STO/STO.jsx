@@ -10,7 +10,7 @@ import { Head } from "@inertiajs/react";
 import { Button, Input, Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
+export default function Detail({ auth, branch, sessions, gap_hasil_sto_id, gap_sto_id }) {
   const { form } = useFormContext();
   const [selected, setSelected] = useState({});
   const [input, setInput] = useState({});
