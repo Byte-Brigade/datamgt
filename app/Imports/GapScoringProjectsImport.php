@@ -18,14 +18,13 @@ use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class GapScoringProjectsImport implements ToCollection, WithHeadingRow, WithValidation
+class GapScoringProjectsImport implements ToCollection, WithHeadingRow
 {
     use Importable;
 
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $periode = Date::excelToDateTimeObject($row['periode']);
 
             $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
             if ($branch && $row['type'] == 'Project') {
@@ -65,17 +64,11 @@ class GapScoringProjectsImport implements ToCollection, WithHeadingRow, WithVali
                         'schedule_scoring' => $row['schedule_scoring'],
                         'type' => $row['type'],
                         'keterangan' => $row['keterangan'],
-                        'periode' => $periode,
                     ]
                 );
             }
         }
     }
 
-    public function rules(): array
-    {
-        return [
-            '*.periode' => 'required|integer',
-        ];
-    }
+
 }

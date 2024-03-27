@@ -17,7 +17,6 @@ class GapDisnaker extends Model
         'tgl_masa_berlaku',
         'progress_resertifikasi',
         'file',
-        'periode'
     ];
 
     public function branches() {

@@ -31,7 +31,6 @@ class GapScoring extends Model
         'type',
         'keterangan',
         'reason',
-        'periode',
     ];
 
     public function branches()

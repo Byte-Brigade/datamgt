@@ -110,31 +110,6 @@ export default function DataTable({
     }, 500)
   ).current;
 
-  const handleRowClick = (event, clickedRowIndex) => {
-    const isCtrlPressed = event.ctrlKey || event.metaKey;
-    const isShiftPressed = event.shiftKey;
-
-    let newSelectedRows;
-
-    if (isCtrlPressed) {
-      newSelectedRows = selectedRows.includes(clickedRowIndex)
-        ? selectedRows.filter((id) => id !== clickedRowIndex)
-        : [...selectedRows, clickedRowIndex];
-    } else if (isShiftPressed && lastSelectedRowIndex !== null) {
-      const rangeStart = Math.min(lastSelectedRowIndex, clickedRowIndex);
-      const rangeEnd = Math.max(lastSelectedRowIndex, clickedRowIndex);
-      const newRange = [...Array(rangeEnd - rangeStart + 1).keys()].map(
-        (i) => rangeStart + i
-      );
-      newSelectedRows = [...new Set([...selectedRows, ...newRange])];
-    } else {
-      newSelectedRows = [clickedRowIndex];
-    }
-
-    setSelectedRows(newSelectedRows);
-    setLastSelectedRowIndex(clickedRowIndex);
-  };
-
   const handleFilter = () => {
     fetchData(1);
   };
@@ -154,19 +129,13 @@ export default function DataTable({
   };
   const handleCheckboxData = (filter, field) => {
     setFilterData((prevFilter) => {
-      // Membuat salinan dari prevFilter
       const updatedFilter = { ...prevFilter };
-
-      // Jika field belum ada dalam updatedFilter, tambahkan field dengan array filter ke dalam updatedFilter
       if (!updatedFilter.hasOwnProperty(field)) {
         updatedFilter[field] = [filter];
       } else {
-        // Jika field sudah ada dalam updatedFilter, periksa apakah filter sudah ada dalam array tersebut
-        // Jika belum, tambahkan filter ke dalam array filter
         if (!updatedFilter[field].includes(filter)) {
           updatedFilter[field].push(filter);
         } else {
-          // Jika filter sudah ada dalam array filter, hapus filter dari array
           updatedFilter[field] = updatedFilter[field].filter(
             (item) => item !== filter
           );
@@ -196,37 +165,12 @@ export default function DataTable({
     };
 
     if (fetchUrl) {
-      const { data } = await axios.get(fetchUrl, { params,  withCredentials: true  });
+      const { data } = await axios.get(fetchUrl, { params, withCredentials: true });
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
-      // setSumData(data.data.reduce((total, item) => {
-      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
-
-      //   return total + value;
-      // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-      setInitialData({ remark: {}, });
-      if (Array.isArray(data.data)) {
-        if (
-          data.data.some(
-            (data) => data.remark !== undefined && data.remark !== null
-          )
-        ) {
-          const remarksData = data.data.reduce((acc, current) => {
-            acc[current.id] = current.remark;
-            return acc;
-          }, {});
-
-
-          setSelected(remarksData);
-          form.setData('remark', remarksData);
-        }
-      }
-
-
-
       console.log(data.data);
     }
     if (dataArr) {

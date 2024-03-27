@@ -630,9 +630,6 @@ class GapApiController extends Controller
             // Create a Carbon instance using the year and month
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
             $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
         }
 
         if (isset($request->type_name)) {
@@ -691,9 +688,6 @@ class GapApiController extends Controller
             // Create a Carbon instance using the year and month
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
             $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
         }
 
 
@@ -720,9 +714,6 @@ class GapApiController extends Controller
             // Create a Carbon instance using the year and month
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
             $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
         }
 
 
@@ -779,9 +770,6 @@ class GapApiController extends Controller
             // Create a Carbon instance using the year and month
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
             $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
         }
 
         if ($perpage == "All") {
