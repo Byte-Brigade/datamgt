@@ -65,28 +65,28 @@ class InqueryController extends Controller
         $lisensi = collect([
             [
                 'name' => 'Izin OJK',
-                'remark' => isset ($branch->izin) ? 'Ada' : 'Tidak Ada',
+                'remark' => isset($branch->izin) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => '-',
-                'url' => isset ($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
+                'url' => isset($branch->file_ojk) ? "ops/branches/{$branch->id}/{$branch->file_ojk}" : false,
 
             ],
             [
                 'name' => 'SK BI RTGS',
-                'remark' => isset ($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
+                'remark' => isset($ops_skbirtgs) ? 'Ada' : 'Tidak Ada',
                 'jatuh_tempo' => '-',
-                'url' => isset ($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->file}" : false,
+                'url' => isset($ops_skbirtgs->file) ? "ops/skbirtgs/{$ops_skbirtgs->file}" : false,
             ],
             [
                 'name' => 'Reklame',
-                'remark' => isset ($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset ($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
-                'url' => isset ($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_skbirtgs->file_izin_reklame}" : false,
+                'remark' => isset($ops_pajak_reklame) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => isset($ops_pajak_reklame->periode_akhir) ? $ops_pajak_reklame->periode_akhir : '-',
+                'url' => isset($ops_pajak_reklame->file_izin_reklame) ? "ops/pajak-reklame/{$ops_skbirtgs->file_izin_reklame}" : false,
 
             ],
             [
                 'name' => 'APAR',
-                'remark' => isset ($ops_apar) ? 'Ada' : 'Tidak Ada',
-                'jatuh_tempo' => isset ($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
+                'remark' => isset($ops_apar) ? 'Ada' : 'Tidak Ada',
+                'jatuh_tempo' => isset($ops_apar->detail) ? $ops_apar->detail()->orderBy('expired_date', 'asc')->first()->expired_date : '-'
             ],
         ]);
 
@@ -188,7 +188,7 @@ class InqueryController extends Controller
         }
 
         foreach ($keterangan as $id => $keteranganValue) {
-            if (!isset ($merged[$id])) {
+            if (!isset($merged[$id])) {
                 $merged[$id] = [
                     'remark' => null,
                     'keterangan' => $keteranganValue
@@ -201,15 +201,15 @@ class InqueryController extends Controller
 
             foreach ($merged as $id => $value) {
                 $gapAsset = GapAsset::find($id);
-                if (!isset ($current_sto)) {
+                if (!isset($current_sto)) {
                     throw new Exception("STO belum dimulai");
                 }
-                if (!isset ($gapAsset)) {
+                if (!isset($gapAsset)) {
                     throw new Exception("Asset tidak ditemukan");
                 }
                 $branch = Branch::where('slug', $slug)->first();
                 $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
-                if (!isset ($gap_hasil_sto)) {
+                if (!isset($gap_hasil_sto)) {
                     $gap_hasil_sto = GapHasilSto::create([
                         'branch_id' => $branch->id,
                         'gap_sto_id' => $current_sto->id,
@@ -219,7 +219,7 @@ class InqueryController extends Controller
                 if ($gapAsset->branch_id == $gap_hasil_sto->branch_id) {
                     $asset_detail = GapAssetDetail::where('asset_number', $gapAsset->asset_number)->where('gap_hasil_sto_id', $gap_hasil_sto->id)->first();
                     $status_constraint = ['Ada', 'Tidak Ada'];
-                    if (isset ($asset_detail)) {
+                    if (isset($asset_detail)) {
                         $asset_detail->update(
                             [
                                 'gap_hasil_sto_id' => $gap_hasil_sto->id,
@@ -267,16 +267,17 @@ class InqueryController extends Controller
         $current_sto = GapSto::where('status', 'On Progress')->first();
         try {
             $gapAsset = GapAsset::find($request->id);
-            if (!isset ($current_sto)) {
+            if (!isset($current_sto)) {
                 throw new Exception("STO belum dimulai");
             }
-            if (!isset ($gapAsset)) {
+            if (!isset($gapAsset)) {
                 throw new Exception("Asset tidak ditemukan");
             }
             $branch = Branch::where('slug', $slug)->first();
             $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
 
             if (!is_null($request->remark)) {
+                $remarks = ["Ada", "Ada Rusak"];
                 GapAssetDetail::updateOrCreate(
                     [
                         'asset_number' => $gapAsset->asset_number,
@@ -289,6 +290,7 @@ class InqueryController extends Controller
                         'periode' => $current_sto->periode,
                         'status' => $request->remark,
                         'sto' => false,
+                        'keterangan' => in_array($request->remark, $remarks) ? null : ""
                     ]
                 );
             }

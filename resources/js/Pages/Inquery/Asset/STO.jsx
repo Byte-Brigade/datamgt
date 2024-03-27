@@ -14,9 +14,16 @@ export default function Detail({ auth, branch, sessions }) {
   const { form } = useFormContext();
   const [selected, setSelected] = useState({});
   const [input, setInput] = useState({});
-
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
-
+  const options = [
+    "Ada",
+    "Ada Rusak",
+    "Tidak Ada",
+    "Lelang",
+    "Mutasi",
+    "Non Asset",
+    "Sudah Pindah Buku",
+  ];
   const postData = (params) => {
     axios
       .post(
@@ -166,13 +173,9 @@ export default function Detail({ auth, branch, sessions }) {
             value={`${data.status || ""}`}
             onChange={(e) => handleChanged(data.id, e)}
           >
-            <Option value={`Ada`}>Ada</Option>
-            <Option value={`Ada Rusak`}>Ada Rusak</Option>
-            <Option value={`Tidak Ada`}>Tidak Ada</Option>
-            <Option value={`Lelang`}>Lelang</Option>
-            <Option value={`Mutasi`}>Mutasi</Option>
-            <Option value={`Non Asset`}>Non Asset</Option>
-            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
+            {options.map((option) => (
+              <Option value={option}>{option}</Option>
+            ))}
           </Select>
         ) : (
           data.status

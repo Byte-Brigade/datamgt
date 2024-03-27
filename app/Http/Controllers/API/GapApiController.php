@@ -788,14 +788,7 @@ class GapApiController extends Controller
         $query = $gap_stos->select('gap_stos.*')->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-
         $input = $request->all();
-
-
-
-
-
-
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -804,7 +797,6 @@ class GapApiController extends Controller
                     ->orWhere('address', 'like', $searchQuery);
             });
         }
-
 
         if ($perpage == "All") {
             $perpage = $query->count();
