@@ -7,7 +7,7 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Input, Option, Select } from "@material-tailwind/react";
+import { Input, Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function Detail({ auth, branch, sessions }) {
@@ -188,7 +188,8 @@ export default function Detail({ auth, branch, sessions }) {
             label={"Keterangan"}
             disabled={
               ["Ada", "Ada Rusak"].includes(selected[data.id]) ||
-              ["Ada", "Ada Rusak"].includes(data.status)
+              ["Ada", "Ada Rusak"].includes(data.status) ||
+              (data.status === null && selected[data.id] === undefined)
                 ? true
                 : false
             }
@@ -242,22 +243,11 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
-            >
-              {auth.permissions.includes("can sto") && (
-                <Button
-                  size="sm"
-                  type="submit"
-                  className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                >
-                  Submit
-                </Button>
-              )}
-            </DataTable>
+            />
           )}
 
           {active == "nonDepre" && (
@@ -265,22 +255,11 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Non-Depre",
               }}
-            >
-              {auth.permissions.includes("can sto") && (
-                <Button
-                  size="sm"
-                  type="submit"
-                  className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                >
-                  Submit
-                </Button>
-              )}
-            </DataTable>
+            />
           )}
         </div>
       </div>

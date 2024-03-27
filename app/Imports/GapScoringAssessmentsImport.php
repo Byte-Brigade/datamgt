@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithValidation
+class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow
 {
     use Importable;
 
@@ -30,7 +30,6 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithV
         DB::beginTransaction();
         try {
             foreach ($rows as $row) {
-                $periode = Date::excelToDateTimeObject($row['periode']);
 
                 $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
                 if ($branch && $row['type'] == 'Assessment') {
@@ -61,8 +60,6 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithV
                             'schedule_scoring' => $row['schedule_scoring'],
                             'type' => $row['type'],
                             'keterangan' => $row['ket'],
-
-                            'periode' => $periode,
                         ]
                     );
                 }
@@ -73,10 +70,5 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow, WithV
             throw new Exception("Error : " . $th->getMessage());
         }
     }
-    public function rules(): array
-    {
-        return [
-            '*.periode' => 'required|integer',
-        ];
-    }
+
 }

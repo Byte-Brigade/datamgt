@@ -54,8 +54,6 @@ class InfraScoringProjectsImport implements ToModel, WithHeadingRow, WithUpserts
                 'schedule_scoring' => $row['schedule_scoring'],
                 'type' => $row['type'],
                 'keterangan' => $row['keterangan'],
-
-                'periode' => Date::excelToDateTimeObject($row['periode']),
             ]);
         }
     }

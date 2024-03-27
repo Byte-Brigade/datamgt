@@ -41,10 +41,9 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                 $cabang = str_contains($row['cabang'], 'Sampoerna') ? 'Sampoerna' : $row['cabang'];
                 $branch = Branch::where('branch_name', 'like', '%' . $cabang . '%')->first();
                 if ($branch) {
-
-                    $gap_asset = GapAsset::updateOrCreate(
-                        ['asset_number' => $row['asset_number']],
-                        [
+                    $gap_asset = GapAsset::where('asset_number', $row['asset_number'])->first();
+                    if (isset($gap_asset)) {
+                        $gap_asset->update([
                             'branch_id' => $branch->id,
                             'category' => $row['category'],
                             'asset_number' => $row['asset_number'],
@@ -59,8 +58,27 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                             'minor_category' => $row['minor_category'],
                             'depre_exp' => round($row['depre_exp']),
                             'net_book_value' => abs(round($row['asset_cost']) - round($row['accum_depre'])),
-                        ]
-                    );
+                        ]);
+                    } else {
+                        $gap_asset = GapAsset::create(
+                            [
+                                'branch_id' => $branch->id,
+                                'category' => $row['category'],
+                                'asset_number' => $row['asset_number'],
+                                'asset_description' => $row['asset_description'],
+                                'date_in_place_service' => is_int($row['date_in_place_service']) ? Date::excelToDateTimeObject($row['date_in_place_service']) : null,
+                                'tgl_awal_susut' => is_int($row['tgl_awal_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
+                                'tgl_akhir_susut' => is_int($row['tgl_akhir_susut']) ? Date::excelToDateTimeObject($row['tgl_awal_susut']) : null,
+                                'asset_cost' => round($row['asset_cost']),
+                                'accum_depre' => round($row['accum_depre']),
+                                'asset_location' => $row['asset_location'],
+                                'major_category' => $row['major_category'],
+                                'minor_category' => $row['minor_category'],
+                                'depre_exp' => round($row['depre_exp']),
+                                'net_book_value' => abs(round($row['asset_cost']) - round($row['accum_depre'])),
+                            ]
+                        );
+                    }
 
                     $sto = GapSto::where('status', 'Done')->latest()->first();
                     if (isset($sto)) {

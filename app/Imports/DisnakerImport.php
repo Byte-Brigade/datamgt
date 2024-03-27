@@ -24,7 +24,7 @@ use Maatwebsite\Excel\Row;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
-class DisnakerImport implements ToCollection, WithHeadingRow, WithValidation
+class DisnakerImport implements ToCollection, WithHeadingRow
 {
     use Importable;
     public function collection(Collection $rows)
@@ -41,39 +41,26 @@ class DisnakerImport implements ToCollection, WithHeadingRow, WithValidation
 
                 $jenis_perizinan = JenisPerizinan::where('name', 'like', '%' . $row['jenis_perizinan'] . '%')->get()->first();
                 $izin = isset($jenis_perizinan) ? $jenis_perizinan : JenisPerizinan::create(['name' => $row['jenis_perizinan']]);
-                $periode = Date::excelToDateTimeObject($row['periode']);
-                $exist_periode = GapDisnaker::where('periode', $periode)->first();
                 if ($branch) {
-                    if ($exist_periode) {
-                        // Menambahkan jumlah hari dari tanggal Excel
-                        GapDisnaker::updateOrCreate(
-                            [
-                                'branch_id' => $branch->id,
-                                'jenis_perizinan_id' => $izin->id,
-                                'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,
-                                'tgl_masa_berlaku' => !is_string($row['tgl_masa_berlaku_sd']) ?  Date::excelToDateTimeObject($row['tgl_masa_berlaku_sd']) : null,
-                                'progress_resertifikasi' => $row['progress_resertifikasi'],
-                                'periode' => $periode,
-                            ],
-                            [
-                                'branch_id' => $branch->id,
-                                'jenis_perizinan_id' => $izin->id,
-                                'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,
-                                'tgl_masa_berlaku' => !is_string($row['tgl_masa_berlaku_sd']) ?  Date::excelToDateTimeObject($row['tgl_masa_berlaku_sd']) : null,
-                                'progress_resertifikasi' => $row['progress_resertifikasi'],
-                                'periode' => $periode,
-                            ]
-                        );
-                    } else {
-                        GapDisnaker::create([
-                                'branch_id' => $branch->id,
-                                'jenis_perizinan_id' => $izin->id,
-                                'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,
-                                'tgl_masa_berlaku' => !is_string($row['tgl_masa_berlaku_sd']) ?  Date::excelToDateTimeObject($row['tgl_masa_berlaku_sd']) : null,
-                                'progress_resertifikasi' => $row['progress_resertifikasi'],
-                                'periode' => $periode,
-                        ]);
-                    }
+
+                    GapDisnaker::updateOrCreate(
+                        [
+                            'branch_id' => $branch->id,
+                            'jenis_perizinan_id' => $izin->id,
+                            'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,
+                            'tgl_masa_berlaku' => !is_string($row['tgl_masa_berlaku_sd']) ?  Date::excelToDateTimeObject($row['tgl_masa_berlaku_sd']) : null,
+                            'progress_resertifikasi' => $row['progress_resertifikasi'],
+
+                        ],
+                        [
+                            'branch_id' => $branch->id,
+                            'jenis_perizinan_id' => $izin->id,
+                            'tgl_pengesahan' => !is_string($row['tgl_pengesahan']) ? Date::excelToDateTimeObject($row['tgl_pengesahan']) : null,
+                            'tgl_masa_berlaku' => !is_string($row['tgl_masa_berlaku_sd']) ?  Date::excelToDateTimeObject($row['tgl_masa_berlaku_sd']) : null,
+                            'progress_resertifikasi' => $row['progress_resertifikasi'],
+
+                        ]
+                    );
                 } else {
                     throw new Exception("Error : Nama Branch " . $row['nama_cabang'] . " tidak ditemukan.");
                 }
@@ -83,10 +70,5 @@ class DisnakerImport implements ToCollection, WithHeadingRow, WithValidation
         }
     }
 
-    public function rules(): array
-    {
-        return [
-            '*.periode' => 'required|integer',
-        ];
-    }
+
 }

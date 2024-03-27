@@ -31,7 +31,6 @@ class InfraScoring extends Model
         'type',
         'keterangan',
         'reason',
-        'periode',
     ];
 
     public function branches()
