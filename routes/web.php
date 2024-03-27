@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
         });
         Route::get('/assets', [InqueryController::class, 'assets'])->name('assets');
         Route::post('/assets/sto/remark/{slug}', [InqueryController::class, 'assets_remark'])->name('assets.remark');
+        Route::post('/sto/remark/{slug}', [InqueryController::class, 'sto_remark'])->name('sto.remark');
         Route::get('/scorings', [InqueryController::class, 'scorings'])->name('scorings');
         Route::get('/licenses', [InqueryController::class, 'licenses'])->name('licenses');
 

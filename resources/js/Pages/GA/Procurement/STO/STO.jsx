@@ -8,9 +8,12 @@ import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 import { Button, Input, Option, Select } from "@material-tailwind/react";
+import { useState } from "react";
 
 export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
-  const { form, selected, setSelected, input, setInput } = useFormContext();
+  const { form } = useFormContext();
+  const [selected, setSelected] = useState({});
+  const [input, setInput] = useState({});
 
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
 
@@ -34,7 +37,7 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
     });
 
     form.setData("keterangan", { ...input, [id]: value });
-  }
+  };
 
   const columns = [
     {
@@ -128,12 +131,12 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
             onChange={(e) => handleChanged(data.id, e)}
           >
             <Option value={`Ada`}>Ada</Option>
-            <Option value={`Tidak Ada`}>Tidak Ada</Option>
             <Option value={`Ada Rusak`}>Ada Rusak</Option>
-            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
-            <Option value={`Mutasi`}>Mutasi</Option>
+            <Option value={`Tidak Ada`}>Tidak Ada</Option>
             <Option value={`Lelang`}>Lelang</Option>
+            <Option value={`Mutasi`}>Mutasi</Option>
             <Option value={`Non Asset`}>Non Asset</Option>
+            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
           </Select>
         ) : (
           data.status
@@ -145,14 +148,17 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
       type: "custom",
       render: (data) =>
         auth.permissions.includes("can sto") ? (
-          <Input label={"Keterangan"} disabled={
-            ["Ada", "Ada Rusak"].includes(selected[data.id])
-              ? true
-              : ["Ada", "Tidak Ada"].includes(data.status)
+          <Input
+            label={"Keterangan"}
+            disabled={
+              ["Ada", "Ada Rusak"].includes(selected[data.id]) ||
+              ["Ada", "Ada Rusak"].includes(data.status)
                 ? true
                 : false
-          } value={`${input[data.id] ? input[data.id] : (data.keterangan || "")}`}
-            onChange={(e) => handleInputChange(data.id, e.target.value)} />
+            }
+            value={`${input[data.id] ? input[data.id] : data.keterangan || ""}`}
+            onChange={(e) => handleInputChange(data.id, e.target.value)}
+          />
         ) : (
           data.keterangan
         ),
@@ -187,9 +193,7 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
                 data
                 type="nonDepre"
                 Icon={ArchiveBoxIcon}
-
                 active={params.value}
-
                 onClick={() => handleTabChange("nonDepre")}
                 color="purple"
               />
@@ -201,21 +205,20 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
               fetchUrl={`/api/gap/stos/assets/${branch.slug}`}
               bordered={true}
               submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
-
               parameters={{
                 gap_hasil_sto_id,
                 category: "Depre",
               }}
             >
-
-              {auth.permissions.includes("can sto") && <Button
-                size="sm"
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>}
-
+              {auth.permissions.includes("can sto") && (
+                <Button
+                  size="sm"
+                  type="submit"
+                  className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                >
+                  Submit
+                </Button>
+              )}
             </DataTable>
           )}
 
@@ -230,13 +233,15 @@ export default function Detail({ auth, branch, sessions, gap_hasil_sto_id }) {
                 category: "Non-Depre",
               }}
             >
-              {auth.permissions.includes("can sto") && <Button
-                size="sm"
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>}
+              {auth.permissions.includes("can sto") && (
+                <Button
+                  size="sm"
+                  type="submit"
+                  className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                >
+                  Submit
+                </Button>
+              )}
             </DataTable>
           )}
         </div>
