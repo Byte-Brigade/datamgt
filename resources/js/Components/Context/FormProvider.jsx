@@ -6,6 +6,8 @@ const FormContext = createContext();
 
 export const FormProvider = ({ children }) => {
   const [isRefreshed, setIsRefreshed] = useState(false);
+
+  const [datePickerValue, setDatePickerValue] = useState({});
   const [initialData, setInitialData] = useState({});
   const [filterData, setFilterData] = useState({});
   const [url, setUrl] = useState([]);
@@ -90,7 +92,8 @@ export const FormProvider = ({ children }) => {
       periode, setPeriode,
       input, setInput,
       groupBy,
-      filterData, setFilterData
+      filterData, setFilterData,
+      datePickerValue, setDatePickerValue
     }}>
       {children}
     </FormContext.Provider>

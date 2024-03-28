@@ -5,7 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, type, type_item, periode, slug }) {
+export default function Detail({ auth, sessions, type, type_item, datePickerValue, slug }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -18,7 +18,7 @@ export default function Detail({ auth, sessions, type, type_item, periode, slug 
     periode: null,
   };
 
-  console.log(periode)
+  console.log(datePickerValue)
   const {
     data,
     setData,

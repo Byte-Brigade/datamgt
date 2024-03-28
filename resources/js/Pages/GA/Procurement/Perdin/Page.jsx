@@ -282,6 +282,12 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/gap/perdins"}
               refreshUrl={isRefreshed}
               bordered={true}
+              periodic={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
               parameters={{ summary: "divisi" }}
             />
           )}
@@ -291,6 +297,12 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/gap/perdins"}
               refreshUrl={isRefreshed}
               bordered={true}
+              periodic={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
               parameters={{ summary: "spender" }}
             />
           )}

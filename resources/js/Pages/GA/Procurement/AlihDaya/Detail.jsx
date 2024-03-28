@@ -6,7 +6,6 @@ import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -21,7 +20,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, type, type_item, periode }) {
+export default function Detail({ auth, sessions, type, type_item, datePickerValue }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -34,7 +33,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
     periode: null,
   };
 
-  console.log(periode)
+  console.log(datePickerValue)
   const {
     data,
     setData,
@@ -194,7 +193,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
             columns={columns.filter((column) => column.field === "cost" ? auth.permissions.includes('can alih daya') : true)}
             fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
             refreshUrl={isRefreshed}
-            parameters={periode}
+            parameters={datePickerValue}
           />
         </div>
       </div>
