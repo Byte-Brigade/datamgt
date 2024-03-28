@@ -80,48 +80,39 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                         );
                     }
 
-                    $sto = GapSto::where('status', 'Done')->latest()->first();
-                    if (isset($sto)) {
-                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
-                        if (!isset($gap_hasil_sto)) {
-                            $gap_hasil_sto = GapHasilSto::create(
-                                [
-                                    'branch_id' => $branch->id,
-                                    'gap_sto_id' => $sto->id,
-                                    'remarked' => true,
-                                ]
-                            );
-                        }
-                        GapAssetDetail::updateOrCreate(
+                    $year = Carbon::createFromDate($row['tahun'])->startOfYear()->format('Y-m-d');
+                    $sto = GapSto::where('periode', $year)->where('semester', $row['semester'])->where('status', 'Done')->first();
+                    if (!isset($sto)) {
+                        $sto = GapSto::create([
+                            'periode' => $year,
+                            'semester' => $row['semester'],
+                            'status' => 'Done',
+                        ]);
+                    }
+
+                    $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                    if (!isset($gap_hasil_sto)) {
+                        $gap_hasil_sto = GapHasilSto::create(
                             [
-                                'asset_number' => $gap_asset->asset_number,
-                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                            ],
-                            [
-                                'gap_hasil_sto_id' => $gap_hasil_sto->id,
-                                'asset_number' => $gap_asset->asset_number,
-                                'semester' => $sto->semester,
-                                'periode' => $sto->periode,
-                                'status' => "Ada",
-                                'sto' => true,
+                                'branch_id' => $branch->id,
+                                'gap_sto_id' => $sto->id,
+                                'remarked' => true,
                             ]
                         );
                     }
-
-
-                    $current_sto = GapSto::where('status', 'On Progress')->latest()->first();
-                    if (isset($current_sto)) {
-                        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $current_sto->id)->where('branch_id', $branch->id)->first();
-                        if (!isset($gap_hasil_sto)) {
-                            $gap_hasil_sto = GapHasilSto::create(
-                                [
-                                    'branch_id' => $branch->id,
-                                    'gap_sto_id' => $current_sto->id,
-                                    'remarked' => false,
-                                ]
-                            );
-                        }
-                    }
+                    GapAssetDetail::updateOrCreate(
+                        [
+                            'asset_number' => $gap_asset->asset_number,
+                            'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                        ],
+                        [
+                            'gap_hasil_sto_id' => $gap_hasil_sto->id,
+                            'asset_number' => $gap_asset->asset_number,
+                            'semester' => $sto->semester,
+                            'periode' => $sto->periode,
+                            'status' => $row['status'],
+                        ]
+                    );
                 }
             }
             DB::commit();
@@ -137,7 +128,9 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
     public function rules(): array
     {
         return [
-            '*.periode' => 'required|integer',
+            '*.tahun' => 'required|integer',
+            '*.semester' => 'required|string',
+            '*.status' => 'required|string',
         ];
     }
 }

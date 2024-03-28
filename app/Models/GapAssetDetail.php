@@ -15,7 +15,6 @@ class GapAssetDetail extends Model
         'status',
         'semester',
         'periode',
-        'sto',
         'keterangan',
     ];
 
