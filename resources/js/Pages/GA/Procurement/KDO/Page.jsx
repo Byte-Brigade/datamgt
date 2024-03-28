@@ -60,7 +60,8 @@ export default function Page({ auth, branches, sessions, type_names }) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
   const { active, params, handleTabChange } = tabState(["cabang", "vendor"]);
-  const { periode } = useFormContext();
+  const {
+    datePickerValue } = useFormContext();
   const columns = [
     { name: "Cabang", field: "branches.branch_name" },
     {
@@ -99,7 +100,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
         <Link
           href={route("gap.kdos.mobil", {
             slug: data.branches.slug,
-            ...periode,
+            ...datePickerValue,
           })}
         >
           <Button variant="outlined">Detail</Button>
@@ -280,7 +281,7 @@ export default function Page({ auth, branches, sessions, type_names }) {
                 }
               ]}
               parameters={
-                {...periode}
+                datePickerValue
               }
             />
           )}
@@ -289,6 +290,10 @@ export default function Page({ auth, branches, sessions, type_names }) {
               columns={columnsVendor}
               fetchUrl={"/api/gap/kdos/vendor"}
               refreshUrl={isRefreshed}
+              periodic={true}
+              parameters={
+                datePickerValue
+              }
             />
           )}
         </div>

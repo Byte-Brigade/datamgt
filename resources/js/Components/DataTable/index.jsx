@@ -9,10 +9,10 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
+import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import Datepicker from "react-tailwindcss-datepicker";
 import { useFormContext } from "../Context/FormProvider";
 import Paginator from "./Paginator";
 import TableRow from "./Partials/TableRow";
@@ -35,8 +35,7 @@ export default function DataTable({
   dataArr,
   className = "w-full",
   component = [],
-  footCols = { name: "", span: 0 },
-  agg,
+  datePicker = { year: true, month: false, day: false },
   periodic = false,
   parameters = {},
   bordered = false,
@@ -58,10 +57,8 @@ export default function DataTable({
   const [open, setOpen] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [fixedTable, setFixedTable] = useState(fixed);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
   const [remarks, setRemarks] = useState({});
-  const [allMarked, setAllMarked] = useState(false);
+
 
   const {
     form,
@@ -74,6 +71,8 @@ export default function DataTable({
     setSelected,
     filterData,
     setFilterData,
+    datePickerValue,
+    setDatePickerValue
   } = useFormContext();
 
   // filters
@@ -86,10 +85,30 @@ export default function DataTable({
     startDate: null,
     endDate: null,
   });
+  const [date, setDate] = useState(null);
+  const [year, setYear] = useState(null);
+  const [month, setMonth] = useState(null);
 
   const handleDateChange = (newValue) => {
     console.log("newValue:", newValue);
-    setDateRange(newValue);
+    setDate(newValue);
+    setYear(null);
+    setMonth(null);
+    setDatePickerValue(newValue);
+  };
+  const handleYearChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setDate(null);
+    setDatePickerValue({ $y: newValue['$y'] });
+    setMonth(null);
+    setYear(newValue);
+  };
+  const handleMonthChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setDate(null);
+    setYear(null);
+    setMonth(newValue);
+    setDatePickerValue({ $y: newValue['$y'], $M: newValue['$M'] });
   };
 
   const handleSort = (column) => {
@@ -161,6 +180,7 @@ export default function DataTable({
       sort_order: sortOrder,
       search,
       ...dateRange,
+      ...datePickerValue,
       ...filterData,
     };
 
@@ -198,6 +218,7 @@ export default function DataTable({
     isRefreshed,
     configuration,
     dateRange,
+    datePickerValue,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -293,13 +314,28 @@ export default function DataTable({
           </div>
           <div>
             {periodic && (
-              <div className="z-50 flex items-center justify-end gap-x-2">
-                <span>Periode</span>
-                <Datepicker
-                  value={dateRange}
-                  popoverDirection="down"
-                  onChange={handleDateChange}
-                />
+              <div className="flex justify-between">
+                {datePicker.year && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Tahun</span>
+                    <DatePicker value={year} onChange={handleYearChange} openTo="year" views={["year"]} />
+                  </div>
+                )}
+                {datePicker.month && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Bulan</span>
+                    <DatePicker value={month} onChange={handleMonthChange} openTo="month" views={["year", "month"]} />
+                  </div>
+                )}
+                {datePicker.day && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Tanggal</span>
+                    <DatePicker value={date} onChange={handleDateChange} openTo="day" views={["year", "month", "day"]} />
+                  </div>
+                )}
+
+
+
               </div>
             )}
           </div>

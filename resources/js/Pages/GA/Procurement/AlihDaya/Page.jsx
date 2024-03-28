@@ -414,6 +414,11 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/gap/alihdayas"}
               refreshUrl={isRefreshed}
               periodic={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
               bordered={true}
               parameters={{
                 type: "tenaga-kerja"
@@ -428,6 +433,12 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/gap/alihdayas"}
               refreshUrl={isRefreshed}
               bordered={true}
+              periodic={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
               parameters={{
                 type: "biaya"
               }}

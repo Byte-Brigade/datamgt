@@ -2,13 +2,9 @@ import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
-import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
-import {
-  DocumentPlusIcon
-} from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -223,6 +219,11 @@ export default function Detail({
             fetchUrl={`/api/gap/kdos/detail/${kdo_mobil.branch_id}`}
             refreshUrl={isRefreshed}
             periodic={true}
+            datePicker={{
+              year: false,
+              month: true,
+              date: false,
+            }}
             parameters={{ periode, vendor }}
           />
         </div>
@@ -313,8 +314,8 @@ export default function Detail({
           </DialogFooter>
         </form>
       </Dialog>
-       {/* Modal Import */}
-       <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
+      {/* Modal Import */}
+      <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
         <DialogHeader className="flex items-center justify-between">
           Import Data
           <IconButton
