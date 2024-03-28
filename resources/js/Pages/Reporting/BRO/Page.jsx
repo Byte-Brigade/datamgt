@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Branch({ auth, sessions, branch_types }) {
+export default function Branch({ auth, sessions, branch_types, periode }) {
   const { url } = usePage();
   const initialData = {
     file: null,
@@ -70,7 +70,10 @@ export default function Branch({ auth, sessions, branch_types }) {
       type: "custom",
       className: "cursor-pointer hover:text-blue-500",
       render: (data) => (
-        <Link href={route("inquery.bros.category", data.category)}>
+        <Link href={route("inquery.bros.category", {
+          category: data.category,
+          periode: data.periode
+        })}>
           {data.category}
         </Link>
       ),
@@ -79,7 +82,7 @@ export default function Branch({ auth, sessions, branch_types }) {
     { name: "Done", field: "done", className: "text-center", sortable: false, agg: "sum" },
     { name: "On Progress", field: "on_progress", className: "text-center", sortable: false, agg: "sum" },
     { name: "Not Start", field: "not_start", className: "text-center", sortable: false, agg: "sum" },
-    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg:"sum" },
+    { name: "Drop", field: "drop", className: "text-center", sortable: false, agg: "sum" },
   ];
 
   const handleSubmitImport = (e) => {
@@ -165,14 +168,44 @@ export default function Branch({ auth, sessions, branch_types }) {
               Create Report
             </PrimaryButton>
           </div>
-          <DataTable
-            headings={headings}
-            periodic={true}
-            columns={columns}
-            fetchUrl={"/api/report/bros"}
-            refreshUrl={isRefreshed}
-            bordered={true}
-          />
+          <div className={`grid ${periode['previous'] ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+            <div className={`col-span-1 ${periode['previous'] ? '' : 'col-start-1 col-end-3'}`}>
+              <h2 className="text-xl font-bold mb-2">{periode['current']}</h2>
+              <DataTable
+                headings={headings}
+                columns={columns}
+                fetchUrl={"/api/report/bros"}
+                parameters={
+                  {
+                    periode: "current"
+                  }
+                }
+                refreshUrl={isRefreshed}
+                bordered={true}
+                configuration={false}
+              />
+            </div>
+            {periode['previous'] && (
+              <div className="col-span-1">
+                <h2 className="text-xl font-bold mb-2">{periode['previous']}</h2>
+                <DataTable
+                  headings={headings}
+                  columns={columns}
+                  fetchUrl={"/api/report/bros"}
+                  refreshUrl={isRefreshed}
+                  bordered={true}
+                  configuration={false}
+                  parameters={
+                    {
+                      periode: "previous"
+                    }
+                  }
+                />
+              </div>
+            )}
+          </div>
+
+
         </div>
       </div>
       {/* Modal Import */}

@@ -18,14 +18,13 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class TonerImport implements ToCollection, WithHeadingRow, WithValidation
+class TonerImport implements ToCollection, WithHeadingRow
 {
     use Importable;
 
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $periode = Date::excelToDateTimeObject($row['periode']);
 
             $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
             $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
@@ -44,14 +43,9 @@ class TonerImport implements ToCollection, WithHeadingRow, WithValidation
                             'cartridge_order' => $row['cartridge_order'],
                         ],
                         [
-                            'branch_id' => $branch->id,
-                            'invoice' => $row['invoice'],
-                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                            'cartridge_order' => $row['cartridge_order'],
                             'quantity' => $row['quantity'],
                             'price' => round($row['price']),
                             'total' => round($row['total']),
-                            'periode' => $periode,
                         ]
                     );
                 }
@@ -67,18 +61,11 @@ class TonerImport implements ToCollection, WithHeadingRow, WithValidation
                             'invoice' => $row['invoice'],
                             'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
                             'cartridge_order' => $row['cartridge_order'],
-                            'periode' => $periode,
-
                         ],
                         [
-                            'branch_id' => $branch->id,
-                            'invoice' => $row['invoice'],
-                            'idecice_date' => Date::excelToDateTimeObject($row['idecice_date']),
-                            'cartridge_order' => $row['cartridge_order'],
                             'quantity' => $row['quantity'],
                             'price' => round($row['price']),
                             'total' => round($row['total']),
-                            'periode' => $periode,
 
                         ]
                     );
@@ -87,10 +74,4 @@ class TonerImport implements ToCollection, WithHeadingRow, WithValidation
         }
     }
 
-    public function rules(): array
-    {
-        return [
-            '*.periode' => 'required|integer',
-        ];
-    }
 }

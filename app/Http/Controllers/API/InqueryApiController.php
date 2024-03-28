@@ -212,6 +212,8 @@ class InqueryApiController extends Controller
             });
         }
 
+        $query = $query->whereHas('gap_assets');
+
         if ($perpage == "All") {
             $perpage = $query->count();
         }
@@ -224,28 +226,57 @@ class InqueryApiController extends Controller
         $query = $query->get();
         // $query = $query->paginate($perpage);
 
-        $collections = $query->map(function ($branch) {
+        $collections = $query->map(function ($branch) use ($request) {
+            $gap_assets = collect([]);
+            if (!is_null($request->input('$y'))) {
+
+                $sto = GapSto::where('status','Done')->where('periode', Carbon::createFromDate($request->input('$y'))->startOfYear()
+                    ->format('Y-m-d'))->latest()->first();
+
+                if (isset($sto)) {
+                    $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                    if (isset($hasil_sto)) {
+                        $gap_assets = GapAsset::where('branch_id', $branch->id)->whereHas('gap_asset_details', function ($q) use ($hasil_sto) {
+                            return $q->where('gap_hasil_sto_id', $hasil_sto->id)->where('status', 'Ada');
+                        })->get();
+                    }
+                }
+            } else {
+                $sto = GapSto::where('status', 'Done')->latest()->first();
+                if (isset($sto)) {
+                    $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                    if (isset($hasil_sto)) {
+                        $gap_assets = GapAsset::where('branch_id', $branch->id)->whereHas('gap_asset_details', function ($q) use ($hasil_sto) {
+                            return $q->where('gap_hasil_sto_id', $hasil_sto->id)->where('status', 'Ada');
+                        })->get();
+                    }
+                } else {
+                    $gap_assets = $branch->gap_assets;
+                }
+
+            }
             return [
+                'year' => isset($sto),
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
                 'slug' => $branch->slug,
                 'item' => [
-                    'depre' => $branch->gap_assets->where('category', 'Depre')->count(),
-                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->count(),
+                    'depre' => $gap_assets->where('category', 'Depre')->count(),
+                    'non_depre' => $gap_assets->where('category', 'Non-Depre')->count(),
 
                 ],
                 'nilai_perolehan' => [
-                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('asset_cost'),
-                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('asset_cost'),
+                    'depre' => $gap_assets->where('category', 'Depre')->sum('asset_cost'),
+                    'non_depre' => $gap_assets->where('category', 'Non-Depre')->sum('asset_cost'),
 
                 ],
                 'penyusutan' => [
-                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('accum_depre'),
-                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('accum_depre'),
+                    'depre' => $gap_assets->where('category', 'Depre')->sum('accum_depre'),
+                    'non_depre' => $gap_assets->where('category', 'Non-Depre')->sum('accum_depre'),
                 ],
                 'net_book_value' => [
-                    'depre' => $branch->gap_assets->where('category', 'Depre')->sum('net_book_value'),
-                    'non_depre' => $branch->gap_assets->where('category', 'Non-Depre')->sum('net_book_value'),
+                    'depre' => $gap_assets->where('category', 'Depre')->sum('net_book_value'),
+                    'non_depre' => $gap_assets->where('category', 'Non-Depre')->sum('net_book_value'),
                 ],
             ];
         });
@@ -323,13 +354,14 @@ class InqueryApiController extends Controller
             $query = $query->whereHas('gap_asset_details', function ($q) use($latestSTO) {
                 return $q->where('status','Ada')->whereHas('gap_hasil_sto', function($q)  use($latestSTO)  {
                     return $q->whereHas('gap_stos',function($q) use($latestSTO)  {
-                       
+
+
                         return $q->where('id', $latestSTO->id);
                     });
                 });
             });
         }
-       
+
 
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
@@ -487,15 +519,10 @@ class InqueryApiController extends Controller
             $query = $query->whereIn('type_name', $request->type_name);
         }
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
-
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
+        if (!is_null($request->input('$y'))) {
+            $startYear = Carbon::createFromDate($request->input(('$y')))->startOfYear()->format('Y-m-d');
+            $endYear = Carbon::createFromDate($request->input(('$y')))->endOfYear()->format('Y-m-d');
+            $query = $query->whereBetween('idecice_date', [$startYear, $endYear]);
         }
         $collections = $query->get();
         if (!is_null($request->type) && $request->type == 'quantity') {
@@ -804,26 +831,19 @@ class InqueryApiController extends Controller
         }
         $yearToDate = false;
 
-        if (!is_null($request->startDate) && !is_null($request->endDate)) {
-            $startDate = Carbon::parse($request->startDate);
-            $endDate = Carbon::parse($request->endDate);
-            if ($startDate->isSameMonth($endDate)) {
-                $sameMonth = true;
-                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
-            } else {
-                $yearToDate = true;
-                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
-            }
-        } else {
+        if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+            $year = $request->input('$y');
+            $month = ((int) $request->input('$M')) + 1;
+            $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+            $query->where('periode', $date->startOfMonth()->format('Y-m-d'));
+        } else if (!is_null($request->input('$y'))) {
+            $startDate = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('Y-m-d');
+            $endDate = Carbon::createFromDate($request->input('$y'))->endOfYear()->format('Y-m-d');
+            $query->whereBetween('periode', [$startDate, $endDate]);
             $yearToDate = true;
-            $minPeriode = $query->min('periode');
-            $maxPeriode = $query->max('periode');
-            $query->whereBetween('periode', [$minPeriode, $maxPeriode]);
+        } else {
+            $query->where('periode', $query->max('periode'));
         }
-        // } else {
-        //     $latestPeriode = $query->max('periode');
-        //     $query->where('periode', $latestPeriode);
-        // }
 
 
         if ($yearToDate && $request->type == "tenaga-kerja") {
@@ -852,6 +872,7 @@ class InqueryApiController extends Controller
             $perpage = $collections->count();
         }
 
+
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
     public function alihdaya_details(GapAlihDaya $gap_alih_daya, Request $request, $type)
@@ -876,17 +897,13 @@ class InqueryApiController extends Controller
             });
         }
 
-        if (!is_null($request->startDate) && !is_null($request->endDate)) {
-            $startDate = Carbon::parse($request->startDate);
-            $endDate = Carbon::parse($request->endDate);
-            if ($startDate->isSameMonth($endDate)) {
-                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
-            } else {
-                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
-            }
+        if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+            $year = $request->input('$y');
+            $month = ((int) $request->input('$M')) + 1;
+            $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+            $query->where('periode', $date->startOfMonth()->format('Y-m-d'));
         } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
+            $query->where('periode', $query->max('periode'));
         }
 
 

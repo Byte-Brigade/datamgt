@@ -2,26 +2,11 @@ import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
-import PrimaryButton from "@/Components/PrimaryButton";
-import Modal from "@/Components/Reports/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
-import { hasRoles } from "@/Utils/HasRoles";
 import { tabState } from "@/Utils/TabState";
-import { ArchiveBoxIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head, Link, useForm } from "@inertiajs/react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  IconButton,
-  Input,
-  Typography,
-} from "@material-tailwind/react";
 import { useState } from "react";
 
 export default function Page({ auth, sessions }) {
@@ -45,7 +30,7 @@ export default function Page({ auth, sessions }) {
     processing,
     errors,
   } = useForm(initialData);
-  const { periode } = useFormContext();
+  const { datePickerValue } = useFormContext();
   const [isRefreshed, setIsRefreshed] = useState(false);
   const { active, params, handleTabChange } = tabState([
     "tenaga-kerja",
@@ -77,7 +62,11 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       render: (data) => (
         <Link
-          href={`/inquery/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+          href={route("inquery.alihdayas.detail.type", {
+            type: "jenis_pekerjaan",
+            type_item: data.jenis_pekerjaan,
+            ...datePickerValue,
+          })}
         >
           {data.jenis_pekerjaan}
         </Link>
@@ -158,7 +147,11 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       render: (data) => (
         <Link
-          href={`/inquery/alihdayas/detail/jenis_pekerjaan?type_item=${data.jenis_pekerjaan}`}
+        href={route('inquery.alihdayas.detail.type', {
+          type: "jenis_pekerjaan",
+          type_item: data.jenis_pekerjaan,
+          ...datePickerValue,
+        })}
         >
           {data.jenis_pekerjaan}
         </Link>
@@ -340,6 +333,11 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/inquery/alihdayas"}
               refreshUrl={isRefreshed}
               periodic={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
               bordered={true}
               parameters={{
                 type: "tenaga-kerja",
@@ -354,6 +352,12 @@ export default function Page({ auth, sessions }) {
               fetchUrl={"/api/inquery/alihdayas"}
               refreshUrl={isRefreshed}
               bordered={true}
+              datePicker={{
+                year: true,
+                month: true,
+                date: false,
+              }}
+              periodic={true}
               parameters={{
                 type: "biaya",
               }}

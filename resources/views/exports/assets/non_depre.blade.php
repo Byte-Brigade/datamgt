@@ -16,7 +16,7 @@
     <tbody>
         @foreach ($assets as $index => $asset)
         @php
-            $detail = $asset->gap_asset_details->where('periode', "2024-02-01")->where('semester', "S1")->first();
+            $detail = $asset->gap_asset_details->where('periode', "2024-02-01")->where('semester', "Smtr 1")->first();
         @endphp
             <tr>
                 <td>{{ $index = $index + 1 }}</td>

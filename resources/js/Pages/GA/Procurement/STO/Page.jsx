@@ -5,6 +5,7 @@ import DataTable from "@/Components/DataTable";
 import DropdownMenu from "@/Components/DropdownMenu";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
+import YearPicker from "@/Components/YearPicker";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
@@ -20,6 +21,7 @@ import {
   Input,
   Option,
   Select,
+  Textarea,
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
@@ -41,8 +43,14 @@ export default function Page({ auth, sessions }) {
     errors,
   } = useForm(initialData);
 
-  const { modalOpen, setModalOpen, handleFormEdit, setUrl, setId
-    , setInitialData } = useFormContext();
+  const {
+    modalOpen,
+    setModalOpen,
+    handleFormEdit,
+    setUrl,
+    setId,
+    setInitialData,
+  } = useFormContext();
 
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
@@ -73,50 +81,47 @@ export default function Page({ auth, sessions }) {
       field: "keterangan",
       className: "text-center",
     },
-
     {
-      name: "Action",
+      name: "Lihat STO",
       field: "action",
-      className: "text-center w-[300px]",
+      className: "text-center",
+      render: (data) => (
+        <Link href={route("gap.stos.detail", data.id)}>
+          <Button variant="outlined">Detail</Button>
+        </Link>
+      ),
+    },
+    {
+      name: "Status",
+      field: "action",
+      className: "text-center",
       render: (data) =>
-
-        <div className="flex justify-around">
-
-          {data.status === "On Progress" && (<Button
+        data.status === "On Progress" ? (
+          <Button
             onClick={(e) => toggleModalStatus(data.id)}
             variant="outlined"
           >
             Selesai STO
-          </Button>)}
-
-          <Link href={route("gap.stos.detail", data.id)}>
-            <Button variant="outlined">Lihat STO</Button>
-          </Link>
-
-          <DropdownMenu
+          </Button>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      name: "Action",
+      field: "action",
+      className: "text-center",
+      render: (data) => (
+        <DropdownMenu
           placement="left-start"
           onDeleteClick={() => {
             toggleModalDelete();
             setData(data);
           }}
         />
-        </div>
+      ),
     },
-
   ];
-
-  const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
-
-  const handleSubmitImport = (e) => {
-    e.preventDefault();
-    post(route("gap.stos.import"), {
-      replace: true,
-      onFinish: () => {
-        setIsRefreshed(!isRefreshed);
-        setIsModalImportOpen(!isModalImportOpen);
-      },
-    });
-  };
 
   const handleSubmitExport = (e) => {
     const { branch } = data;
@@ -159,10 +164,6 @@ export default function Page({ auth, sessions }) {
     });
   };
 
-  const toggleModalImport = () => {
-    setIsModalImportOpen(!isModalImportOpen);
-  };
-
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
   };
@@ -174,9 +175,9 @@ export default function Page({ auth, sessions }) {
     setIsModalCreateOpen(!isModalCreateOpen);
   };
   const toggleModalStatus = (id) => {
-    setInitialData({ status: null })
+    setInitialData({ status: null });
     setUrl("gap.stos.status");
-    setId(id)
+    setId(id);
 
     setModalOpen((prevModalOpen) => {
       const updatedModalOpen = {
@@ -193,7 +194,7 @@ export default function Page({ auth, sessions }) {
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA Procurement | Hasil STO" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
@@ -209,7 +210,6 @@ export default function Page({ auth, sessions }) {
                     <div className="flex items-center gap-x-2">
                       <DocumentPlusIcon className="w-4 h-4" />
                       Create STO
-
                     </div>
                   </PrimaryButton>
                 </div>
@@ -226,50 +226,6 @@ export default function Page({ auth, sessions }) {
           />
         </div>
       </div>
-      {/* Modal Import */}
-      {/* <Dialog open={isModalImportOpen} handler={toggleModalImport} size="md">
-        <DialogHeader className="flex items-center justify-between">
-          Import Data
-          <IconButton
-            size="sm"
-            variant="text"
-            className="p-2"
-            color="gray"
-            onClick={toggleModalImport}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </IconButton>
-        </DialogHeader>
-        <form onSubmit={handleSubmitImport} encType="multipart/form-data">
-          <DialogBody divider>
-            <div className="flex flex-col gap-y-4">
-              <Input
-                variant="standard"
-                label="Import Excel (.xlsx)"
-                disabled={processing}
-                type="file"
-                name="import"
-                id="import"
-                accept=".xlsx"
-                onChange={(e) => setData("file", e.target.files[0])}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
-            <SecondaryButton type="button">
-              <a href={route("gap.stos.template")}>Download Template</a>
-            </SecondaryButton>
-            <div className="flex flex-row-reverse gap-x-4">
-              <Button disabled={processing} type="submit">
-                Simpan
-              </Button>
-              <SecondaryButton type="button" onClick={toggleModalImport}>
-                Tutup
-              </SecondaryButton>
-            </div>
-          </DialogFooter>
-        </form>
-      </Dialog> */}
       {/* Modal Export */}
       <Dialog open={isModalExportOpen} handler={toggleModalExport} size="md">
         <DialogHeader className="flex items-center justify-between">
@@ -397,35 +353,34 @@ export default function Page({ auth, sessions }) {
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate}>
-          <DialogBody className="overflow-y-scroll max-h-96" divider>
+          <DialogBody divider>
             <div className="flex flex-col gap-y-4">
-              <Input
+              <YearPicker
+                startYear={2024}
                 label="Periode"
-                type="date"
-                value={data.periode || ""}
-                disabled={processing}
-                onChange={(e) => setData("periode", e.target.value)}
+                value={data.periode}
+                processing={processing}
+                onChange={(e) => setData("periode", e)}
               />
               <Select
                 label="Semester"
-                value={`${data.semester}`}
+                value={data.semester}
                 disabled={processing}
                 onChange={(e) => setData("semester", e)}
               >
-                <Option value="S1">
-                  S1
+                <Option value="Smtr 1">
+                  Smtr 1
                 </Option>
-                <Option value="S2">
-                  S2
+                <Option value="Smtr 2">
+                  Smtr 2
                 </Option>
               </Select>
-              <Input
+              <Textarea
                 label="Keterangan"
                 value={data.keterangan || ""}
                 disabled={processing}
                 onChange={(e) => setData("keterangan", e.target.value)}
               />
-
             </div>
           </DialogBody>
           <DialogFooter>

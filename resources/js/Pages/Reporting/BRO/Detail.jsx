@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, branches, category, sessions }) {
+export default function Detail({ auth, branches, category, sessions, periode }) {
   const initialData = {
     branch_id: 0,
     jenis_perizinan_id: 0,
@@ -208,7 +208,7 @@ export default function Detail({ auth, branches, category, sessions }) {
             className="w-[1200px]"
             fetchUrl={"/api/infra/bros"}
             refreshUrl={isRefreshed}
-            parameters={{category: category}}
+            parameters={{category: category, periode: periode}}
           />
         </div>
       </div>

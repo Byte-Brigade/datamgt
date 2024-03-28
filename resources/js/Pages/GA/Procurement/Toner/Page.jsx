@@ -208,6 +208,7 @@ export default function Page({ auth, sessions, type_names }) {
             fetchUrl={"/api/gap/toners"}
             refreshUrl={isRefreshed}
             bordered={true}
+            periodic={true}
             component={[
               {
                 data: type_names,

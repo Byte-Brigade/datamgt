@@ -13,6 +13,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.2",
         "laravel/scout": "^10.2",
+        "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
         "mpociot/versionable": "^4.4",

@@ -22,11 +22,12 @@ class KdoMobilResource extends JsonResource
     {
         $biaya_sewa = $this->biaya_sewas()->orderBy('periode', 'desc')->first();
 
-        if (!is_null($request->startDate) && !is_null($request->endDate)) {
-            $startDate = Carbon::parse($request->startDate);
-            $endDate = Carbon::parse($request->endDate);
 
-            $biaya_sewa = $this->biaya_sewas()->where('periode', $endDate->startOfMonth()->format('Y-m-d'))->first();
+        if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+            $year = $request->input('$y');
+            $month = ((int) $request->input('$M')) + 1;
+            $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+            $biaya_sewa = $this->biaya_sewas->where('periode', $date->startOfMonth()->format('Y-m-d'))->first();
         }
         return [
             'id' => $this->id,

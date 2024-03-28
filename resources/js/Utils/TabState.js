@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 
 const tabState = (values) => {
   const [active, setActive] = useState(values[0]);
@@ -17,7 +17,15 @@ const tabState = (values) => {
       const newPath = `${params.slug}`;
       window.history.replaceState(null, "", `${newPath}?tab=${params.value}`);
     }
-    window.history.replaceState(null, "", `?tab=${params.value}`);
+    if (route().params.branch) {
+      window.history.replaceState(
+        null,
+        "",
+        `?branch=${route().params.branch}&tab=${params.value}`
+      );
+    } else {
+      window.history.replaceState(null, "", `?tab=${params.value}`);
+    }
 
     setActive(params.value);
   }, [params]);
@@ -31,7 +39,7 @@ const tabState = (values) => {
     params,
     active,
     handleTabChange,
-  }
+  };
 };
 
 export { tabState };

@@ -16,11 +16,17 @@ import {
   DialogHeader,
   IconButton,
   Input,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Page({ auth, sessions, gap_sto_id, periode, semester }) {
+export default function Page({
+  auth,
+  sessions,
+  gap_sto_id,
+  periode,
+  semester,
+}) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -56,7 +62,6 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
 
-
   const columns = [
     {
       name: "Cabang",
@@ -66,8 +71,9 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
       render: (data) => (
         <Link
           href={route("gap.stos.detail.assets", {
-            slug: data.slug,
-            gap_sto_id: data.gap_sto_id,
+            gap_sto_id,
+            gap_hasil_sto_id: data.gap_hasil_sto_id,
+            branch: data.slug,
           })}
         >
           {data.branch_name}
@@ -120,19 +126,12 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
     },
   ];
 
-
-
-
   const handleSubmitExport = (e) => {
     const { branch } = data;
     e.preventDefault();
-    window.open(
-      route("gap.stos.hasil-sto.export", gap_sto_id),
-      "_self"
-    );
+    window.open(route("gap.stos.hasil-sto.export", gap_sto_id), "_self");
     setIsModalExportOpen(!isModalExportOpen);
   };
-
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
@@ -171,7 +170,6 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
     });
   };
 
-
   const toggleModalExport = () => {
     setIsModalExportOpen(!isModalExportOpen);
   };
@@ -185,13 +183,12 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
 
   return (
     <AuthenticatedLayout auth={auth}>
-      <Head title="GA Procurement | KDO" />
+      <Head title="GA Procurement | Detail Hasil STO" />
       <BreadcrumbsDefault />
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">
-
             {auth.permissions.includes("can export") && (
               <PrimaryButton onClick={toggleModalExport}>
                 Create Report
@@ -203,18 +200,12 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
             columns={columns}
             isRefreshed={isRefreshed}
             bordered={true}
-
           />
-
         </div>
       </div>
 
       {/* Modal Create */}
-      <Dialog
-        open={modalOpen.create}
-        handler={toggleModalCreate}
-        size="md"
-      >
+      <Dialog open={modalOpen.create} handler={toggleModalCreate} size="md">
         <DialogHeader className="flex items-center justify-between">
           Disclaimer
           <IconButton
@@ -231,8 +222,9 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
           <DialogBody divider>
             <div className="flex flex-col gap-y-4">
               <Typography>
-                BSM dan BSO menyatakan sudah melakukan STO dengan ini
-                bertanggung jawab...
+                BSM dan BSO menyatakan sudah melakukan Stock Opname ini dengan
+                benar dan bertanggung jawab jika dikemudian hari diketahui ada
+                data yang tidak sesuai.
               </Typography>
 
               <Input
@@ -242,9 +234,7 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
                 name="upload"
                 id="upload"
                 accept=".pdf"
-                onChange={(e) =>
-                  form.setData("file", e.target.files[0])
-                }
+                onChange={(e) => form.setData("file", e.target.files[0])}
               />
             </div>
           </DialogBody>
@@ -253,10 +243,7 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
               <Button disabled={form.processing} type="submit">
                 Ubah
               </Button>
-              <SecondaryButton
-                type="button"
-                onClick={toggleModalCreate}
-              >
+              <SecondaryButton type="button" onClick={toggleModalCreate}>
                 Tutup
               </SecondaryButton>
             </div>
@@ -272,9 +259,7 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
         onToggle={toggleModalExport}
         onSubmit={handleSubmitExport}
       >
-        <div className="flex flex-col gap-y-4">
-          Export Hasil STO Periode
-        </div>
+        <div className="flex flex-col gap-y-4">Export Hasil STO Periode</div>
       </Modal>
 
       {/* Modal Edit */}
@@ -339,10 +324,7 @@ export default function Page({ auth, sessions, gap_sto_id, periode, semester }) 
         <DialogBody divider>
           <Typography>
             Apakah anda yakin ingin menghapus{" "}
-            <span className="text-lg font-bold">
-
-            </span>{" "}
-            ?
+            <span className="text-lg font-bold"></span> ?
           </Typography>
         </DialogBody>
         <DialogFooter>

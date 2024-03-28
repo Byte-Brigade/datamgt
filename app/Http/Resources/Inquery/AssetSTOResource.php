@@ -17,14 +17,14 @@ class AssetSTOResource extends JsonResource
     public function toArray($request)
     {
 
-        $gap_asset_details = $this->gap_asset_details();
+        $gap_asset_details = $this->gap_asset_details->where('gap_hasil_sto_id', $request->gap_hasil_sto_id)->first();
 
-        if (isset($gap_asset_details)) {
+        if (!isset($gap_asset_details)) {
             $latestSTO = GapSto::where('status', 'On Progress')
                 ->latest()
                 ->first();
             if (isset($latestSTO)) {
-                $gap_asset_details = $gap_asset_details->where('periode', $latestSTO->periode)->where('semester', $latestSTO->semester)->first();
+                $gap_asset_details = $this->gap_asset_details->where('periode', $latestSTO->periode)->where('semester', $latestSTO->semester)->first();
             }
         }
 
@@ -49,7 +49,9 @@ class AssetSTOResource extends JsonResource
             'remark' => $this->remark,
             'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
             'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
+            'keterangan' => isset($gap_asset_details) ? $gap_asset_details->keterangan : null,
             'semestawdaer' => $this->gap_asset_details,
+
 
 
         ];

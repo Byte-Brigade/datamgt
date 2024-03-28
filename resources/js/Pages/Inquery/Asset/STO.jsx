@@ -7,50 +7,80 @@ import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
-import { Button, Option, Select } from "@material-tailwind/react";
-import { useEffect } from "react";
+import { Input, Option, Select } from "@material-tailwind/react";
+import { useState } from "react";
 
 export default function Detail({ auth, branch, sessions }) {
-  const { form, selected, setSelected, setInitialData, data, loading, isRefreshed } = useFormContext();
-
+  const { form } = useFormContext();
+  const [selected, setSelected] = useState({});
+  const [input, setInput] = useState({});
   const { params, active, handleTabChange } = tabState(["depre", "nonDepre"]);
+  const options = [
+    "Ada",
+    "Ada Rusak",
+    "Tidak Ada",
+    "Lelang",
+    "Mutasi",
+    "Non Asset",
+    "Sudah Pindah Buku",
+  ];
+  const postData = (params) => {
+    axios
+      .post(
+        route("inquery.sto.remark", {
+          slug: branch.slug,
+        }),
+        params
+      )
+      .then((response) => console.log(response.data.message))
+      .catch((err) => console.log(err));
+  };
 
-  const handleRemarkChanged = (id, value) => {
+  const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
       const updatedSelected = { ...prevSelected, [id]: value };
-      console.log("Updated Selected:", value); // Add this line for debugging
-      console.log("Updated Selected:", selected); // Add this line for debugging
+      // console.log("Updated Selected:", value); // Add this line for debugging
+      // console.log("Updated Selected:", selected); // Add this line for debugging
+      postData({
+        id,
+        remark: value,
+      });
+
       return updatedSelected;
     });
 
-    form.setData(columns, { ...selected, [id]: value });
+    form.setData("remark", { ...selected, [id]: value });
   };
 
+  const handleInputChange = (id, value) => {
+    setInput((prevInput) => {
+      const updateInput = { ...prevInput, [id]: value };
+      // console.log("Updated Selected:", value); // Add this line for debugging
+      // console.log("Updated Selected:", input); // Add this line for debugging
+      return updateInput;
+    });
 
-  useEffect(() => {
-    if (!loading) {
-      if (Array.isArray(data)) {
-        if (
-          data.some(
-            (data) => data.remark !== undefined && data.remark !== null
-          )
-        ) {
-          const remarksData = data.reduce((acc, current) => {
-            acc[current.id] = current.remark;
-            return acc;
-          }, {});
+    form.setData("keterangan", { ...input, [id]: value });
+  };
 
-          setSelected(remarksData);
-        }
-      }
-      console.log("aa")
-      console.log(data)
+  const handleBlur = (id, value) => {
+    if (value !== "") {
+      postData({
+        id,
+        keterangan: value,
+      });
     }
+  };
 
-
-    setInitialData({ remark: {}, keterangan: null });
-
-  }, [isRefreshed])
+  const handleKeyDown = (id, e) => {
+    if (e.key === "Enter" || e.key === "Escape") {
+      postData({
+        id,
+        keterangan: e.target.value,
+      });
+      e.target.blur();
+    }
+  };
 
   const columns = [
     {
@@ -138,24 +168,43 @@ export default function Detail({ auth, branch, sessions }) {
       render: (data) =>
         auth.permissions.includes("can sto") ? (
           <Select
-            className="bg-white"
+            className="bg-white z-50"
             label="Status"
             value={`${data.status || ""}`}
-            onChange={(e) => handleRemarkChanged(data.asset_number, e)}
+            onChange={(e) => handleChanged(data.id, e)}
           >
-            <Option value={`Ada`}>Ada</Option>
-            <Option value={`Tidak Ada`}>Tidak Ada</Option>
-            <Option value={`Ada Rusak`}>Ada Rusak</Option>
-            <Option value={`Sudah dihapus buku`}>Sudah dihapus buku</Option>
-            <Option value={`Mutasi`}>Mutasi</Option>
-            <Option value={`Lelang`}>Lelang</Option>
-            <Option value={`Non Asset`}>Non Asset</Option>
+            {options.map((option) => (
+              <Option value={option}>{option}</Option>
+            ))}
           </Select>
         ) : (
           data.status
         ),
     },
-
+    {
+      name: "Keterangan",
+      field: "keterangan",
+      type: "custom",
+      render: (data) =>
+        auth.permissions.includes("can sto") ? (
+          <Input
+            label={"Keterangan"}
+            disabled={
+              ["Ada", "Ada Rusak"].includes(selected[data.id]) ||
+              ["Ada", "Ada Rusak"].includes(data.status) ||
+              (data.status === null && selected[data.id] === undefined)
+                ? true
+                : false
+            }
+            value={`${input[data.id] ? input[data.id] : data.keterangan || ""}`}
+            onChange={(e) => handleInputChange(data.id, e.target.value)}
+            onBlur={(e) => handleBlur(data.id, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(data.id, e)}
+          />
+        ) : (
+          data.keterangan
+        ),
+    },
   ];
 
   return (
@@ -186,9 +235,7 @@ export default function Detail({ auth, branch, sessions }) {
                 data
                 type="nonDepre"
                 Icon={ArchiveBoxIcon}
-
                 active={params.value}
-
                 onClick={() => handleTabChange("nonDepre")}
                 color="purple"
               />
@@ -199,23 +246,11 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
-
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Depre",
               }}
-            >
-
-              {auth.permissions.includes("can sto") && <Button
-                size="sm"
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>}
-
-            </DataTable>
+            />
           )}
 
           {active == "nonDepre" && (
@@ -223,20 +258,11 @@ export default function Detail({ auth, branch, sessions }) {
               columns={columns}
               fetchUrl={`/api/inquery/stos/detail`}
               bordered={true}
-              submitUrl={{ url: `inquery.assets.remark`, id: branch.slug }}
               parameters={{
                 branch_code: branch.branch_code,
                 category: "Non-Depre",
               }}
-            >
-              {auth.permissions.includes("can sto") && <Button
-                size="sm"
-                type="submit"
-                className="inline-flex mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-              >
-                Submit
-              </Button>}
-            </DataTable>
+            />
           )}
         </div>
       </div>

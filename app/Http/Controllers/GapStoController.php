@@ -39,13 +39,12 @@ class GapStoController extends Controller
         $gap_sto = GapSto::find($gap_sto_id);
         return Inertia::render('GA/Procurement/STO/Detail', ['gap_sto_id' => $gap_sto_id, 'periode' => Carbon::parse($gap_sto->periode)->year, 'semester' => $gap_sto->semester]);
     }
-    public function assets(Request $request, $slug)
+    public function assets(Request $request, $gap_sto_id, $gap_hasil_sto_id)
     {
+        $branch = Branch::where('slug', $request->branch)->first();
 
-        $branch = Branch::where('slug', $slug)->first();
-
-        $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $request->gap_sto_id)->where('branch_id', $branch->id)->first();
-        return Inertia::render('GA/Procurement/STO/STO', ['gap_hasil_sto_id' => $gap_hasil_sto->id, 'branch' => $branch]);
+        $gap_hasil_sto = GapHasilSto::find($gap_hasil_sto_id);
+        return Inertia::render('GA/Procurement/STO/STO', ['gap_sto_id' => $gap_sto_id, 'gap_hasil_sto_id' => $gap_hasil_sto->id, 'branch' => $branch]);
     }
     /**
      * Show the form for creating a new resource.
@@ -76,8 +75,6 @@ class GapStoController extends Controller
                 $gap_sto->update([
                     'status' => 'Done'
                 ]);
-
-                GapAssetDetail::where('periode', $gap_sto->periode)->where('semester', $gap_sto->semester)->update(['sto' => true]);
             } else {
                 $count = abs($current_asset - $prev_asset);
                 if ($count == 0) {
@@ -106,20 +103,19 @@ class GapStoController extends Controller
                 throw new Exception("Selesaikan STO sebelumnya terlebih dahulu.");
             }
 
-            $exist_sto = GapSto::where('periode', Carbon::parse($request->periode)->startOfMonth()->format('Y-m-d'))->where('semester', $request->semester)->first();
+            $exist_sto = GapSto::where('periode', Carbon::createFromDate($request->periode)->startOfYear()->format('Y-m-d'))->where('semester', $request->semester)->first();
             if (isset($exist_sto)) {
                 throw new Exception("STO sudah ada!");
             }
 
             $gap_sto = GapSto::create([
-                'periode' => Carbon::parse($request->periode)->startOfMonth()->format('Y-m-d'),
+                'periode' => Carbon::createFromDate($request->periode)->startOfYear()->format('Y-m-d'),
                 'semester' => $request->semester,
                 'status' => 'On Progress',
                 'keterangan' => $request->keterangan,
             ]);
 
             $branches = Branch::whereHas('gap_assets')->get();
-
             foreach ($branches as $branch) {
                 GapHasilSto::create(
                     [
@@ -129,11 +125,10 @@ class GapStoController extends Controller
                     ]
                 );
             }
+
             $role = Role::where('name', 'cabang')->first();
             $permission = Permission::where('name', 'can sto')->first();
-
             $userIdsWithRole = $role->users()->pluck('id');
-
             User::whereIn('id', $userIdsWithRole)->each(function ($user) use ($permission) {
                 $user->givePermissionTo($permission);
             });
@@ -147,33 +142,45 @@ class GapStoController extends Controller
     {
         try {
             $branch = Branch::with('gap_assets')->where('slug', $slug)->first();
-            $fileName = $request->file('file')->getClientOriginalName();
-
             $sto = GapSto::where('status', 'On Progress')->first();
 
-
+            $fileName = $branch->branch_types->type_name . '_' . $branch->branch_name . '_STO_' . Carbon::parse($sto->periode)->year . '_' . $sto->semester;
 
             if (isset($sto)) {
-
                 $current_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($sto) {
-                    return $q->where('periode', $sto->periode);
+                    return $q->where('periode', $sto->periode)->where('semester', $sto->semester);
                 })->count();
                 $assets = GapAsset::where('branch_id', $branch->id)->count();
                 $prevSTO = GapSto::where('status', 'Done')->latest()->first();
                 $prev_asset = 0;
                 if (isset($prevSTO)) {
                     $prev_asset = $branch->gap_assets()->whereHas('gap_asset_details', function ($q) use ($prevSTO) {
-                        return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester);
+                        return $q->where('periode', $prevSTO->periode)->where('semester', $prevSTO->semester)->where('status', 'Ada');
                     })->count();
+
+                    // $gap_hasil_sto = GapHasilSto::where('gap_sto_id', $prevSTO->id)->where('branch_id', $branch->id)->first();
+
+                    // if (isset($gap_hasil_sto)) {
+                    //     if ($gap_hasil_sto->remarked) {
+                    //         $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/' . Carbon::parse($sto->periode)->year . '/' . $sto->semester . '/', $fileName, ["disk" => 'public']);
+                    //         $gap_hasil_sto->update([
+                    //             "disclaimer" => $fileName
+                    //         ]);
+                    //         return Redirect::back()->with(['status' => 'success', 'message' => 'Data berhasil disimpan!']);
+                    //     }
+                    // }
                 }
+
 
                 if ($prev_asset == 0) {
                     $prev_asset = $assets;
                 }
 
+
                 if ($current_asset < $prev_asset) {
                     throw new Exception(abs($prev_asset - $current_asset) . " asset belum diremark");
                 }
+
                 $request->file('file')->storeAs('gap/stos/' . $branch->slug . '/' . Carbon::parse($sto->periode)->year . '/' . $sto->semester . '/', $fileName, ["disk" => 'public']);
                 GapHasilSto::updateOrCreate(
                     [
@@ -191,6 +198,16 @@ class GapStoController extends Controller
 
                 if ($user->hasRole('cabang')) {
                     $user->revokePermissionTo("can sto");
+                } else {
+                    $users = User::whereHas('permissions', function ($query) {
+                        $query->where('name', 'can sto');
+                    })
+                        ->where('branch_id', $branch->id)
+                        ->get();
+
+                    foreach ($users as $user) {
+                        $user->revokePermissionTo('can sto');
+                    }
                 }
             } else {
                 throw new Exception("STO belum dimulai");
@@ -201,15 +218,15 @@ class GapStoController extends Controller
             return Redirect::back()->with(['status' => 'failed', 'message' => 'Data gagal disimpan! ' . $e->getMessage()]);
         }
     }
-    public function export()
+    public function export($gap_sto_id)
     {
         $fileName = 'Data_STO_' . date('d-m-y') . '.xlsx';
-        return(new STOExport)->download($fileName);
+        return (new STOExport($gap_sto_id))->download($fileName);
     }
     public function export_hasil_sto($gap_sto_id)
     {
         $fileName = 'Data_STO_' . date('d-m-y') . '.xlsx';
-        return(new HasilSTOExport($gap_sto_id))->download($fileName);
+        return (new HasilSTOExport($gap_sto_id))->download($fileName);
     }
 
     public function disclaimer()

@@ -4,12 +4,12 @@ import { Breadcrumbs } from "@material-tailwind/react";
 export function BreadcrumbsDefault() {
   const page = usePage();
   const baseUrl = route().t.url;
-  console.log(page);
+  // console.log(route().params);
 
   const currentRoute = route().current();
   const routeParts = currentRoute.split(".");
   // const routeParts = page.url.split("/").filter((route) => route !== "");
-  console.log(routeParts);
+  // console.log(routeParts);
   const crumbs = [];
   let url = `${baseUrl}/`;
 

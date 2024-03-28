@@ -1,12 +1,9 @@
 import Alert from "@/Components/Alert";
 import { BreadcrumbsDefault } from "@/Components/Breadcrumbs";
 import DataTable from "@/Components/DataTable";
-import PrimaryButton from "@/Components/PrimaryButton";
 import Modal from "@/Components/Reports/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { hasRoles } from "@/Utils/HasRoles";
-import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
@@ -21,7 +18,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-export default function Detail({ auth, sessions, type, type_item, periode }) {
+export default function Detail({ auth, sessions, type, type_item, datePickerValue }) {
   const initialData = {
     jumlah_kendaraan: null,
     jumlah_driver: null,
@@ -34,7 +31,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
     periode: null,
   };
 
-  console.log(periode)
+  console.log(datePickerValue)
   const {
     data,
     setData,
@@ -53,11 +50,6 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
   const [isRefreshed, setIsRefreshed] = useState(false);
 
   const columns = [
-    {
-      name: "Jenis Pekerjaan",
-      field: "jenis_pekerjaan",
-      className: 'text-center'
-    },
     {
       name: "Nama Pegawai",
       field: "nama_pegawai",
@@ -81,21 +73,6 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
       type: "custom",
       render: (data) => data.cost.toLocaleString("id-ID"),
     },
-    {
-      name: "Periode",
-      field: "periode",
-      type: "date",
-    }
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.alihdayas.detail", data.divisi_pembebanan)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
 
   const footerCols = [{ name: "Sum", span: 5 }, { name: 123123123 }];
@@ -178,7 +155,7 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
       <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          {hasRoles("superadmin|admin|procurement", auth) &&
+          {/* {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)
             ) && (
@@ -189,12 +166,15 @@ export default function Detail({ auth, sessions, type, type_item, periode }) {
                   </PrimaryButton>
                 )}
               </div>
-            )}
+            )} */}
+          <h2 className="mb-4 text-xl font-semibold text-center">
+            {type_item} - {datePickerValue['periode']}
+          </h2>
           <DataTable
             columns={columns.filter((column) => column.field === "cost" ? auth.permissions.includes('can alih daya') : true)}
-            fetchUrl={`/api/gap/alihdaya/${type}?type_item=${type_item}`}
+            fetchUrl={`/api/inquery/alihdayas/detail/${type}?type_item=${type_item}`}
             refreshUrl={isRefreshed}
-            parameters={periode}
+            parameters={datePickerValue}
           />
         </div>
       </div>

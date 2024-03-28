@@ -71,27 +71,12 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
     { name: "Branch", path: "inquery.branch", state: "inquery.branch.*" },
     { name: "Staff", path: "inquery.staff" },
     { name: "Asset", path: "inquery.assets" },
-    // { name: "Branch Roll Out", path: "reporting.bros" },
-    // { name: "Alih Daya", path: "inquery.alihdayas.summary" },
-    // { name: "Lisensi", path: "inquery.licenses" },
-    // { name: "Branch (Report)", path: "reporting.branches", state: "reporting.*" },
-    // { name: "Asset (Report)", path: "reporting.assets" },
-    // { name: "Lisensi (Report)", path: "reporting.licenses" },
-    // { name: "Vendor", path: "reporting.vendor" },
   ];
 
   const inqueryRouterNonCabang = [
     { name: "Branch Roll Out", path: "inquery.bros" },
     { name: "Alih Daya", path: "inquery.alihdayas.summary" },
     { name: "Vendor", path: "inquery.vendor" },
-  ];
-
-  const reportRouter = [
-    // { name: "Branch", path: "reporting.branches", state: "reporting.*" },
-    // { name: "Asset", path: "reporting.assets" },
-    // { name: "Lisensi", path: "reporting.licenses" },
-    // { name: "Vendor", path: "reporting.vendor" },
-    // { name: "Branch Roll Out", path: "reporting.bros" },
   ];
 
   const opsRouter = [
@@ -152,7 +137,6 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
       name: "Branch Roll Out",
       path: "infra.bros",
     },
-
     {
       name: "Maintenance and Project Cost",
       path: "infra.maintenance-costs",

@@ -1,38 +1,36 @@
-import { useEffect, useState } from "react";
+import { Option, Select } from "@material-tailwind/react";
 
-const YearPicker = () => {
+const YearPicker = ({
+  startYear,
+  endYear,
+  label,
+  value,
+  processing,
+  onChange,
+}) => {
   const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [startYear, setStartYear] = useState(currentYear - 10);
-  const [endYear, setEndYear] = useState(currentYear + 10);
+  const start = startYear || currentYear;
+  const end = endYear || currentYear + 1;
 
   const years = Array.from(
-    { length: endYear - startYear + 1 },
-    (_, index) => startYear + index
+    { length: end - start + 1 },
+    (_, index) => start + index
   );
 
-  useEffect(() => {
-    // Do any additional logic based on the selected year if needed
-  }, [selectedYear]);
-
-  const handleChange = (event) => {
-    const selected = parseInt(event.target.value, 10);
-    setSelectedYear(selected);
-    // Do any other logic based on the selected year if needed
-  };
-
   return (
-    <select
-      className="border p-2 rounded-md w-fit"
-      value={selectedYear}
-      onChange={handleChange}
+    <Select
+      label={label}
+      value={currentYear || value}
+      disabled={processing}
+      onChange={onChange}
+      size="md"
     >
       {years.map((year) => (
-        <option key={year} value={year}>
+        <Option key={year} value={year}>
           {year}
-        </option>
+        </Option>
       ))}
-    </select>
+    </Select>
   );
 };
 

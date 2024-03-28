@@ -7,12 +7,12 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
+import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import Datepicker from "react-tailwindcss-datepicker";
 import { useFormContext } from "../Context/FormProvider";
 import Paginator from "./Paginator";
 import TableRow from "./Partials/TableRow";
@@ -35,8 +35,7 @@ export default function DataTable({
   dataArr,
   className = "w-full",
   component = [],
-  footCols = { name: "", span: 0 },
-  agg,
+  datePicker = { year: true, month: false, day: false },
   periodic = false,
   parameters = {},
   bordered = false,
@@ -47,20 +46,19 @@ export default function DataTable({
   fixed = false,
 }) {
 
+  const [data, setData] = useState([]);
   const [perPage, setPerPage] = useState(15);
   const [sortColumn, setSortColumn] = useState();
   const [sortOrder, setSortOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [fixedTable, setFixedTable] = useState(fixed);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(null);
   const [remarks, setRemarks] = useState({});
-  const [allMarked, setAllMarked] = useState(false);
+
 
   const {
     form,
@@ -73,10 +71,8 @@ export default function DataTable({
     setSelected,
     filterData,
     setFilterData,
-    data,
-    setData,
-    loading,
-    setLoading
+    datePickerValue,
+    setDatePickerValue
   } = useFormContext();
 
   // filters
@@ -89,10 +85,30 @@ export default function DataTable({
     startDate: null,
     endDate: null,
   });
+  const [date, setDate] = useState(null);
+  const [year, setYear] = useState(null);
+  const [month, setMonth] = useState(null);
 
   const handleDateChange = (newValue) => {
     console.log("newValue:", newValue);
-    setDateRange(newValue);
+    setDate(newValue);
+    setYear(null);
+    setMonth(null);
+    setDatePickerValue(newValue);
+  };
+  const handleYearChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setDate(null);
+    setDatePickerValue({ $y: newValue['$y'] });
+    setMonth(null);
+    setYear(newValue);
+  };
+  const handleMonthChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setDate(null);
+    setYear(null);
+    setMonth(newValue);
+    setDatePickerValue({ $y: newValue['$y'], $M: newValue['$M'] });
   };
 
   const handleSort = (column) => {
@@ -113,31 +129,6 @@ export default function DataTable({
     }, 500)
   ).current;
 
-  const handleRowClick = (event, clickedRowIndex) => {
-    const isCtrlPressed = event.ctrlKey || event.metaKey;
-    const isShiftPressed = event.shiftKey;
-
-    let newSelectedRows;
-
-    if (isCtrlPressed) {
-      newSelectedRows = selectedRows.includes(clickedRowIndex)
-        ? selectedRows.filter((id) => id !== clickedRowIndex)
-        : [...selectedRows, clickedRowIndex];
-    } else if (isShiftPressed && lastSelectedRowIndex !== null) {
-      const rangeStart = Math.min(lastSelectedRowIndex, clickedRowIndex);
-      const rangeEnd = Math.max(lastSelectedRowIndex, clickedRowIndex);
-      const newRange = [...Array(rangeEnd - rangeStart + 1).keys()].map(
-        (i) => rangeStart + i
-      );
-      newSelectedRows = [...new Set([...selectedRows, ...newRange])];
-    } else {
-      newSelectedRows = [clickedRowIndex];
-    }
-
-    setSelectedRows(newSelectedRows);
-    setLastSelectedRowIndex(clickedRowIndex);
-  };
-
   const handleFilter = () => {
     fetchData(1);
   };
@@ -157,19 +148,13 @@ export default function DataTable({
   };
   const handleCheckboxData = (filter, field) => {
     setFilterData((prevFilter) => {
-      // Membuat salinan dari prevFilter
       const updatedFilter = { ...prevFilter };
-
-      // Jika field belum ada dalam updatedFilter, tambahkan field dengan array filter ke dalam updatedFilter
       if (!updatedFilter.hasOwnProperty(field)) {
         updatedFilter[field] = [filter];
       } else {
-        // Jika field sudah ada dalam updatedFilter, periksa apakah filter sudah ada dalam array tersebut
-        // Jika belum, tambahkan filter ke dalam array filter
         if (!updatedFilter[field].includes(filter)) {
           updatedFilter[field].push(filter);
         } else {
-          // Jika filter sudah ada dalam array filter, hapus filter dari array
           updatedFilter[field] = updatedFilter[field].filter(
             (item) => item !== filter
           );
@@ -195,23 +180,17 @@ export default function DataTable({
       sort_order: sortOrder,
       search,
       ...dateRange,
+      ...datePickerValue,
       ...filterData,
     };
 
     if (fetchUrl) {
-      const { data } = await axios.get(fetchUrl, { params });
+      const { data } = await axios.get(fetchUrl, { params, withCredentials: true });
       setData(
         data.data instanceof Object ? Object.values(data.data) : data.data
       );
-      // setSumData(data.data.reduce((total, item) => {
-      //   let value = parseInt(item[agg.name].replace(/\./g, ""));
-
-      //   return total + value;
-      // }, 0));
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-
-
       console.log(data.data);
     }
     if (dataArr) {
@@ -219,21 +198,6 @@ export default function DataTable({
       setData(dataArr);
       setLoading(false);
     }
-  };
-
-  const getFormattedDate = (currentDate, months = 0) => {
-    // Mendapatkan tanggal saat ini
-    // const currentDate = new Date();
-
-    // Mendapatkan tahun, bulan, dan tanggal dari objek Date
-    const year = currentDate.getFullYear();
-    const month = String(months + 1).padStart(2, "0"); // Ditambah 1 karena bulan dimulai dari 0
-    const day = String(currentDate.getDate()).padStart(2, "0");
-
-    // Menggabungkan komponen tanggal dalam format "YYYY-MM-DD"
-    const formattedDate = `${year}-${month}-${day}`;
-
-    return formattedDate;
   };
 
   useEffect(() => {
@@ -254,6 +218,7 @@ export default function DataTable({
     isRefreshed,
     configuration,
     dateRange,
+    datePickerValue,
   ]);
 
   const getNestedValue = (obj, field) => {
@@ -349,13 +314,28 @@ export default function DataTable({
           </div>
           <div>
             {periodic && (
-              <div className="z-50 flex items-center justify-end gap-x-2">
-                <span>Periode</span>
-                <Datepicker
-                  value={dateRange}
-                  popoverDirection="down"
-                  onChange={handleDateChange}
-                />
+              <div className="flex justify-between">
+                {datePicker.year && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Tahun</span>
+                    <DatePicker value={year} onChange={handleYearChange} openTo="year" views={["year"]} />
+                  </div>
+                )}
+                {datePicker.month && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Bulan</span>
+                    <DatePicker value={month} onChange={handleMonthChange} openTo="month" views={["year", "month"]} />
+                  </div>
+                )}
+                {datePicker.day && (
+                  <div className="z-50 flex items-center justify-end gap-x-2">
+                    <span>Tanggal</span>
+                    <DatePicker value={date} onChange={handleDateChange} openTo="day" views={["year", "month", "day"]} />
+                  </div>
+                )}
+
+
+
               </div>
             )}
           </div>
@@ -500,16 +480,16 @@ export default function DataTable({
                         <span className="flex flex-col gap-y-1">
                           <ChevronUpIcon
                             className={`${sortOrder === SORT_ASC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                           <ChevronDownIcon
                             className={`${sortOrder === SORT_DESC &&
-                                column.field === sortColumn
-                                ? "text-slate-900"
-                                : "text-gray-400"
+                              column.field === sortColumn
+                              ? "text-slate-900"
+                              : "text-gray-400"
                               } w-3 h-3`}
                           />
                         </span>

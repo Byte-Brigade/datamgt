@@ -5,9 +5,9 @@ const FormContext = createContext();
 
 
 export const FormProvider = ({ children }) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
+
+  const [datePickerValue, setDatePickerValue] = useState({});
   const [initialData, setInitialData] = useState({});
   const [filterData, setFilterData] = useState({});
   const [url, setUrl] = useState([]);
@@ -17,6 +17,7 @@ export const FormProvider = ({ children }) => {
     endDate: null
   });
   const [selected, setSelected] = useState({})
+  const [input, setInput] = useState({})
   const [modalOpen, setModalOpen] = useState({
     create: false,
     edit: false,
@@ -89,10 +90,10 @@ export const FormProvider = ({ children }) => {
       setId,
       selected, setSelected,
       periode, setPeriode,
+      input, setInput,
       groupBy,
       filterData, setFilterData,
-      data, setData,
-      loading, setLoading
+      datePickerValue, setDatePickerValue
     }}>
       {children}
     </FormContext.Provider>
