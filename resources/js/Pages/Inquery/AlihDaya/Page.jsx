@@ -28,7 +28,7 @@ export default function Page({ auth, sessions, slug, branch }) {
     processing,
     errors,
   } = useForm(initialData);
-  const { periode } = useFormContext();
+  const { datePickerValue } = useFormContext();
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
   const [isModalExportOpen, setIsModalExportOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
@@ -69,7 +69,7 @@ export default function Page({ auth, sessions, slug, branch }) {
             slug: slug,
             type: "jenis_pekerjaan",
             type_item: data.jenis_pekerjaan,
-            ...periode
+            ...datePickerValue
           })}
         >
           {data.jenis_pekerjaan}
@@ -154,7 +154,7 @@ export default function Page({ auth, sessions, slug, branch }) {
             slug: slug,
             type: "jenis_pekerjaan",
             type_item: data.jenis_pekerjaan,
-            ...periode
+            ...datePickerValue
           })}
         >
           {data.jenis_pekerjaan}
@@ -285,16 +285,16 @@ export default function Page({ auth, sessions, slug, branch }) {
             {branch.branch_name}
           </h2>
 
-            <DataTable
-              columns={columnItems}
-              headings={heading1}
-              fetchUrl={`/api/inquery/alihdayas/branch/${slug}`}
-              refreshUrl={isRefreshed}
-              bordered={true}
-              parameters={{
-                type: "tenaga-kerja",
-              }}
-            />
+          <DataTable
+            columns={columnItems}
+            headings={heading1}
+            fetchUrl={`/api/inquery/alihdayas/branch/${slug}`}
+            refreshUrl={isRefreshed}
+            bordered={true}
+            parameters={{
+              type: "tenaga-kerja",
+            }}
+          />
 
 
 

@@ -36,6 +36,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
     modalOpen,
     setModalOpen,
     form,
+    datePickerValue
   } = useFormContext();
 
   const toggleModalCreate = (id) => {
@@ -286,7 +287,10 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
       className: "cursor-pointer hover:text-blue-500",
       type: "custom",
       render: (data) => (
-        <Link href={route("inquery.assets.detail", data.slug)}>
+        <Link href={route("inquery.assets.detail", {
+          slug: data.slug,
+          ...datePickerValue
+        })}>
           {data.branch_name}
         </Link>
       ),
@@ -513,7 +517,7 @@ export default function Page({ sessions, auth, data, type_names, yearToner }) {
             <DataTable
               fetchUrl={"/api/inquery/assets"}
               columns={columns}
-              parameters={{ branch_id: auth.user.branch_id }}
+              parameters={{ branch_id: auth.user.branch_id, ...datePickerValue }}
               headings={headings}
               bordered={true}
               periodic={true}

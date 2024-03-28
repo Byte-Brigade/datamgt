@@ -95,8 +95,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/alihdayas', [InqueryController::class, 'alihdaya_summary'])->name('alihdayas.summary');
         Route::get('/alihdayas/{slug}', [InqueryController::class, 'alihdayas'])->name('alihdayas.branch');
-        Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail'])->name('alihdayas.detail');
-        Route::get('/alihdayas/detail/{type}', [GapAlihDayaController::class, 'detail'])->name('alihdayas.type');
+        Route::get('/alihdayas/{slug}/detail', [InqueryController::class, 'alihdaya_detail_branch'])->name('alihdayas.detail');
+        Route::get('/alihdayas/detail/{type}', [InqueryController::class, 'alihdaya_detail'])->name('alihdayas.detail.type');
 
         Route::get('/vendor', [ReportController::class, 'vendor'])->name('vendor');
     });

@@ -6,6 +6,7 @@ use App\Http\Resources\InqueryAssetsResource;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\EmployeePosition;
+use App\Models\GapAlihDaya;
 use App\Models\GapAsset;
 use App\Models\GapAssetDetail;
 use App\Models\GapDisnaker;
@@ -58,7 +59,7 @@ class InqueryController extends Controller
                 'name' => $disnaker->jenis_perizinan->name,
                 'remark' => 'Ada',
                 'jatuh_tempo' => $disnaker->tgl_masa_berlaku,
-                'url' => isset ($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
+                'url' => isset($disnaker->file) ? "infra/disnaker/{$disnaker->id}/{$disnaker->file}" : false,
 
             ];
         });
@@ -95,7 +96,7 @@ class InqueryController extends Controller
         $kdos = GapKdo::where('branch_id', $branch->id)->get();
         $kdos = $kdos->map(function ($kdo) {
             $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
-            $kdo->biaya_sewa = isset ($biaya_sewa) ? $biaya_sewa->value : 0;
+            $kdo->biaya_sewa = isset($biaya_sewa) ? $biaya_sewa->value : 0;
             return $kdo;
         });
 
@@ -134,9 +135,27 @@ class InqueryController extends Controller
             'branch' => $branch,
         ]);
     }
-    public function alihdaya_detail($slug, Request $request)
+
+    public function alihdaya_detail(Request $request, $type)
     {
-        return Inertia::render('Inquery/AlihDaya/DetailBranch', ['slug' => $slug, 'type' => $request->type, 'type_item' => $request->type_item, 'periode' => ['startDate' => $request->startDate, 'endDate' => $request->endDate]]);
+        $maxPeriode = GapAlihDaya::max('periode');
+        $date = Carbon::parse($maxPeriode)->format('M Y');
+        if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+            $year = $request->input('$y');
+            $month = ((int) $request->input('$M')) + 1;
+            $date = Carbon::createFromFormat('Y-m', $year . '-' . $month)->format('M Y');
+        } else if (!is_null($request->input('$y'))) {
+            $startDate = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('M');
+            $endDate = Carbon::createFromDate($request->input('$y'))->endOfYear()->format('M Y');
+            $date = $startDate . '-' . $endDate;
+        }
+
+
+        return Inertia::render('Inquery/AlihDaya/Detail', ['type' => $type, 'type_item' => $request->type_item, 'datePickerValue' => ['$M' => $request->input('$M'), '$y' => $request->input('$y'), 'periode' => $date]]);
+    }
+    public function alihdaya_detail_branch($slug, Request $request)
+    {
+        return Inertia::render('Inquery/AlihDaya/DetailBranch', ['slug' => $slug, 'type' => $request->type, 'type_item' => $request->type_item, 'datePickerValue' => ['$M' => $request->input('$M'), '$y' => $request->input('$y')]]);
     }
     public function assets()
     {

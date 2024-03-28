@@ -23,6 +23,7 @@ use App\Models\GapHasilSto;
 use App\Models\GapKdo;
 use App\Models\GapKdoMobil;
 use App\Models\GapPerdin;
+use App\Models\GapPerdinDetail;
 use App\Models\GapPks;
 use App\Models\GapScoring;
 use App\Models\GapSto;
@@ -91,6 +92,14 @@ class GapApiController extends Controller
             $query = $query->where('vendor', $request->vendor);
         }
 
+        if (!is_null($request->input('$y'))) {
+            $year = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('Y-m-d');
+            $query = $query->where('periode', $year);
+        } else {
+            $year = $query->max('periode');
+            $query = $query->where('periode', $year);
+        }
+
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -104,16 +113,6 @@ class GapApiController extends Controller
             $query = $query->whereIn('type_name', $request->type_name);
         }
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
-
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
-        }
         $collections = $query->get();
         if ($type == 'cabang') {
             $collections = $collections->groupBy('branches.id')->map(function ($kdos, $branch) {
@@ -196,6 +195,8 @@ class GapApiController extends Controller
                     ->orWhere('nopol', 'like', $searchQuery);
             });
         }
+
+        $query = $query->whereHas('biaya_sewas');
 
 
         if ($perpage == "All") {
@@ -393,26 +394,32 @@ class GapApiController extends Controller
             });
         }
 
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
-
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
+        if (!is_null($request->input('$y'))) {
+            $startDate = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('Y-m-d');
+            $endDate = Carbon::createFromDate($request->input('$y'))->endOfYear()->format('Y-m-d');
+            $query = $query->whereBetween('periode', [$startDate, $endDate]);
         }
 
-
+        // else {
+        //     $startDate = Carbon::parse($query->max('periode'))->startOfYear();
+        //     $endDate = Carbon::parse($query->max('periode'))->endOfYear();
+        //     $query =  $query->whereBetween('periode', [$startDate, $endDate]);
+        // }
 
 
         $query = $query->get();
         $collections = collect([]);
         if (!is_null($request->summary) && $request->summary == "divisi") {
-            $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) {
-                $spender = $perdins->flatMap(function ($spender) {
-                    return $spender->gap_perdin_details;
+            $collections = $query->groupBy('divisi_pembebanan')->map(function ($perdins, $divisi) use ($request) {
+                $spender = $perdins->flatMap(function ($spender) use ($request, $divisi) {
+                    $spender = $spender->gap_perdin_details;
+                    if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+                        $year = $request->input('$y');
+                        $month = ((int) $request->input('$M')) + 1;
+                        $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+                        $spender = $spender->where('periode', $date->startOfMonth()->format('Y-m-d'));
+                    }
+                    return $spender;
                 });
                 return [
                     'divisi_pembebanan' => $divisi,
@@ -425,9 +432,16 @@ class GapApiController extends Controller
                 return $item['total'];
             });
         } else if (!is_null($request->summary) && $request->summary == "spender") {
-            $collections = $query->groupBy('user')->map(function ($perdins, $user) {
-                $spender = $perdins->flatMap(function ($spender) {
-                    return $spender->gap_perdin_details;
+            $collections = $query->groupBy('user')->map(function ($perdins, $user) use ($request) {
+                $spender = $perdins->flatMap(function ($spender) use ($request) {
+                    $spender = $spender->gap_perdin_details;
+                    if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+                        $year = $request->input('$y');
+                        $month = ((int) $request->input('$M')) + 1;
+                        $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+                        $spender = $spender->where('periode', $date->startOfMonth()->format('Y-m-d'));
+                    }
+                    return $spender;
                 });
                 return [
                     'user' => $user,
@@ -511,26 +525,22 @@ class GapApiController extends Controller
         }
         $yearToDate = false;
 
-        if (!is_null($request->startDate) && !is_null($request->endDate)) {
-            $startDate = Carbon::parse($request->startDate);
-            $endDate = Carbon::parse($request->endDate);
-            if ($startDate->isSameMonth($endDate)) {
-                $sameMonth = true;
-                $query->where('periode', $endDate->startOfMonth()->format('Y-m-d'));
-            } else {
-                $yearToDate = true;
-                $query->whereBetween('periode', [$startDate->startOfMonth()->format('Y-m-d'), $endDate->startOfMonth()->format('Y-m-d')]);
-            }
-        } else {
+        if (!is_null($request->input('$M')) && !is_null($request->input('$y'))) {
+            $year = $request->input('$y');
+            $month = ((int) $request->input('$M')) + 1;
+            $date = Carbon::createFromFormat('Y-m', $year . '-' . $month);
+            $query->where('periode', $date->startOfMonth()->format('Y-m-d'));
+        } else if (!is_null($request->input('$y'))) {
+            $startDate = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('Y-m-d');
+            $endDate = Carbon::createFromDate($request->input('$y'))->endOfYear()->format('Y-m-d');
+            $query->whereBetween('periode', [$startDate, $endDate]);
             $yearToDate = true;
-            $minPeriode = $query->min('periode');
-            $maxPeriode = $query->max('periode');
-            $query->whereBetween('periode', [$minPeriode, $maxPeriode]);
+        } else {
+            $startDate = Carbon::parse($query->max('periode'))->startOfYear();
+            $endDate = Carbon::parse($query->max('periode'))->endOfYear();
+            $query->whereBetween('periode', [$startDate, $endDate]);
+            $yearToDate = true;
         }
-        // } else {
-        //     $latestPeriode = $query->max('periode');
-        //     $query->where('periode', $latestPeriode);
-        // }
 
 
         if ($yearToDate && $request->type == "tenaga-kerja") {
@@ -624,12 +634,11 @@ class GapApiController extends Controller
                 });
             });
         }
-        if (!is_null($request->month) && !is_null($request->year)) {
-            $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
-            // Create a Carbon instance using the year and month
-            $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
+        if (!is_null($request->input('$y'))) {
+            $startYear = Carbon::createFromDate($request->input(('$y')))->startOfYear()->format('Y-m-d');
+            $endYear = Carbon::createFromDate($request->input(('$y')))->endOfYear()->format('Y-m-d');
+            $query = $query->whereBetween('idecice_date', [$startYear, $endYear]);
         }
 
         if (isset($request->type_name)) {

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function() {
+// Route::middleware('auth:sanctum')->group(function() {
 Route::prefix('report')->name('report.')->group(function () {
     Route::get('branches', [ReportApiController::class, 'branches'])->name('branches');
     Route::get('files', [ReportApiController::class, 'files'])->name('files');
@@ -130,4 +130,4 @@ Route::prefix('infra')->name('infra.')->group(function () {
     Route::get('scoring-assessments/{scoring_vendor}', [InfraApiController::class, 'scoring_assessment_details']);
 });
 
-});
+// });
