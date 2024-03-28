@@ -75,8 +75,6 @@ class GapStoController extends Controller
                 $gap_sto->update([
                     'status' => 'Done'
                 ]);
-
-                GapAssetDetail::where('periode', $gap_sto->periode)->where('semester', $gap_sto->semester)->update(['sto' => true]);
             } else {
                 $count = abs($current_asset - $prev_asset);
                 if ($count == 0) {
