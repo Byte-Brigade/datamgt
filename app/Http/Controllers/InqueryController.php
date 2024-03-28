@@ -246,7 +246,6 @@ class InqueryController extends Controller
                                 'semester' => $current_sto->semester,
                                 'periode' => $current_sto->periode,
                                 'status' => $asset_detail->status,
-                                'sto' => false,
                                 'keterangan' => !in_array($value['remark'], $status_constraint) ? $value['keterangan'] : null,
                             ]
                         );
@@ -263,7 +262,6 @@ class InqueryController extends Controller
                                     'semester' => $current_sto->semester,
                                     'periode' => $current_sto->periode,
                                     'status' => $value['remark'],
-                                    'sto' => false,
                                     'keterangan' => !in_array($value['remark'], $status_constraint) ? $value['keterangan'] : null,
                                 ]
                             );
@@ -308,7 +306,6 @@ class InqueryController extends Controller
                         'semester' => $current_sto->semester,
                         'periode' => $current_sto->periode,
                         'status' => $request->remark,
-                        'sto' => false,
                         'keterangan' => in_array($request->remark, $remarks) ? null : ""
                     ]
                 );
@@ -325,7 +322,6 @@ class InqueryController extends Controller
                         'asset_number' => $gapAsset->asset_number,
                         'semester' => $current_sto->semester,
                         'periode' => $current_sto->periode,
-                        'sto' => false,
                         'keterangan' => $request->keterangan,
                     ]
                 );

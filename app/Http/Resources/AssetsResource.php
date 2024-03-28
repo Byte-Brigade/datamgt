@@ -16,7 +16,7 @@ class AssetsResource extends JsonResource
     public function toArray($request)
     {
 
-        $gap_asset_details = $this->gap_asset_details()->where('sto', true);
+        $gap_asset_details = $this->gap_asset_details();
 
         if (isset($gap_asset_details)) {
             if (!is_null($request->endDate) && !is_null($request->semester)) {
