@@ -22,13 +22,12 @@ class AssetsResource extends JsonResource
         if (isset($gap_asset_details)) {
             if (!is_null($request->input('$y'))) {
                 $year = Carbon::createFromDate($request->input('$y'))->startOfYear()->format('Y-m-d');
-                $sto = GapSto::where('periode', $year)->latest()->first();
+                $sto = GapSto::where('status', 'Done')->where('periode', $year)->latest()->first();
 
                 $gap_asset_details = $gap_asset_details->where('periode', $sto->periode)->where('semester', $sto->semester);
             } else {
-                $periode = $gap_asset_details->get()->max('periode');
-                $sto = GapSto::where('periode', $periode)->latest()->first();
-                $gap_asset_details = $gap_asset_details->where('periode', $periode)->where('semester', $sto->semester);
+                $sto = GapSto::where('status', 'Done')->latest()->first();
+                $gap_asset_details = $gap_asset_details->where('periode', $sto->periode)->where('semester', $sto->semester);
             }
 
             $gap_asset_details = $gap_asset_details->first();

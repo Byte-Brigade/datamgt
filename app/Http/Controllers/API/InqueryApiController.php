@@ -230,7 +230,7 @@ class InqueryApiController extends Controller
             $gap_assets = collect([]);
             if (!is_null($request->input('$y'))) {
 
-                $sto = GapSto::where('periode', Carbon::createFromDate($request->input('$y'))->startOfYear()
+                $sto = GapSto::where('status','Done')->where('periode', Carbon::createFromDate($request->input('$y'))->startOfYear()
                     ->format('Y-m-d'))->latest()->first();
 
                 if (isset($sto)) {
