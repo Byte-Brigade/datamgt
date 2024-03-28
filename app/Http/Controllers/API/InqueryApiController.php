@@ -224,7 +224,32 @@ class InqueryApiController extends Controller
         $query = $query->get();
         // $query = $query->paginate($perpage);
 
-        $collections = $query->map(function ($branch) {
+        $collections = $query->map(function ($branch) use ($request) {
+            $gap_assets = collect([]);
+            if (!is_null($request->input('$y'))) {
+                $sto = GapSto::where('periode', Carbon::createFromDate($request->input('$y'))->startOfYear()
+                    ->format('Y-m-d'))->latest()->first();
+                if (isset($sto)) {
+                    $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                    if (isset($hasil_sto)) {
+                        $gap_assets = GapAsset::where('branch_id', $branch->id)->whereHas('gap_asset_details', function ($q) use ($hasil_sto) {
+                            return $q->where('gap_hasil_sto_id', $hasil_sto->id)->where('status', 'Ada');
+                        })->get();
+                    }
+                }
+            } else {
+                $sto = GapSto::where('status', 'Done')->latest()->first();
+                if (isset($sto)) {
+                    $hasil_sto = GapHasilSto::where('gap_sto_id', $sto->id)->where('branch_id', $branch->id)->first();
+                    if (isset($hasil_sto)) {
+                        $gap_assets = GapAsset::where('branch_id', $branch->id)->whereHas('gap_asset_details', function ($q) use ($hasil_sto) {
+                            return $q->where('gap_hasil_sto_id', $hasil_sto->id)->where('status', 'Ada');
+                        })->get();
+                    }
+                } else {
+                    $gap_assets = $branch->gap_assets;
+                }
+            }
             return [
                 'branch_name' => $branch->branch_name,
                 'type_name' => $branch->branch_types->type_name,
@@ -323,13 +348,13 @@ class InqueryApiController extends Controller
             $query = $query->whereHas('gap_asset_details', function ($q) use($latestSTO) {
                 return $q->where('status','Ada')->whereHas('gap_hasil_sto', function($q)  use($latestSTO)  {
                     return $q->whereHas('gap_stos',function($q) use($latestSTO)  {
-                       
+
                         return $q->where('id', $latestSTO->id);
                     });
                 });
             });
         }
-       
+
 
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);

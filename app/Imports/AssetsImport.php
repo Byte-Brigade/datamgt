@@ -40,6 +40,11 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
             foreach ($rows as $row) {
                 $cabang = str_contains($row['cabang'], 'Sampoerna') ? 'Sampoerna' : $row['cabang'];
                 $branch = Branch::where('branch_name', 'like', '%' . $cabang . '%')->first();
+                if(!in_array($row['semester'], ['Smtr 1', 'Smtr 2'])) {
+                    throw new Exception("Gunakan format semester: Smtr 1 atau Smtr 2");
+                }
+
+
                 if ($branch) {
                     $gap_asset = GapAsset::where('asset_number', $row['asset_number'])->first();
                     if (isset($gap_asset)) {
