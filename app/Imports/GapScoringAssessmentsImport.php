@@ -33,9 +33,6 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow
 
                 $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
                 if ($branch && $row['type'] == 'Assessment') {
-                    $exist_periode = GapScoring::where('type', 'Project')->where('periode', $periode)->first();
-
-
                     $tgl_scoring = is_int($row['tgl_scoring']) ? Date::excelToDateTimeObject($row['tgl_scoring'])->format('Y-m-d') : null;
 
                     GapScoring::updateOrCreate(
@@ -57,7 +54,6 @@ class GapScoringAssessmentsImport implements ToCollection, WithHeadingRow
                             'vendor' => $row['nama_vendor'],
                             'tgl_scoring' => $tgl_scoring,
                             'scoring_vendor' => $row['scoring_vendor'],
-                            'schedule_scoring' => $row['schedule_scoring'],
                             'type' => $row['type'],
                             'keterangan' => $row['ket'],
                         ]

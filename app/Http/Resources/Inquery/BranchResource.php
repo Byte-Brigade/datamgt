@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Inquery;
 
 use App\Models\Branch;
+use App\Models\Employee;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BranchResource extends JsonResource
@@ -22,7 +23,10 @@ class BranchResource extends JsonResource
             'area' => $this->area,
             'address' => $this->address,
             'type_name' => $this->branch_types->type_name,
-            'bm' => $this->employees->where('position_id', 5)->pluck('name')->first(),
+            // 'bm' => $this->employees->where('position_id', 5)->pluck('name')->first(),
+            'bm' => Employee::where('branch_id', $this->id)->whereHas('employee_positions', function ($q) {
+                return $q->where('position_name', 'Branch Manager');
+            })->pluck('name')->first(),
             'slug' => $this->slug
         ];
     }
