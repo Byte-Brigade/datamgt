@@ -78,6 +78,7 @@ export default function Detail({
                     src={`/storage/ops/branches/${branch.slug}/${branch.photo}`}
                     alt={`Photo ${branch.branch_name}`}
                     className="object-cover w-full h-full"
+                    loading="lazy"
                   />
                 ) : (
                   <PhotoIcon className="h-auto w-fit text-slate-200" />

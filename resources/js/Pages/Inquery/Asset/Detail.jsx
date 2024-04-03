@@ -111,12 +111,12 @@ export default function Detail({ auth, branch, sessions }) {
     },
     {
       name: "Semester",
-      filterable: true,
       field: "semester",
       className: "text-center",
     },
     {
       name: "Status",
+      filterable: true,
       field: "status",
       className: "text-center",
     }
@@ -168,10 +168,9 @@ export default function Detail({ auth, branch, sessions }) {
                 category: "Depre",
               }}
               component={[
-
                 {
-                  data: ['S1','S2'],
-                  field: 'semester'
+                  data: ['Ada','Ada Rusak'],
+                  field: 'status'
                 }
               ]}
             />

@@ -55,7 +55,7 @@ class AssetsResource extends JsonResource
             'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
             'tahun' => isset($gap_asset_details) ? Carbon::parse($gap_asset_details->periode)->year : null,
             'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
-            'semestawdaer' => $this->gap_asset_details,
+            'details' => $this->gap_asset_details,
 
 
         ];

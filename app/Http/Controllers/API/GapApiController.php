@@ -51,6 +51,12 @@ class GapApiController extends Controller
             $query = $query->where('category', $request->category);
         }
 
+        if (!is_null($request->status)) {
+            $query = $query->whereHas('gap_asset_details', function ($q) use ($request) {
+                $q->where('status', '=', $request->get('status'));
+            });
+        }
+
         // if (isset($request->category)) {
         //     $query = $query->whereIn('category', $request->category);
         // }
@@ -122,8 +128,8 @@ class GapApiController extends Controller
                 return [
                     'branches' => Branch::find($branch),
                     'type_name' => $kdos->first()->branches->branch_types->type_name,
-                    'jumlah_kendaraan' => isset($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
-                    'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
+                    'jumlah_kendaraan' => isset ($biaya_sewa) ? $biaya_sewa->where('value', '>', 0)->count() : 0,
+                    'sewa_perbulan' => isset ($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->filter(function ($kdo) {
                         $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
@@ -141,7 +147,7 @@ class GapApiController extends Controller
                 return [
                     'vendor' => $vendor,
                     'jumlah_kendaraan' => $biaya_sewa->where('value', '>', 0)->count(),
-                    'sewa_perbulan' => isset($biaya_sewa) ? $biaya_sewa->sum('value')
+                    'sewa_perbulan' => isset ($biaya_sewa) ? $biaya_sewa->sum('value')
                         : 0,
                     'akhir_sewa' => $kdos->filter(function ($kdo) {
                         $biaya_sewa = $kdo->biaya_sewas()->orderBy('periode', 'desc')->first();
@@ -623,7 +629,8 @@ class GapApiController extends Controller
         $searchInput = $request->search;
         $query = $gap_toner->select('gap_toners.*')->orderBy($sortFieldInput, $sortOrder)
             ->join('branches', 'gap_toners.branch_id', 'branches.id')
-            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');;
+            ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
+        ;
         $perpage = $request->perpage ?? 15;
 
         if (!is_null($searchInput)) {
@@ -888,8 +895,8 @@ class GapApiController extends Controller
 
                     return $q->where('periode', $sto->periode)->where('semester', $sto->semester);
                 })->count(),
-                'remarked' => isset($hasil_sto) ? $hasil_sto->remarked : 0,
-                'disclaimer' => isset($hasil_sto) ? $hasil_sto->disclaimer : null
+                'remarked' => isset ($hasil_sto) ? $hasil_sto->remarked : 0,
+                'disclaimer' => isset ($hasil_sto) ? $hasil_sto->disclaimer : null
             ];
         });
 
