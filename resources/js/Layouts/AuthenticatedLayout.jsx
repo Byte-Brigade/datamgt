@@ -6,11 +6,6 @@ export default function Authenticated({ auth, header, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className={`min-h-screen bg-gray-100`}>
-      {/* <nav className="fixed top-0 left-0 z-50 w-full bg-white border-b border-slate-200">
-        <div className="flex flex-wrap items-center max-w-screen-xl p-4 mx-auto justify between">
-          <h2 className="text-xl font-semibold">Navbar</h2>
-        </div>
-      </nav> */}
       <ComplexNavbar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}

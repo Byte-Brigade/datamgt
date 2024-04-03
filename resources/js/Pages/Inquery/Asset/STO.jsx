@@ -4,11 +4,14 @@ import { useFormContext } from "@/Components/Context/FormProvider";
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CardMenu from "@/Pages/Dashboard/Partials/CardMenu";
+import { notify } from "@/Utils/Notify";
 import { tabState } from "@/Utils/TabState";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 import { Input, Option, Select } from "@material-tailwind/react";
+import axios from "axios";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Detail({ auth, branch, sessions }) {
   const { form } = useFormContext();
@@ -24,16 +27,49 @@ export default function Detail({ auth, branch, sessions }) {
     "Non Asset",
     "Sudah Pindah Buku",
   ];
-  const postData = (params) => {
-    axios
-      .post(
-        route("inquery.sto.remark", {
-          slug: branch.slug,
-        }),
-        params
-      )
-      .then((response) => console.log(response.data.message))
-      .catch((err) => console.log(err));
+
+  const postData = async (params) => {
+    try {
+      const response = await toast.promise(
+        axios.post(route("inquery.sto.remark", { slug: branch.slug }), params),
+        {
+          pending: "Menyimpan ...",
+          success: {
+            render({ data }) {
+              return data.data.message;
+            },
+          },
+          error: "Terjadi kesalahan!",
+        },
+        {
+          toastId: `notify-${params.id}`,
+        }
+      );
+
+      return response;
+    } catch (error) {
+      notify("error", error.message);
+    }
+    // try {
+    //   axios
+    //     .post(
+    //       route("inquery.sto.remark", {
+    //         slug: branch.slug,
+    //       }),
+    //       params
+    //     )
+    //     .then((response) => {
+    //       notify(response.data.status, response.data.message);
+    //       console.log(response.data.message);
+    //     })
+    //     .catch((err) => {
+    //       notify("error", "Terjadi kesalahan!");
+    //       console.log(err.message);
+    //     });
+    // } catch (error) {
+    //   notify("error", "Terjadi kesalahan!");
+    //   console.log(error.message);
+    // }
   };
 
   const handleChanged = (id, value) => {
@@ -74,10 +110,10 @@ export default function Detail({ auth, branch, sessions }) {
 
   const handleKeyDown = (id, e) => {
     if (e.key === "Enter" || e.key === "Escape") {
-      postData({
-        id,
-        keterangan: e.target.value,
-      });
+      // postData({
+      //   id,
+      //   keterangan: e.target.value,
+      // });
       e.target.blur();
     }
   };
@@ -189,6 +225,7 @@ export default function Detail({ auth, branch, sessions }) {
         auth.permissions.includes("can sto") ? (
           <Input
             label={"Keterangan"}
+            className="bg-white"
             disabled={
               ["Ada", "Ada Rusak"].includes(selected[data.id]) ||
               ["Ada", "Ada Rusak"].includes(data.status) ||
@@ -196,7 +233,7 @@ export default function Detail({ auth, branch, sessions }) {
                 ? true
                 : false
             }
-            value={`${input[data.id] ? input[data.id] : data.keterangan || ""}`}
+            value={input[data.id] ? input[data.id] : data.keterangan || ""}
             onChange={(e) => handleInputChange(data.id, e.target.value)}
             onBlur={(e) => handleBlur(data.id, e.target.value)}
             onKeyDown={(e) => handleKeyDown(data.id, e)}
@@ -220,6 +257,7 @@ export default function Detail({ auth, branch, sessions }) {
             </h2>
           </div>
           <div className="flex justify-between">
+            <button onClick={notify}>Toast!</button>
             <div className="grid grid-cols-4 gap-4 mb-2">
               <CardMenu
                 label="Depre"
