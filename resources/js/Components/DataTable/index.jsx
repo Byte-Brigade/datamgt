@@ -261,11 +261,11 @@ export default function DataTable({
           <div className="flex items-center justify-between mb-2">
             <div className="flex flex-col w-72">
               <div className="flex items-center gap-x-2">
-                Show
+                <label htmlFor="perpage">Show</label>
                 <select
                   name="perpage"
                   id="perpage"
-                  className="rounded-lg form-select"
+                  className="rounded-lg form-select focus:border-indigo-500 border-gray-300 shadow-sm"
                   value={perPage}
                   onChange={(e) => handlePerPage(e.target.value)}
                 >
@@ -275,7 +275,7 @@ export default function DataTable({
                   <option value="60">60</option>
                   <option value="All">All</option>
                 </select>
-                entries
+                <label htmlFor="perpage">entries</label>
               </div>
             </div>
             <div className="flex flex-col">
@@ -290,7 +290,7 @@ export default function DataTable({
                   />
                 </div>
 
-                <IconButton onClick={toggleOpen}>
+                <IconButton onClick={toggleOpen} className="bg-green-600">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -306,7 +306,7 @@ export default function DataTable({
                     />
                   </svg>
                 </IconButton>
-                <IconButton onClick={toggleOpenSetting}>
+                <IconButton onClick={toggleOpenSetting} className="bg-green-600">
                   <CogIcon className="w-5 h-5" />
                 </IconButton>
               </div>

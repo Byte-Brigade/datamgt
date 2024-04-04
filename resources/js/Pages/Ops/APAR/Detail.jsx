@@ -102,7 +102,7 @@ export default function Detail({ auth, sessions, ops_apar }) {
     <AuthenticatedLayout auth={auth}>
       <Head title={`OPS | Apar - ${ops_apar.branches.branch_name}`} />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <h2 className="mb-4 text-xl font-semibold text-center">

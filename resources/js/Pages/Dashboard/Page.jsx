@@ -14,6 +14,7 @@ import { Option, Select } from "@material-tailwind/react";
 import { useState } from "react";
 import BarChart from "./Partials/BarChart";
 import CardMenu from "./Partials/CardMenu";
+import Alert from "@/Components/Alert";
 
 export default function Dashboard({ auth, errors, sessions, data }) {
   const [branchId, setBranchId] = useState(0);
@@ -463,7 +464,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded gap-y-2">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex flex-col gap-y-2">
@@ -540,7 +541,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
               </div>
               <div className="cols-span-1">
                 {/* Tabel Cabang */}
-                <table className={`text-sm leading-3 bg-white w-full`}>
+                <table className="text-sm leading-3 border bg-white w-full">
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
                       <th className="text-center">Tipe Cabang</th>
@@ -615,7 +616,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                   data={data}
                   branchState={branchId}
                   areaState={area}
-                  height={950}
+                  height={1000}
                 />
               </div>
               <div className="overflow-y-auto h-[450px]">
@@ -642,7 +643,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
                 />
               </div>
               <div className="cols-span-1">
-                <table className={`text-sm leading-3 bg-white w-full`}>
+                <table className="text-sm leading-3 border bg-white w-full">
                   <thead className="sticky top-0 border-b-2 table-fixed border-slate-200">
                     <tr className="[&>th]:p-2 bg-slate-100">
                       <th className="text-center">Fungsi</th>
@@ -692,7 +693,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
 
           {/* Jumlah Asset */}
           {active === "asset" && (
-            <table className={`text-sm leading-3 bg-white mt-2`}>
+            <table className="text-sm leading-3 border bg-white mt-2">
               <thead className="sticky border-b-2 table-fixed top-16 border-slate-200">
                 <tr className="[&>th]:p-2 bg-slate-100 border border-slate-200 divide-x divide-slate-200">
                   <th

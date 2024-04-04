@@ -52,7 +52,7 @@ export default function Page({ sessions, auth }) {
     <AuthenticatedLayout auth={auth}>
       <Head title="Inquery Data | Assets" />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <DataTable
             fetchUrl={"/api/inquery/licenses"}

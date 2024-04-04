@@ -103,9 +103,9 @@ export default function CardMenu({
         onClick={onClick}
         className={`flex-row cursor-pointer ${
           active === type
-            ? `hover:${outlineColor} ring-2 ring-offset-2 ` +
+            ? `hover:${outlineColor} ring-2 ring-offset-2 border-0` +
               ringColor + " "+ outlineColor
-            : "bg-white hover:bg-slate-200"
+            : "bg-white hover:bg-slate-200 border"
         } transition-all duration-300 w-full rounded-lg py-2 shadow-md`}
       >
         <div className="flex items-center justify-center">
@@ -121,7 +121,7 @@ export default function CardMenu({
       className={`flex-row cursor-pointer gap-x-4 ${
         active === type
           ? "hover:bg-slate-200 bg-slate-100 ring-2 ring-offset-2 " + ringColor
-          : "bg-white hover:bg-slate-200"
+          : "bg-white hover:bg-slate-200 border"
       } transition-all duration-300 w-full max-w-[24-rem]`}
     >
       <CardHeader

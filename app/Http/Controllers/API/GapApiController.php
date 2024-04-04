@@ -214,7 +214,6 @@ class GapApiController extends Controller
         return KdoMobilResource::collection($query);
     }
 
-
     public function scoring_projects(GapScoring $gap_scoring_project, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
@@ -228,8 +227,6 @@ class GapApiController extends Controller
         if (!is_null($request->branch_code)) {
             $query = $query->where('branch_code', $request->branch_code);
         }
-
-
 
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
@@ -258,8 +255,6 @@ class GapApiController extends Controller
         if ($perpage == "All") {
             $perpage = $collections->count();
         }
-
-
 
         return response()->json(PaginationHelper::paginate($collections, $perpage));
     }
@@ -298,7 +293,6 @@ class GapApiController extends Controller
         return ScoringProjectsResource::collection($query);
     }
 
-
     public function scoring_assessments(GapScoring $gap_scoring_assessment, Request $request)
     {
         $sortFieldInput = $request->input('sort_field') ?? 'branches.branch_code';
@@ -335,7 +329,6 @@ class GapApiController extends Controller
                 'q4' => $scorings->where('schedule_scoring', 'Q4')->count(),
             ];
         })->sortBy('scoring_vendor');
-
 
         if ($perpage == "All") {
             $perpage = $collections->count();
@@ -406,13 +399,6 @@ class GapApiController extends Controller
             $query = $query->whereBetween('periode', [$startDate, $endDate]);
         }
 
-        // else {
-        //     $startDate = Carbon::parse($query->max('periode'))->startOfYear();
-        //     $endDate = Carbon::parse($query->max('periode'))->endOfYear();
-        //     $query =  $query->whereBetween('periode', [$startDate, $endDate]);
-        // }
-
-
         $query = $query->get();
         $collections = collect([]);
         if (!is_null($request->summary) && $request->summary == "divisi") {
@@ -480,8 +466,6 @@ class GapApiController extends Controller
             $query = $query->where('branch_code', $request->branch_code);
         }
 
-
-
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($query) use ($searchQuery) {
@@ -548,7 +532,6 @@ class GapApiController extends Controller
             $yearToDate = true;
         }
 
-
         if ($yearToDate && $request->type == "tenaga-kerja") {
 
             $query = $query->select([
@@ -612,8 +595,6 @@ class GapApiController extends Controller
             $query->where('periode', $latestPeriode);
         }
 
-
-
         if ($perpage == "All") {
             $perpage = $query->count();
         }
@@ -652,8 +633,6 @@ class GapApiController extends Controller
             $query = $query->whereIn('type_name', $request->type_name);
         }
 
-
-
         $data = $query->get();
 
         $collections = $data->groupBy('branch_id')->map(function ($toners, $id) {
@@ -685,7 +664,6 @@ class GapApiController extends Controller
         $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($q) use ($searchQuery) {
@@ -697,7 +675,6 @@ class GapApiController extends Controller
             $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
-
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
@@ -705,7 +682,6 @@ class GapApiController extends Controller
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
             $query->where('periode', $carbonInstance);
         }
-
 
         if ($perpage == "All") {
             $perpage = $query->count();
@@ -732,7 +708,6 @@ class GapApiController extends Controller
             $query->where('periode', $carbonInstance);
         }
 
-
         $data = $query->get();
 
         $collections = $data->groupBy('status')->map(function ($pks, $status) {
@@ -745,7 +720,6 @@ class GapApiController extends Controller
                 'on_progress' => $pks->where('on_progress', true)->count(),
             ];
         });
-
 
         if ($perpage == "All") {
             $perpage = $collections->count();
@@ -820,7 +794,6 @@ class GapApiController extends Controller
 
         $query = $query->paginate($perpage);
 
-
         return StoResource::collection($query);
     }
     public function hasil_stos(GapHasilSto $gap_hasil_sto, Request $request, $gap_sto_id)
@@ -832,8 +805,6 @@ class GapApiController extends Controller
             ->join('branches', 'branches.id', 'gap_hasil_stos.branch_id')
             ->join('branch_types', 'branches.branch_type_id', 'branch_types.id');
         $perpage = $request->perpage ?? 15;
-
-
 
         $input = $request->all();
         if (isset($input['branch_types_type_name'])) {
@@ -867,7 +838,6 @@ class GapApiController extends Controller
         if ($perpage == "All") {
             $perpage = $query->count();
         }
-
 
         $query = $query->get();
 
@@ -921,12 +891,9 @@ class GapApiController extends Controller
             return $q->where('gap_hasil_sto_id', $request->gap_hasil_sto_id);
         });
 
-
-
         if (!is_null($request->category)) {
             $query = $query->where('category', $request->category);
         }
-
 
         if (isset($request->major_category)) {
             $query = $query->whereIn('major_category', $request->major_category);
