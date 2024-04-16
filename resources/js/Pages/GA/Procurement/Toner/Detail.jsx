@@ -180,9 +180,9 @@ export default function Page({ auth, sessions, branch }) {
       <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <h2 className="text-xl text-end font-semibold">
-              {branch.branch_types.type_name} {branch.branch_name}
-            </h2>
+          <h2 className="text-xl text-center font-semibold">
+            {branch.branch_types.type_name} {branch.branch_name}
+          </h2>
           {hasRoles("superadmin|admin|procurement", auth) &&
             ["can add", "can export"].some((permission) =>
               auth.permissions.includes(permission)

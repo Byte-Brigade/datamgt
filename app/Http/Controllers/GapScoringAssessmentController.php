@@ -40,7 +40,7 @@ class GapScoringAssessmentController extends Controller
             /** @var array $messages */
             foreach ($e->errors() as $field => $messages) {
                 foreach ($messages as $message) {
-                    $errorString .= "Field {$field}: {$message} ";
+                    $errorString .= "{$field}: {$message},";
                 }
             }
             $errorString = trim($errorString);
