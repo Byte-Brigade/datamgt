@@ -35,7 +35,6 @@ class AssetsResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'branch_id' => $this->branch_id,
             'category' => $this->category,
             'asset_number' => $this->asset_number,
             'asset_description' => $this->asset_description,
@@ -48,16 +47,11 @@ class AssetsResource extends JsonResource
             'accum_depre' => $this->accum_depre,
             'net_book_value' => $this->net_book_value,
             'branch_name' => $this->branches->branch_name,
-            'periode' => $this->periode,
-
-            'slug' => $this->slug,
             'remark' => $this->remark,
             'status' => isset($gap_asset_details) ? $gap_asset_details->status : null,
             'tahun' => isset($gap_asset_details) ? Carbon::parse($gap_asset_details->periode)->year : null,
             'semester' => isset($gap_asset_details) ? $gap_asset_details->semester : null,
             'details' => $this->gap_asset_details,
-
-
         ];
     }
 }

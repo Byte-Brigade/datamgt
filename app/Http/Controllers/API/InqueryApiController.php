@@ -195,7 +195,6 @@ class InqueryApiController extends Controller
             });
         }
 
-
         if (!is_null($request->branch_id)) {
             $query = $query->where('branches.id', $request->branch_id);
         }
@@ -221,7 +220,6 @@ class InqueryApiController extends Controller
         if (isset($request->type_name) && !is_null($request->type_name)) {
             $query = $query->where('type_name', $request->type_name);
         }
-
 
         $query = $query->get();
         // $query = $query->paginate($perpage);
@@ -309,8 +307,6 @@ class InqueryApiController extends Controller
                 return $q->whereIn('type_name', $type_name);
             });
         }
-
-
 
         if (isset($request->layanan_atm)) {
             $query = $query->whereIn('layanan_atm', $request->layanan_atm);
@@ -472,9 +468,6 @@ class InqueryApiController extends Controller
             ];
         });
 
-
-
-
         if ($sortOrder == 'desc') {
             $collections = $collections->sortByDesc($sortFieldInput);
         } else {
@@ -594,7 +587,6 @@ class InqueryApiController extends Controller
         $query = $gap_toner->select('gap_toners.*')->where('branch_id', $branch->id)->orderBy($sortFieldInput, $sortOrder);
         $perpage = $request->perpage ?? 15;
 
-
         if (!is_null($searchInput)) {
             $searchQuery = "%$searchInput%";
             $query = $query->where(function ($q) use ($searchQuery) {
@@ -606,16 +598,12 @@ class InqueryApiController extends Controller
             $query = $query->whereBetween('idecice_date', [Carbon::parse($request->startDate)->startOfMonth(), Carbon::parse($request->endDate)->startOfMonth()]);
         }
 
-
         if (!is_null($request->month) && !is_null($request->year)) {
             $paddedMonth = str_pad($request->month, 2, '0', STR_PAD_LEFT);
 
             // Create a Carbon instance using the year and month
             $carbonInstance = Carbon::createFromDate($request->year, $paddedMonth, 1)->format('Y-m-d');
-            $query->where('periode', $carbonInstance);
-        } else {
-            $latestPeriode = $query->max('periode');
-            $query->where('periode', $latestPeriode);
+            $query->where('idecice_date', $carbonInstance);
         }
 
 

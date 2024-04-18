@@ -10,26 +10,6 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function Page({ auth, sessions }) {
-  const initialData = {
-    jumlah_kendaraan: null,
-    jumlah_driver: null,
-    sewa_kendaraan: null,
-    biaya_driver: null,
-    ot: null,
-    rfid: null,
-    non_rfid: null,
-    grab: null,
-    periode: null,
-  };
-  const {
-    data,
-    setData,
-    post,
-    put,
-    delete: destroy,
-    processing,
-    errors,
-  } = useForm(initialData);
   const { datePickerValue } = useFormContext();
   const [isRefreshed, setIsRefreshed] = useState(false);
   const { active, params, handleTabChange } = tabState([
@@ -70,11 +50,8 @@ export default function Page({ auth, sessions }) {
         >
           {data.jenis_pekerjaan}
         </Link>
-
-
       ),
     },
-
     {
       name: "Permata",
       field: "permata",
@@ -147,17 +124,16 @@ export default function Page({ auth, sessions }) {
       type: "custom",
       render: (data) => (
         <Link
-        href={route('inquery.alihdayas.detail.type', {
-          type: "jenis_pekerjaan",
-          type_item: data.jenis_pekerjaan,
-          ...datePickerValue,
-        })}
+          href={route("inquery.alihdayas.detail.type", {
+            type: "jenis_pekerjaan",
+            type_item: data.jenis_pekerjaan,
+            ...datePickerValue,
+          })}
         >
           {data.jenis_pekerjaan}
         </Link>
       ),
     },
-
     {
       name: "Permata",
       field: "vendor",
@@ -257,17 +233,6 @@ export default function Page({ auth, sessions }) {
       className: "text-right tabular-nums",
       render: (data) => data.total_biaya.toLocaleString("id-ID"),
     },
-
-    // {
-    //   name: "Detail",
-    //   field: "detail",
-    //   className: "text-center",
-    //   render: (data) => (
-    //     <Link href={route("gap.alihdayas.detail", data.vendor)}>
-    //       <Button variant="outlined">Detail</Button>
-    //     </Link>
-    //   ),
-    // },
   ];
 
   const columnLocations = [
@@ -282,7 +247,6 @@ export default function Page({ auth, sessions }) {
         </Link>
       ),
     },
-
     {
       name: "Jumlah Tenaga Kerja",
       field: "tenaga_kerja",
@@ -293,7 +257,7 @@ export default function Page({ auth, sessions }) {
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Alih Daya" />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="grid grid-cols-4 gap-4 mb-4">
@@ -377,7 +341,6 @@ export default function Page({ auth, sessions }) {
           )}
         </div>
       </div>
-
     </AuthenticatedLayout>
   );
 }

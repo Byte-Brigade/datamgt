@@ -225,7 +225,7 @@ export default function Detail({
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Biaya Perjalanan Dinas" />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           <div className="flex items-center justify-between mb-4">

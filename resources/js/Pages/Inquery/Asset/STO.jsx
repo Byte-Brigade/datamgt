@@ -248,16 +248,15 @@ export default function Detail({ auth, branch, sessions }) {
     <AuthenticatedLayout auth={auth}>
       <Head title="GA Procurement | Assets" />
       <BreadcrumbsDefault />
-      <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
-          <div className="flex justify-end">
-            <h2 className="text-xl font-semibold text-end">
-              {branch.branch_name}
+          <div className="flex justify-center">
+            <h2 className="text-xl font-semibold text-center">
+              {branch.branch_types.type_name} {branch.branch_name}
             </h2>
           </div>
-          <div className="flex justify-between">
-            <button onClick={notify}>Toast!</button>
+          <div className="flex justify-between my-4">
             <div className="grid grid-cols-4 gap-4 mb-2">
               <CardMenu
                 label="Depre"

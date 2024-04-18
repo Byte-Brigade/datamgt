@@ -1,21 +1,12 @@
-import InputLabel from "@/Components/InputLabel";
-import TextInput from "@/Components/TextInput";
-import { CogIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
-import {
-  Button,
-  Checkbox,
-  Collapse,
-  IconButton,
-  Typography,
-} from "@material-tailwind/react";
-import { DatePicker } from "@mui/x-date-pickers";
+import { Checkbox, Collapse, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "../Context/FormProvider";
 import Paginator from "./Paginator";
-import TableRow from "./Partials/TableRow";
+import { Configuration, Filters, Loading, NoData, TableRow } from "./Partials";
+
 const SORT_ASC = "asc";
 const SORT_DESC = "desc";
 
@@ -41,7 +32,6 @@ export default function DataTable({
   bordered = false,
   configuration = true,
   headings,
-  children,
   submitUrl = {},
   fixed = false,
 }) {
@@ -257,180 +247,34 @@ export default function DataTable({
   return (
     <div>
       {configuration && (
-        <div className="flex flex-col">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex flex-col w-72">
-              <div className="flex items-center gap-x-2">
-                Show
-                <select
-                  name="perpage"
-                  id="perpage"
-                  className="rounded-lg form-select"
-                  value={perPage}
-                  onChange={(e) => handlePerPage(e.target.value)}
-                >
-                  <option value="15">15</option>
-                  <option value="30">30</option>
-                  <option value="45">45</option>
-                  <option value="60">60</option>
-                  <option value="All">All</option>
-                </select>
-                entries
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex gap-2">
-                <div className="flex items-center gap-2">
-                  <InputLabel htmlFor="search">Search : </InputLabel>
-                  <TextInput
-                    type="search"
-                    name="search"
-                    id="search"
-                    onChange={(e) => handleSearch(e.target.value)}
-                  />
-                </div>
-
-                <IconButton onClick={toggleOpen}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-                    />
-                  </svg>
-                </IconButton>
-                <IconButton onClick={toggleOpenSetting}>
-                  <CogIcon className="w-5 h-5" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-          <div>
-            {periodic && (
-              <div className="flex justify-between">
-                {datePicker.year && (
-                  <div className="z-50 flex items-center justify-end gap-x-2">
-                    <span>Tahun</span>
-                    <DatePicker
-                      value={year}
-                      onChange={handleYearChange}
-                      openTo="year"
-                      views={["year"]}
-                      slotProps={{ textField: { size: 'small' } }}
-                      className="bg-white"
-                    />
-                  </div>
-                )}
-                {datePicker.month && (
-                  <div className="z-50 flex items-center justify-end gap-x-2">
-                    <span>Bulan</span>
-                    <DatePicker
-                      value={month}
-                      onChange={handleMonthChange}
-                      openTo="month"
-                      views={["year", "month"]}
-                      slotProps={{ textField: { size: 'small' } }}
-                      className="bg-white"
-                    />
-                  </div>
-                )}
-                {datePicker.day && (
-                  <div className="z-50 flex items-center justify-end gap-x-2">
-                    <span>Tanggal</span>
-                    <DatePicker
-                      value={date}
-                      onChange={handleDateChange}
-                      openTo="day"
-                      views={["year", "month", "day"]}
-                      slotProps={{ textField: { size: 'small' } }}
-                      className="bg-white"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <Configuration
+          perPage={perPage}
+          handlePerPage={handlePerPage}
+          handleSearch={handleSearch}
+          toggleOpen={toggleOpen}
+          toggleOpenSetting={toggleOpenSetting}
+          periodic={periodic}
+          handleYearChange={handleYearChange}
+          year={year}
+          handleMonthChange={handleMonthChange}
+          month={month}
+          handleDateChange={handleDateChange}
+          date={date}
+        />
       )}
 
-      <div id="filters">
-        <Collapse open={open}>
-          <div className="w-full mx-auto my-2 bg-slate-200 p-2 rounded-lg shadow-inner">
-            <div className="flex flex-col flex-wrap">
-              <span className="ml-3 font-medium text-lg">Filters</span>
-              {columns
-                .filter((column, index) => column.filterable)
-                .map((column, id) => {
-                  if (column.name !== "Action") {
-                    return (
-                      <>
-                        <Checkbox
-                          label={column.name}
-                          key={id}
-                          checked={filters.includes(column.field)}
-                          value={column.field}
-                          onChange={(e) =>
-                            handleCheckbox(
-                              e.target.value,
-                              column.component,
-                              column.field
-                            )
-                          }
-                        />
-                        {component.length > 0 &&
-                          filters.includes(column.field) &&
-                          component.map(({ data, field }, i) =>
-                            column.field == field ? (
-                              <div className="ml-4 grid grid-cols-4">
-                                {data.map((item, index) => (
-                                  <div>
-                                    <Checkbox
-                                      onChange={(e) =>
-                                        handleCheckboxData(
-                                          e.target.value,
-                                          field
-                                        )
-                                      }
-                                      checked={
-                                        filterData[field]
-                                          ? filterData[field].includes(item)
-                                          : false
-                                      }
-                                      key={index}
-                                      value={item}
-                                      label={item}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              ""
-                            )
-                          )}
-                      </>
-                    );
-                  }
-                })}
-            </div>
+      <Filters
+        open={open}
+        columns={columns}
+        filters={filters}
+        component={component}
+        filterData={filterData}
+        handleCheckbox={handleCheckbox}
+        handleCheckboxData={handleCheckboxData}
+        handleFilter={handleFilter}
+        handleClearFilter={handleClearFilter}
+      />
 
-            <div className="flex justify-end gap-x-2 mt-2">
-              <Button size="sm" onClick={handleClearFilter}>
-                Clear
-              </Button>
-              <Button size="sm" color="green" onClick={handleFilter}>
-                Filter
-              </Button>
-            </div>
-          </div>
-        </Collapse>
-      </div>
       <div id="settings">
         <Collapse open={openSetting}>
           <div className="flex justify-between w-full mx-auto my-2 bg-slate-200 p-2 rounded-lg shadow-inner">
@@ -451,9 +295,7 @@ export default function DataTable({
           </div>
         </Collapse>
       </div>
-      <div className="flex justify-end mb-2">
-        <form onSubmit={handleFormSubmit}>{children}</form>
-      </div>
+
       <div
         className={`relative overflow-x-auto border-2 rounded-lg border-slate-200 ${
           fixedTable ? "max-h-96" : "h-full"
@@ -526,23 +368,9 @@ export default function DataTable({
           </thead>
           <tbody className="overflow-y-auto">
             {loading ? (
-              <tr>
-                <td
-                  colSpan={columns.length + 1}
-                  className="p-2 text-lg font-semibold text-center transition-colors duration-75 bg-slate-200 animate-pulse"
-                >
-                  Loading ...
-                </td>
-              </tr>
+              <Loading length={columns.length + 1} />
             ) : data.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length + 1}
-                  className="p-2 text-lg font-semibold text-center bg-slate-200"
-                >
-                  Tidak ada data tersedia
-                </td>
-              </tr>
+              <NoData length={columns.length + 1} />
             ) : (
               <>
                 {data.map((data, index) => (

@@ -7,13 +7,17 @@ export default function Alert({ sessions }) {
   const onCloseAlert = () => {
     setClose((prev) => !prev);
   };
-
   const status =
     sessions.status === "success"
       ? "Berhasil"
       : sessions.status === "failed"
       ? "Gagal"
       : sessions.status;
+
+  const message =
+    sessions.status === "failed"
+      ? sessions.message.split(",").filter((msg) => msg !== '').map((msg) => msg.trim())
+      : sessions.message;
   return (
     <div
       className={`border-l-4 ${
@@ -23,14 +27,20 @@ export default function Alert({ sessions }) {
       } p-4 mb-4 ${close ? "hidden" : ""}`}
       role="alert"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col">
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between">
           <p className="font-bold">{status}</p>
-          <p>{sessions.message}</p>
+          <IconButton onClick={onCloseAlert} variant="text">
+            <XMarkIcon className="w-5 h-5" />
+          </IconButton>
         </div>
-        <IconButton onClick={onCloseAlert} variant="text">
-          <XMarkIcon className="w-5 h-5" />
-        </IconButton>
+        <div className="max-h-24 overflow-y-auto">
+          {sessions.status === "success" ? (
+            <p>{message}</p>
+          ) : (
+            message.map((msg) => <li>{msg}</li>)
+          )}
+        </div>
       </div>
     </div>
   );
