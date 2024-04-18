@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
         "mpociot/versionable": "^4.4",
+        "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^5.11",
         "tightenco/ziggy": "^1.0"
     },

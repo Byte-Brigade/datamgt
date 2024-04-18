@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 
 class GapAsset extends Model
 {
-    use HasFactory;
-
-
-
-
+    use HasFactory, LogsActivity;
     protected $fillable = [
         'branch_id',
         'category',
@@ -39,13 +37,22 @@ class GapAsset extends Model
         'depre_exp' => 0,
     ];
 
-    public function branches() {
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}")
+            ->useLogName("GapAsset");
+    }
+
+    public function branches()
+    {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 
     public function gap_asset_details()
     {
-        return $this->hasMany(GapAssetDetail::class, 'asset_number','asset_number');
+        return $this->hasMany(GapAssetDetail::class, 'asset_number', 'asset_number');
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Exception;
 use Inertia\Inertia;
 use App\Models\Branch;
@@ -45,6 +46,9 @@ class BranchController extends Controller
         try {
             (new BranchesImport)->import($request->file('file'));
 
+            activity("Branch")
+                ->event("imported")
+                ->log("This model has been imported");
 
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
@@ -79,6 +83,15 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         try {
+            $branch_type = BranchType::find($request->branch_type_id);
+
+            $type_name = strtolower($branch_type->type_name);
+            $branch_name = strtolower($request->branch_name);
+            if ($branch_type == 'kfno' || $branch_type == 'kfo') {
+                $branch_type = 'kf';
+            }
+            $slug = Str::slug($type_name . " " . $branch_name, '-');
+
             $branch = Branch::create([
                 'branch_type_id' => $request->branch_type_id,
                 'branch_code' => $request->branch_code,
@@ -88,17 +101,8 @@ class BranchController extends Controller
                 'layanan_atm' => $request->layanan_atm,
                 'npwp' => $request->npwp,
                 'area' => $request->area,
+                'slug' => $slug
             ]);
-
-            $branch_type = strtolower($branch->branch_types->type_name);
-            $branch_name = strtolower($request->branch_name);
-            if ($branch_type == 'kfno' || $branch_type == 'kfo') {
-                $branch_type = 'kf';
-            }
-
-            $slug = Str::slug($branch_type . " " . $branch_name, '-');
-            $branch->slug = $slug;
-            $branch->save();
 
             if (!is_null($request->file('file_ojk'))) {
                 $file = $request->file('file_ojk');

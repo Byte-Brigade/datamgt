@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
@@ -378,6 +379,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/uam/{id}', [UAMController::class, 'update'])->name('uam.update');
         Route::delete('/uam/{id}', [UAMController::class, 'destroy'])->name('uam.delete');
         /* [END] User Access Management*/
+
+        Route::get('/audit-log', [AuditController::class, 'index'])->name('audit');
     });
 });
 

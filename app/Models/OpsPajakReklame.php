@@ -6,10 +6,12 @@ use App\Models\Branch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class OpsPajakReklame extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory, Searchable, LogsActivity;
 
     protected $fillable = [
         'branch_id',
@@ -20,6 +22,14 @@ class OpsPajakReklame extends Model
         'note',
         'additional_info',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}")
+            ->useLogName("OpsPajakReklame");
+    }
 
     public function branches()
     {

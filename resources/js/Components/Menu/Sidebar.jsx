@@ -1,5 +1,7 @@
 import { hasRoles } from "@/Utils/HasRoles";
 import {
+  ArchiveBoxIcon,
+  BookOpenIcon,
   ChartBarSquareIcon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -602,6 +604,24 @@ export function SidebarWithLogo({ sidebarOpen, setSidebarOpen }) {
                         className={`mr-auto font-normal`}
                       >
                         Users
+                      </Typography>
+                    )}
+                  </ListItem>
+                </Link>
+                <Link href={route("audit")}>
+                  <ListItem
+                    className={`${sidebarOpen && "justify-center"}`}
+                    selected={route().current("audit")}
+                  >
+                    <ListItemPrefix className={`${sidebarOpen && "m-0"}`}>
+                      <BookOpenIcon className="w-5 h-5" />
+                    </ListItemPrefix>
+                    {!sidebarOpen && (
+                      <Typography
+                        color="blue-gray"
+                        className={`mr-auto font-normal`}
+                      >
+                        Audit Log
                       </Typography>
                     )}
                   </ListItem>

@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 
 class InfraBro extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'branch_id',
@@ -31,6 +33,13 @@ class InfraBro extends Model
         'barang_it',
         'asuransi',
         'keterangan',
-
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}")
+            ->useLogName("InfraBro");
+    }
 }
