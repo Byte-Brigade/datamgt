@@ -41,6 +41,7 @@ class DisnakerImport implements ToCollection, WithHeadingRow
 
                 $jenis_perizinan = JenisPerizinan::where('name', 'like', '%' . $row['jenis_perizinan'] . '%')->get()->first();
                 $izin = isset($jenis_perizinan) ? $jenis_perizinan : JenisPerizinan::create(['name' => $row['jenis_perizinan']]);
+                activity()->disableLogging();
                 if ($branch) {
 
                     GapDisnaker::updateOrCreate(

@@ -23,7 +23,7 @@ export default function Filters({
               .map((column, id) => {
                 if (column.name !== "Action") {
                   return (
-                    <>
+                    <div key={id}>
                       <Checkbox
                         label={column.name}
                         key={id}
@@ -41,9 +41,9 @@ export default function Filters({
                         filters.includes(column.field) &&
                         component.map(({ data, field }, i) =>
                           column.field == field ? (
-                            <div className="ml-4 grid grid-cols-4">
+                            <div key={column.field} className="ml-4 grid grid-cols-4">
                               {data.map((item, index) => (
-                                <div>
+                                <div key={index}>
                                   <Checkbox
                                     onChange={(e) =>
                                       handleCheckboxData(e.target.value, field)
@@ -64,7 +64,7 @@ export default function Filters({
                             ""
                           )
                         )}
-                    </>
+                    </div>
                   );
                 }
               })}

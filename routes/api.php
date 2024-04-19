@@ -6,6 +6,7 @@ use App\Http\Controllers\API\InfraApiController;
 use App\Http\Controllers\API\InqueryApiController;
 use App\Http\Controllers\API\OpsApiController;
 use App\Http\Controllers\API\ReportApiController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UAMController;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ Route::prefix('ops')->name('ops.')->group(function () {
 Route::get('/checkdbhcs', [OpsApiController::class, 'check_db_status']);
 
 Route::get('uam', [UAMController::class, 'api']);
+Route::get('audit-log', [AuditController::class, 'api']);
 Route::get('/dashboard/branch', [DashboardController::class, 'api']);
 
 Route::prefix('gap')->name('gap.')->group(function () {

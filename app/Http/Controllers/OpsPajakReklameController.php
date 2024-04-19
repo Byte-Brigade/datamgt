@@ -31,6 +31,12 @@ class OpsPajakReklameController extends Controller
             DB::beginTransaction();
             (new PajakReklameImport)->import($request->file('file'));
             DB::commit();
+
+            activity()->enableLogging();
+            activity("OpsPajakReklame")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

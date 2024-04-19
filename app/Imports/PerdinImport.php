@@ -42,9 +42,8 @@ class PerdinImport implements ToCollection, WithHeadingRow, WithEvents, WithVali
         DB::beginTransaction();
         $row = null;
         try {
+            activity()->disableLogging();
             foreach ($rows as $row) {
-
-
                 $row = $row->toArray();
                 $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
                 $periode = Carbon::createFromDate($row['tahun'])->startOfYear()->format('Y-m-d');

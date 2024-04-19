@@ -28,13 +28,11 @@ class KdoMobilImport implements ToCollection, WithHeadingRow, WithUpserts
 
     public function collection(Collection $rows)
     {
+        activity()->disableLogging();
         foreach ($rows as $row) {
             $row = $row->toArray();
             $filteredData = array_intersect_key($row, array_flip(preg_grep('/^(jan|feb|mar|apr|may|june|jul|aug|sep|oct|nov|dec)$/i', array_keys($row))));
-
-
             $currentYear = date('Y');
-
             $periode = [];
 
             $gap_kdo_mobil = GapKdoMobil::updateOrCreate(

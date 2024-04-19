@@ -28,6 +28,12 @@ class GapTonerController extends Controller
             DB::beginTransaction();
             (new TonerImport)->import($request->file('file'));
             DB::commit();
+
+            activity()->enableLogging();
+            activity("GapToner")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

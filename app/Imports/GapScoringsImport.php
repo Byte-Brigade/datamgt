@@ -25,6 +25,7 @@ class GapScoringsImport implements ToCollection, WithHeadingRow
 
             foreach ($rows as $row) {
                 $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
+                activity()->disableLogging();
                 if ($branch) {
 
                     // Menambahkan jumlah hari dari tanggal Excel

@@ -24,6 +24,11 @@ class GapAlihDayaController extends Controller
             DB::beginTransaction();
             (new AlihDayaImport)->import($request->file('file'));
             DB::commit();
+
+            activity("GapAlihDaya")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

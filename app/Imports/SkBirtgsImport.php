@@ -29,6 +29,7 @@ class SkBirtgsImport implements ToModel, WithHeadingRow, WithValidation
             $query->where('position_name', 'Branch Manager')->orWhere('position_name', 'Branch Service Manager');
         })->where([['name', 'like', "%$penerima_kuasa[1]%"], ['branch_id', '=', $branch_id]])->pluck('id')->first() : null;
 
+        activity()->disableLogging();
         $ops_skbirtgs = OpsSkbirtgs::updateOrCreate(
             [
                 'branch_id' => $branch_id

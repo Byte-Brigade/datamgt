@@ -28,8 +28,7 @@ class MaintenanceCostImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-
-
+        activity()->disableLogging();
         foreach ($rows as $row) {
             try {
 

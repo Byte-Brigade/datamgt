@@ -23,6 +23,7 @@ class PajakReklameImport implements ToCollection, WithHeadingRow, WithValidation
     public function collection(Collection $rows)
 
     {
+        activity()->disableLogging();
         foreach ($rows as $index => $row) {
             $periode = trim($row['periode_pajak_reklame']) != '-' ? explode(' - ', $row['periode_pajak_reklame']) : [null, null];
             $types = BranchType::all()->pluck('type_name')->toArray();

@@ -20,6 +20,7 @@ class SkOperasionalsImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         $mergedCells = [];
+        activity()->disableLogging();
         foreach ($rows as $key => $row) {
             if ($key % 2 === 0) {
                 $mergedCells[$key] = $row['cabang'];

@@ -29,6 +29,11 @@ class OpsSkOperasionalController extends Controller
         try {
             (new SkOperasionalsImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("OpsSkOperasional")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

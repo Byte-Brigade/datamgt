@@ -22,6 +22,8 @@ class OpsApar extends Model
         return LogOptions::defaults()
             ->logFillable()
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}")
+            ->logOnly(['titik_posisi', 'expired_date'])
+            ->dontSubmitEmptyLogs()
             ->useLogName("OpsApar");
     }
 

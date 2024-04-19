@@ -55,8 +55,6 @@ class GapStoController extends Controller
     {
         try {
             $gap_sto = GapSto::find($id);
-
-
             $not_submit_disclamer = GapHasilSto::where('gap_sto_id', $gap_sto->id)->whereNull('disclaimer')->count();
 
             $current_asset = GapAssetDetail::where('periode', $gap_sto->periode)->distinct()->get()->count();

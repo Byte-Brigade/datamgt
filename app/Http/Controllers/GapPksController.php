@@ -24,6 +24,12 @@ class GapPksController extends Controller
             DB::beginTransaction();
             (new PksImport)->import($request->file('file'));
             DB::commit();
+
+            activity()->enableLogging();
+            activity("GapPks")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             DB::rollBack();

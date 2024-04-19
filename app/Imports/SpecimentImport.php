@@ -22,14 +22,10 @@ class SpecimentImport implements ToModel, WithHeadingRow, WithUpserts, WithValid
     use Importable;
     public function model(array $row)
     {
-
         // Temukan indeks kunci 'keterangan'
         $types = BranchType::all()->pluck('type_name')->toArray();
         $regexPattern = implode('|', array_map('preg_quote', $types));
-
-
         $branch_name = trim(preg_replace("/\b({$regexPattern}|KPO|CABANG|CAPEM)\b/i", "", $row['cabang']));
-
         $branch = Branch::where('branch_name', 'like', '%' . $branch_name . '%')->first();
 
         return new OpsSpeciment([
