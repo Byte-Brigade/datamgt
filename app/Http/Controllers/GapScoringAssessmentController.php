@@ -34,6 +34,11 @@ class GapScoringAssessmentController extends Controller
         try {
             (new GapScoringAssessmentsImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("GapScoringAssessment")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

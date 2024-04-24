@@ -32,9 +32,13 @@ class InfraBroController extends Controller
         try {
             (new BroImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("InfraBro")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return redirect(route('infra.bros'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
-            dd($e);
             return redirect(route('infra.bros'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }

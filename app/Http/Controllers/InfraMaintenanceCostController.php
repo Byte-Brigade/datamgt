@@ -27,6 +27,11 @@ class InfraMaintenanceCostController extends Controller
         try {
             (new MaintenanceCostImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("InfraMaintenanceCost")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return redirect(route('infra.maintenance-costs'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);

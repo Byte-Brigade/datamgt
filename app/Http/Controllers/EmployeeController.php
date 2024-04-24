@@ -103,32 +103,39 @@ class EmployeeController extends Controller
                 $branch = Branch::query()->where('branch_name', 'like', '%' . $branch_name . '%');
 
                 if (!is_null($branch_type)) {
-
                     $branch = $branch->whereHas('branch_types', function ($q) use ($branch_type) {
                         $q->where('type_name', $branch_type == 'KF' ? 'KFO' : $branch_type);
                     });
                 }
+
                 $branch = $branch->get()->first();
                 if (isset($branch)) {
                     $exists = Employee::where('employee_id', $employee['emp_id'])->first();
                     if (!$exists) {
-                        Employee::updateOrCreate(
-                            ['employee_id' => $employee['emp_id']],
-                            [
-                                'employee_id' => $employee['emp_id'],
-                                'position_id' => $position->id,
-                                'branch_id' => $branch->id,
-                                'name' => $employee['fullname'],
-                                'gender' => 'L',
-                                'email' => $employee['email_address'] !== '' ? $employee['email_address'] : str_replace(" ", ".", $employee['fullname']) . '@banksampoerna.com',
-                                'birth_date' => Carbon::createFromFormat('Ymd', $employee['birth_date'] !== '' ? $employee['birth_date'] : '19700101')->format('Y-m-d'),
-                                'hiring_date' => Carbon::createFromFormat('Ymd', $employee['joint_date'])->format('Y-m-d'),
-                            ]
-                        );
+                        activity()->withoutLogs(function () use ($employee, $position, $branch) {
+                            Employee::updateOrCreate(
+                                ['employee_id' => $employee['emp_id']],
+                                [
+                                    'employee_id' => $employee['emp_id'],
+                                    'position_id' => $position->id,
+                                    'branch_id' => $branch->id,
+                                    'name' => $employee['fullname'],
+                                    'gender' => 'L',
+                                    'email' => $employee['email_address'] !== '' ? $employee['email_address'] : str_replace(" ", ".", $employee['fullname']) . '@banksampoerna.com',
+                                    'birth_date' => Carbon::createFromFormat('Ymd', $employee['birth_date'] !== '' ? $employee['birth_date'] : '19700101')->format('Y-m-d'),
+                                    'hiring_date' => Carbon::createFromFormat('Ymd', $employee['joint_date'])->format('Y-m-d'),
+                                ]
+                            );
+                        });
                     }
                 }
             }
             DB::commit();
+
+            activity("Employee")
+                ->event("synced")
+                ->log("This model has been synced");
+
             Redirect::back()->with(['status' => 'success', 'message' => 'Sync Berhasil']);
         } catch (\Throwable $th) {
             dd($employee);

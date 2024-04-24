@@ -49,6 +49,11 @@ class InfraScoringProjectController extends Controller
         try {
             (new InfraScoringProjectsImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("InfraScoringProject")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return redirect(route('infra.scoring-projects'))->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (Throwable $e) {
             dd($e);

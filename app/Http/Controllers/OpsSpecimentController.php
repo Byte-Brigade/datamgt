@@ -55,6 +55,10 @@ class OpsSpecimentController extends Controller
         try {
             (new SpecimentImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("OpsSpeciment")
+                ->event("imported")
+                ->log("This model has been imported");
 
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {

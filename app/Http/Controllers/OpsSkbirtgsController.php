@@ -30,6 +30,11 @@ class OpsSkbirtgsController extends Controller
         try {
             (new SkBirtgsImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("OpsSkbirtgs")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

@@ -143,6 +143,11 @@ class GapKdoController extends Controller
         try {
             (new KdoImport)->import($request->file('file'));
 
+            activity()->enableLogging();
+            activity("GapKdo")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

@@ -28,7 +28,7 @@ class OpsAparController extends Controller
 
     public function detail($slug)
     {
-        $ops_apar = OpsApar::whereHas('branches', function($query) use($slug) {
+        $ops_apar = OpsApar::whereHas('branches', function ($query) use ($slug) {
             $query->where('slug', $slug);
         })->with('branches')->get()->first();
         return Inertia::render('Ops/APAR/Detail', [
@@ -42,6 +42,11 @@ class OpsAparController extends Controller
             DB::beginTransaction();
             (new AparImport)->import($request->file('file'));
             DB::commit();
+
+            activity("OpsApar")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -74,7 +79,7 @@ class OpsAparController extends Controller
         try {
             $apar = OpsApar::create([
                 'branch_id' => $request->branch_id,
-                'keterangan' => isset($request->apars) ? count($request->apars). 'Tabung' : 'Tidak Ada',
+                'keterangan' => isset($request->apars) ? count($request->apars) . 'Tabung' : 'Tidak Ada',
             ]);
 
             $apar->detail()->createMany($request->apars);

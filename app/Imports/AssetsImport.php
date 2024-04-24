@@ -44,7 +44,7 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, With
                     throw new Exception("Gunakan format semester: Smtr 1 atau Smtr 2");
                 }
 
-
+                activity()->disableLogging();
                 if ($branch) {
                     $gap_asset = GapAsset::where('asset_number', $row['asset_number'])->first();
                     if (isset($gap_asset)) {

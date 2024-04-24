@@ -8,12 +8,13 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Contracts\Auth\CanResetPassword;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, Searchable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, Searchable, HasRoles, CausesActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -47,7 +48,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function branches() {
+    public function branches()
+    {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 

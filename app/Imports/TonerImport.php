@@ -24,8 +24,8 @@ class TonerImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
+        activity()->disableLogging();
         foreach ($rows as $row) {
-
             $row['cabang'] = str_replace('BANK SAHABAT SAMPOERNA, PT - ', '', $row['cabang']);
             $branch_type = isset(explode(' ', $row['cabang'])[0]) ? explode(' ', $row['cabang'])[0] : '';
             if (in_array($branch_type, ['KF', 'SFI'])) {

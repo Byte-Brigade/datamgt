@@ -28,21 +28,14 @@ class GapAssetController extends Controller
     public function import(Request $request)
     {
         try {
-            // $tableName = 'Asset';
-            // $timestamp = Carbon::now()->format('YmdHis');
             $uploadedFile = $request->file('file');
-            // $originalFilename = $uploadedFile->getClientOriginalName();
-            // $newFilename = "{$timestamp}_{$originalFilename}";
             (new AssetsImport)->import($uploadedFile);
 
-            // $path = $uploadedFile->storeAs("files/{$tableName}", $newFilename, 'local'); // 'local' is the disk name
-            // File::create([
-            //     'user_id' => Auth::user()->id,
-            //     'table_name' => $tableName,
-            //     'filename' => $newFilename,
-            //     'path' => $path,
-            //     'status' => 'Success'
-            // ]);
+            activity()->enableLogging();
+            activity("GapAsset")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

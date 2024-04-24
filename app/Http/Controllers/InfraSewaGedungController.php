@@ -29,10 +29,16 @@ class InfraSewaGedungController extends Controller
 
     public function import(Request $request)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             (new SewaGedungImport)->import($request->file('file'));
             DB::commit();
+
+            activity()->enableLogging();
+            activity("InfraSewaGedung")
+                ->event("imported")
+                ->log("This model has been imported");
+
             return Redirect::back()->with(['status' => 'success', 'message' => 'Import Berhasil']);
         } catch (ValidationException $e) {
             $errorString = '';

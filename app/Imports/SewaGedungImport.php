@@ -32,29 +32,30 @@ class SewaGedungImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         try {
+            activity()->disableLogging();
             foreach ($rows as $row) {
-               $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
+                $branch = Branch::where('branch_name', 'like', '%' . $row['nama_cabang'] . '%')->first();
                 if ($branch) {
                     InfraSewaGedung::updateOrCreate(
                         [
                             'branch_id' => $branch->id,
                             'status_kepemilikan' => $row['status'],
-                            'jangka_waktu' => isset($row['masa_sewa']) ? preg_replace('/[^0-9]/', '',  $row['masa_sewa']) : null,
+                            'jangka_waktu' => isset($row['masa_sewa']) ? preg_replace('/[^0-9]/', '', $row['masa_sewa']) : null,
                             'jatuh_tempo' => !is_null($row['jatuh_tempo']) ? Date::excelToDateTimeObject($row['jatuh_tempo']) : null,
                             'open_date' => !is_null($row['open_date']) ? Date::excelToDateTimeObject($row['open_date']) : null,
                             'owner' => $row['pemilik'],
-                            'biaya_per_tahun' => is_int($row['sewa_per_tahun'])  ? $row['sewa_per_tahun'] : null,
+                            'biaya_per_tahun' => is_int($row['sewa_per_tahun']) ? $row['sewa_per_tahun'] : null,
                             'total_biaya' => is_int($row['total_biaya_sewa']) ? $row['total_biaya_sewa'] : null,
 
                         ],
                         [
                             'branch_id' => $branch->id,
                             'status_kepemilikan' => $row['status'],
-                            'jangka_waktu' => isset($row['masa_sewa']) ? preg_replace('/[^0-9]/', '',  $row['masa_sewa']) : null,
+                            'jangka_waktu' => isset($row['masa_sewa']) ? preg_replace('/[^0-9]/', '', $row['masa_sewa']) : null,
                             'jatuh_tempo' => !is_null($row['jatuh_tempo']) ? Date::excelToDateTimeObject($row['jatuh_tempo']) : null,
                             'open_date' => !is_null($row['open_date']) ? Date::excelToDateTimeObject($row['open_date']) : null,
                             'owner' => $row['pemilik'],
-                            'biaya_per_tahun' => is_int($row['sewa_per_tahun'])  ? $row['sewa_per_tahun'] : null,
+                            'biaya_per_tahun' => is_int($row['sewa_per_tahun']) ? $row['sewa_per_tahun'] : null,
                             'total_biaya' => is_int($row['total_biaya_sewa']) ? $row['total_biaya_sewa'] : null,
 
                         ]

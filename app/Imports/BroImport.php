@@ -23,15 +23,11 @@ use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 class BroImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use Importable;
-    use Importable;
 
     public function collection(Collection $rows)
     {
-
-
         foreach ($rows as $row) {
             try {
-
                 $status = preg_match('/drop/i', $row['cabang'], $match) ? ucfirst($match[0]) : $row['status'];
                 $branch_name = preg_replace('/bss|cabang|[!@#$%^&*()_+-]|drop/i', '', $row['cabang']);
                 $branch_type = preg_match('/\b(KF|KFO|KFNO|KC)\b/', $branch_name, $match) ? $match[0] : null;
@@ -39,12 +35,10 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                 $branch = Branch::where('branch_name', $branch_name)->first();
                 $branch_type = !is_null($branch_type) ? $branch_type : (isset($branch) ? $branch->branch_types->type_name : null);
                 $target = is_int($row['target']) ? Date::excelToDateTimeObject($row['target'])->format('Y-m-d') : null;
-                $jatuh_tempo = is_int($row['jatuh_tempo_sewa'])  ? Date::excelToDateTimeObject($row['jatuh_tempo_sewa']) : null;
-
-
+                $jatuh_tempo = is_int($row['jatuh_tempo_sewa']) ? Date::excelToDateTimeObject($row['jatuh_tempo_sewa']) : null;
                 $periode = Date::excelToDateTimeObject($row['periode']);
-
                 $exist_periode = InfraBro::where('periode', $periode)->first();
+                activity()->disableLogging();
                 if ($exist_periode) {
                     InfraBro::updateOrCreate(
                         [
@@ -87,12 +81,10 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                             'barang_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['barang_it'])),
                             'asuransi' => doubleval(preg_replace('/[^0-9.]/', "", $row['asuransi'])),
                             'keterangan' => $row['keterangan'],
-
                             'periode' => $periode,
                         ]
                     );
                 } else {
-
                     InfraBro::create([
                         'branch_name' => $row['cabang'],
                         'branch_type' => $row['type'],
@@ -112,7 +104,6 @@ class BroImport implements ToCollection, WithHeadingRow, WithValidation
                         'barang_it' => doubleval(preg_replace('/[^0-9.]/', "", $row['barang_it'])),
                         'asuransi' => doubleval(preg_replace('/[^0-9.]/', "", $row['asuransi'])),
                         'keterangan' => $row['keterangan'],
-
                         'periode' => $periode,
                     ]);
                 }

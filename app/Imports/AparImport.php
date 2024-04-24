@@ -51,18 +51,20 @@ class AparImport implements ToCollection, WithHeadingRow, WithUpserts
                 foreach ($aparKeys as $index => $aparKey) {
                     if (!is_null($row[$aparKey]) && !is_null($row[$index + 1])) {
                         try {
-                            OpsApar::updateOrCreate(
-                                [
-                                    'branch_id' => $branch->id,
-                                    'titik_posisi' => $row[$aparKey]
-                                ],
-                                [
-                                    'branch_id' => $branch->id,
-                                    'keterangan' => $row['keterangan'],
-                                    'titik_posisi' => $row[$aparKey],
-                                    'expired_date' =>   Date::excelToDateTimeObject($row[$index + 1]),
-                                ]
-                            );
+                            activity()->withoutLogs(function () use ($branch, $row, $aparKey, $index) {
+                                OpsApar::updateOrCreate(
+                                    [
+                                        'branch_id' => $branch->id,
+                                        'titik_posisi' => $row[$aparKey]
+                                    ],
+                                    [
+                                        'branch_id' => $branch->id,
+                                        'keterangan' => $row['keterangan'],
+                                        'titik_posisi' => $row[$aparKey],
+                                        'expired_date' => Date::excelToDateTimeObject($row[$index + 1]),
+                                    ]
+                                );
+                            });
                             $number++;
                         } catch (Throwable $th) {
                             throw new Exception("Format expired_date harus berupa date pada baris ke-" . $num + 1 . " dan apar ke-" . $number . " " . $th->getMessage());

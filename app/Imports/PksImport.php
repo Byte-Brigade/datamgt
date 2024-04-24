@@ -19,6 +19,7 @@ class PksImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         try {
+            activity()->disableLogging();
             GapPks::query()->delete();
             foreach ($rows as $row) {
                 $contract_date = is_int($row['contract_date']) ? Date::excelToDateTimeObject($row['contract_date']) :  null;

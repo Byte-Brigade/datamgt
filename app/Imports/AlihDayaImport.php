@@ -29,28 +29,30 @@ class AlihDayaImport implements ToCollection, WithHeadingRow, WithValidation
             $branch_name = $branch_name == "KPO" ? "Kantor Pusat" : $branch_name;
             $branch = Branch::where('branch_name', 'like', '%' . $branch_name . '%')->first();
             if ($row['cost'] > 0) {
-                GapAlihDaya::updateOrCreate(
-                    [
-                        'jenis_pekerjaan' => $row['jenis_pekerjaan'],
-                        'nama_pegawai' => $row['nama_pegawai'],
-                        'user' => $row['user'],
-                        'lokasi' => $row['lokasi'],
-                        'vendor' => $row['vendor'],
-                        'cost' => $row['cost'],
-                        'periode' => $periode,
-                        'branch_id' => isset($branch) ? $branch->id : null,
-                    ],
-                    [
-                        'jenis_pekerjaan' => $row['jenis_pekerjaan'],
-                        'nama_pegawai' => $row['nama_pegawai'],
-                        'user' => $row['user'],
-                        'lokasi' => $row['lokasi'],
-                        'vendor' => $row['vendor'],
-                        'cost' => $row['cost'],
-                        'periode' => $periode,
-                        'branch_id' => isset($branch) ? $branch->id : null,
-                    ],
-                );
+                activity()->withoutLogs(function () use ($row, $periode, $branch) {
+                    GapAlihDaya::updateOrCreate(
+                        [
+                            'jenis_pekerjaan' => $row['jenis_pekerjaan'],
+                            'nama_pegawai' => $row['nama_pegawai'],
+                            'user' => $row['user'],
+                            'lokasi' => $row['lokasi'],
+                            'vendor' => $row['vendor'],
+                            'cost' => $row['cost'],
+                            'periode' => $periode,
+                            'branch_id' => isset($branch) ? $branch->id : null,
+                        ],
+                        [
+                            'jenis_pekerjaan' => $row['jenis_pekerjaan'],
+                            'nama_pegawai' => $row['nama_pegawai'],
+                            'user' => $row['user'],
+                            'lokasi' => $row['lokasi'],
+                            'vendor' => $row['vendor'],
+                            'cost' => $row['cost'],
+                            'periode' => $periode,
+                            'branch_id' => isset($branch) ? $branch->id : null,
+                        ],
+                    );
+                });
             }
         }
     }
