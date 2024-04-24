@@ -381,6 +381,7 @@ Route::middleware(['auth'])->group(function () {
         /* [END] User Access Management*/
 
         Route::get('/audit-log', [AuditController::class, 'index'])->name('audit');
+        Route::get('/audit-log/export', [AuditController::class, 'export'])->name('audit.export');
     });
 });
 

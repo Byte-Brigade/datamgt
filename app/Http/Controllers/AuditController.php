@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ActivityExport;
 use App\Http\Resources\AuditResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -49,5 +50,11 @@ class AuditController extends Controller
         $query = $query->paginate($perpage);
 
         return AuditResource::collection($query);
+    }
+
+    public function export()
+    {
+        $fileName = 'Activity_Log_' . date('d-m-y') . '.xlsx';
+        return (new ActivityExport)->download($fileName);
     }
 }

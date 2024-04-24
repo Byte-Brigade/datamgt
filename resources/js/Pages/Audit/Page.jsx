@@ -118,8 +118,7 @@ export default function Audit({ auth, sessions }) {
   const handleSubmitExport = (e) => {
     e.preventDefault();
     setIsModalExportOpen(!isModalExportOpen);
-    // window.open(route("ops.branches.export"), "_self");
-    alert("cannot export");
+    window.open(route("audit.export"), "_self");
   };
 
   const convertDate = (date) => {
@@ -139,7 +138,7 @@ export default function Audit({ auth, sessions }) {
     <AuthenticatedLayout auth={auth}>
       <BreadcrumbsDefault />
       <Head title="Audit Log" />
-      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           {hasRoles("superadmin|admin", auth) &&
@@ -182,7 +181,14 @@ export default function Audit({ auth, sessions }) {
                   Old Data
                 </AccordionHeader>
                 <AccordionBody>
-                  {JSON.stringify(data.properties?.old)}
+                  <textarea
+                    name="olddata"
+                    id="olddata"
+                    className="w-full resize-none"
+                    disabled
+                  >
+                    {JSON.stringify(data.properties?.old)}
+                  </textarea>
                 </AccordionBody>
               </Accordion>
             ) : null}
@@ -192,7 +198,14 @@ export default function Audit({ auth, sessions }) {
                   New Data
                 </AccordionHeader>
                 <AccordionBody>
-                  {JSON.stringify(data.properties?.attributes)}
+                  <textarea
+                    name="newdata"
+                    id="newdata"
+                    className="w-full resize-none"
+                    disabled
+                  >
+                    {JSON.stringify(data.properties?.attributes)}
+                  </textarea>
                 </AccordionBody>
               </Accordion>
             ) : null}
@@ -222,7 +235,7 @@ export default function Audit({ auth, sessions }) {
         </DialogHeader>
         <DialogBody divider>
           <div className="flex flex-col gap-y-4">
-            <Typography>Buat Report Data Cabang?</Typography>
+            <Typography>Buat Report Activity Log?</Typography>
           </div>
         </DialogBody>
         <DialogFooter>
