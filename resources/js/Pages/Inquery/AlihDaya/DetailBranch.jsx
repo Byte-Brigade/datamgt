@@ -18,7 +18,7 @@ export default function Detail({ auth, sessions, type, type_item, periode, slug 
     periode: null,
   };
 
-  console.log(periode)
+  (periode)
   const {
     data,
     setData,

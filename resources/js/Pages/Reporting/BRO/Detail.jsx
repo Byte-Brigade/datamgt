@@ -376,7 +376,7 @@ export default function Detail({ auth, branches, category, sessions, periode }) 
                 name="file"
                 accept=".pdf"
                 onChange={(e) => {
-                  console.log(e.target.files[0]);
+                  (e.target.files[0]);
                   return setData("file", e.target.files[0]);
                 }}
               />

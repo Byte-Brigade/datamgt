@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 export default function Branch({ sessions, auth }) {
-  console.log(auth.user);
+  (auth.user);
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title="Inquery Data | Branch" />

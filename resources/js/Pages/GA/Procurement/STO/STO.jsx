@@ -59,8 +59,8 @@ export default function Detail({
   const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
       const updatedSelected = { ...prevSelected, [id]: value };
-      // console.log("Updated Selected:", value); // Add this line for debugging
-      // console.log("Updated Selected:", selected); // Add this line for debugging
+      // ("Updated Selected:", value); // Add this line for debugging
+      // ("Updated Selected:", selected); // Add this line for debugging
       postData({
         id,
         remark: value,
@@ -75,8 +75,8 @@ export default function Detail({
   const handleInputChange = (id, value) => {
     setInput((prevInput) => {
       const updateInput = { ...prevInput, [id]: value };
-      // console.log("Updated Selected:", value); // Add this line for debugging
-      // console.log("Updated Selected:", input); // Add this line for debugging
+      // ("Updated Selected:", value); // Add this line for debugging
+      // ("Updated Selected:", input); // Add this line for debugging
       return updateInput;
     });
 

@@ -459,7 +459,7 @@ export default function Dashboard({ auth, errors, sessions, data }) {
     },
   ];
 
-  console.log(data);
+  (data);
   return (
     <AuthenticatedLayout auth={auth} errors={errors}>
       <Head title="Dashboard" />

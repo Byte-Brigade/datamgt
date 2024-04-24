@@ -58,7 +58,7 @@ export default function Detail({ auth, branch, sessions, positions, slug }) {
   };
 
   const searchParams = route().params?.search;
-  console.log(searchParams);
+  (searchParams);
 
   return (
     <AuthenticatedLayout auth={auth}>

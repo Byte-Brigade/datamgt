@@ -18,7 +18,7 @@ export default function Detail({ auth, sessions, type, type_item, datePickerValu
     periode: null,
   };
 
-  console.log(datePickerValue)
+  (datePickerValue)
   const {
     data,
     setData,

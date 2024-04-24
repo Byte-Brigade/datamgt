@@ -60,23 +60,23 @@ export default function Detail({ auth, branch, sessions }) {
     //     )
     //     .then((response) => {
     //       notify(response.data.status, response.data.message);
-    //       console.log(response.data.message);
+    //       (response.data.message);
     //     })
     //     .catch((err) => {
     //       notify("error", "Terjadi kesalahan!");
-    //       console.log(err.message);
+    //       (err.message);
     //     });
     // } catch (error) {
     //   notify("error", "Terjadi kesalahan!");
-    //   console.log(error.message);
+    //   (error.message);
     // }
   };
 
   const handleChanged = (id, value) => {
     setSelected((prevSelected) => {
       const updatedSelected = { ...prevSelected, [id]: value };
-      // console.log("Updated Selected:", value); // Add this line for debugging
-      // console.log("Updated Selected:", selected); // Add this line for debugging
+      // ("Updated Selected:", value); // Add this line for debugging
+      // ("Updated Selected:", selected); // Add this line for debugging
       postData({
         id,
         remark: value,
@@ -91,8 +91,8 @@ export default function Detail({ auth, branch, sessions }) {
   const handleInputChange = (id, value) => {
     setInput((prevInput) => {
       const updateInput = { ...prevInput, [id]: value };
-      // console.log("Updated Selected:", value); // Add this line for debugging
-      // console.log("Updated Selected:", input); // Add this line for debugging
+      // ("Updated Selected:", value); // Add this line for debugging
+      // ("Updated Selected:", input); // Add this line for debugging
       return updateInput;
     });
 

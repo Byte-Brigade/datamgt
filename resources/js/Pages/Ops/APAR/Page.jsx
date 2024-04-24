@@ -168,7 +168,7 @@ export default function Apar({ auth, branches, sessions }) {
   const toggleModalDelete = () => {
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
-  console.log(auth)
+  (auth)
   return (
     <AuthenticatedLayout auth={auth}>
       <BreadcrumbsDefault />

@@ -152,7 +152,7 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
           onEditClick={() => {
             toggleModalEdit();
             setData(data);
-            console.log(data);
+            (data);
           }}
           onDeleteClick={() => {
             toggleModalDelete();
@@ -233,12 +233,12 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
     const tgl_bast = new Date(startDate);
     const tgl_scoring = new Date(endDate);
     if (isNaN(tgl_bast) || isNaN(tgl_bast)) {
-      console.log("tgl tidak valid");
+      ("tgl tidak valid");
       return;
     }
     const difference = Math.abs(tgl_scoring - tgl_bast); // Menggunakan nilai mutlak
     days = difference / (1000 * 60 * 60 * 24); // Convert milliseconds to days
-    console.log(days);
+    (days);
     setData({
       ...data,
       tgl_bast: startDate,
@@ -250,12 +250,12 @@ export default function Page({ auth, branches, sessions, scoring_vendor }) {
   const handleTglBast = (e) => {
     setData("tgl_bast", e.target.value);
     calculateDifference(e.target.value, data.tgl_scoring);
-    console.log(e.target.value);
+    (e.target.value);
   };
   const handleTglScoring = (e) => {
     setData("tgl_scoring", e.target.value);
     calculateDifference(data.tgl_bast, e.target.value);
-    console.log(e.target.value);
+    (e.target.value);
   };
 
   const toggleModalImport = () => {

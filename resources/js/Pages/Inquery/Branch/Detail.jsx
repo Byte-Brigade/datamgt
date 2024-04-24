@@ -13,9 +13,9 @@ export default function Detail({
   licenses,
   kdos,
 }) {
-  console.log(branch);
-  console.log(positions);
-  console.log(kdos);
+  (branch);
+  (positions);
+  (kdos);
   return (
     <AuthenticatedLayout auth={auth}>
       <Head title={`Inquery Data | Branch | ${branch.branch_name}`} />

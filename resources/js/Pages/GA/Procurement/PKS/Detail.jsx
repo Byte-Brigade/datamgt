@@ -219,7 +219,7 @@ export default function Detail({ auth, sessions, status, action }) {
   };
 
   const page = usePage()
-  console.log(page)
+  (page)
 
   let title = page.props.status
   if (page.props.action) {

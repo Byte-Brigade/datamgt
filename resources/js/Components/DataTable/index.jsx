@@ -78,21 +78,21 @@ export default function DataTable({
   const [month, setMonth] = useState(null);
 
   const handleDateChange = (newValue) => {
-    console.log("newValue:", newValue);
+    ("newValue:", newValue);
     setDate(newValue);
     setYear(null);
     setMonth(null);
     setDatePickerValue(newValue);
   };
   const handleYearChange = (newValue) => {
-    console.log("newValue:", newValue);
+    ("newValue:", newValue);
     setDate(null);
     setDatePickerValue({ $y: newValue["$y"] });
     setMonth(null);
     setYear(newValue);
   };
   const handleMonthChange = (newValue) => {
-    console.log("newValue:", newValue);
+    ("newValue:", newValue);
     setDate(null);
     setYear(null);
     setMonth(newValue);
@@ -182,10 +182,10 @@ export default function DataTable({
       );
       setPagination(data.meta ? data.meta : data);
       setLoading(false);
-      console.log(data.data);
+      (data.data);
     }
     if (dataArr) {
-      console.log(dataArr);
+      (dataArr);
       setData(dataArr);
       setLoading(false);
     }

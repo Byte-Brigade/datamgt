@@ -30,7 +30,7 @@ export default function Detail({
   periode,
   vendor
 }) {
-  console.log(kdo_mobil);
+  (kdo_mobil);
   const currentDate = new Date();
   const initialData = {
     id: 0,
@@ -194,7 +194,7 @@ export default function Detail({
       ),
     },
   ];
-  console.log(kdo_mobil);
+  (kdo_mobil);
 
   return (
     <AuthenticatedLayout auth={auth}>

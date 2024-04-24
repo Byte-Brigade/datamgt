@@ -193,7 +193,7 @@ export default function UAM({
     setIsModalDeleteOpen(!isModalDeleteOpen);
   };
 
-  console.log(data)
+  (data)
 
   return (
     <AuthenticatedLayout auth={auth}>

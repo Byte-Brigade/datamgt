@@ -392,7 +392,7 @@ export default function Page({ auth, branches, sessions }) {
                 name="file"
                 accept=".pdf"
                 onChange={(e) => {
-                  console.log(e.target.files[0]);
+                  (e.target.files[0]);
                   return setData("file", e.target.files[0]);
                 }}
               />

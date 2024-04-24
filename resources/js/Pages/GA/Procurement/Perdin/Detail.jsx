@@ -139,8 +139,8 @@ export default function Detail({
       year: year,
       biaya_sewa: biaya_sewa ? biaya_sewa : 0,
     });
-    console.log(data.month);
-    console.log(data.year);
+    (data.month);
+    (data.year);
   };
   const handleMonth = (e) => {
     handlePeriode(e, data.year);
@@ -152,14 +152,14 @@ export default function Detail({
   const handleBiayaSewa = (val) => {
     if (typeof data.biaya_sewa === "object" && data.biaya_sewa !== null) {
       let biaya_sewa = { ...data.biaya_sewa, value: val };
-      console.log("handle");
-      console.log(biaya_sewa);
+      ("handle");
+      (biaya_sewa);
       setData("biaya_sewa", biaya_sewa);
       return;
     }
     setData("biaya_sewa", Number(val));
 
-    console.log(data.biaya_sewa);
+    (data.biaya_sewa);
   };
 
   const toggleModalCreate = () => {
@@ -219,7 +219,7 @@ export default function Detail({
       render: (data) => data.total.toLocaleString("id-ID"),
     },
   ];
-  console.log(data.month);
+  (data.month);
 
   return (
     <AuthenticatedLayout auth={auth}>

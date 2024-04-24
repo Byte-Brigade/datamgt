@@ -10,7 +10,7 @@ const MonthPicker = ({ onDateChange }) => {
 
     // Extracting the year and month from the input value
     const [year, month] = newDate.split("-").map(Number);
-    console.log(newDate);
+    (newDate);
 
     // Propagating the date change up to the parent component
     onDateChange({ month, year });
