@@ -118,7 +118,6 @@ class UAMController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
         try {
-
             $full_access = [
                 'can view',
                 'can edit',
