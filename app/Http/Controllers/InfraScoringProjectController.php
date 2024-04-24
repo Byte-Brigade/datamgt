@@ -8,6 +8,7 @@ use App\Imports\InfraScoringProjectsImport;
 use App\Models\Branch;
 use App\Models\InfraScoring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Throwable;
 
@@ -61,6 +62,8 @@ class InfraScoringProjectController extends Controller
         }
     }
 
+
+
     public function export()
     {
         $fileName = 'Data_Infra_Scoring_Project_' . date('d-m-y') . '.xlsx';
@@ -87,7 +90,7 @@ class InfraScoringProjectController extends Controller
     public function detail($scoring_vendor)
     {
         $branches = Branch::get();
-        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches, 'status_pekerjaan' => InfraScoring::whereNot('type','Assessment')->pluck('status_pekerjaan')->unique()->toArray()]);
+        return Inertia::render('GA/Infra/Scoring/Project/Detail', ['scoring_vendor' => $scoring_vendor, 'branches' => $branches, 'status_pekerjaan' => InfraScoring::whereNot('type', 'Assessment')->pluck('status_pekerjaan')->unique()->toArray()]);
     }
     /**
      * Show the form for editing the specified resource.
@@ -109,7 +112,35 @@ class InfraScoringProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $scoring_project = InfraScoring::find($id);
+            $branch = Branch::find($request->branch_id);
+            $scoring_project->update([
+                'branch_id' => $branch->id,
+                'entity' => "BSS",
+                'description' => $request->description,
+                'status_pekerjaan' => $request->status_pekerjaan,
+                'pic' => $request->pic,
+                'dokumen_perintah_kerja' => $request->dokumen_perintah_kerja,
+                'vendor' => $request->vendor,
+                'tgl_scoring' => $request->tgl_scoring,
+                'tgl_selesai_pekerjaan' => $request->tgl_selesai_pekerjaan,
+                'tgl_bast' => $request->tgl_bast,
+                'tgl_request_scoring' => $request->tgl_request_scoring,
+                'tgl_selesai' => $request->tgl_selesai,
+                'sla' => $request->sla,
+                'actual' => $request->actual,
+                'meet_the_sla' => $request->actual < $request->sla ? true : ($request->actual  > ($request->sla - 1) ? false : true),
+                'scoring_vendor' => $request->scoring_vendor,
+                'schedule_scoring' => $request->schedule_scoring,
+                'type' => 'Post Project',
+                'keterangan' => $request->keterangan,
+            ]);
+
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
+        } catch (Throwable $e) {;
+            return Redirect::back()->with(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
 
     /**

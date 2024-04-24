@@ -8,6 +8,7 @@ use App\Imports\SewaGedungImport;
 use App\Models\Branch;
 use App\Models\BranchType;
 use App\Models\InfraSewaGedung;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -51,6 +52,28 @@ class InfraSewaGedungController extends Controller
             $errorString = trim($errorString);
 
             return Redirect::back()->with(['status' => 'failed', 'message' => $errorString]);
+        } catch (\Throwable $th) {
+            return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $sewa_gedungs = InfraSewaGedung::find($id);
+
+            $sewa_gedungs->update([
+                'branch_id' => $request->branch_id,
+                'status_kepemilikan' => $request->status_kepemilikan,
+                'jangka_waktu' => intval($request->jangka_waktu),
+                'open_date' => Carbon::parse($request->open_date)->format('Y-m-d'),
+                'jatuh_tempo' => Carbon::parse($request->jatuh_tempo)->format('Y-m-d'),
+                'owner' => $request->owner,
+                'biaya_per_tahun' => $request->biaya_per_tahun,
+                'total_biaya' => $request->total_biaya,
+            ]);
+
+            return Redirect::back()->with(['status' => 'success', 'message' => "Data berhasil diupdate"]);
         } catch (\Throwable $th) {
             return Redirect::back()->with(['status' => 'failed', 'message' => $th->getMessage()]);
         }

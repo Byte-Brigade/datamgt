@@ -8,7 +8,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { hasRoles } from "@/Utils/HasRoles";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Head, useForm } from "@inertiajs/react";
 import {
   Button,
@@ -27,14 +27,17 @@ import { useState } from "react";
 export default function Page({ auth, branches, sessions, status_gedung, type_names }) {
   const initialData = {
     branch_id: 0,
-    jenis_perizinan_id: 0,
-    tgl_pengesahan: null,
-    tgl_masa_berlaku: null,
+    status_kepemilikan: null,
+    jangka_waktu: null,
+    open_date: null,
+    jatuh_tempo: null,
+    owner: null,
+    biaya_per_tahun: 0,
+    total_biaya: 0,
     branches: {
       branch_code: null,
       branch_name: null,
     },
-    expired_date: null,
   };
   const {
     data,
@@ -56,7 +59,7 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
 
   const columns = [
     { name: "Cabang", sortable: true, field: "branches.branch_name" },
-    { name: "Tipe Cabang", field: "type_name", filterable: true},
+    { name: "Tipe Cabang", field: "type_name", filterable: true },
 
     {
       name: "Status Kepemilikan",
@@ -162,8 +165,8 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    post(route("infra.sewa_gedungs.update", data.id), {
-      method: "post",
+    put(route("infra.sewa_gedungs.update", data.id), {
+      method: "put",
       replace: true,
       onFinish: () => {
         setIsRefreshed(!isRefreshed);
@@ -230,26 +233,18 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
             ) && (
               <div className="flex items-center justify-between mb-4">
                 {auth.permissions.includes("can add") && (
-                  <div>
-                    <PrimaryButton
-                      className="mr-2 bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalCreate}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <PlusIcon className="w-4 h-4" />
-                        Add
-                      </div>
-                    </PrimaryButton>
-                    <PrimaryButton
-                      className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
-                      onClick={toggleModalImport}
-                    >
-                      <div className="flex items-center gap-x-2">
-                        <DocumentPlusIcon className="w-4 h-4" />
-                        Import Excel
-                      </div>
-                    </PrimaryButton>
-                  </div>
+
+
+                  <PrimaryButton
+                    className="bg-green-500 hover:bg-green-400 active:bg-green-700 focus:bg-green-400"
+                    onClick={toggleModalImport}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <DocumentPlusIcon className="w-4 h-4" />
+                      Import Excel
+                    </div>
+                  </PrimaryButton>
+
                 )}
                 {auth.permissions.includes("can export") && (
                   <PrimaryButton onClick={toggleModalExport}>
@@ -262,9 +257,9 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|ga", auth) &&
-                  ["can edit", "can delete"].some((permission) =>
-                    auth.permissions.includes(permission)
-                  )
+                ["can edit", "can delete"].some((permission) =>
+                  auth.permissions.includes(permission)
+                )
                 : true
             )}
             className="w-[1200px]"
@@ -431,38 +426,64 @@ export default function Page({ auth, branches, sessions, status_gedung, type_nam
                   </Option>
                 ))}
               </Select>
-              <Input
-                label="Tanggal Pengesahan"
-                value={data.tgl_pengesahan || ""}
+              <Select
+                label="Status Kepemilikan"
+                value={`${data.status_kepemilikan}`}
                 disabled={processing}
-                type="date"
-                onChange={(e) => setData("tgl_pengesahan", e.target.value)}
+                onChange={(e) => setData("status_kepemilikan", e)}
+              >
+                {status_gedung.map((status, index) => (
+                  <Option key={index} value={`${status}`}>
+                    {status}
+                  </Option>
+                ))}
+              </Select>
+              <Input
+                label="Masa Sewa (Tahun)"
+                value={data.jangka_waktu || ""}
+                disabled={processing}
+                type="text"
+                onChange={(e) => setData("jangka_waktu", e.target.value)}
               />
               <Input
-                label="Tanggal Masa Berlaku"
-                value={data.tgl_masa_berlaku || ""}
+                label="Open Date"
+                value={data.open_date || ""}
                 disabled={processing}
                 type="date"
-                onChange={(e) => setData("tgl_masa_berlaku", e.target.value)}
+                onChange={(e) => setData("open_date", e.target.value)}
               />
               <Input
-                label="Progress Resertifikasi"
-                value={data.progress_resertifikasi || ""}
+                label="Jatuh Tempo"
+                value={data.jatuh_tempo || ""}
+                disabled={processing}
+                type="date"
+                onChange={(e) => setData("jatuh_tempo", e.target.value)}
+              />
+              <Input
+                label="Owner"
+                value={data.owner || ""}
                 disabled={processing}
                 onChange={(e) =>
-                  setData("progress_resertifikasi", e.target.value)
+                  setData("owner", e.target.value)
                 }
               />
               <Input
-                label="Upload Lampiran"
-                type="file"
+                label="Biaya Per Tahun"
+                value={data.biaya_per_tahun || ""}
                 disabled={processing}
-                name="file"
-                accept=".pdf"
-                onChange={(e) => {
-                  (e.target.files[0]);
-                  return setData("file", e.target.files[0]);
-                }}
+                type="number"
+                onChange={(e) =>
+                  setData("biaya_per_tahun", e.target.value)
+                }
+              />
+              <Input
+                label="Total Biaya"
+                value={data.total_biaya || ""}
+                disabled={processing}
+                type="number"
+                onChange={(e) =>
+                  setData("total_biaya", e.target.value)
+                }
               />
             </div>
           </DialogBody>

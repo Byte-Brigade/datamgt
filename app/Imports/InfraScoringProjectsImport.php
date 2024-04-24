@@ -33,6 +33,7 @@ class InfraScoringProjectsImport implements ToModel, WithHeadingRow, WithUpserts
             $tgl_bast = Date::excelToDateTimeObject($row['tgl_bast'])->format('Y-m-d');
             $tgl_scoring = Date::excelToDateTimeObject($row['tgl_scoring'])->format('Y-m-d');
             $actual = Carbon::createFromFormat('Y-m-d', $tgl_bast)->diffInDays($tgl_scoring) + 1;
+            dd($actual);
             return new InfraScoring([
                 'branch_id' => $branch->id,
                 'entity' => $row['entity'],

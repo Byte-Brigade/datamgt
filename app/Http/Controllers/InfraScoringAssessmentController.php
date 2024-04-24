@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\InfraScoring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Throwable;
 
@@ -48,6 +49,8 @@ class InfraScoringAssessmentController extends Controller
             return redirect(route('infra.scoring-assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
+
+
 
     public function template()
     {
@@ -132,11 +135,11 @@ class InfraScoringAssessmentController extends Controller
                 ]
             );
             DB::commit();
-            return redirect(route('infra.scoring-assessments'))->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
+            return Redirect::back()->with(['status' => 'success', 'message' => 'Data berhasil diupdate']);
         } catch (Throwable $e) {
 
             DB::rollBack();
-            return redirect(route('infra.scoring-assessments'))->with(['status' => 'failed', 'message' => $e->getMessage()]);
+            return Redirect::back()->with(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
 
