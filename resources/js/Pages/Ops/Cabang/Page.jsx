@@ -100,7 +100,8 @@ export default function Cabang({
             {" "}
             {data.file_ojk}
           </a>
-        ) : hasRoles("superadmin|admin|branch_ops", auth) ? (
+        ) : hasRoles("superadmin|admin|branch_ops|ga", auth) &&
+          auth.permissions.includes("can edit") ? (
           <Button
             variant="outlined"
             size="sm"
@@ -134,7 +135,8 @@ export default function Cabang({
             {" "}
             {data.photo}
           </a>
-        ) : hasRoles("superadmin|admin|branch_ops", auth) ? (
+        ) : hasRoles("superadmin|admin|branch_ops|ga", auth) &&
+          auth.permissions.includes("can edit") ? (
           <Button
             variant="outlined"
             size="sm"
@@ -269,7 +271,7 @@ export default function Cabang({
     <AuthenticatedLayout auth={auth}>
       <BreadcrumbsDefault />
       <Head title="Data Cabang" />
-      <div className="p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-4 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col mb-4 rounded">
           <div>{sessions.status && <Alert sessions={sessions} />}</div>
           {hasRoles("superadmin|admin|branch_ops", auth) &&
@@ -313,9 +315,9 @@ export default function Cabang({
             columns={columns.filter((column) =>
               column.field === "action"
                 ? hasRoles("superadmin|admin|branch_ops", auth) &&
-                ["can edit", "can delete"].some((permission) =>
-                  auth.permissions.includes(permission)
-                )
+                  ["can edit", "can delete"].some((permission) =>
+                    auth.permissions.includes(permission)
+                  )
                 : true
             )}
             fetchUrl={"/api/ops/branches"}
@@ -387,7 +389,7 @@ export default function Cabang({
               />
             </div>
           </DialogBody>
-          <DialogFooter className="w-100 flex justify-between">
+          <DialogFooter className="flex justify-between w-100">
             <SecondaryButton type="button">
               <a href={route("ops.branches.template")}>Download Template</a>
             </SecondaryButton>
@@ -500,7 +502,7 @@ export default function Cabang({
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitEdit} encType="multipart/form-data">
-          <DialogBody divider className="max-h-96 overflow-auto">
+          <DialogBody divider className="overflow-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Tipe Cabang"
@@ -644,7 +646,7 @@ export default function Cabang({
           </IconButton>
         </DialogHeader>
         <form onSubmit={handleSubmitCreate} encType="multipart/form-data">
-          <DialogBody divider className="max-h-96 overflow-auto">
+          <DialogBody divider className="overflow-auto max-h-96">
             <div className="flex flex-col gap-y-4">
               <Select
                 label="Tipe Cabang"

@@ -164,14 +164,22 @@ class UAMController extends Controller
             'password' => 'min:8|confirmed',
         ]);
 
+        // dd($request->all());
         try {
             $user = User::find($id);
             $role = Role::where('name', $request->position)->pluck('name')->first();
-            $user->update([
-                'name' => $request->name,
-                'nik' => $request->nik,
-                'password' => Hash::make($request->password)
-            ]);
+            if (isset($request->password)) {
+                $user->update([
+                    'name' => $request->name,
+                    'nik' => $request->nik,
+                    'password' => Hash::make($request->password)
+                ]);
+            } else {
+                $user->update([
+                    'name' => $request->name,
+                    'nik' => $request->nik,
+                ]);
+            }
             $user->syncRoles($role);
             $user->syncPermissions($request->permissions);
             return redirect(route('uam'))->with(['status' => 'success', 'message' => 'Data berhasil diubah']);

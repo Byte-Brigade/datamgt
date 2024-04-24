@@ -35,6 +35,19 @@ class UserSeeder extends Seeder
         $superadmin->assignRole('superadmin');
 
         User::create([
+            'name' => 'Riyadi Ikhsan',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'riyadi.ikhsan@banksampoerna.com',
+            'nik' => '00003836'
+        ])->assignRole('admin')->syncPermissions($full_access);
+        User::create([
+            'name' => 'Edward Sitorus',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'edward.sitorus@banksampoerna.com',
+            'nik' => '00005412'
+        ])->assignRole('admin')->syncPermissions($full_access);
+
+        User::create([
             'name' => 'Siswoyo',
             'password' => Hash::make('Sahabat1!'),
             'email' => 'Siswoyo.Siswoyo@banksampoerna.com',
@@ -101,5 +114,12 @@ class UserSeeder extends Seeder
             'email' => 'Ahmad.Harefli@sahabat-ukm.co.id',
             'nik' => '50010913'
         ])->assignRole('ga');
+
+        User::create([
+            'name' => 'Saipul Anwar',
+            'password' => Hash::make('Sahabat1!'),
+            'email' => 'saipul.anwar@banksampoerna.com',
+            'nik' => '00005042'
+        ])->assignRole('branch_ops');
     }
 }
