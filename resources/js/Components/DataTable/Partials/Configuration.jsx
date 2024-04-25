@@ -20,7 +20,7 @@ export default function Configuration({
   date,
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mb-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex flex-col w-72">
           <div className="flex items-center gap-x-2">
